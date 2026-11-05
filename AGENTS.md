@@ -123,12 +123,13 @@ pfs source add <url|файл> [--origin own|interview|synthetic] [--published YY
 pfs source add --text-file f.md --url <url> --title "…"     pfs source list | show S001
 pfs claim add "текст" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "вывод" --kind inference --from C001,C004
-pfs claim supersede --id C003 "новый текст" --reason "…" | retract --id C003 --reason "…"
+pfs claim supersede --id C003 "новый текст" --reason "…" [--from C…] | retract --id C003 --reason "…"
+pfs claim rebase [--id C010]                 # перенаправить выводы с замещённых оснований на замены
 pfs impact C003 | S002                       pfs check [--strict]
 pfs kb search "когортный анализ удержания"   pfs kb show M-jtbd | pfs kb index
 pfs data profile file.csv --save profile     pfs data cohort file.csv --user id --date dt --save cohorts
 pfs decision add --title … --decision … --owner … --grounds C001,C007 --metric "NSM: 10 -> 12 @2027-01-01" \
                  --review 2027-01-01 --trigger "…" --commit "что|кто|когда"
-pfs decision due | list | done --id D001 --commitment K1
-pfs cost | pfs export | pfs doctor
+pfs decision due [--on YYYY-MM-DD] | list | done --id D001 --commitment K1 | rebase --id D001 --note "…"
+pfs cost [--transcript <jsonl> --since <ISO>] | pfs export | pfs doctor
 ```

@@ -69,6 +69,32 @@ def set_status(pdir: Path, did: str, status: str, reason: str) -> None:
     raise PfsError(f"Решение {did} не найдено")
 
 
+def rebase(pdir: Path, did: str, note: str = "") -> list[str]:
+    """Перенести основания решения на замены замещённых утверждений; история сохраняется в решении."""
+    cl = {c["id"]: c for c in claims_mod.load(pdir)}
+    rows = load(pdir)
+    for d in rows:
+        if d["id"] != did:
+            continue
+        changes, base = [], []
+        for g in d["grounds"]:
+            cur = g
+            while cl.get(cur, {}).get("status") == "superseded" and cl[cur].get("superseded_by"):
+                cur = cl[cur]["superseded_by"]
+            if cl.get(cur, {}).get("status") == "retracted":
+                raise PfsError(f"Основание {cur} отозвано — решение {did} нужно пересмотреть по существу (decision status --status revisit)")
+            if cur != g:
+                changes.append(f"{g}→{cur}")
+            base.append(cur)
+        if changes:
+            d["grounds"] = list(dict.fromkeys(base))
+            d.setdefault("history", []).append({"ts": core.now(), "rebase": changes, "note": note})
+            core.write_jsonl(pdir / "decisions.jsonl", rows)
+            core.log(pdir, "decision", f"{did}: основания обновлены {', '.join(changes)}. {note}")
+        return changes
+    raise PfsError(f"Решение {did} не найдено")
+
+
 def _days_since(iso: str | None) -> int | None:
     if not iso:
         return None

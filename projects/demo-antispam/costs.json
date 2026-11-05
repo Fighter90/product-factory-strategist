@@ -1,13 +1,13 @@
 {
   "sessions": {
-    "build-and-demo": {
+    "bdaf6459-c3c5-44ce-92dd-655f7c0ba3e0": {
       "models": {
         "claude-opus-5-5": {
-          "input": 90,
-          "output": 68469,
-          "cache_write": 674158,
-          "cache_read": 15824166,
-          "messages": 45
+          "input": 236,
+          "output": 116156,
+          "cache_write": 890512,
+          "cache_read": 51180224,
+          "messages": 116
         },
         "<synthetic>": {
           "input": 0,
@@ -17,24 +17,24 @@
           "messages": 2
         },
         "claude-sonnet-5-5": {
-          "input": 8,
-          "output": 1128,
-          "cache_write": 43372,
-          "cache_read": 92489,
-          "messages": 4
+          "input": 44,
+          "output": 58364,
+          "cache_write": 167317,
+          "cache_read": 1114976,
+          "messages": 22
         },
         "claude-haiku-5-5": {
-          "input": 8,
-          "output": 7750,
-          "cache_write": 145807,
-          "cache_read": 371860,
-          "messages": 4
+          "input": 20,
+          "output": 41729,
+          "cache_write": 224648,
+          "cache_read": 584649,
+          "messages": 10
         }
       },
-      "usd": 8.0694,
-      "updated": "2026-11-05T14:55:30+03:00",
-      "stage": "strategy",
-      "since": "2026-11-05T07:11:28Z"
+      "usd": 18.2925,
+      "updated": "2026-11-05T15:21:38+03:00",
+      "stage": "monitoring",
+      "since": "2026-11-05T07:11:29Z"
     }
   },
   "manual": []
