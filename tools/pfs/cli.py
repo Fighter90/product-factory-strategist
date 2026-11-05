@@ -7,7 +7,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from . import (check, claims, core, cost, data, decisions, export, impact, kb, models, project, route, sources)
+from . import (calc, check, claims, core, cost, data, decisions, export, impact, kb, models, project, route, sources)
 from .core import PfsError
 
 
@@ -200,7 +200,16 @@ def cmd_models(a):
 
 
 def cmd_export(a):
-    print(f"Отчёт: {export.build(_p(a))}")
+    pdir = _p(a)
+    if a.six_pager:
+        print(f"Six-pager: {export.build_six_pager(pdir, with_calcs=not a.no_calcs)}")
+    else:
+        print(f"Отчёт: {export.build(pdir)}")
+
+
+def cmd_calc(a):
+    for p in calc.run(_p(a), a.which):
+        print(f"Excel-приложение: {p}")
 
 
 def cmd_doctor(a):
@@ -277,7 +286,13 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("task", nargs="?"); s.add_argument("--economy", action="store_true"); s.add_argument("--critical", action="store_true")
     s.add_argument("--reason"); s.set_defaults(f=cmd_models)
 
-    sp.add_parser("export", help="собрать REPORT.md").set_defaults(f=cmd_export)
+    s = sp.add_parser("export", help="собрать REPORT.md или SIX_PAGER.md")
+    s.add_argument("--six-pager", action="store_true", help="six-pager FAQ-1…6 + Excel-приложения")
+    s.add_argument("--no-calcs", action="store_true", help="не перегенерировать Excel")
+    s.set_defaults(f=cmd_export)
+    s = sp.add_parser("calc", help="Excel-приложения: юнит-экономика, модель роста, когорты, рынок")
+    s.add_argument("which", nargs="?", default="all", choices=["all", "unit-econ", "growth", "cohort", "market"])
+    s.set_defaults(f=cmd_calc)
     sp.add_parser("doctor", help="проверка окружения").set_defaults(f=cmd_doctor)
     return ap
 
