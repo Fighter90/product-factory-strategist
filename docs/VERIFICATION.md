@@ -61,17 +61,18 @@
 
 ## Дополнение: вечер 05.11.2026 — workflow v2 и интеграции
 
-> Батарея прогнана на рабочем репозитории 5 ноября 2026 (вечер), версия 1.0.1.
+> Батарея прогнана на рабочем репозитории 5 ноября 2026 (вечер, после волны расширения), версия 1.0.1.
 
 | Проверка | Результат |
 |---|---|
-| Тесты `python3 -m unittest discover -s tests` | ✅ **21 тест**, все зелёные, 0.35 с |
+| Тесты `python3 -m unittest discover -s tests` | ✅ **55 тестов**, все зелёные, 1.98 с |
 | `python3 -m tools.pfs doctor` | ✅ Python 3.12.13: ok · pdftotext: есть · pypdf: есть · **72 карты** в базе знаний · 2 проекта (активный `kids-guard`) · профиль моделей `claude` |
 | `pfs check --strict` · `kids-guard` | ✅ **100/100, ошибок 0, предупреждений 0** (02–06 документы без замечаний) |
 | `pfs check` · `demo-antispam` | ✅ **94/100, ошибок 0, предупреждений 3** (допущения без оснований: C001, C002, C047 — известное состояние демо) |
 | `pfs kb index` | ✅ INDEX.md обновлён; **72 карты, 0 битых связей** |
-| HTML-парс `site/index.html` | ✅ 502 строки, **0 незакрытых/лишних тегов** (stdlib `html.parser`, стек тегов) |
-| MCP-серверы сессии | ✅ pfs-strategist · linear · lovable (41 tool) · higgsfield · officecli (CLI) |
-| Домен strategyproduct.ru | ⚠ `site/CNAME` = `strategyproduct.ru` (на стороне GitHub установлен); DNS: апекс **NXDOMAIN**, `www` отвечает заглушкой регистратора (A 194.87.250.231 — не GitHub Pages). Осталось настроить у регистратора: A 185.199.108–111.153, AAAA 2606:50c0:8000–8003::153, CNAME www → fighter90.github.io |
+| HTML-парс `site/index.html` | ✅ 523 строки, **0 незакрытых/лишних тегов** (stdlib `html.parser`, стек тегов) |
+| MCP | ✅ сессия: pfs-strategist · linear · lovable · higgsfield · officecli (CLI); `tools/list` pfs-сервера — **18 инструментов** (было 10: + pfs_next, pfs_source_refresh, pfs_data_funnel, pfs_data_stats, pfs_interview_guide, pfs_interview_save, pfs_media_add, pfs_ux_scaffold); неизвестный метод → -32601, неизвестный инструмент → -32602 |
+| Функциональная волна | ✅ data funnel/stats · source refresh (sha-дельта + impact) · interview guide/save · media add · ux scaffold · pfs next · export --deck (HTML 16:9) · officecli pptx-дека kids-guard (`outputs/presentations/deck_kids_guard.pptx`) · hallmark skill (sloplint-гейты) · board-of-directors · premortem · REA (MCP) · Lovable-лендинг опубликован ([strategyproduct.lovable.app](https://strategyproduct.lovable.app), HTTP 200) |
+| Домен strategyproduct.ru | ⚠ DNS: апекс и `www` отвечают **A 194.87.250.231** (Timeweb, заглушка регистратора — не GitHub Pages), AAAA нет; `site/CNAME` = `strategyproduct.ru` на стороне GitHub установлен. Осталось: у регистратора A 185.199.108–111.153, AAAA 2606:50c0:8000–8003::153, CNAME `www` → fighter90.github.io; либо привязка домена в UI Lovable-проекта |
 
-Сайт начнёт открываться по домену после DNS-настройки у регистратора (проверка повторяется `dig strategyproduct.ru A` — ждём 185.199.108–111.153).
+Сайт по домену откроется после DNS-настройки у регистратора (проверка повторяется `dig strategyproduct.ru A` — ждём 185.199.108–111.153); рабочая ссылка сейчас — strategyproduct.lovable.app.

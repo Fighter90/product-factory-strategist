@@ -15,6 +15,12 @@
       "type": "http",
       "url": "https://mcp.lovable.dev",
       "enabled": true
+    },
+    "rea": {
+      "comment": "REA — reverse-engineering MCP (https://github.com/morluto/rea). Для Hopper-интеграции (macOS, установлен Hopper) переменная HOPPER_LAUNCHER_PATH опциональна — при нестандартном пути добавьте её в env.",
+      "command": "npx",
+      "args": ["-y", "rea-agents@6.7.0", "mcp"],
+      "env": {}
     }
   }
 }
