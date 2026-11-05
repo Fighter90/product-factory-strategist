@@ -1,6 +1,8 @@
 """Сборка итогового отчёта: документы + реестр утверждений + источники + решения + стоимость."""
 from __future__ import annotations
 
+import html as html_mod
+import re
 from pathlib import Path
 
 from . import calc, check, claims as claims_mod, core, cost, decisions, sources as src_mod
@@ -113,4 +115,95 @@ def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
     path = pdir / "outputs" / "SIX_PAGER.md"
     core.atomic_write(path, "\n".join(parts) + "\n")
     core.log(pdir, "action", "Собран outputs/SIX_PAGER.md", tool="pfs export --six-pager")
+    return path
+
+
+# ---------- HTML-дека 16:9 из six-pager ----------
+
+_MAX_POINTS = 6   # тезисов на слайд
+_POINT_CAP = 160  # символов на тезис
+
+_DECK_CSS = """
+  :root { --bg: #070b13; --fg: #e8eef8; --a1: #4fd1c5; --a2: #8b7bff; --dim: #9aa7bd; }
+  * { box-sizing: border-box; }
+  html { scroll-snap-type: y mandatory; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  section.slide { width: 100vw; height: auto; aspect-ratio: 16/9; min-height: 100vh;
+                  max-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+                  display: flex; flex-direction: column; justify-content: center; gap: .6em;
+                  padding: clamp(24px, 6vw, 80px); overflow: hidden;
+                  border-bottom: 1px solid rgba(139, 123, 255, .18); }
+  h1, h2 { margin: 0; line-height: 1.15; font-weight: 700;
+           background: linear-gradient(90deg, var(--a1), var(--a2));
+           -webkit-background-clip: text; background-clip: text; color: transparent; }
+  h1 { font-size: clamp(28px, 5vw, 56px); }
+  h2 { font-size: clamp(22px, 3.6vw, 40px); }
+  ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: .45em;
+       font-size: clamp(15px, 2vw, 24px); }
+  li::marker { color: var(--a1); }
+  p { margin: 0; font-size: clamp(15px, 2vw, 24px); color: var(--fg); }
+  .query { color: var(--dim); font-size: clamp(16px, 2.2vw, 26px); }
+  .query b { color: var(--a1); }
+"""
+
+
+def _points(body: str) -> list[str]:
+    """Тезисы слайда: маркеры списков и первые предложения абзацев (≤6, ≤160 символов)."""
+    pts: list[str] = []
+    for raw in body.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or set(line) <= set("-|: "):
+            continue
+        if line.startswith("|"):  # строка таблицы — первый столбец
+            line = [c.strip() for c in line.strip("|").split("|")][0]
+        line = re.sub(r"^[-*+]\s+", "", line)
+        line = re.sub(r"^>\s?", "", line)
+        sentence = re.split(r"(?<=[.!?…])\s+", line)[0]
+        if len(sentence) > _POINT_CAP:
+            sentence = sentence[:_POINT_CAP - 1].rstrip() + "…"
+        if sentence and (not pts or sentence != pts[-1]):
+            pts.append(sentence)
+        if len(pts) >= _MAX_POINTS:
+            break
+    return pts
+
+
+def _slide(title: str, points: list[str], cls: str = "") -> str:
+    """Секция-слайд: заголовок + один тезис — один пункт."""
+    body = ""
+    if points:
+        items = "".join(f"<li>{html_mod.escape(p)}</li>" for p in points)
+        body = f"<ul>{items}</ul>"
+    k = f' class="{cls}"' if cls else ""
+    return f'<section class="slide"{k}>\n<h2>{html_mod.escape(title)}</h2>\n{body}\n</section>'
+
+
+def build_deck(pdir: Path) -> Path:
+    """HTML-дека 16:9 из outputs/SIX_PAGER.md (тёмная тема, один тезис на слайд)."""
+    src = pdir / "outputs" / "SIX_PAGER.md"
+    if not src.exists():
+        raise core.PfsError("Сначала соберите six-pager: pfs export --six-pager")
+    text = src.read_text(encoding="utf-8")
+    meta = core.read_json(pdir / "project.json", {})
+    q = re.search(r"^\*\*Запрос:\*\*\s*(.+)$", text, flags=re.M)
+    query = q.group(1).strip() if q else meta.get("question", "")
+    h1 = re.search(r"^#\s+(.+)$", text, flags=re.M)
+    title = h1.group(1).strip() if h1 else meta.get("title", "Six-pager")
+    sections = re.split(r"^##\s+", text, flags=re.M)[1:]
+    slides = ['<section class="slide title-slide">\n'
+              f"<h1>{html_mod.escape(title)}</h1>\n"
+              f'<p class="query"><b>Запрос:</b> {html_mod.escape(query)}</p>\n</section>']
+    for sec in sections:
+        head, _, body = sec.partition("\n")
+        head = head.strip()
+        if head:
+            slides.append(_slide(head, _points(body)))
+    doc = ("<!doctype html>\n<html lang=\"ru\">\n<head>\n<meta charset=\"utf-8\">\n"
+           f"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+           f"<title>{html_mod.escape(title)}</title>\n<style>{_DECK_CSS}</style>\n"
+           f"</head>\n<body>\n" + "\n".join(slides) + "\n</body>\n</html>\n")
+    path = pdir / "outputs" / "presentations" / "deck.html"
+    core.atomic_write(path, doc)
+    core.log(pdir, "action", "Собран outputs/presentations/deck.html", tool="pfs export --deck")
     return path

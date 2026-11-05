@@ -225,9 +225,17 @@ class KbAndMcpTests(unittest.TestCase):
         self.assertIsNone(mcp_server.handle({"jsonrpc": "2.0", "method": "notifications/initialized"}))
         names = [t["name"] for t in mcp_server.handle({"jsonrpc": "2.0", "id": 2, "method": "tools/list"})["result"]["tools"]]
         self.assertIn("pfs_claim_add", names)
+        for n in ("pfs_next", "pfs_source_refresh", "pfs_data_funnel", "pfs_media_add", "pfs_ux_scaffold"):
+            self.assertIn(n, names)
         res = mcp_server.handle({"jsonrpc": "2.0", "id": 3, "method": "tools/call",
                                  "params": {"name": "pfs_models_pick", "arguments": {"task": "route"}}})
         self.assertFalse(res["result"]["isError"])
+        pdir = project.create("MCP проект", "Почему падает удержание подписчиков?", slug=f"mcp{id(self)}")
+        core.set_active(pdir.name)
+        res = mcp_server.handle({"jsonrpc": "2.0", "id": 4, "method": "tools/call",
+                                 "params": {"name": "pfs_next", "arguments": {}}})
+        self.assertFalse(res["result"]["isError"])
+        self.assertIn("ЧТО РЕШАТЬ СЕЙЧАС", res["result"]["content"][0]["text"])
 
 
 if __name__ == "__main__":

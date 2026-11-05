@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 from . import (calc, check, claims, core, cost, data, decisions, docx, export, impact, kb, models,
-               project, route, sources)
+               participate, project, route, sources)
 from .core import PfsError
 
 
@@ -112,6 +112,18 @@ def cmd_source(a):
             print(f"{s['id']} [{s['origin']}/{s['kind']}] {s['title'][:70]} — {s.get('url') or s.get('path') or ''}")
     elif a.action == "show":
         print(sources.show(pdir, a.target, a.max_chars))
+    elif a.action == "refresh":
+        res = sources.refresh(pdir, a.target, a.max_chars)
+        if not res["changed"]:
+            print(f"{a.target}: не изменился")
+            return
+        old = res["old_chars"] if res["old_chars"] is not None else "?"
+        print(f'{res["sid"]} обновлён: chars {old}→{res["new_chars"]} '
+              f'(sha {res["old_sha8"]}→{res["new_sha8"]}), флагов-инъекций: {res["flags"]}')
+        print("```")
+        print(res["preview"])
+        print("```")
+        print(impact.impact_text(impact.impact(pdir, res["sid"])))
 
 
 def cmd_claim(a):
@@ -208,12 +220,57 @@ def cmd_data(a):
     if a.action == "profile":
         text = data.profile_text(data.profile(path, a.sheet))
         cmd = f"python3 -m tools.pfs data profile {a.file}" + (f" --sheet {a.sheet}" if a.sheet else "")
-    else:
+    elif a.action == "cohort":
         text = data.cohort_text(data.cohort_retention(path, a.user, a.date, a.sheet))
         cmd = f"python3 -m tools.pfs data cohort {a.file} --user {a.user} --date {a.date}"
+    elif a.action == "funnel":
+        if not (a.steps or "").strip():
+            raise core.PfsError("funnel: укажите шаги --steps шаг1,шаг2,шаг3")
+        text = data.funnel_text(data.funnel(path, a.steps, a.user or "user_id", a.date, a.sheet))
+        cmd = f"python3 -m tools.pfs data funnel {a.file} --steps {a.steps}"
+        if a.user and a.user != "user_id":
+            cmd += f" --user {a.user}"
+        if a.date:
+            cmd += f" --date {a.date}"
+        if a.sheet:
+            cmd += f" --sheet {a.sheet}"
+    else:
+        if not (a.col or "").strip():
+            raise core.PfsError("stats: укажите столбец --col имя_столбца")
+        text = data.stats_text(data.stats(path, a.col, a.group, a.sheet))
+        cmd = f"python3 -m tools.pfs data stats {a.file} --col {a.col}"
+        if a.group:
+            cmd += f" --group {a.group}"
+        if a.sheet:
+            cmd += f" --sheet {a.sheet}"
     print(text)
     if pdir and a.save:
         print(f"Сохранено: {data.save_analysis(pdir, a.save, text, cmd)}")
+
+
+def cmd_interview(a):
+    pdir = _p(a)
+    if a.action == "guide":
+        if not (a.topic or "").strip():
+            raise core.PfsError("interview guide: укажите тему --topic")
+        print(f"Гайд: {participate.guide(pdir, a.persona, a.topic)}")
+    else:
+        if not a.file:
+            raise core.PfsError("interview save: укажите файл транскрипта/выжимки")
+        rec = participate.save_synthetic(pdir, Path(a.file), a.persona, a.title)
+        print(f'{rec["id"]} [синтетика] зарегистрирован — только гипотезы '
+              "(facts на синтетике инструмент не примет)")
+
+
+def cmd_media(a):
+    rec = participate.media(_p(a), Path(a.file), a.desc, a.title, a.origin)
+    print(f'{rec["id"]} [{rec["kind"]}] зарегистрирован: raw-файл и описание добавлены')
+
+
+def cmd_ux(a):
+    pdir = _p(a)
+    path = participate.ux_scaffold(pdir, a.source_id, a.focus or "")
+    print(f"Каркас разбора: {path} (выводы — только по материалу {a.source_id})")
 
 
 def cmd_route(a):
@@ -246,6 +303,9 @@ def cmd_models(a):
 
 def cmd_export(a):
     pdir = _p(a)
+    if a.deck:
+        print(f"Дека: {export.build_deck(_p(a))}")
+        return
     if a.six_pager:
         print(f"Six-pager: {export.build_six_pager(pdir, with_calcs=not a.no_calcs)}")
     else:
@@ -291,10 +351,14 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("answer", help="ответ руководителя"); s.add_argument("answer"); s.set_defaults(f=cmd_answer)
     s = sp.add_parser("question", help="открытый вопрос/пробел"); s.add_argument("text"); s.add_argument("--close", action="store_true"); s.set_defaults(f=cmd_question)
 
-    s = sp.add_parser("source", help="источники"); s.add_argument("action", choices=["add", "list", "show"]); s.add_argument("target", nargs="?")
+    s = sp.add_parser("source", help="источники (add/list/show/refresh)")
+    s.add_argument("action", choices=["add", "list", "show", "refresh"],
+                   help="refresh — перезагрузить web-источник (изменился ли текст)")
+    s.add_argument("target", nargs="?")
     s.add_argument("--text-file"); s.add_argument("--url"); s.add_argument("--title"); s.add_argument("--origin", default="public")
     s.add_argument("--note"); s.add_argument("--published"); s.add_argument("--force", action="store_true")
-    s.add_argument("--max-chars", type=int, default=4000); s.set_defaults(f=cmd_source)
+    s.add_argument("--max-chars", type=int, default=4000, help="лимит знаков превью (show/refresh)")
+    s.set_defaults(f=cmd_source)
 
     s = sp.add_parser("claim", help="утверждения"); s.add_argument("action", choices=["add", "list", "retract", "supersede", "rebase"])
     s.add_argument("text", nargs="?"); s.add_argument("--id"); s.add_argument("--kind", choices=claims.KINDS)
@@ -326,9 +390,41 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("kb", help="база знаний"); s.add_argument("action", choices=["search", "index", "show"]); s.add_argument("query", nargs="?")
     s.add_argument("-k", type=int, default=8); s.add_argument("--with-project", action="store_true"); s.set_defaults(f=cmd_kb)
 
-    s = sp.add_parser("data", help="анализ таблиц"); s.add_argument("action", choices=["profile", "cohort"]); s.add_argument("file")
-    s.add_argument("--sheet"); s.add_argument("--user"); s.add_argument("--date"); s.add_argument("--save", help="имя файла в analysis/")
+    s = sp.add_parser("data", help="анализ таблиц (profile/cohort/funnel/stats)")
+    s.add_argument("action", choices=["profile", "cohort", "funnel", "stats"],
+                   help="profile — паспорт таблицы; cohort — удержание; funnel — воронка; stats — статистика столбца")
+    s.add_argument("file")
+    s.add_argument("--sheet", help="лист Excel")
+    s.add_argument("--user", help="столбец пользователя (cohort/funnel)")
+    s.add_argument("--date", help="столбец даты (cohort/funnel)")
+    s.add_argument("--steps", help="шаги воронки через запятую: visit,signup,pay")
+    s.add_argument("--col", help="числовой столбец для stats")
+    s.add_argument("--group", help="столбец группировки для stats")
+    s.add_argument("--save", help="имя файла в analysis/")
     s.set_defaults(f=cmd_data)
+
+    s = sp.add_parser("interview", help="гайд интервью и синтетические респонденты")
+    s.add_argument("action", choices=["guide", "save"],
+                   help="guide — каркас вопросов; save — транскрипт ИИ-респондента как источник")
+    s.add_argument("file", nargs="?", help="файл транскрипта/выжимки (для save)")
+    s.add_argument("--persona", required=True, help="персона ИИ-респондента, напр. «Родитель 7–12»")
+    s.add_argument("--topic", help="тема интервью (для guide)")
+    s.add_argument("--title", help="заголовок источника (для save)")
+    s.set_defaults(f=cmd_interview)
+
+    s = sp.add_parser("media", help="медиа-файл как источник: raw-копия + описание")
+    s.add_argument("action", choices=["add"], help="add — зарегистрировать")
+    s.add_argument("file", help="путь к изображению/аудио/видео")
+    s.add_argument("--desc", required=True, help="что видно/слышимо, без домыслов")
+    s.add_argument("--title", help="заголовок источника")
+    s.add_argument("--origin", default="own", help="public | own | interview | synthetic | agent")
+    s.set_defaults(f=cmd_media)
+
+    s = sp.add_parser("ux", help="каркас UX-разбора источника")
+    s.add_argument("action", choices=["scaffold"], help="scaffold — создать analysis/ux_<S###>.md")
+    s.add_argument("source_id", help="S### — источник с материалом разбора")
+    s.add_argument("--focus", help="фокус разбора, напр. «онбординг»")
+    s.set_defaults(f=cmd_ux)
 
     s = sp.add_parser("route", help="выбор сценария и моделей"); s.add_argument("request", nargs="?")
     s.add_argument("--override"); s.add_argument("--economy", action="store_true"); s.add_argument("--json", action="store_true")
@@ -337,7 +433,8 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("task", nargs="?"); s.add_argument("--economy", action="store_true"); s.add_argument("--critical", action="store_true")
     s.add_argument("--reason"); s.set_defaults(f=cmd_models)
 
-    s = sp.add_parser("export", help="собрать REPORT.md или SIX_PAGER.md")
+    s = sp.add_parser("export", help="собрать REPORT.md, SIX_PAGER.md или deck.html")
+    s.add_argument("--deck", action="store_true", help="HTML-дека 16:9 из SIX_PAGER.md")
     s.add_argument("--six-pager", action="store_true", help="six-pager FAQ-1…6 + Excel-приложения")
     s.add_argument("--no-calcs", action="store_true", help="не перегенерировать Excel")
     s.set_defaults(f=cmd_export)

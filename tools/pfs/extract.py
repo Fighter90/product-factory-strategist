@@ -8,7 +8,9 @@ import re
 import socket
 import shutil
 import subprocess
+import time
 import urllib.request
+import urllib.error
 import zipfile
 from html.parser import HTMLParser
 from pathlib import Path
@@ -92,17 +94,29 @@ class _SafeRedirect(urllib.request.HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
-def fetch_url(url: str, timeout: int = 30, max_bytes: int = 20_000_000) -> tuple[bytes, str]:
+def fetch_url(url: str, timeout: int = 30, max_bytes: int = 20_000_000, attempts: int = 3) -> tuple[bytes, str]:
+    """Загрузка с повторами: до 3 попыток с паузами 1с/2с при сетевых сбоях (URLError/OSError/таймаут)
+    и HTTP 429/5xx. SSRF-проверка выполняется до запросов; при неудаче — прежнее сообщение об ошибке."""
     assert_public_url(url)
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Language": "ru,en;q=0.8"})
     opener = urllib.request.build_opener(_SafeRedirect)
-    try:
-        with opener.open(req, timeout=timeout) as resp:  # noqa: S310 — адрес проверен assert_public_url
-            return resp.read(max_bytes), resp.headers.get_content_type() or ""
-    except PfsError:
-        raise
-    except Exception as exc:  # сеть недоступна, 403, таймаут — сообщаем явно, не молчим
-        raise PfsError(f"Не удалось загрузить {url}: {exc}. Сохраните страницу вручную или передайте текст через --text-file") from exc
+    last: Exception | None = None
+    for attempt in range(attempts):
+        try:
+            with opener.open(req, timeout=timeout) as resp:  # noqa: S310 — адрес проверен assert_public_url
+                return resp.read(max_bytes), resp.headers.get_content_type() or ""
+        except PfsError:
+            raise
+        except Exception as exc:  # сеть недоступна, 429/5xx, таймаут — повторяем; прочее сообщаем явно, не молчим
+            last = exc
+            if isinstance(exc, urllib.error.HTTPError):
+                retry = exc.code == 429 or exc.code >= 500
+            else:
+                retry = isinstance(exc, OSError)  # URLError/OSError/таймаут — сеть
+            if not retry or attempt == attempts - 1:
+                break
+            time.sleep(2 ** attempt)  # 1с, 2с
+    raise PfsError(f"Не удалось загрузить {url}: {last}. Сохраните страницу вручную или передайте текст через --text-file") from last
 
 
 def pdf_to_text(path: Path) -> str:
