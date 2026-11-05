@@ -19,6 +19,8 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
+[id]{scroll-margin-top:86px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 section,.hero,footer{scroll-margin-top:76px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden;transition:opacity .18s ease}
@@ -36,7 +38,7 @@ a:hover{text-decoration:underline}
 .orb.a{width:640px;height:640px;left:-160px;top:-180px;background:radial-gradient(circle,rgba(79,209,197,.34),transparent 65%)}
 .orb.b{width:720px;height:720px;right:-220px;top:16vh;background:radial-gradient(circle,rgba(139,123,255,.32),transparent 65%)}
 .orb.c{width:560px;height:560px;left:30vw;bottom:-220px;background:radial-gradient(circle,rgba(56,189,248,.22),transparent 65%)}
-.grid{position:absolute;inset:0;opacity:.5;
+.grid{position:absolute;inset:0;opacity:.5;animation:gridDrift 26s ease-in-out infinite;
   background-image:linear-gradient(rgba(120,140,190,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(120,140,190,.055) 1px,transparent 1px);
   background-size:56px 56px;
   -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 40%,transparent 100%);
@@ -90,7 +92,10 @@ h1 .grad{background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 40%,va
 
 section{padding:72px 0;position:relative}
 section+section{border-top:1px solid rgba(90,110,160,.14)}
-h2{font-size:clamp(24px,3.2vw,32px);margin-bottom:10px;letter-spacing:-.4px}
+h2{font-size:clamp(24px,3.2vw,32px);margin-bottom:18px;letter-spacing:-.4px;position:relative;padding-bottom:12px}
+h2::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transform-origin:left}
+.rv.in h2::after{transform:scaleX(1);transition:transform .9s cubic-bezier(.2,.6,.2,1) .25s}
 .lead{color:var(--muted);max-width:800px;margin-bottom:34px;overflow-wrap:anywhere}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;backdrop-filter:blur(8px);position:relative;transition:border-color .3s,box-shadow .3s;transform-style:preserve-3d;will-change:transform}
@@ -101,7 +106,7 @@ h2{font-size:clamp(24px,3.2vw,32px);margin-bottom:10px;letter-spacing:-.4px}
 .card p{color:var(--muted);font-size:14.5px;overflow-wrap:anywhere}
 .card .tag{display:inline-block;font-size:12px;color:var(--accent);border:1px solid var(--line);border-radius:6px;padding:1px 9px;margin-bottom:12px;background:var(--code)}
 
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;counter-reset:step;margin-top:6px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px 14px;counter-reset:step;margin-top:10px}
 .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;position:relative;backdrop-filter:blur(8px);transition:transform .25s,border-color .25s}
 .step:hover{transform:translateY(-4px);border-color:rgba(79,209,197,.5)}
 .step::before{counter-increment:step;content:counter(step);position:absolute;top:-11px;left:14px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#070b13;font-weight:800;font-size:12px;border-radius:8px;padding:2px 9px;box-shadow:0 4px 14px rgba(79,209,197,.35)}
@@ -140,9 +145,12 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(72,187,120,.55)}70%{box-shadow:0 0 0 9px rgba(72,187,120,0)}100%{box-shadow:0 0 0 0 rgba(72,187,120,0)}}
 @keyframes blink{50%{opacity:0}}
 @keyframes cue{0%{opacity:0;top:6px}40%{opacity:1}100%{opacity:0;top:20px}}
+@keyframes gridDrift{0%{background-position:0 0,0 0}50%{background-position:26px 14px,-26px -14px}100%{background-position:0 0,0 0}}
 @keyframes orbPulse{0%,100%{opacity:.5}50%{opacity:.62}}
 @keyframes auroraSpin{to{transform:rotate(360deg)}}
 
+.arch-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.arch-scroll svg{min-width:900px}
 .arch-diagram{margin:4px 0 0}
 .arch-diagram svg{width:100%;height:auto;display:block}
 .arch-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
@@ -203,7 +211,7 @@ body[data-lang=ru] [lang=en]{display:none}
     <div class="stat"><b><span class="cnt" data-target="72">0</span></b><span lang="ru">карт методик по категориям</span><span lang="en">method cards across categories</span></div>
     <div class="stat"><b><span class="cnt" data-target="120">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
     <div class="stat"><b>0</b><span lang="ru">зависимостей — только stdlib Python</span><span lang="en">dependencies — Python stdlib only</span></div>
-    <div class="stat"><b><span class="cnt" data-target="87">0</span>%</b><span lang="ru">чисел проверяемы против 0% у чата</span><span lang="en">verifiable numbers vs 0% in plain chat</span></div>
+    <div class="stat"><b><span class="cnt" data-target="87">0</span>%</b><span lang="ru">чисел подтверждены источниками · у обычного чата 0%</span><span lang="en">of numbers verifiable — plain chat: 0%</span></div>
   </div>
 </div>
 <div class="scroll-cue" lang="ru">листайте вниз<span></span></div>
@@ -283,7 +291,7 @@ $ pfs export --six-pager    # report + attachments</pre>
   <h2 class="rv" lang="ru">Архитектура: как устроен агент</h2><h2 class="rv" lang="en">Architecture: how the agent works</h2>
   <p class="lead rv d1" lang="ru">Слои агента: среда (AGENTS.md, 120 skills, 8 субагентов, 4 хука) → CLI+MCP-ядро <code>tools/pfs</code> → база из 72 карт методик и интеграции. Гарантии — не в промптах, а в коде pfs; состояние — в файлах проекта, поэтому работа переживает перерывы и переезды между средами.</p>
   <p class="lead rv d1" lang="en">The agent's layers: environment (AGENTS.md, 120 skills, 8 subagents, 4 hooks) → the <code>tools/pfs</code> CLI+MCP core → a knowledge base of 72 method cards and integrations. Guarantees live in pfs code, not in prompts; state lives in project files, so work survives breaks and moves between environments.</p>
-  <div class="arch-diagram rv d2">
+  <div class="arch-scroll rv d2"><div class="arch-diagram rv d2">
     <svg viewBox="0 0 1200 640" width="100%" role="img">
       <title>Архитектура агента / Agent architecture</title>
       <defs>
@@ -375,6 +383,7 @@ $ pfs export --six-pager    # report + attachments</pre>
       <text x="232" y="380" font-size="11" fill="#9aa7bd">продолжение после перерыва</text>
       <text x="232" y="396" font-size="11" fill="#9aa7bd">resume after a break</text>
     </svg>
+  </div>
   </div>
   <div class="arch-legend rv d3">
     <span><b lang="ru">Доказательства:</b><b lang="en">Evidence trail:</b> S### → C### → D###</span>
