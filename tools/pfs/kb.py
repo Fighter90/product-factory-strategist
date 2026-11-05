@@ -147,3 +147,25 @@ def card_path(card_id: str) -> Path:
         if c.get("id") == card_id:
             return core.KNOWLEDGE / "methods" / c["file"]
     raise core.PfsError(f"Карта {card_id} не найдена")
+
+# Обязательные карты по шагам процесса (агент читает их перед шагом; pfs step печатает список).
+STAGE_CARDS = {
+    "intake": ["M-brief-hypotheses", "M-customers", "M-jtbd", "M-product-context"],
+    "sources": ["M-source-criticism", "M-research-types"],
+    "research": ["M-research-types", "M-quant-methods", "M-ab-testing", "M-sql-for-pm", "M-ai-in-research"],
+    "discovery": ["M-jtbd", "M-audience-research", "M-in-depth-interviews", "M-customers", "M-product-frameworks"],
+    "situation": ["M-source-criticism", "M-external-environment", "M-competitors", "M-trends-scenarios"],
+    "options": ["M-strategy-growth", "M-goals-drivers-bets", "M-risks", "M-cannibalization",
+                "M-product-frameworks", "M-lean-canvas", "M-double-diamond"],
+    "choice": ["M-decision-daci", "M-product-frameworks"],
+    "strategy": ["M-usp", "M-product-communication", "M-monetization", "M-unit-economics",
+                 "M-traction-model", "M-platforms-types-criteria"],
+    "validation": ["M-ab-testing", "M-success-metrics", "M-product-metrics", "M-forecasting-product"],
+    "review": ["M-six-pager", "M-source-criticism"],
+    "decision": ["M-decision-daci", "M-model-validation"],
+    "monitoring": ["M-decision-daci", "M-loyalty-metrics"],
+}
+
+
+def cards_for(stage: str) -> list[str]:
+    return STAGE_CARDS.get(stage, [])

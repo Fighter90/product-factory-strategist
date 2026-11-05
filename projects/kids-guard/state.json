@@ -1,0 +1,57 @@
+{
+  "stage": "choice",
+  "steps": {
+    "intake": {
+      "status": "done",
+      "ts": "2026-11-05T21:13:01+03:00",
+      "note": "бриф подтверждён руководителем: сегмент 7–12, ≤199 ₽/мес, критерий ARPU без оттока"
+    },
+    "sources": {
+      "status": "done",
+      "ts": "2026-11-05T21:13:01+03:00",
+      "note": "8 источников, помечены"
+    },
+    "research": {
+      "status": "done",
+      "ts": "2026-11-05T21:21:57+03:00",
+      "note": "план закрыт по Q1/Q4/Q5; Q2/Q3 — гипотезы и прогнозы под пилот"
+    },
+    "situation": {
+      "status": "done",
+      "ts": "2026-11-05T21:21:57+03:00",
+      "note": "ситуация собрана: 8 источников, 18 утверждений"
+    },
+    "options": {
+      "status": "done",
+      "ts": "2026-11-05T21:32:07+03:00",
+      "note": "5 вариантов A–E; красная команда применена: убраны псевдопроценты, добавлены фальсификаторы; C018 отозван"
+    },
+    "choice": {
+      "status": "pending"
+    },
+    "strategy": {
+      "status": "pending"
+    },
+    "validation": {
+      "status": "pending"
+    },
+    "review": {
+      "status": "pending"
+    },
+    "decision": {
+      "status": "pending"
+    },
+    "monitoring": {
+      "status": "pending"
+    },
+    "discovery": {
+      "status": "done",
+      "ts": "2026-11-05T21:33:10+03:00",
+      "note": "персоны и сегменты включены в 02_situation (раздел Сегменты); JTBD-фокус подтверждён вопросным блоком discovery"
+    }
+  },
+  "next_action": "choice",
+  "open_questions": [],
+  "awaiting_human": null,
+  "updated": "2026-11-05T21:33:10+03:00"
+}
