@@ -10,7 +10,8 @@
 
 The agent is not a program and not a bot — it is a **repository folder** that you open in an LLM environment
 (Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot). The environment reads `AGENTS.md` (rules and process),
-`knowledge/` (methods distilled from 7 product courses — techniques only, no brands), while the tool `pfs` keeps
+`knowledge/` (knowledge sets by category: strategy · economics · product · UX · data · platforms · Gen AI;
+techniques only — no brands), while the tool `pfs` keeps
 the research "bookkeeping": sources, claims, checks, decisions, cost.
 
 Four layers to distinguish:
@@ -244,6 +245,48 @@ Deep research — Feynman (feynman.is, skill `deep-research`): `feynman deeprese
 file. Transfer rules: provenance → primary sources registered as S###; numbers are facts only from primary sources;
 the report itself is origin agent — hypotheses only. Telemetry: `FEYNMAN_TELEMETRY=off`;
 `OPENALEX`/`SEMANTIC_SCHOLAR_API_KEY` in `.env`.
+
+---
+
+## Skills: structure and invocation
+
+Alongside the process the environment loads **skills** — packaged instruction sets (106 in total, in three
+groups plus integrations):
+
+- **Base (13)** — one per process step: `intake`, `research`, `situation`, `options`, `strategy`,
+  `validation-plan`, `decision-support`, `six-pager`, `deck`, etc.
+- **Product-skills (27)** — domain packs around the process: segments, JTBD, unit economics, growth, risks.
+- **Personal library (~59)** — imported packs by category:
+  - **Design** — `design-ui`, `refero-design`, `frontend-design`, `make-interfaces-feel-better`,
+    `emil-design-eng`, `web-design-guidelines`;
+  - **Marketing** — `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `cold-email`,
+    `emails`, `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`,
+    `directory-submissions`, `customer-research`, `marketing-psychology`, `prospecting`…;
+  - **Science** — `paper-lookup`, `research-lookup`, `literature-review`, `scientific-writing`,
+    `scientific-critical-thinking`, `peer-review`, `statistical-analysis`, `statsmodels`, `scikit-learn`,
+    `hypothesis-generation`, `pydeseq2`, `biopython`, `rdkit`;
+  - **Docs/media** — `pdf`, `docx`, `pptx`, `xlsx`, `markitdown`, `officecli`, `generate-image`, `video`,
+    `infographics`, `scientific-slides`/`scientific-schematics`/`scientific-visualization`, `latex-posters`,
+    `matplotlib`, `seaborn`;
+  - **Thinking modes** — `board-of-directors`, `consciousness-council`, `balanced`, `what-if-oracle`,
+    `dhdna-profiler`;
+  - **Meta** — `skill-creator`, `find-skills`, `shap`, `watch`, `transcribe`.
+- **Integrations** — cross-process behaviors: `hallmark` (anti-slop gates for pages), `board-of-directors`
+  (5-perspective council + Red Team), `premortem` (failure pre-mortem), `rea` (reverse engineering of pages
+  and closed formats), `sdd`, `deck`.
+
+How skills are invoked:
+
+- **Automatically** — by description trigger: the task matches, the skill loads.
+- **Explicitly** — say `use skill <name>: <task>` (example: `use skill hallmark: build the landing`).
+- **In-process, by step** — `pfs step` prints the step's knowledge cards; at `options` expensive decisions
+  additionally get `board-of-directors`; at `decision` — `decision-support` plus `premortem` AFTER the D###
+  draft and BEFORE your approval; at `research` — `deep-research` and `rea` for JS-rendered pages.
+
+Examples of requests: "run a premortem on D001", "use skill hallmark: build the landing".
+
+Precedence rule: on conflict, the `knowledge/` methodology wins over a skill's own procedure.
+Full registry of skills — [`SKILLS.md`](SKILLS.md).
 
 ---
 

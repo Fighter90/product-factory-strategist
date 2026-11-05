@@ -10,7 +10,7 @@
 
 Агент — не программа и не бот, а **папка-репозиторий**, которую вы открываете в LLM-среде
 (Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot). Среда читает `AGENTS.md` (правила и процесс),
-`knowledge/` (методики из 7 учебных курсов, только техники — без брендов), а всю «бухгалтерию» исследования
+`knowledge/` (наборы знаний по категориям: стратегия · экономика · продукт · UX · данные · платформы · Gen AI; только методики — без брендов), а всю «бухгалтерию» исследования
 (источники, утверждения, проверки, решения, стоимость) ведёт инструмент `pfs`.
 
 Четыре слоя, которые важно различать:
@@ -246,6 +246,39 @@ pfs doctor
 provenance-файлом. Правила переноса: provenance → первоисточники регистрируются как S###; цифры —
 факты только из первоисточников; сам отчёт — origin agent, только гипотезы. Телеметрия:
 FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
+
+---
+
+## Навыки: структура и вызов
+
+У агента 106 навыков (skills): базовые 13 по шагам процесса · 27 product-skills · ~59 из личной библиотеки · интеграции.
+Навыки не заменяют процесс и `pfs` — это библиотека техник, которые подключаются там, где нужны.
+
+**Группы:**
+
+- **Базовые (13)** — по шагам процесса: intake, research, situation, options, strategy, validation-plan, decision-support и др.
+- **Product-skills (27)** — продуктовые методики (маркет-сайзинг, юнит-экономика, трекшн-модели, роадмапы…).
+- **Личная библиотека (~59):**
+  - *дизайн*: `design-ui`, `refero-design`, `frontend-design`, `make-interfaces-feel-better`, `emil-design-eng`, `web-design-guidelines`
+  - *маркетинг*: `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `cold-email`, `emails`, `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`, `directory-submissions`, `customer-research`, `marketing-psychology`, `prospecting` и др.
+  - *наука*: `paper-lookup`, `research-lookup`, `literature-review`, `scientific-writing`, `scientific-critical-thinking`, `peer-review`, `statistical-analysis`, `statsmodels`, `scikit-learn`, `hypothesis-generation`, `pydeseq2`, `biopython`, `rdkit`
+  - *документы/медиа*: `pdf`, `docx`, `pptx`, `xlsx`, `markitdown`, `officecli`, `generate-image`, `video`, `infographics`, `scientific-slides` / `scientific-schematics` / `scientific-visualization`, `latex-posters`, `matplotlib`, `seaborn`
+  - *режимы мышления*: `board-of-directors`, `consciousness-council`, `balanced`, `what-if-oracle`, `dhdna-profiler`
+  - *мета*: `skill-creator`, `find-skills`, `shap`, `watch`, `transcribe`
+- **Интеграции:** `hallmark` — anti-slop гейты для страниц; `board-of-directors` — совет из 5 перспектив + Red Team;
+  `premortem` — предразбор провала; `rea` — reverse-engineering страниц и форматов; `sdd`; `deck`.
+
+**Как вызывать:**
+
+1. **Автоматически** — по триггерам из описания навыка (агент сам подключит нужный, когда задача совпадает).
+2. **Явно** — «используй skill `<имя>`: `<задача>`». Примеры: «сделай premortem по D001»,
+   «используй skill hallmark: собери лендинг».
+3. **В процессе — по шагам:** `pfs step` печатает обязательные карты шага; options → для дорогих решений
+   подключается `board-of-directors`; decision → `decision-support` + `premortem` — ПОСЛЕ черновика D###
+   и ДО утверждения; research → для JS-страниц — `deep-research` / `rea`.
+
+**Правило приоритета:** при конфликте методология из `knowledge/` приоритетнее процедуры навыка.
+Полный реестр — [`SKILLS.md`](SKILLS.md).
 
 ---
 

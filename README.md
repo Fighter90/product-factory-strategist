@@ -7,7 +7,8 @@
 и согласованным продуктовой и коммуникационной стратегиям. После решения агент хранит его основания, следит
 за обязательствами и пересматривает выводы при новых данных.
 
-Это папка-репозиторий: инструкции, методическая база из 7 учебных курсов, 45 навыков, 8 субагентов, 4 хука
+Это папка-репозиторий: инструкции, наборы знаний по категориям (стратегия · экономика · продукт · UX ·
+данные · платформы · Gen AI), 106 навыков, 8 субагентов, 4 хука
 и CLI/MCP-инструменты на чистом Python (ноль зависимостей). Работает в Claude Code, Cursor, Codex, OpenCode,
 Windsurf, Copilot.
 
@@ -41,6 +42,15 @@ python3 -m unittest discover -s tests          # 55 тестов
 и упирается в **ворота качества**. Фазы двойного романа: Discover (0–3) → Define (4–6) → Develop (7–9) →
 Deliver (10–12).
 
+```mermaid
+flowchart TD
+  Q["запрос руководителя"] --> R["route: сценарий · карты · модели"]
+  R --> S0["0 intake: бриф"] --> S1["1 sources: источники"] --> S2["2 research: исследование"] --> S3["3 discovery: персоны/JTBD"] --> S4["4 situation: ситуация"] --> S5["5 options: варианты + red team"] --> S6{{"6 choice: выбор — ЧЕЛОВЕК"}} --> S7["7 strategy: стратегии"] --> S8["8 validation: проверка"] --> S9["9 review: ревью + six-pager"] --> S10{{"10 decision: решение — ЧЕЛОВЕК"}} --> S11["11 monitoring: мониторинг"]
+  S6 -.->|"pfs questions"| QB["вопросные блоки"]
+  S9 --> DECK["six-pager + 4 Excel"]
+  S11 -->|"новые данные"| REF["impact → supersede → rebase"]
+```
+
 | # | Шаг | Что делает агент | Карты (обязательные) | Вопросный блок | Ворота |
 |---|---|---|---|---|---|
 | 0 | intake | ≤3 вопроса, бриф, допущения | M-brief-hypotheses, M-customers, M-jtbd | intake-* | **человек подтверждает** |
@@ -64,7 +74,7 @@ Deliver (10–12).
 flowchart TB
   U["Руководитель продукта"] -->|"запрос · ответы на блоки вопросов"| ENV
   subgraph ENV["LLM-среда (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 45<br/>(базовые + product-skills 27 + интеграции: sdd · deck · deep-research · premortem · board-of-directors · hallmark)"]
+    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 106<br/>(базовые 13 + product-skills 27 + личная 60 + интеграции 6: sdd · deck · premortem · board-of-directors · hallmark · rea)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 4<br/>SessionStart · PreWeb-домены · PostTool-журнал · Stop-стоимость"]
   end
@@ -77,7 +87,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>основания · обязательства"] --> MON["decision due<br/>что решать сейчас"]
   end
-  KB["knowledge/ — 72 карты из 7 курсов<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
+  KB["knowledge/ — 72 карты по категориям<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → первоисточники → S###"| S
   SUB -->|"отчёты"| ENV
@@ -88,6 +98,47 @@ flowchart TB
 **материалы проекта** (projects/`<slug>`) ≠ **состояние** (state.json, *.jsonl). Прежний ответ агента не
 становится фактом: он хранится как `inference` с основаниями; при отзыве основания `pfs check` помечает
 все места, где на него ссылаются.
+
+---
+
+## Навыки: структура и как их вызывать
+
+```mermaid
+flowchart TB
+  SK["106 навыков"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
+  SK --> P["Product-skills 27: процедуры методов<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
+  SK --> L["Личная библиотека ~60<br/>дизайн · маркетинг · наука · документы/медиа · режимы мышления · мета"]
+  SK --> INT["Интеграции 6<br/>hallmark · board-of-directors · premortem · rea · sdd · deck"]
+  B & P & L & INT --> INV["Вызов: авто по триггерам · явно «используй skill X» · по шагам процесса"]
+```
+
+**Структура (106):** четыре группы.
+- **Базовые 13** — шаги процесса: intake, research, situation, options, strategy, validation-plan,
+  decision-support, data-analysis, interviews, ux-review, six-pager, deep-research, strategist.
+- **Product-skills 27** — процедуры методов: market-sizing, unit-economics, traction-modeling,
+  solution-design, mvp-pilot-launch, problem-design…
+- **Личная библиотека 60** — дизайн: design-ui, refero-design, frontend-design, make-interfaces-feel-better,
+  emil-design-eng, web-design-guidelines; маркетинг: ads, ad-creative, seo-audit, ai-seo, cro, pricing,
+  offers, cold-email, emails, launch, content-strategy, competitors, analytics, programmatic-seo,
+  directory-submissions, customer-research, marketing-psychology, prospecting; наука: paper-lookup,
+  research-lookup, literature-review, scientific-writing, scientific-critical-thinking, peer-review,
+  statistical-analysis, statsmodels, scikit-learn, hypothesis-generation, pydeseq2, biopython, rdkit;
+  документы/медиа: pdf, docx, pptx, xlsx, markitdown, officecli, generate-image, video, infographics,
+  scientific-slides, scientific-schematics, scientific-visualization, latex-posters, matplotlib, seaborn;
+  режимы мышления: consciousness-council, balanced, what-if-oracle, dhdna-profiler; мета: skill-creator,
+  find-skills, shap, watch, transcribe.
+- **Интеграции 6** — hallmark, board-of-directors, premortem, rea, sdd, deck.
+
+**Как вызывать — три способа:**
+1. **Автоматически** — среда читает `description` навыка и подключает его по формулировке задачи
+   («сделай premortem», «оцени лендинг по веб-гайдлайнам»).
+2. **Явно** — «используй skill `<имя>`: `<задача>`».
+3. **В процессе агента** — навык шага подключает нужные: `pfs step` печатает обязательные карты, а skills
+   включаются на шагах (options → options + red-team + board-of-directors; decision → decision-support +
+   premortem). Примеры команд: `pfs questions options`, `pfs export --deck`.
+
+**Правило согласования:** при конфликте методология в `knowledge/` (карты) приоритетнее процедуры навыка.
+Полный реестр — `docs/SKILLS.md`.
 
 ---
 
@@ -103,12 +154,23 @@ flowchart TB
 - **D### — решения**: основания (C###), ответственный, метрика «X→Y к дате», триггеры пересмотра,
   обязательства «что|кто|когда». `pfs decision due` — что просрочено и на каких устаревших основаниях.
 
-### 2. База знаний (72 карты, 7 курсов + фреймворки)
-Дистилляция курсов продуктовой магистратуры: стратегии роста · юнит-экономика и traction-модели ·
-продуктовый менеджмент · UX и клиентские метрики · анализ данных (A/B c формулами MDE, SQL, дашборды,
-прогнозирование, ML) · платформенные решения · Gen AI в продуктах. Только методики — без брендов.
-Фреймворковый слой: **Double Diamond** (маппинг на 12 шагов), **Lean Canvas** (9 ячеек с C###),
-**обзор фреймворков** (RICE/ICE/WSJF, HADI, AARRR/HEART/Кано — «фаза → инструмент»). Поиск: `pfs kb search`
+```mermaid
+flowchart LR
+  W["Веб/файлы/интервью"] -->|"fetch · дедуп · инъекции"| S["S### источники"]
+  S -->|"факт ⇐ источник"| C["C### утверждения<br/>fact/hypothesis/forecast/assumption/inference<br/>сила A–D"]
+  C -->|"вывод ⇒ derived_from"| I["inference-выводы"]
+  I --> DOC["документы 02–07"]
+  C --> DEC["D### решения"]
+  NEW["новые данные"] -->|"refresh / supersede"| IMP["impact: затронутые выводы · строки · решения"]
+  IMP --> REV["пересмотр: supersede · rebase"]
+```
+
+### 2. База знаний (72 карты по категориям)
+Наборы знаний по категориям: стратегия и рост · юнит-экономика и монетизация · продуктовый менеджмент ·
+UX и клиентские метрики · анализ данных и A/B · платформенные решения · Gen AI в продукте. Поверх —
+фреймворки: Double Diamond, Lean Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Кано. Только методики —
+без брендов. Фреймворковый слой: **Double Diamond** (маппинг на 12 шагов), **Lean Canvas**
+(9 ячеек с C###), **обзор фреймворков** («фаза → инструмент»). Поиск: `pfs kb search`
 (BM25, русский стемминг); на каждом шаге агент получает обязательный список карт.
 
 ### 3. Framework для исследований (Feynman, feynman.is)
@@ -183,17 +245,24 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 ## Структура репозитория
 
 ```
-AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
-.claude/skills/ (45)  .claude/agents/ (8)  .claude/hooks/ (4)  .claude/settings.json
-.cursor/rules/  .github/ (Pages workflow)  .mcp.json (pfs · linear · lovable)
-config/   models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/ methods/ (72 карты) · templates/ · rubrics/ · INDEX.md
-tools/pfs/ core · project · route · sources · claims · check · impact · decisions
-           data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
-projects/<slug>/ sources/ · claims.jsonl · decisions.jsonl · log.jsonl · costs.json
-                 state.json · outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx
-site/index.html (RU/EN) · docs/ (HELP×2, ARCHITECTURE, SKILLS, SUBMISSION, VERIFICATION…)
-tests/ (55) · demos: demo-antispam (готов), kids-guard (сквозной прогон)
+AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject.toml
+.claude/skills/      (106)  базовые 13 · product-skills 27 · личная 60 · интеграции 6
+.claude/agents/      (8)    researcher · red-team · evidence-auditor · synthetic-respondent ·
+                            data-analyst · ux-analyst · comms-strategist · router
+.claude/hooks/       (4)    SessionStart · PreWeb-домены · PostTool-журнал · Stop-стоимость
+.claude/settings.json
+.cursor/rules/       .github/ (Pages workflow) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable)
+config/              models.json · pricing.json · quality_gate.json · question_blocks.json
+knowledge/           methods/ (72 карты) · templates/ · rubrics/ · INDEX.md
+tools/pfs/           core · project · route · sources · claims · check · impact · decisions ·
+                     data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
+projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl · log.jsonl · costs.json ·
+                     outputs/ (00…07 · REPORT · SIX_PAGER · attachments/*.xlsx · presentations/)
+                     демо-проекты: demo-antispam (готов) · kids-guard (сквозной прогон)
+site/                index.html (RU/EN)
+docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
+                     VERIFICATION · docx/ · demo/ · lovable-brief…
+tests/               (55)
 ```
 
 ## Прозрачность и стоимость
@@ -201,9 +270,3 @@ tests/ (55) · demos: demo-antispam (готов), kids-guard (сквозной �
 Журнал `log.jsonl` — что сделано; реестры — на чём основаны выводы; `pfs cost` — токены и деньги
 (демо-проект: $18,79 ≈ 1 785 ₽; проверяемость чисел 87% против 0% у обычного чата; независимая рубрика
 19/22). Подробно — `docs/demo/comparison.md`.
-
-## Roadmap и ограничения
-
-Дальше: паритет OpenCode (хуки → события), публикация на PyPI, живые прогоны Feynman, авто-дека PPTX.
-Ограничения: качество зависит от модели среды; сайты на JS сохраняются через `--text-file`; авто-стоимость
-— только по транскриптам Claude Code; Excel без диаграмм (stdlib); новые субагенты — после перезапуска.
