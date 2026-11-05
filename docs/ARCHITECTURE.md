@@ -14,7 +14,7 @@ LLM-среда (Claude Code / Cursor / Codex) — «мозг» и исполни
    продукта      └───────┬───────────────────────────┬───────────────────────────┬───────────────────┘
                          │ CLI / MCP                 │ hooks (события)           │ WebSearch/WebFetch
                          ▼                           ▼                           ▼
-            tools/pfs: state · sources · claims · check · impact · decisions · cost · kb · data · route · models
+            tools/pfs: state · sources · claims · check · impact · decisions · cost · kb · data · route · models · calc · export
                          │
      ┌───────────────────┼─────────────────────────────┬─────────────────────────────┐
      ▼                   ▼                             ▼                             ▼
@@ -67,8 +67,9 @@ LLM-среда (Claude Code / Cursor / Codex) — «мозг» и исполни
 | cost | токены из транскриптов Claude Code (с дедупликацией по message.id, вкл. субагентов) × pricing.json |
 | kb | поиск BM25, INDEX.md, проверка связей |
 | data | профиль таблицы (типы, пропуски, дубли, единицы, пропущенные периоды), когорты |
+| calc, xlsx | Excel-приложения к six-pager (юнит-экономика, модель роста, когорты, размер рынка): лист «Ввод» + формулы + кэш значений, параметры из `calcs.json`, без зависимостей |
 | route, models | сценарий запроса; модель под задачу, эскалация, профили, синхронизация субагентов |
-| export | REPORT.md с приложениями |
+| export | REPORT.md и six-pager (FAQ-1…FAQ-6) с Excel-приложениями |
 | mcp_server | те же функции по MCP (stdio JSON-RPC, без зависимостей) |
 
 ## 5. Хуки
