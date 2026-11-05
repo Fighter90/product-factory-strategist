@@ -11,8 +11,7 @@ OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
 [HELP (RU)](docs/HELP.md) · [Skills registry](docs/SKILLS.md) · [CHANGELOG](CHANGELOG.md) ·
-[Release v1.0.0](https://github.com/Fighter90/product-factory-strategist/releases/tag/v1.0.0) ·
-Work tracking: Linear `PRO-5…PRO-25`
+[Release v1.0.0](https://github.com/Fighter90/product-factory-strategist/releases/tag/v1.0.0)
 
 Русская версия: [README.md](README.md)
 
@@ -163,7 +162,7 @@ Higgsfield visuals, Lovable web version).
 
 | Tool | Wired via | What it gives |
 |---|---|---|
-| Linear | MCP `mcp-server-linear` (key in `.env`) | work program PRO-5…PRO-25 |
+| Linear | MCP `mcp-server-linear` (key in `.env`) | work items and backlog tracking |
 | Feynman | CLI + `deep-research` skill | deep research with provenance |
 | Lovable | MCP `https://mcp.lovable.dev` (OAuth `/mcp`) | web deck/landing from `docs/lovable-brief.md` |
 | Higgsfield | environment MCP | slide/site visuals (credits — asks first) |
@@ -200,6 +199,6 @@ tests/ (21+) · demos: demo-antispam (done), kids-guard (live end-to-end run)
 
 ## Roadmap and limitations
 
-Work program — Linear (PRO-5…PRO-25): OpenCode parity, PyPI publication, live Feynman runs.
+Next: OpenCode parity (hooks → events), PyPI publication, live Feynman runs, automated PPTX deck.
 Limitations: quality depends on the environment's model; JS-only sites saved via `--text-file`; auto-cost
 only from Claude Code transcripts; Excel without charts (stdlib); new subagents load after restart.
