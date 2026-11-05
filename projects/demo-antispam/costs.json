@@ -1,0 +1,41 @@
+{
+  "sessions": {
+    "build-and-demo": {
+      "models": {
+        "claude-opus-5-5": {
+          "input": 90,
+          "output": 68469,
+          "cache_write": 674158,
+          "cache_read": 15824166,
+          "messages": 45
+        },
+        "<synthetic>": {
+          "input": 0,
+          "output": 0,
+          "cache_write": 0,
+          "cache_read": 0,
+          "messages": 2
+        },
+        "claude-sonnet-5-5": {
+          "input": 8,
+          "output": 1128,
+          "cache_write": 43372,
+          "cache_read": 92489,
+          "messages": 4
+        },
+        "claude-haiku-5-5": {
+          "input": 8,
+          "output": 7750,
+          "cache_write": 145807,
+          "cache_read": 371860,
+          "messages": 4
+        }
+      },
+      "usd": 8.0694,
+      "updated": "2026-11-05T14:55:30+03:00",
+      "stage": "strategy",
+      "since": "2026-11-05T07:11:28Z"
+    }
+  },
+  "manual": []
+}

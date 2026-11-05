@@ -46,7 +46,7 @@ def impact(pdir: Path, target: str) -> dict:
     claims = ([target] if target.startswith("C") else []) + affected_claims(pdir, start)
     refs = doc_refs(pdir)
     docs = []
-    for cid in [target] + claims:
+    for cid in dict.fromkeys([target] + claims):  # без дублей
         for ref in refs.get(cid, []):
             docs.append({"id": cid, "doc": ref[0], "line": ref[1], "text": ref[2][:160]})
     decisions = [d for d in core.read_jsonl(pdir / "decisions.jsonl")

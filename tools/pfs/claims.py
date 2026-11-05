@@ -98,15 +98,18 @@ def retract(pdir: Path, cid: str, reason: str) -> dict:
 
 
 def supersede(pdir: Path, cid: str, text: str, kind: str | None = None, sources: list[str] | None = None,
-              confidence: str | None = None, reason: str = "") -> dict:
+              confidence: str | None = None, reason: str = "", derived_from: list[str] | None = None) -> dict:
     old = get(pdir, cid)
     if old["status"] != "active":
         raise PfsError(f"{cid} уже не активно ({old['status']})")
     # Сначала снимаем активность, иначе валидация не даст сослаться на новое.
     _update(pdir, cid, status="superseded", superseded_at=core.now(), supersede_reason=reason)
     try:
+        # Основания, которые сами уже замещены/отозваны, не переносятся: их нужно указать заново (--from).
+        alive = {c["id"] for c in load(pdir) if c["status"] == "active"}
+        base = derived_from if derived_from is not None else [d for d in old["derived_from"] if d in alive]
         new = add(pdir, text, kind or old["kind"], sources if sources is not None else old["sources"],
-                  old["derived_from"], confidence or old["confidence"], note=f"замещает {cid}: {reason}")
+                  base, confidence or old["confidence"], note=f"замещает {cid}: {reason}")
     except PfsError:
         _update(pdir, cid, status="active", superseded_at=None, supersede_reason=None)
         raise

@@ -63,7 +63,7 @@ def cmd_question(a):
 def cmd_source(a):
     pdir = _p(a)
     if a.action == "add":
-        text = Path(a.text_file).read_text(encoding="utf-8") if a.text_file else None
+        text = sources.assert_safe_local(Path(a.text_file)).read_text(encoding="utf-8") if a.text_file else None
         rec, new = sources.add(pdir, a.target, text=text, url=a.url, title=a.title, origin=a.origin,
                                note=a.note, published=a.published, force=a.force)
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
@@ -87,7 +87,8 @@ def cmd_claim(a):
         claims.retract(pdir, a.id, a.reason)
         print(impact.impact_text(impact.impact(pdir, a.id)))
     elif a.action == "supersede":
-        new = claims.supersede(pdir, a.id, a.text, a.kind, _split(a.source) or None, a.confidence, a.reason or "")
+        new = claims.supersede(pdir, a.id, a.text, a.kind, _split(a.source) or None, a.confidence, a.reason or "",
+                               _split(a.derived_from) if a.derived_from else None)
         print(f"{a.id} замещено {new['id']}")
         print(impact.impact_text(impact.impact(pdir, a.id)))
 
@@ -133,7 +134,7 @@ def cmd_log(a):
 def cmd_cost(a):
     pdir = _p(a)
     if a.transcript:
-        s = cost.record_session(pdir, a.session or Path(a.transcript).stem, Path(a.transcript))
+        s = cost.record_session(pdir, a.session or Path(a.transcript).stem, Path(a.transcript), a.since)
         print(f"Сессия учтена: ${s['usd']:.4f}")
     print(cost.summary_text(pdir))
 
@@ -246,7 +247,8 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("log", help="запись в журнал / ручная стоимость"); s.add_argument("message")
     s.add_argument("--kind", default="action"); s.add_argument("--step"); s.add_argument("--usd", type=float, default=0.0)
     s.add_argument("--human-minutes", type=float, default=0.0); s.set_defaults(f=cmd_log)
-    s = sp.add_parser("cost", help="стоимость"); s.add_argument("--transcript"); s.add_argument("--session"); s.set_defaults(f=cmd_cost)
+    s = sp.add_parser("cost", help="стоимость"); s.add_argument("--transcript"); s.add_argument("--session")
+    s.add_argument("--since", help="ISO-время начала задачи (UTC), учитывать сообщения после него"); s.set_defaults(f=cmd_cost)
 
     s = sp.add_parser("kb", help="база знаний"); s.add_argument("action", choices=["search", "index", "show"]); s.add_argument("query", nargs="?")
     s.add_argument("-k", type=int, default=8); s.add_argument("--with-project", action="store_true"); s.set_defaults(f=cmd_kb)

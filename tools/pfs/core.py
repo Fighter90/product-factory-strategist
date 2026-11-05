@@ -59,6 +59,7 @@ def atomic_write(path: Path, text: str) -> None:
     fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".tmp-", suffix=path.suffix)
     with os.fdopen(fd, "w", encoding="utf-8") as fh:
         fh.write(text)
+    os.chmod(tmp, 0o644)  # mkstemp создаёт 0600 — делаем обычные права
     os.replace(tmp, path)
 
 

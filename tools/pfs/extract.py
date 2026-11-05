@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import csv
 import io
+import ipaddress
 import re
+import socket
 import shutil
 import subprocess
 import urllib.request
@@ -64,13 +66,41 @@ def html_to_text(html: str) -> tuple[str, str]:
     return p.title, text.strip()
 
 
-def fetch_url(url: str, timeout: int = 30) -> tuple[bytes, str]:
-    if not re.match(r"^https?://", url):
+def assert_public_url(url: str) -> None:
+    """Защита от SSRF: только http(s) и только публичные адреса (каждый резолв хоста)."""
+    from urllib.parse import urlparse
+    if not re.match(r"^https?://", url, re.IGNORECASE):
         raise PfsError("Поддерживаются только http(s)-ссылки")
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Language": "ru,en;q=0.8"})
+    host = (urlparse(url).hostname or "").rstrip(".").lower()
+    if not host or host == "localhost" or host.endswith(".localhost") or host.endswith(".local"):
+        raise PfsError(f"Адрес {host or url} не публичный — загрузка запрещена")
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 — схема проверена выше
-            return resp.read(), resp.headers.get_content_type() or ""
+        infos = socket.getaddrinfo(host, None)
+    except socket.gaierror as exc:
+        raise PfsError(f"Не удалось разрешить имя {host}: {exc}") from exc
+    for info in infos:
+        ip = ipaddress.ip_address(info[4][0])
+        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast or ip.is_unspecified:
+            raise PfsError(f"{host} указывает на непубличный адрес {ip} — загрузка запрещена")
+
+
+class _SafeRedirect(urllib.request.HTTPRedirectHandler):
+    """Каждый редирект проверяется так же, как исходная ссылка."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        assert_public_url(newurl)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def fetch_url(url: str, timeout: int = 30, max_bytes: int = 20_000_000) -> tuple[bytes, str]:
+    assert_public_url(url)
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Language": "ru,en;q=0.8"})
+    opener = urllib.request.build_opener(_SafeRedirect)
+    try:
+        with opener.open(req, timeout=timeout) as resp:  # noqa: S310 — адрес проверен assert_public_url
+            return resp.read(max_bytes), resp.headers.get_content_type() or ""
+    except PfsError:
+        raise
     except Exception as exc:  # сеть недоступна, 403, таймаут — сообщаем явно, не молчим
         raise PfsError(f"Не удалось загрузить {url}: {exc}. Сохраните страницу вручную или передайте текст через --text-file") from exc
 
