@@ -180,7 +180,7 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="stats">
     <div class="stat"><b><span class="cnt" data-target="12">0</span></b><span lang="ru">шагов процесса, 3 паузы для человека</span><span lang="en">process steps, 3 human checkpoints</span></div>
     <div class="stat"><b><span class="cnt" data-target="72">0</span></b><span lang="ru">карт методик из 7 курсов</span><span lang="en">method cards from 7 courses</span></div>
-    <div class="stat"><b><span class="cnt" data-target="12">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
+    <div class="stat"><b><span class="cnt" data-target="45">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
     <div class="stat"><b>0</b><span lang="ru">зависимостей — только stdlib Python</span><span lang="en">dependencies — Python stdlib only</span></div>
     <div class="stat"><b><span class="cnt" data-target="87">0</span>%</b><span lang="ru">чисел проверяемы против 0% у чата</span><span lang="en">verifiable numbers vs 0% in plain chat</span></div>
   </div>
@@ -275,14 +275,16 @@ $ pfs export --six-pager    # report + attachments</pre>
   <table lang="ru">
     <tr><th>Группа</th><th>Команды</th><th>Что делают</th></tr>
     <tr><td>Проекты</td><td><code>new · list · use · status</code></td><td>создать/выбрать проект, где остановились</td></tr>
-    <tr><td>Шаги</td><td><code>step · questions &lt;шаг&gt;</code></td><td>отметка шага + обязательные карты; вопросные блоки для настраиваемости</td></tr>
-    <tr><td>Источники</td><td><code>source add/list/show</code></td><td>сайты, PDF, DOCX, XLSX → S###, с дедупликацией и защитой</td></tr>
+    <tr><td>Шаги</td><td><code>step · next · questions &lt;шаг&gt;</code></td><td>отметка шага + обязательные карты; «что решать сейчас»; вопросные блоки</td></tr>
+    <tr><td>Источники</td><td><code>source add/list/show · source refresh S###</code></td><td>сайты, PDF, DOCX, XLSX → S###, с дедупликацией и защитой; обновление источника</td></tr>
     <tr><td>Утверждения</td><td><code>claim add/list/supersede/retract/rebase</code></td><td>реестр C###: факт/гипотеза/прогноз/допущение/вывод, сила A–D</td></tr>
     <tr><td>Качество</td><td><code>check --strict · impact</code></td><td>числа без тегов, мёртвые ссылки; что затронет изменение</td></tr>
     <tr><td>Решения</td><td><code>decision add/due/done/rebase</code></td><td>основания, ответственные, обязательства, пересмотр</td></tr>
     <tr><td>Данные</td><td><code>data profile/cohort</code></td><td>профиль таблицы, когортное удержание</td></tr>
+    <tr><td>Воронка и статистика</td><td><code>data funnel · data stats</code></td><td>воронка по событиям/колонкам; базовая статистика с ДИ 95%</td></tr>
+    <tr><td>Интервью, медиа, UX</td><td><code>interview guide/save · media add · ux scaffold</code></td><td>гайды интервью, медиа-источники, UX-каркас по материалу</td></tr>
     <tr><td>Excel</td><td><code>calc all|unit-econ|growth|cohort|market</code></td><td>книги на формулах → outputs/attachments</td></tr>
-    <tr><td>Отчёты</td><td><code>export · export --six-pager</code></td><td>REPORT.md; six-pager FAQ-1…6 + Excel</td></tr>
+    <tr><td>Отчёты</td><td><code>export · export --six-pager · export --deck</code></td><td>REPORT.md; six-pager FAQ-1…6 + Excel; HTML-дека 16:9</td></tr>
     <tr><td>Знания</td><td><code>kb search/show/index</code></td><td>поиск по 72 картам методик</td></tr>
     <tr><td>Модели</td><td><code>models show/pick/use/escalate</code></td><td>какая модель на какую задачу, профили сред</td></tr>
     <tr><td>Стоимость</td><td><code>cost · log --usd</code></td><td>токены и деньги за задачу</td></tr>
@@ -291,14 +293,16 @@ $ pfs export --six-pager    # report + attachments</pre>
   <table lang="en">
     <tr><th>Group</th><th>Commands</th><th>Purpose</th></tr>
     <tr><td>Projects</td><td><code>new · list · use · status</code></td><td>create/select a project, resume point</td></tr>
-    <tr><td>Steps</td><td><code>step · questions &lt;step&gt;</code></td><td>step mark + mandatory cards; question blocks for tuning</td></tr>
-    <tr><td>Sources</td><td><code>source add/list/show</code></td><td>websites, PDF, DOCX, XLSX → S###, deduped and protected</td></tr>
+    <tr><td>Steps</td><td><code>step · next · questions &lt;step&gt;</code></td><td>step mark + mandatory cards; "what to decide now"; question blocks</td></tr>
+    <tr><td>Sources</td><td><code>source add/list/show · source refresh S###</code></td><td>websites, PDF, DOCX, XLSX → S###, deduped and protected; refresh a source</td></tr>
     <tr><td>Claims</td><td><code>claim add/list/supersede/retract/rebase</code></td><td>C### registry: fact/hypothesis/forecast/assumption/inference, grade A–D</td></tr>
     <tr><td>Quality</td><td><code>check --strict · impact</code></td><td>untagged numbers, dead links; what a change affects</td></tr>
     <tr><td>Decisions</td><td><code>decision add/due/done/rebase</code></td><td>grounds, owners, commitments, revisions</td></tr>
     <tr><td>Data</td><td><code>data profile/cohort</code></td><td>table profile, cohort retention</td></tr>
+    <tr><td>Funnel &amp; stats</td><td><code>data funnel · data stats</code></td><td>funnel over events/columns; descriptive stats with 95% CI</td></tr>
+    <tr><td>Interview, media, UX</td><td><code>interview guide/save · media add · ux scaffold</code></td><td>interview guides, media sources, UX scaffold from the material</td></tr>
     <tr><td>Excel</td><td><code>calc all|unit-econ|growth|cohort|market</code></td><td>formula workbooks → outputs/attachments</td></tr>
-    <tr><td>Reports</td><td><code>export · export --six-pager</code></td><td>REPORT.md; six-pager FAQ-1…6 + Excel</td></tr>
+    <tr><td>Reports</td><td><code>export · export --six-pager · export --deck</code></td><td>REPORT.md; six-pager FAQ-1…6 + Excel; 16:9 HTML deck</td></tr>
     <tr><td>Knowledge</td><td><code>kb search/show/index</code></td><td>search across 72 method cards</td></tr>
     <tr><td>Models</td><td><code>models show/pick/use/escalate</code></td><td>which model per task, environment profiles</td></tr>
     <tr><td>Cost</td><td><code>cost · log --usd</code></td><td>tokens and money per task</td></tr>
@@ -374,6 +378,20 @@ $ pfs export --six-pager    # report + attachments</pre>
     </table>
     <p lang="ru">Полная справка: <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md">docs/HELP.md</a> (RU) · <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md">docs/HELP_EN.md</a> (EN) · docx-версии в <code>docs/docx/</code>.</p>
     <p lang="en">Full manual: <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md">docs/HELP_EN.md</a> (EN) · <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md">docs/HELP.md</a> (RU) · docx versions in <code>docs/docx/</code>.</p></div>
+</div></section>
+
+<section id="built-with"><div class="wrap">
+  <h2 class="rv" lang="ru">Как сделан этот сайт</h2>
+  <h2 class="rv" lang="en">How this site is built</h2>
+  <p class="lead rv d1" lang="ru">Этот лендинг — часть демонстрации интеграции агента. Эффекты — параллакс-орбы, reveal-анимации по скроллу, 3D-tilt карточек, анимированные счётчики и печатающийся терминал — специфицированы в <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/lovable-brief.md">docs/lovable-brief.md</a> и собираются через <b>Lovable MCP</b>: агент «Стратег Фабрики продуктов» создаёт и деплоит сайт программно (опубликованная версия — <a href="https://strategyproduct.lovable.app">strategyproduct.lovable.app</a>). Страница, которую вы читаете, — референс-версия: та же спецификация, реализованная вручную на чистом HTML/CSS/JS без единой зависимости.</p>
+  <p class="lead rv d1" lang="en">This landing page is part of the agent's integration demo. The effects — parallax orbs, scroll reveal animations, 3D card tilt, animated counters and the typing terminal — are specified in <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/lovable-brief.md">docs/lovable-brief.md</a> and assembled through <b>Lovable MCP</b>: the Product Factory Strategist agent creates and deploys the site programmatically (published version — <a href="https://strategyproduct.lovable.app">strategyproduct.lovable.app</a>). The page you are reading is the reference build: the same spec, hand-written in plain HTML/CSS/JS with zero dependencies.</p>
+  <div class="rv d2" style="display:flex;gap:10px;flex-wrap:wrap">
+    <span class="card" style="padding:6px 14px;border-radius:999px;font-size:13px;color:var(--accent)">MCP</span>
+    <span class="card" style="padding:6px 14px;border-radius:999px;font-size:13px;color:var(--accent)">Parallax</span>
+    <span class="card" style="padding:6px 14px;border-radius:999px;font-size:13px;color:var(--accent)">Animations</span>
+    <span class="card" style="padding:6px 14px;border-radius:999px;font-size:13px;color:var(--accent)">i18n RU/EN</span>
+    <span class="card" style="padding:6px 14px;border-radius:999px;font-size:13px;color:var(--accent)">Lovable MCP</span>
+  </div>
 </div></section>
 
 <footer><div class="wrap">
@@ -486,7 +504,7 @@ const LINES = [
   '$ python3 -m tools.pfs doctor',
   '\u2713 Python 3.12: ok \u00b7 pdftotext: \u0435\u0441\u0442\u044c \u00b7 \u043a\u0430\u0440\u0442 \u0432 \u0431\u0430\u0437\u0435 \u0437\u043d\u0430\u043d\u0438\u0439: 72',
   '$ python3 -m unittest discover -s tests',
-  '\u2713 Ran 21 tests \u2014 OK'
+  '\u2713 Ran 55 tests \u2014 OK'
 ];
 (function type(){
   const el = document.getElementById('typed');

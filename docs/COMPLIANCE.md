@@ -20,7 +20,7 @@
 | Продуктовая стратегия | `04_product_strategy.md`; обязательные разделы в `config/quality_gate.json`: Аудитория · Альтернативы · Выбранное направление · Осознанные отказы · Экономика | Файл есть в обоих демо-проектах; `pfs check` падает при пропуске раздела (проверка VERIFICATION) | ✓ | — |
 | Коммуникационная стратегия | `05_comms_strategy.md`; разделы: Аудитория и ситуация · Барьер · Ключевое сообщение · Подтверждение · Роль каналов · таблица «Соответствие обещаний продукту» (`promise_table_section` в quality_gate.json) | Файл есть в обоих проектах; `pfs check` kids-guard 100/100 | ✓ | — |
 | План проверки | `06_validation_plan.md`; 5 обязательных разделов (Ожидаемое изменение · С чем сравниваем · Срок наблюдения · Нежелательные последствия · Критерии решения) | Файл есть в обоих проектах; sections проверяются `pfs check` по quality_gate.json | ✓ | — |
-| Workflow | 12 шагов: `tools/pfs/core.py` (intake…monitoring + discovery + route), state.json, `pfs step`, ворота в README (таблица шагов с картами и вопросными блоками) | `python3 -m tools.pfs step --help`; `grep discovery tools/pfs/core.py`; `pfs questions <шаг>` | ⚠ | AGENTS.md на диске — старая 10-шаговая таблица (строка-маркер «Шаг N/10», нет route/discovery в таблице шагов); код и README/HELP — 12 шагов. Обновить AGENTS.md до 12 шагов |
+| Workflow | 12 шагов: `tools/pfs/core.py` (intake…monitoring + discovery + route), state.json, `pfs step`, ворота в README (таблица шагов с картами и вопросными блоками) | `python3 -m tools.pfs step --help`; `grep discovery tools/pfs/core.py`; `pfs questions <шаг>` | ✓ | — (исправлено 05.11 вечер: AGENTS.md переведён на 12-шаговую таблицу с discovery, маркер «Шаг N/12») |
 | Порядок в знаниях | `knowledge/methods/` (72 карты), `knowledge/templates/` (9), `knowledge/rubrics/strategy_quality.md`, `INDEX.md`; поиск BM25 `pfs kb search`; разделение слоёв (ARCHITECTURE §3) | `ls knowledge/methods \| wc -l` → 72; `pfs kb index` → 0 битых связей (VERIFICATION, вечер 05.11) | ✓ | — |
 | Продолжение после перерыва | Хук `.claude/hooks/session_start.py` (SessionStart подаёт `status` + `decision due`), состояние в state.json/log.jsonl; «прочитай AGENTS.md и `pfs status`» для сред без хуков | Доказательство демо: `docs/demo/resume_after_break.txt`; VERIFICATION: «работа продолжается после перерыва ✅» | ✓ | — |
 | Прозрачность | `log.jsonl` (что сделано), `claims.jsonl` (на чём основано), `decisions.jsonl`, `costs.json` + `pfs cost`, `pfs impact` (граф до строки документа) | `wc -l projects/demo-antispam/log.jsonl`; `pfs cost` → $18,79 по окну `cost_window` (project.json демо) | ✓ | — |
@@ -38,7 +38,7 @@
 | Поддержка решений | `pfs decision add/due/done/status/rebase`: основания C###, ответственный, метрика «X→Y @дата», триггер, обязательства «что\|кто\|когда» | `pfs decision list` → D001 в обоих проектах (`wc -l projects/*/decisions.jsonl` = 1/1) | ✓ | — |
 | Пересмотр при новых данных | `pfs claim supersede/retract/rebase` + `pfs impact` (источник → утверждение → вывод → строка документа → решение); `check` ловит ссылки на отозванное | `pfs impact C005`; демо: 14 из 56 утверждений замещены/отозваны (docs/demo/comparison.md); образец вывода `docs/demo/impact_S005.txt` | ✓ | — |
 | Routing | `pfs route` — 6 сценариев, карты и план моделей, `--override`, `--economy`, `--json`; `config/models.json` — 3 профиля, 19 задач, эскалация (`pfs models escalate`) | `python3 -m tools.pfs route "запрос"`; VERIFICATION: «7 формулировок — верный сценарий ✅» | ✓ | — |
-| Skills / hooks / subagents | `.claude/skills/` (42 на диске), `.claude/hooks/` (4 события + _common.py), `.claude/agents/` (8) | `ls .claude/skills \| wc -l` → 42; `ls .claude/agents \| wc -l` → 8 | ✓ | — |
+| Skills / hooks / subagents | `.claude/skills/` (45 на диске), `.claude/hooks/` (4 события + _common.py), `.claude/agents/` (8) | `ls .claude/skills \| wc -l` → 45; `ls .claude/agents \| wc -l` → 8 | ✓ | — |
 | MCP + CLI | CLI `python3 -m tools.pfs` (25 подкоманд); MCP `tools/pfs/mcp_server.py` (10 инструментов, stdio JSON-RPC); `.mcp.json` → pfs-strategist + linear + lovable | `python3 -m tools.pfs --help`; VERIFICATION: «MCP-сервер (10 инструментов) ✅» | ✓ | — |
 | База знаний | 72 карты, BM25 с русским стеммингом (`pfs kb search`), INDEX.md, связи `related` проверяются `pfs kb index` | `pfs doctor` → «Карт в базе знаний: 72»; VERIFICATION: «72 карты, 0 битых связей ✅» | ✓ | — |
 | Устойчивость к сбоям | Атомарная запись (core.atomic_write), идемпотентность команд, хуки не роняют сессию, окно стоимости `cost_window` | VERIFICATION: «найдено и исправлено 4 дефекта… каждое исправление закреплено тестом»; ARCHITECTURE §6 | ✓ | — |
@@ -52,7 +52,7 @@
 | Требование | Где реализовано | Доказательство | Статус | Что доделать (для ⚠) |
 |---|---|---|---|---|
 | Среды | Claude Code (полно), Cursor (`.cursor/rules` + MCP), Codex/OpenCode/Copilot/Windsurf (AGENTS.md), Lovable/Feynman/officecli как интеграции | Таблица сред в HELP §10; `ls .cursor/rules` → strategist.mdc | ✓ | — |
-| Запуск по инструкции | `git clone` → `python3 -m tools.pfs doctor` → `python3 -m unittest discover -s tests`; Python 3.9+ без pip install | Живой прогон 05.11: `doctor` ok (72 карты); в закоммиченном состоянии 35 тестов — все зелёные (`git stash` + unittest → OK) | ⚠ | Числа в документации разошлись: HELP — «23 теста», README — «21+», VERIFICATION — «21», фактически 35; навыков на диске 42, в README/SKILLS — 41. Обновить числа |
+| Запуск по инструкции | `git clone` → `python3 -m tools.pfs doctor` → `python3 -m unittest discover -s tests`; Python 3.9+ без pip install | Живой прогон 05.11 (вечер): `doctor` ok (72 карты); unittest → 55 тестов, все зелёные | ✓ | — (числа сверены 05.11 вечер: тесты 55, навыки 45, карты 72 — HELP/README/SKILLS/VERIFICATION синхронизированы) |
 | Экономичность | `config/models.json`: fast/balanced/deep/frontier по 19 задачам; `pfs route --economy`; длинные источники — extract на fast; `pfs kb search` вместо чтения всей базы; фоновые субагенты | `python3 -m tools.pfs models` → таблица; escalation_rules в models.json | ✓ | — |
 | Удобство | `pfs status --brief`, `pfs next` («что решать сейчас»), `pfs ask/answer`, хуки-автоматика, HELP RU/EN + troubleshooting (HELP §12), docx-версии документации | `python3 -m tools.pfs next --help`; `ls docs/docx/` → 5 файлов docx | ✓ | — |
 | Данные и безопасность | `allowed_sources` + блок домена до запроса (`.claude/hooks/pre_web.py`), SSRF-защита, отказ от `.ssh`/секретов/XML-бомб, детектор фраз-инструкций, `.env` вне git | `git check-ignore .env` → игнорируется; VERIFICATION: «Безопасность и ПДн ✅» (ключей, e-mail, телефонов, ФИО нет) | ✓ | — |
@@ -68,13 +68,13 @@
 | Видео | ❌ — на команде | Сценарий готов: docs/VIDEO_SCRIPT.md (≤10 мин, по шагам с командами) | Записать по сценарию |
 | Описание работы | ✓ docx готов; PDF собирается из него | docs/SUBMISSION.md + docs/docx/SUBMISSION.docx; конвертация — `pandoc docs/SUBMISSION.md -o submission.pdf` или «Печать → PDF» | Собрать PDF и добавить скриншоты |
 | Сайт strategyproduct.ru | ⚠ | VERIFICATION (вечер 05.11): GitHub Pages настроен (`site/CNAME`), DNS: апекс NXDOMAIN, `www` — заглушка регистратора | Прописать у регистратора A 185.199.108–111.153, AAAA 2606:50c0:8000–8003::153, CNAME www → fighter90.github.io |
-| Рабочая копия перед отправкой | ⚠ | Незакоммиченные правки `tools/pfs/` (data, export, extract, sources) + 3 новых теста; `unittest` на копии: 55 тестов, 5 ошибок — `tests/test_deck_export.py` ждёт `export.build_deck`, которого ещё нет в `export.py` | Доделать deck-export и закоммитить (или исключить WIP из отправки); в коммит уже вошёл `participate.py` с тестами — он зелёный |
+| Рабочая копия перед отправкой | ✓ | deck-export (`export.build_deck`, `pfs export --deck`) завершён и закоммичен 05.11 вечер вместе с `data funnel/stats`, `source refresh`, `participate` и их тестами; unittest: 55 тестов — все зелёные | — |
 
 ---
 
 ## 5. Итог
 
-**Сильные стороны.** Репозиторий проходит проверку «свежим clone» без установки пакетов: doctor, 35 зелёных
+**Сильные стороны.** Репозиторий проходит проверку «свежим clone» без установки пакетов: doctor, 55 зелёных
 тестов, сквозной путь от размытого запроса до D001 в двух демо-проектах (demo-antispam — полный цикл с REPORT,
 six-pager и Excel; kids-guard — второй сквозной прогон с check 100/100 и PPTX-декой). Ядро ценности —
 детерминированные гарантии: факт без источника не записать, синтетика не станет фактом, отзыв основания
@@ -89,4 +89,4 @@ six-pager и Excel; kids-guard — второй сквозной прогон с
 автоучёт стоимости — только по транскриптам Claude Code; мультимодальность средствами модели среды
 (инструменты хранят описание); `numbers_need_tags` — эвристика с возможными ложными предупреждениями;
 роутер сценариев — по ключевым словам; субагенты подхватываются после перезапуска сессии. К сдаче осталось:
-видео (на команде), PDF описания, DNS сайта и завершение незакоммиченного deck-WIP.
+видео (на команде), PDF описания и DNS сайта.

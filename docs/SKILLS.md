@@ -1,8 +1,8 @@
 # Навыки агента: полный реестр
 
 Навыки — повторяемые процедуры, которые агент подключает на шагах процесса. В репозитории теперь
-**41 навык**: 13 базовых + 27 из плагина product-skills + новые интеграции. Карьерные файлы
-(`SKILL_*_CAREER_OPS_UI.md`) сознательно не включены.
+**45 навыков**: 13 базовых + 27 из плагина product-skills + интеграции (deck, sdd, premortem,
+board-of-directors, hallmark). Карьерные файлы (`SKILL_*_CAREER_OPS_UI.md`) сознательно не включены.
 
 ## Базовые (процесс агента)
 
@@ -39,8 +39,11 @@ product-metrics · benchmarking · scaling-communication · growth-drivers · tr
 
 | Навык | Источник | Назначение |
 |---|---|---|
-| deck | officecli + Higgsfield + Lovable | Презентация комитета из SIX_PAGER.md: PPTX через officecli, HTML-fallback, визуалы через Higgsfield, web-версия через Lovable (OAuth) |
+| deck | officecli + Higgsfield + Lovable | Презентация комитета из SIX_PAGER.md: PPTX через officecli, HTML-fallback (`pfs export --deck`), визуалы через Higgsfield, web-версия через Lovable (OAuth) |
 | sdd | sdd-system-prompt.md | Дисциплина разработки самого агента: спека → тест → гардрейлы |
+| premortem | Klein/Kahneman, references/premortem-protocol.md | Предразбор провала после выбора варианта и до утверждения решения (шаг decision): сценарии провала, ранние сигналы, скрытые допущения, контрмеры |
+| board-of-directors | ИИ-совет экспертов (adapt. 2026-09) | Проверка дорогого/труднообратимого решения заседанием из 5 независимых перспектив: разногласия, критика, Red Team → вердикт ДА/НЕТ/ДА,ЕСЛИ/…; шаги options (дополнение к red-team) и decision (стресс-тест) |
+| hallmark | hallmark v2 (references + scripts) | Дизайн новых сайтов/страниц, которые выглядят спроектированными, а не сгенерированными; для новых работ среды, не для правки существующего дизайна без явного запроса |
 
 ## Установочные гайды (docs/)
 

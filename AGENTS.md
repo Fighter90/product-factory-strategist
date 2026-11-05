@@ -56,6 +56,9 @@
 
 ## 3. Рабочий процесс
 
+**Вопросные блоки.** На каждом шаге пройди блок из `pfs questions <шаг>` (1–3 вопроса руководителю);
+если ответ очевиден из данных — `pfs log --kind questions-skip`. Обязательные карты шага печатает `pfs step`.
+
 Перед началом: `pfs route` — сценарий (удержание, вывод на рынок, коммуникация, монетизация, рост, закрыть/оставить),
 список карт и план моделей. Если уверенность `low` — уточни у руководителя или исправь `--override`.
 
@@ -64,20 +67,21 @@
 | 0 | `intake` | Уточняешь вопрос, решение, цель, получателя, ограничения, данные | skill `intake` | `00_brief.md` | **Человек** подтверждает бриф |
 | 1 | `sources` | Регистрируешь материалы пользователя и открытые источники | skill `research`, субагент `researcher` | `sources/S###.md` | Нет запрещённых доменов |
 | 2 | `research` | План от вопросов, которые меняют решение; поиск; расчёты; интервью | skills `research`, `interviews`, `data-analysis`, `ux-review` | `01_research_plan.md`, `analysis/`, `claims.jsonl` | Каждый ключевой вопрос: ответ с C### или назван пробел |
-| 3 | `situation` | Что известно (откуда), чего не знаем (почему), противоречия | skill `situation` | `02_situation.md` | `pfs check` без ошибок |
-| 4 | `options` | ≥3 содержательно разных варианта, вкл. «оставить как есть» и «закрыть»; сильные возражения | skill `options`, субагент `red-team` | `03_options.md` | `pfs check`; red-team ответил |
-| 5 | `choice` | Показываешь сравнение и рекомендацию, ждёшь выбора | `pfs ask` | ответ в state.json | **Человек** выбирает |
-| 6 | `strategy` | Продуктовая и коммуникационная стратегии, согласованные между собой | skill `strategy`, субагент `comms-strategist` | `04_product_strategy.md`, `05_comms_strategy.md` | Каждое обещание подтверждено в продукте |
-| 7 | `validation` | Ожидаемое изменение, база сравнения, срок, контрметрики, критерии решения | skill `validation-plan` | `06_validation_plan.md` | Все 5 разделов |
-| 8 | `review` | Автопроверка + независимая оценка по рубрике | `pfs check`, субагент `evidence-auditor` | `07_quality_review.md`; для комитета — six-pager с Excel (`pfs export --six-pager`, skill `six-pager`) | Оценка ≥ порога или исправлено |
-| 9 | `decision` | Фиксируешь решение: основания, ответственные, метрики, пересмотр, обязательства | skill `decision-support` | `decisions.jsonl` | **Человек** утверждает |
-| 10 | `monitoring` | Следишь за сроками, новыми данными; пересматриваешь затронутые выводы | skill `decision-support` | обновления документов | `pfs decision due` пуст |
+| 3 | `discovery` | Персоны, JTBD, альтернативы пользователя — раздел «Сегменты» в 02 | skill `research`, вопросный блок discovery | 02 «Сегменты» | сегмент зафиксирован |
+| 4 | `situation` | Что известно (откуда), чего не знаем (почему), противоречия | skill `situation` | `02_situation.md` | `pfs check` без ошибок |
+| 5 | `options` | ≥3 содержательно разных варианта, вкл. «оставить как есть» и «закрыть»; сильные возражения | skill `options`, субагент `red-team` | `03_options.md` | `pfs check`; red-team ответил |
+| 6 | `choice` | Показываешь сравнение и рекомендацию, ждёшь выбора | `pfs ask` | ответ в state.json | **Человек** выбирает |
+| 7 | `strategy` | Продуктовая и коммуникационная стратегии, согласованные между собой | skill `strategy`, субагент `comms-strategist` | `04_product_strategy.md`, `05_comms_strategy.md` | Каждое обещание подтверждено в продукте |
+| 8 | `validation` | Ожидаемое изменение, база сравнения, срок, контрметрики, критерии решения | skill `validation-plan` | `06_validation_plan.md` | Все 5 разделов |
+| 9 | `review` | Автопроверка + независимая оценка по рубрике | `pfs check`, субагент `evidence-auditor` | `07_quality_review.md`; для комитета — six-pager с Excel (`pfs export --six-pager`, skill `six-pager`) | Оценка ≥ порога или исправлено |
+| 10 | `decision` | Фиксируешь решение: основания, ответственные, метрики, пересмотр, обязательства | skill `decision-support` | `decisions.jsonl` | **Человек** утверждает |
+| 11 | `monitoring` | Следишь за сроками, новыми данными; пересматриваешь затронутые выводы | skill `decision-support` | обновления документов | `pfs decision due` пуст |
 
 Перед каждым шагом прочитай соответствующий `.claude/skills/<навык>/SKILL.md` и шаблон из `knowledge/templates/`.
 Методы бери из карт: `pfs kb search "<что нужно>"` → открой 1–3 найденные карты.
 
 ### Как вести человека
-- В начале каждого ответа одна строка: `Шаг N/10 · <шаг> · что сделано · что дальше`.
+- В начале каждого ответа одна строка: `Шаг N/12 · <шаг> · что сделано · что дальше`.
 - Пользователь может в любой момент сказать «стоп», «уточни задачу», «перепиши раздел X». Остановись, запиши
   (`pfs log`, `pfs question`), переделай только затронутое.
 - Если человек правит документ руками — прочитай правку, не затирай её; если правка противоречит C###, скажи об этом.
@@ -119,8 +123,11 @@
 pfs new "<название>" "<запрос дословно>"     pfs status | pfs list | pfs use <slug>
 pfs route ["запрос"] [--override X]          pfs models [pick|escalate|use|sync] <задача>
 pfs step <шаг> in_progress|done --next "…"   pfs ask "вопрос" --options "A,B,C" | pfs answer "…"
+pfs next                                     # «что решать сейчас»: шаг, обязательства, пересмотры, вопросы
+pfs questions <шаг|блок>                     # вопросный блок шага (пропуск — pfs log --kind questions-skip)
 pfs source add <url|файл> [--origin own|interview|synthetic] [--published YYYY-MM-DD]
 pfs source add --text-file f.md --url <url> --title "…"     pfs source list | show S001
+pfs source refresh S###                      # перезагрузить web-источник; изменился sha256 — impact по утверждениям
 pfs claim add "текст" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "вывод" --kind inference --from C001,C004
 pfs claim supersede --id C003 "новый текст" --reason "…" [--from C…] | retract --id C003 --reason "…"
@@ -128,11 +135,16 @@ pfs claim rebase [--id C010]                 # перенаправить выв
 pfs impact C003 | S002                       pfs check [--strict]
 pfs kb search "когортный анализ удержания"   pfs kb show M-jtbd | pfs kb index
 pfs data profile file.csv --save profile     pfs data cohort file.csv --user id --date dt --save cohorts
+pfs data funnel file.csv --steps visit,signup,pay --user id   pfs data stats file.csv --col revenue [--group seg]
+pfs interview guide --persona "Родитель 7–12" [--topic] | pfs interview save transcript.md --persona …
+pfs media add скрин.png --desc "что видно" --title "…"       pfs ux scaffold S003 --focus "онбординг"
+pfs docx <файл.md> [--out]                   # Markdown → Word
 pfs decision add --title … --decision … --owner … --grounds C001,C007 --metric "NSM: 10 -> 12 @2027-01-01" \
                  --review 2027-01-01 --trigger "…" --commit "что|кто|когда"
 pfs decision due [--on YYYY-MM-DD] | list | done --id D001 --commitment K1 | rebase --id D001 --note "…"
 pfs cost [--transcript <jsonl>] [--since|--until <ISO>] [--window]
 pfs calc [all|unit-econ|growth|cohort|market]   # Excel-приложения (юнит-экономика, рост, когорты, рынок) → outputs/attachments/
 pfs export [--six-pager] [--no-calcs]           # REPORT.md; six-pager (FAQ-1…6) с Excel-приложениями
+pfs export --deck                            # HTML-дека 16:9 из SIX_PAGER.md
 pfs doctor
 ```

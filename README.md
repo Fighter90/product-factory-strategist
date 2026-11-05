@@ -7,7 +7,7 @@
 и согласованным продуктовой и коммуникационной стратегиям. После решения агент хранит его основания, следит
 за обязательствами и пересматривает выводы при новых данных.
 
-Это папка-репозиторий: инструкции, методическая база из 7 учебных курсов, 41 навык, 8 субагентов, 4 хука
+Это папка-репозиторий: инструкции, методическая база из 7 учебных курсов, 45 навыков, 8 субагентов, 4 хука
 и CLI/MCP-инструменты на чистом Python (ноль зависимостей). Работает в Claude Code, Cursor, Codex, OpenCode,
 Windsurf, Copilot.
 
@@ -23,7 +23,7 @@ Windsurf, Copilot.
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 21+ тестов
+python3 -m unittest discover -s tests          # 55 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -64,7 +64,7 @@ Deliver (10–12).
 flowchart TB
   U["Руководитель продукта"] -->|"запрос · ответы на блоки вопросов"| ENV
   subgraph ENV["LLM-среда (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 41<br/>(базовые + product-skills 27 + sdd/deck/deep-research)"]
+    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 45<br/>(базовые + product-skills 27 + интеграции: sdd · deck · deep-research · premortem · board-of-directors · hallmark)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 4<br/>SessionStart · PreWeb-домены · PostTool-журнал · Stop-стоимость"]
   end
@@ -143,15 +143,20 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 | `pfs new / list / use / status [--brief]` | проекты и состояние |
 | `pfs route "<запрос>" [--override --economy --json]` | сценарий, карты, план моделей |
 | `pfs questions <шаг\|блок>` | вопросные блоки для настраиваемости |
+| `pfs next` | «что решать сейчас»: шаг, обязательства, пересмотры |
 | `pfs step <шаг> in_progress\|done [--note --next]` | отметка шага + обязательные карты |
 | `pfs ask / answer / question` | паузы с человеком |
 | `pfs source add/list/show [--text-file --url --origin --force]` | источники S### |
+| `pfs source refresh S###` | обновить web-источник: sha256-дельта, бэкап, impact |
 | `pfs claim add/list/supersede/retract/rebase [--kind --source --from --grade]` | реестр C### |
 | `pfs check [--strict --json] · pfs impact C###` | качество и влияние изменений |
 | `pfs decision add/list/due/done/status/rebase` | решения и мониторинг |
 | `pfs data profile/cohort <csv> [--save]` | профиль таблиц, когорты |
+| `pfs data funnel/stats <csv>` | воронка по событиям/колонкам; статистика с ДИ 95% |
+| `pfs interview guide\|save · pfs media add · pfs ux scaffold` | гайды интервью, медиа-источники, UX-каркас |
 | `pfs calc [all\|unit-econ\|growth\|cohort\|market]` | Excel-приложения |
 | `pfs export [--six-pager --no-calcs]` | REPORT.md / SIX_PAGER.md |
+| `pfs export --deck` | HTML-дека 16:9 из six-pager |
 | `pfs docx <file.md> [--out]` | Markdown → Word |
 | `pfs kb search/show/index` | поиск по базе знаний |
 | `pfs models [show/pick/use/sync/escalate]` | маршрутизация моделей |
@@ -179,7 +184,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 
 ```
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
-.claude/skills/ (41)  .claude/agents/ (8)  .claude/hooks/ (4)  .claude/settings.json
+.claude/skills/ (45)  .claude/agents/ (8)  .claude/hooks/ (4)  .claude/settings.json
 .cursor/rules/  .github/ (Pages workflow)  .mcp.json (pfs · linear · lovable)
 config/   models.json · pricing.json · quality_gate.json · question_blocks.json
 knowledge/ methods/ (72 карты) · templates/ · rubrics/ · INDEX.md
@@ -188,7 +193,7 @@ tools/pfs/ core · project · route · sources · claims · check · impact · d
 projects/<slug>/ sources/ · claims.jsonl · decisions.jsonl · log.jsonl · costs.json
                  state.json · outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx
 site/index.html (RU/EN) · docs/ (HELP×2, ARCHITECTURE, SKILLS, SUBMISSION, VERIFICATION…)
-tests/ (21+) · demos: demo-antispam (готов), kids-guard (сквозной прогон)
+tests/ (55) · demos: demo-antispam (готов), kids-guard (сквозной прогон)
 ```
 
 ## Прозрачность и стоимость
