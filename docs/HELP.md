@@ -36,7 +36,7 @@
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor     # проверка окружения
-python3 -m unittest discover -s tests   # самопроверка (23 теста)
+python3 -m unittest discover -s tests   # самопроверка (55 тестов)
 ```
 
 `doctor` показывает: версию Python, наличие pdftotext/pypdf, число карт в базе знаний, активный проект.
@@ -100,6 +100,8 @@ pfs status [--brief]                     # где остановились, чт
 
 ### Шаги и вопросы
 ```bash
+pfs next                                 # «что решать сейчас»: текущий шаг, ожидание человека,
+                                         # просроченные обязательства, пересмотры, открытые вопросы
 pfs step <шаг> in_progress|done --note "…" --next "…"
 pfs ask "Вопрос?" --options "A,B,C"      # пауза: агент ждёт вашего ответа
 pfs answer "Вариант B"                   # ответить
@@ -116,6 +118,8 @@ pfs source add --text-file doc.md --url <url> --title "…"   # если сай�
 pfs source add interview.md --origin interview      # ваше интервью (без персональных данных)
 pfs source add transcript.md --origin synthetic     # ИИ-респондент: только гипотезы
 pfs source list | pfs source show S003
+pfs source refresh S003                  # обновить web-источник: дельта sha256 → бэкап старой версии
+                                         # в raw/<S###>_old_<sha8>.txt → impact по утверждениям на нём
 ```
 Правила: домены проекта (`project.json → allowed_sources`) проверяются до запроса; файлы-секреты
 (`.ssh`, ключи, `.env`) отклоняются; фразы-инструкции в текстах помечаются и не исполняются.
@@ -153,6 +157,22 @@ pfs decision list | status | rebase
 ```bash
 pfs data profile events.csv [--sheet Лист1] --save profile    # профиль таблицы: типы, пропуски, дубли, периоды
 pfs data cohort events.csv --user user_id --date dt --save cohorts   # когортное удержание
+pfs data funnel events.csv --steps visit,signup,pay --user user_id   # воронка по журналу событий
+                                                              # или по флагам-колонкам; --date проверяет порядок
+pfs data stats events.csv --col revenue [--group segment]     # базовая статистика столбца
+                                                              # (n, среднее, медиана, перцентили, ДИ 95%) по группам
+```
+
+### Интервью, медиа и UX
+```bash
+pfs interview guide --persona "Родитель 7–12" [--topic "…"]   # каркас вопросов интервью в interviews/
+pfs interview save transcript.md --persona "…" --title "…"    # транскрипт/выжимка ИИ-респондента
+                                                              # → источник с origin synthetic (только гипотезы)
+pfs media add скрин.png --desc "что видно на скриншоте"       # медиа в заявленных границах: файл копируется
+                                                              # в sources/raw, описание «только видимое/слышимое»
+                                                              # становится источником; интерпретации — отдельные C###
+pfs ux scaffold S003 --focus "онбординг"                      # UX-каркас из 10 эвристик в analysis/ux_<S###>.md
+                                                              # с правилом «выводы только по материалу источника»
 ```
 
 ### Excel-расчёты (приложения к six-pager)
@@ -181,6 +201,7 @@ pfs calc unit-econ | growth | cohort | market
 pfs export                     # REPORT.md: все документы + приложения A–E
 pfs export --six-pager         # SIX_PAGER.md (FAQ-1…6) + пересборка Excel
 pfs export --six-pager --no-calcs   # пересобрать текст без перегенерации книг
+pfs export --deck                   # HTML-дека 16:9 из SIX_PAGER.md
 pfs docx <файл.md> [--out]     # Markdown → Word без зависимостей
                                # (docx-версии HELP/README лежат в docs/docx/)
 ```

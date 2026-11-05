@@ -36,7 +36,7 @@ You need: Python 3.9+ (no packages), git, any environment above. Optional: `pdft
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # self-check (23 tests)
+python3 -m unittest discover -s tests          # self-check (55 tests)
 ```
 
 `doctor` reports Python version, pdftotext/pypdf availability, number of knowledge cards, active project.
@@ -100,6 +100,8 @@ pfs status [--brief]                   # where we stopped, what's next, cost
 
 ### Steps and questions
 ```bash
+pfs next                                # "what to decide now": current step, human checkpoint,
+                                        # overdue commitments, reviews due, open questions
 pfs step <step> in_progress|done --note "…" --next "…"
 pfs ask "Question?" --options "A,B,C"  # pause: agent waits for your answer
 pfs answer "Option B"
@@ -115,6 +117,8 @@ pfs source add --text-file doc.md --url <url> --title "…"   # if a site blocks
 pfs source add interview.md --origin interview       # your interview (no personal data)
 pfs source add transcript.md --origin synthetic      # AI respondent: hypotheses only
 pfs source list | pfs source show S003
+pfs source refresh S003                 # refresh a web source: sha256 delta → old version backed up
+                                        # to raw/<S###>_old_<sha8>.txt → impact on claims built on it
 ```
 Rules: project domains (`project.json → allowed_sources`) are checked before the request; secret files
 (`.ssh`, keys, `.env`) are rejected; instruction-like phrases in texts are flagged and never executed.
@@ -152,6 +156,22 @@ pfs decision list | status | rebase
 ```bash
 pfs data profile events.csv [--sheet Sheet1] --save profile      # table profile: types, gaps, dupes, periods
 pfs data cohort events.csv --user user_id --date dt --save cohorts   # cohort retention
+pfs data funnel events.csv --steps visit,signup,pay --user user_id   # funnel over an event log
+                                                  # or per-step flag columns; --date validates step order
+pfs data stats events.csv --col revenue [--group segment]       # descriptive stats for a column
+                                                  # (n, mean, median, percentiles, 95% CI), optionally per group
+```
+
+### Interviews, media and UX
+```bash
+pfs interview guide --persona "Parent of 7–12" [--topic "…"]   # interview question outline in interviews/
+pfs interview save transcript.md --persona "…" --title "…"     # AI-respondent transcript/summary
+                                        # → source with origin synthetic (hypotheses only)
+pfs media add screenshot.png --desc "what is visible"          # media within declared limits: the file is copied
+                                        # to sources/raw and its description — "only what is visible/audible" —
+                                        # becomes a source; interpretations are separate claims
+pfs ux scaffold S003 --focus "onboarding"                      # UX scaffold of 10 heuristics in analysis/ux_<S###>.md
+                                        # with the rule "conclusions only from the source material"
 ```
 
 ### Excel models (six-pager attachments)
@@ -180,6 +200,7 @@ Trace every value to C###/S###: the source lives in the registry, the link goes 
 pfs export                     # REPORT.md: all documents + appendices A–E
 pfs export --six-pager         # SIX_PAGER.md (FAQ-1…6) + Excel rebuild
 pfs export --six-pager --no-calcs   # rebuild text without regenerating workbooks
+pfs export --deck                   # 16:9 HTML deck from SIX_PAGER.md
 pfs docx <file.md> [--out]          # Markdown → Word, dependency-free (docx versions of HELP/README live in docs/docx/)
 ```
 Six-pager structure: FAQ-1 market & competitors · FAQ-2 segments & personas · FAQ-3 initiatives & objections ·

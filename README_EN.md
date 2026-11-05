@@ -7,7 +7,7 @@ the new service to", "what do we tell the audience") to a **verifiable** picture
 distinct options, and aligned product and communication strategies. After the decision, the agent keeps its
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
-This is a repository folder: instructions, a method base distilled from 7 product courses, 41 skills,
+This is a repository folder: instructions, a method base distilled from 7 product courses, 45 skills,
 8 subagents, 4 hooks, and a dependency-free Python CLI/MCP toolset. Works in Claude Code, Cursor, Codex,
 OpenCode, Windsurf, Copilot.
 
@@ -23,7 +23,7 @@ OpenCode, Windsurf, Copilot.
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 21+ tests
+python3 -m unittest discover -s tests          # 55 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -65,7 +65,7 @@ Deliver (10–12).
 flowchart TB
   U["Product director"] -->|"request · answers to question blocks"| ENV
   subgraph ENV["LLM environment (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 41<br/>(base + product-skills 27 + sdd/deck/deep-research)"]
+    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 45<br/>(base + product-skills 27 + integrations: sdd · deck · deep-research · premortem · board-of-directors · hallmark)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 4<br/>SessionStart · PreWeb-domains · PostTool-log · Stop-cost"]
   end
@@ -143,15 +143,20 @@ Higgsfield visuals, Lovable web version).
 | `pfs new / list / use / status [--brief]` | projects and state |
 | `pfs route "<request>" [--override --economy --json]` | scenario, cards, model plan |
 | `pfs questions <step\|block>` | question blocks for strategy tuning |
+| `pfs next` | "what to decide now": step, commitments, reviews |
 | `pfs step <step> in_progress\|done [--note --next]` | step mark + mandatory cards |
 | `pfs ask / answer / question` | human checkpoints |
 | `pfs source add/list/show [--text-file --url --origin --force]` | sources S### |
+| `pfs source refresh S###` | refresh a web source: sha256 delta, backup, impact |
 | `pfs claim add/list/supersede/retract/rebase [--kind --source --from --grade]` | claims C### |
 | `pfs check [--strict --json] · pfs impact C###` | quality and change impact |
 | `pfs decision add/list/due/done/status/rebase` | decisions and monitoring |
 | `pfs data profile/cohort <csv> [--save]` | table profile, cohorts |
+| `pfs data funnel/stats <csv>` | funnel over events/columns; stats with 95% CI |
+| `pfs interview guide\|save · pfs media add · pfs ux scaffold` | interview guides, media sources, UX scaffold |
 | `pfs calc [all\|unit-econ\|growth\|cohort\|market]` | Excel attachments |
 | `pfs export [--six-pager --no-calcs]` | REPORT.md / SIX_PAGER.md |
+| `pfs export --deck` | 16:9 HTML deck from the six-pager |
 | `pfs docx <file.md> [--out]` | Markdown → Word |
 | `pfs kb search/show/index` | knowledge search |
 | `pfs models [show/pick/use/sync/escalate]` | model routing |
@@ -179,7 +184,7 @@ consent and no personal data · the validator refuses a fact based on synthetic/
 
 ```
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
-.claude/skills/ (41)  .claude/agents/ (8)  .claude/hooks/ (4)  .claude/settings.json
+.claude/skills/ (45)  .claude/agents/ (8)  .claude/hooks/ (4)  .claude/settings.json
 .cursor/rules/  .github/ (Pages workflow)  .mcp.json (pfs · linear · lovable)
 config/   models.json · pricing.json · quality_gate.json · question_blocks.json
 knowledge/ methods/ (72 cards) · templates/ · rubrics/ · INDEX.md
@@ -188,7 +193,7 @@ tools/pfs/ core · project · route · sources · claims · check · impact · d
 projects/<slug>/ sources/ · claims.jsonl · decisions.jsonl · log.jsonl · costs.json
                  state.json · outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx
 site/index.html (RU/EN) · docs/ (HELP×2, ARCHITECTURE, SKILLS, SUBMISSION, VERIFICATION…)
-tests/ (21+) · demos: demo-antispam (done), kids-guard (live end-to-end run)
+tests/ (55) · demos: demo-antispam (done), kids-guard (live end-to-end run)
 ```
 
 ## Transparency and cost

@@ -143,3 +143,4 @@
 {"ts": "2026-11-05T20:35:04+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
 {"ts": "2026-11-05T23:23:31+03:00", "kind": "action", "msg": "Создан каркас гайда интервью: guide_родитель-7-12.md (персона: Родитель 7–12)", "tool": "pfs interview guide"}
 {"ts": "2026-11-05T23:24:35+03:00", "kind": "action", "msg": "Создан каркас UX-анализа: ux_S003.md (источник S003)", "tool": "pfs ux scaffold"}
+{"ts": "2026-11-05T23:37:07+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
