@@ -121,6 +121,9 @@ def add(pdir: Path, target: str | None = None, *, text: str | None = None, url: 
         ok, why = _domain_ok(meta, url)
         if not ok and not force:
             raise PfsError(f"Источник не разрешён: {why}")
+    if kind in ("web", "pdf") and len(body.strip()) < 200:
+        raise PfsError(f"Из {url or target} извлечено {len(body.strip())} знаков — страница, вероятно, отрисовывается "
+                       "JavaScript или это скан. Сохраните текст вручную и добавьте: pfs source add --text-file <файл> --url <ссылка>")
     digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
     for r in rows:
         if r.get("sha256") == digest:

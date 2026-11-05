@@ -141,8 +141,10 @@ def cmd_log(a):
 
 def cmd_cost(a):
     pdir = _p(a)
+    if a.window:
+        print(f"Окно учёта: {cost.set_window(pdir, a.since, a.until)}")
     if a.transcript:
-        s = cost.record_session(pdir, a.session or Path(a.transcript).stem, Path(a.transcript), a.since)
+        s = cost.record_session(pdir, a.session or Path(a.transcript).stem, Path(a.transcript), a.since, a.until)
         print(f"Сессия учтена: ${s['usd']:.4f}")
     print(cost.summary_text(pdir))
 
@@ -256,7 +258,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--kind", default="action"); s.add_argument("--step"); s.add_argument("--usd", type=float, default=0.0)
     s.add_argument("--human-minutes", type=float, default=0.0); s.set_defaults(f=cmd_log)
     s = sp.add_parser("cost", help="стоимость"); s.add_argument("--transcript"); s.add_argument("--session")
-    s.add_argument("--since", help="ISO-время начала задачи (UTC), учитывать сообщения после него"); s.set_defaults(f=cmd_cost)
+    s.add_argument("--since", help="ISO-время начала задачи (UTC), учитывать сообщения после него")
+    s.add_argument("--until", help="ISO-время окончания задачи (UTC)")
+    s.add_argument("--window", action="store_true", help="сохранить --since/--until в project.json (хук Stop будет их соблюдать)")
+    s.set_defaults(f=cmd_cost)
 
     s = sp.add_parser("kb", help="база знаний"); s.add_argument("action", choices=["search", "index", "show"]); s.add_argument("query", nargs="?")
     s.add_argument("-k", type=int, default=8); s.add_argument("--with-project", action="store_true"); s.set_defaults(f=cmd_kb)

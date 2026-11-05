@@ -21,7 +21,7 @@ def _price_for(model: str, p: dict) -> dict:
     return models.get(p.get("fallback_model", ""), {"input": 0, "output": 0, "cache_write": 0, "cache_read": 0})
 
 
-def parse_transcript(path: Path, since: str | None = None) -> dict:
+def parse_transcript(path: Path, since: str | None = None, until: str | None = None) -> dict:
     """Суммирует usage по моделям. Одно сообщение может занимать несколько строк — считаем по message.id один раз."""
     seen: set[str] = set()
     per_model: dict[str, dict] = {}
@@ -40,8 +40,9 @@ def parse_transcript(path: Path, since: str | None = None) -> dict:
             msg = row.get("message") if isinstance(row, dict) else None
             if not isinstance(msg, dict) or not isinstance(msg.get("usage"), dict):
                 continue
-            if since and row.get("timestamp") and str(row["timestamp"]) < since:
-                continue  # учитываем только сообщения после момента начала задачи
+            ts = str(row.get("timestamp") or "")
+            if ts and ((since and ts < since) or (until and ts > until)):
+                continue  # учитываем только сообщения внутри окна задачи
             mid = msg.get("id") or row.get("uuid")
             if mid in seen:
                 continue
@@ -71,21 +72,37 @@ def _utc(iso: str) -> str:
     return datetime.fromisoformat(iso).astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S") + "Z"
 
 
-def record_session(pdir: Path, session_id: str, transcript: Path, since: str | None = None) -> dict:
+def record_session(pdir: Path, session_id: str, transcript: Path, since: str | None = None,
+                   until: str | None = None) -> dict:
     """Идемпотентно: повторный вызов перезаписывает запись сессии, а не суммирует её дважды.
 
     Один чат может охватывать несколько задач, поэтому по умолчанию учитываются только сообщения
     после создания проекта (since = project.json → created).
     """
+    meta = core.read_json(pdir / "project.json", {})
+    window = meta.get("cost_window", {})
     if not since:
-        created = core.read_json(pdir / "project.json", {}).get("created")
-        since = _utc(created) if created else None
-    per_model = parse_transcript(transcript, since)
+        since = window.get("since") or (_utc(meta["created"]) if meta.get("created") else None)
+    until = until or window.get("until")
+    per_model = parse_transcript(transcript, since, until)
     data = core.read_json(pdir / "costs.json", {"sessions": {}, "manual": []})
     data["sessions"][session_id] = {"models": per_model, "usd": round(price(per_model), 4), "updated": core.now(),
-                                    "stage": core.read_json(pdir / "state.json", {}).get("stage"), "since": since}
+                                    "stage": core.read_json(pdir / "state.json", {}).get("stage"), "since": since, "until": until}
     core.write_json(pdir / "costs.json", data)
     return data["sessions"][session_id]
+
+
+def set_window(pdir: Path, since: str | None = None, until: str | None = None) -> dict:
+    """Зафиксировать окно учёта: после until хук Stop не относит расходы чата к проекту."""
+    meta = core.read_json(pdir / "project.json", {})
+    w = meta.setdefault("cost_window", {})
+    if since:
+        w["since"] = since
+    if until:
+        w["until"] = until
+    core.write_json(pdir / "project.json", meta)
+    core.log(pdir, "cost", f"Окно учёта стоимости: {w}")
+    return w
 
 
 def add_manual(pdir: Path, what: str, usd: float = 0.0, human_minutes: float = 0.0) -> None:

@@ -3,11 +3,11 @@
     "bdaf6459-c3c5-44ce-92dd-655f7c0ba3e0": {
       "models": {
         "claude-opus-5-5": {
-          "input": 248,
-          "output": 119725,
-          "cache_write": 894655,
-          "cache_read": 54500159,
-          "messages": 122
+          "input": 244,
+          "output": 118193,
+          "cache_write": 893766,
+          "cache_read": 53390815,
+          "messages": 120
         },
         "<synthetic>": {
           "input": 0,
@@ -31,10 +31,11 @@
           "messages": 10
         }
       },
-      "usd": 19.0486,
-      "updated": "2026-11-05T15:22:47+03:00",
+      "usd": 18.7916,
+      "updated": "2026-11-05T16:30:24+03:00",
       "stage": "monitoring",
-      "since": "2026-11-05T07:11:29Z"
+      "since": "2026-11-05T07:11:29Z",
+      "until": "2026-11-05T12:22:16Z"
     }
   },
   "manual": []
