@@ -131,5 +131,5 @@ pfs data profile file.csv --save profile     pfs data cohort file.csv --user id 
 pfs decision add --title … --decision … --owner … --grounds C001,C007 --metric "NSM: 10 -> 12 @2027-01-01" \
                  --review 2027-01-01 --trigger "…" --commit "что|кто|когда"
 pfs decision due [--on YYYY-MM-DD] | list | done --id D001 --commitment K1 | rebase --id D001 --note "…"
-pfs cost [--transcript <jsonl> --since <ISO>] | pfs export | pfs doctor
+pfs cost [--transcript <jsonl>] [--since|--until <ISO>] [--window] | pfs export | pfs doctor
 ```

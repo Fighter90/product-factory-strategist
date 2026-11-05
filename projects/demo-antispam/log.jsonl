@@ -134,3 +134,5 @@
 {"ts": "2026-11-05T15:21:00+03:00", "kind": "step", "msg": "monitoring → in_progress", "step": "monitoring"}
 {"ts": "2026-11-05T15:21:00+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
 {"ts": "2026-11-05T15:21:58+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-05T16:30:24+03:00", "kind": "cost", "msg": "Окно учёта стоимости: {'until': '2026-11-05T12:22:16Z'}"}
+{"ts": "2026-11-05T16:30:46+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}

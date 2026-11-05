@@ -74,6 +74,10 @@ class EvidenceTests(unittest.TestCase):
         self.assertFalse(ok)
         with self.assertRaises(PfsError):
             sources.add(self.pdir, text="t", url="https://bad.example/x")
+        from unittest import mock
+        with mock.patch("tools.pfs.extract.fetch_url", return_value=(b"<html><script>app()</script></html>", "text/html")):
+            with self.assertRaises(PfsError):  # пустая JS-страница не становится источником
+                sources.add(self.pdir, "https://spa.example.org/")
 
     def test_claim_rules(self):
         sources.add(self.pdir, text="публичный отчёт", title="pub")
@@ -146,6 +150,10 @@ class DecisionTests(unittest.TestCase):
         c2 = claims.supersede(pdir, c["id"], "Сегмент растёт на 5% в год", reason="уточнение")
         self.assertTrue(any("superseded" in s for s in decisions.due(pdir, on="2026-06-01")["stale_grounds"]))
         self.assertEqual(decisions.rebase(pdir, d["id"]), [f"{c['id']}→{c2['id']}"])
+        h = claims.add(pdir, "Гипотеза на основании", "hypothesis", derived_from=[c2["id"]])
+        d2 = decisions.add(pdir, "Второе", "решение", "PM", [h["id"]])
+        claims.retract(pdir, c2["id"], "ошибка")
+        self.assertTrue(any(d2["id"] in s and "неактивные" in s for s in decisions.due(pdir, on="2026-06-01")["stale_grounds"]))
         decisions.update_commitment(pdir, d["id"], "K1", "done")
         self.assertEqual(decisions.due(pdir, on="2026-06-01")["overdue"], [])
 
@@ -169,6 +177,11 @@ class CostTests(unittest.TestCase):
             {"timestamp": "2999-01-01T00:00:00Z", "message": {"id": "new", "model": "claude-haiku-5-5", "usage": usage}}]))
         only_new = cost.parse_transcript(tr2, since="2026-01-01T00:00:00Z")
         self.assertEqual(list(only_new), ["claude-haiku-5-5"])  # сообщения до начала задачи не считаются
+        self.assertEqual(cost.parse_transcript(tr2, since="2019-01-01T00:00:00Z", until="2021-01-01T00:00:00Z"),
+                         {"claude-opus-5-5": {"input": 1000, "output": 500, "cache_write": 0, "cache_read": 2000, "messages": 1}})
+        pdir2 = fresh("cost-window")
+        cost.set_window(pdir2, until="2021-01-01T00:00:00Z")  # окно из project.json соблюдается хуком Stop
+        self.assertEqual(cost.record_session(pdir2, "s2", tr2, since="2019-01-01T00:00:00Z")["models"].keys(), {"claude-opus-5-5"})
         self.assertAlmostEqual(cost.summary(pdir)["usd"], round(expected, 4), places=4)
 
 

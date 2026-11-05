@@ -129,6 +129,9 @@ def due(pdir: Path, on: str | None = None) -> dict:
                 out["stale_grounds"].append(f"{d['id']}: основание {cid} {c['status']}"
                                             + (f" → {c.get('superseded_by')}" if c.get("superseded_by") else ""))
                 continue
+            weak = [d2 for d2 in c.get("derived_from", []) if claims.get(d2, {}).get("status") != "active"]
+            if weak:
+                out["stale_grounds"].append(f"{d['id']}: основание {cid} опирается на неактивные {', '.join(weak)}")
             for sid in c["sources"]:
                 age = _days_since(srcs.get(sid, {}).get("published") or srcs.get(sid, {}).get("retrieved"))
                 if age is not None and age > stale_days:
