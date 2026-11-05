@@ -49,6 +49,10 @@ def cmd_step(a):
         print("Карты шага: " + ", ".join(cards))
 
 
+def cmd_next(a):
+    print(project.next_text(_p(a)))
+
+
 def cmd_questions(a):
     blocks = core.read_json(core.CONFIG / "question_blocks.json", {})
     key = a.block
@@ -343,6 +347,8 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("docx", help="Markdown → DOCX (без зависимостей)")
     s.add_argument("file"); s.add_argument("--out")
     s.set_defaults(f=cmd_docx)
+    s = sp.add_parser("next", help="что решать сейчас: шаг, обязательства, пересмотры, открытые вопросы")
+    s.set_defaults(f=cmd_next)
     s = sp.add_parser("questions", help="вопросные блоки шага (настраиваемость стратегии)")
     s.add_argument("block", nargs="?", default=None, help="шаг или id блока, напр. options-criteria; без аргумента — обзор всех шагов")
     s.set_defaults(f=cmd_questions)

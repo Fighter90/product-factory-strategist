@@ -161,6 +161,38 @@ def status_text(pdir: Path, brief: bool = False) -> str:
     return "\n".join(lines)
 
 
+def next_text(pdir: Path) -> str:
+    """«Что решать сейчас»: шаг, ожидания человека, обязательства, пересмотры, открытые вопросы."""
+    from . import decisions as decisions_mod
+    state = load_state(pdir)
+    meta = core.read_json(pdir / "project.json", {})
+    lines = [f"ЧТО РЕШАТЬ СЕЙЧАС — {meta.get('title')} [{meta.get('slug')}]"]
+    lines.append(f"Шаг: {state.get('stage')} · Далее: {state.get('next_action')}")
+    if state.get("awaiting_human"):
+        ah = state["awaiting_human"]
+        opts = f" ({' / '.join(ah['options'])})" if ah.get("options") else ""
+        lines.append(f"⏸ Ждём вашего ответа: {ah['question']}{opts}")
+    due = decisions_mod.due(pdir)
+    if due.get("overdue"):
+        lines.append(f"⏰ Просроченные обязательства: {len(due['overdue'])}")
+        for o in due["overdue"][:3]:
+            label = o.get("commitment") or o.get("text") or str(o) if isinstance(o, dict) else str(o)
+            lines.append(f"  · {str(label)[:120]}")
+    if due.get("review_now"):
+        ids = [d.get("id", d) if isinstance(d, dict) else str(d) for d in due["review_now"]]
+        lines.append(f"🔎 К пересмотру решений: {', '.join(map(str, ids[:3]))}")
+    if due.get("stale_grounds"):
+        lines.append(f"⚠ Устаревшие основания: {len(due['stale_grounds'])} — pfs decision rebase / claim supersede")
+    oq = state.get("open_questions", [])
+    if oq:
+        lines.append(f"❓ Открытые вопросы: {len(oq)}")
+        lines += ["  · " + q[:120] for q in oq[:3]]
+    if len(lines) == 2:
+        lines.append("Долгов нет. Текущий шаг процесса — см. pfs status.")
+    lines.append("Обновить источники после изменений: pfs source refresh <S###>")
+    return "\n".join(lines)
+
+
 def list_projects() -> list[dict]:
     out = []
     for p in sorted(core.projects_dir().glob("*/project.json")):
