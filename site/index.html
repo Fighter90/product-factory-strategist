@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стратег Фабрики продуктов — ИИ-агент для руководителя продукта</title>
+<meta name="description" content="ИИ-агент: от размытого запроса до обоснованной продуктовой и коммуникационной стратегии — с доказательствами, вариантами, red team, Excel-расчётами и six-pager для комитета.">
+<style>
+:root{
+  --bg:#0b0f17; --card:#141c2e; --card2:#182236;
+  --text:#e8edf6; --muted:#9aa7bd; --line:#24304a;
+  --accent:#4fd1c5; --accent2:#7c6cff; --warn:#f6ad55;
+  --code:#0d1322; --ok:#48bb78;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+header{position:sticky;top:0;z-index:10;background:rgba(11,15,23,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:18px;padding:14px 0;flex-wrap:wrap}
+.logo{font-weight:800;font-size:17px;letter-spacing:.2px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav a{color:var(--muted);font-size:14px}
+.nav a:hover{color:var(--text);text-decoration:none}
+.lang{margin-left:auto;display:flex;gap:6px}
+.lang button{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.lang button.active{color:#0b0f17;background:var(--accent);border-color:var(--accent);font-weight:700}
+.hero{padding:72px 0 56px;background:radial-gradient(1200px 500px at 70% -10%,rgba(124,108,255,.18),transparent),radial-gradient(900px 420px at 10% 0%,rgba(79,209,197,.14),transparent)}
+.badge{display:inline-block;border:1px solid var(--line);background:var(--card);color:var(--accent);border-radius:999px;padding:4px 14px;font-size:13px;margin-bottom:18px}
+h1{font-size:44px;line-height:1.15;font-weight:850;letter-spacing:-.5px;max-width:820px}
+h1 .grad{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:18px;max-width:760px;margin:18px 0 30px}
+.cta{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-block;padding:11px 22px;border-radius:10px;font-weight:700;font-size:15px}
+.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#0b0f17}
+.btn.ghost{border:1px solid var(--line);color:var(--text)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:46px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.stat b{font-size:26px;display:block;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{color:var(--muted);font-size:13px}
+section{padding:56px 0;border-top:1px solid var(--line)}
+h2{font-size:30px;margin-bottom:8px;letter-spacing:-.3px}
+.lead{color:var(--muted);max-width:780px;margin-bottom:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.card h3{font-size:16.5px;margin-bottom:8px}
+.card p{color:var(--muted);font-size:14.5px}
+.card .tag{display:inline-block;font-size:12px;color:var(--accent);border:1px solid var(--line);border-radius:6px;padding:1px 8px;margin-bottom:10px;background:var(--code)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;counter-reset:step}
+.step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;position:relative}
+.step::before{counter-increment:step;content:counter(step);position:absolute;top:-10px;left:14px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#0b0f17;font-weight:800;font-size:12px;border-radius:7px;padding:2px 8px}
+.step b{font-size:14px;display:block;margin-top:6px}
+.step span{color:var(--muted);font-size:13px}
+pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:13.5px;line-height:1.6;margin:14px 0}
+code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+p code,li code,td code{background:var(--code);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.9em;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th{background:var(--card2);color:var(--text);text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:700}
+td{padding:9px 12px;border:1px solid var(--line);color:var(--muted);vertical-align:top}
+.pause{color:var(--warn);font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:800px){.two{grid-template-columns:1fr}h1{font-size:32px}}
+.faq{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+.faq h3{font-size:15px;color:var(--accent2)}
+.tr{color:var(--ok);font-weight:700}
+.note{border-left:3px solid var(--accent);background:var(--card);padding:12px 16px;border-radius:0 10px 10px 0;color:var(--muted);font-size:14px;margin:14px 0}
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
+body[data-lang=en] [lang=ru]{display:none}
+body[data-lang=ru] [lang=en]{display:none}
+.toc{columns:2;gap:30px;margin:10px 0 6px}
+.toc a{display:block;color:var(--muted);font-size:14px;padding:3px 0;break-inside:avoid}
+@media(max-width:700px){.toc{columns:1}}
+</style>
+</head>
+<body data-lang="ru">
+
+<header><div class="wrap nav">
+  <div class="logo">◈ Стратег Фабрики продуктов</div>
+  <a href="#features" lang="ru">Возможности</a><a href="#features" lang="en">Features</a>
+  <a href="#process" lang="ru">Процесс</a><a href="#process" lang="en">Process</a>
+  <a href="#sixpager" lang="ru">Six-pager</a><a href="#sixpager" lang="en">Six-pager</a>
+  <a href="#commands" lang="ru">Команды</a><a href="#commands" lang="en">Commands</a>
+  <a href="#help" lang="ru">Справка</a><a href="#help" lang="en">Help</a>
+  <div class="lang">
+    <button id="btn-ru" onclick="setLang('ru')">RU</button>
+    <button id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div class="badge" lang="ru">ИИ-агент · доказательная стратегия · человек в контуре</div>
+  <div class="badge" lang="en">AI agent · evidence-based strategy · human in the loop</div>
+  <h1 lang="ru">От размытого запроса — до <span class="grad">обоснованной стратегии</span>, которой можно доверять</h1>
+  <h1 lang="en">From a vague request to an <span class="grad">evidence-based strategy</span> you can trust</h1>
+  <p class="sub" lang="ru">Агент проводит настоящее исследование: план от вопросов, меняющих решение, проверяемые источники, реестр утверждений, содержательно разные варианты, атака red team, продуктовая и коммуникационная стратегии, план проверки — и Excel-расчёты в six-pager для комитета. А после решения — следит за обязательствами и пересматривает выводы при новых данных.</p>
+  <p class="sub" lang="en">The agent runs real research: a plan built from decision-changing questions, verifiable sources, a claim registry, substantively distinct options, a red-team attack, product &amp; communication strategies, a validation plan — and Excel models attached to a six-pager for the committee. After the decision, it tracks commitments and revisits conclusions when new data arrives.</p>
+  <div class="cta">
+    <a class="btn primary" href="#quickstart" lang="ru">Запустить за 5 минут</a>
+    <a class="btn primary" href="#quickstart" lang="en">Start in 5 minutes</a>
+    <a class="btn ghost" href="https://github.com/Fighter90/product-factory-strategist" lang="ru">Репозиторий на GitHub →</a>
+    <a class="btn ghost" href="https://github.com/Fighter90/product-factory-strategist" lang="en">GitHub repository →</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>10</b><span lang="ru">шагов процесса, 3 паузы для человека</span><span lang="en">process steps, 3 human checkpoints</span></div>
+    <div class="stat"><b>69</b><span lang="ru">карт методик из 7 курсов</span><span lang="en">method cards from 7 courses</span></div>
+    <div class="stat"><b>12 / 8 / 4</b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
+    <div class="stat"><b>0</b><span lang="ru">зависимостей — только stdlib Python</span><span lang="en">dependencies — Python stdlib only</span></div>
+    <div class="stat"><b>87%</b><span lang="ru">чисел проверяемы против 0% у чата</span><span lang="en">verifiable numbers vs 0% in plain chat</span></div>
+  </div>
+</div></div>
+
+<section id="features"><div class="wrap">
+  <h2 lang="ru">Что умеет агент</h2><h2 lang="en">What the agent does</h2>
+  <p class="lead" lang="ru">Обязательный минимум конкурса — реализован полностью; поверх — дополнительные возможности. Каждая цифра в документах имеет тип (факт/гипотеза/прогноз/допущение/вывод), силу A–D и источник S###.</p>
+  <p class="lead" lang="en">The competition's required minimum is fully covered, plus advanced capabilities. Every number in documents has a type (fact/hypothesis/forecast/assumption/inference), strength A–D, and a source S###.</p>
+  <div class="grid">
+    <div class="card"><span class="tag" lang="ru">шаг 0</span><span class="tag" lang="en">step 0</span><h3 lang="ru">Постановка задачи</h3><h3 lang="en">Task framing</h3><p lang="ru">Уточняет вопрос, цель, получателя, ограничения и данные. Спрашивает только то, что важно для следующего шага. Бриф подтверждает человек.</p><p lang="en">Clarifies the question, goal, audience, constraints and data. Asks only what matters for the next step. A human approves the brief.</p></div>
+    <div class="card"><span class="tag">S###</span><h3 lang="ru">Сбор материалов</h3><h3 lang="en">Material collection</h3><p lang="ru">Сайты, PDF, DOCX, XLSX, CSV, изображения — из разрешённых доменов проекта. Дедупликация по URL и SHA-256, детектор фраз-инструкций.</p><p lang="en">Websites, PDF, DOCX, XLSX, CSV, images — from project-allowed domains. Deduplicated by URL and SHA-256, prompt-injection scanner.</p></div>
+    <div class="card"><span class="tag">C###</span><h3 lang="ru">Доказательное исследование</h3><h3 lang="en">Evidence-based research</h3><p lang="ru">План строится от вопросов, которые могут изменить решение. Реестр утверждений: факт без источника записать невозможно; синтетика ИИ-респондентов — только гипотезы.</p><p lang="en">The plan starts from decision-changing questions. A claim registry makes storing a fact without a source impossible; synthetic respondents yield hypotheses only.</p></div>
+    <div class="card"><span class="tag" lang="ru">red team</span><span class="tag" lang="en">red team</span><h3 lang="ru">Варианты и возражения</h3><h3 lang="en">Options &amp; objections</h3><p lang="ru">Не меньше трёх содержательно разных вариантов, включая «оставить как есть» и «закрыть направление». Отдельный субагент атакует каждый вариант.</p><p lang="en">At least three substantively distinct options, including "do nothing" and "shut down". A dedicated subagent attacks every option.</p></div>
+    <div class="card"><span class="tag" lang="ru">стратегия</span><span class="tag" lang="en">strategy</span><h3 lang="ru">Продуктовая + коммуникационная</h3><h3 lang="en">Product + communication</h3><p lang="ru">Аудитория и её задача, осознанные отказы, связь пользы с экономикой; барьер понимания, ключевое сообщение, каналы. Таблица «обещание → чем подтверждено» проверяется автоматически.</p><p lang="en">Audience and its job, conscious trade-offs, value tied to economics; comprehension barrier, key message, channels. A "promise → proof" table is verified automatically.</p></div>
+    <div class="card"><span class="tag">Excel</span><h3 lang="ru">Six-pager с расчётами</h3><h3 lang="en">Six-pager with models</h3><p lang="ru">Отчёт в структуре FAQ-1…FAQ-6 + четыре Excel-книги на формулах: юнит-экономика, модель роста, когорты, размер рынка. Считаются фоном, пересчитываются при открытии.</p><p lang="en">A report in the FAQ-1…FAQ-6 structure + four formula-driven Excel workbooks: unit economics, growth model, cohorts, market sizing. Built in the background, recalculated on open.</p></div>
+    <div class="card"><span class="tag" lang="ru">после решения</span><span class="tag" lang="en">after decision</span><h3 lang="ru">Сопровождение решения</h3><h3 lang="en">Decision support</h3><p lang="ru">Основания, ответственные, метрики, обязательства, даты пересмотра. «Что решать сейчас», устаревшие основания, влияние новых данных на выводы.</p><p lang="en">Grounds, owners, metrics, commitments, review dates. "What to decide now", stale grounds, and how new data affects conclusions.</p></div>
+    <div class="card"><span class="tag" lang="ru">прозрачность</span><span class="tag" lang="en">transparency</span><h3 lang="ru">Журнал и стоимость</h3><h3 lang="en">Log and cost</h3><p lang="ru">Журнал всех действий, реестр оснований каждого вывода и стоимость в токенах и рублях. Любой шаг виден и воспроизводим.</p><p lang="en">A log of every action, the grounds behind each conclusion, and cost in tokens and money. Every step is visible and reproducible.</p></div>
+  </div>
+</div></section>
+
+<section id="process"><div class="wrap">
+  <h2 lang="ru">Процесс: 10 шагов</h2><h2 lang="en">Process: 10 steps</h2>
+  <p class="lead" lang="ru">Агент ведёт работу сам и зовёт человека только на существенный выбор. Прогресс виден строкой: <code>Шаг N/10 · research · источники S001–S009 · дальше: ситуация</code></p>
+  <p class="lead" lang="en">The agent drives the work and calls the human only for a consequential choice. Progress shows as: <code>Step N/10 · research · sources S001–S009 · next: situation</code></p>
+  <div class="steps">
+    <div class="step"><b lang="ru">Бриф</b><b lang="en">Brief</b><span lang="ru">вопрос, цель, ограничения — <span class="pause">человек подтверждает</span></span><span lang="en">question, goal, constraints — <span class="pause">human approves</span></span></div>
+    <div class="step"><b lang="ru">Источники</b><b lang="en">Sources</b><span>materials → S###</span></div>
+    <div class="step"><b lang="ru">Исследование</b><b lang="en">Research</b><span lang="ru">план, расчёты, интервью → C###</span><span lang="en">plan, calculations, interviews → C###</span></div>
+    <div class="step"><b lang="ru">Ситуация</b><b lang="en">Situation</b><span lang="ru">известно / не знаем / противоречия</span><span lang="en">known / unknown / contradictions</span></div>
+    <div class="step"><b lang="ru">Варианты</b><b lang="en">Options</b><span lang="ru">≥3 + red team</span><span lang="en">≥3 + red team</span></div>
+    <div class="step"><b lang="ru">Выбор</b><b lang="en">Choice</b><span class="pause" lang="ru">человек выбирает</span><span class="pause" lang="en">human decides</span></div>
+    <div class="step"><b>Strategy</b><span lang="ru">продукт + коммуникация</span><span lang="en">product + comms</span></div>
+    <div class="step"><b lang="ru">Проверка</b><b lang="en">Validation</b><span lang="ru">метрики, срок, контрметрики</span><span lang="en">metrics, duration, counter-metrics</span></div>
+    <div class="step"><b>Review</b><span lang="ru">автопроверка + рубрика + six-pager</span><span lang="en">auto-check + rubric + six-pager</span></div>
+    <div class="step"><b lang="ru">Решение</b><b lang="en">Decision</b><span class="pause" lang="ru">человек утверждает</span><span class="pause" lang="en">human approves</span></div>
+    <div class="step"><b>Monitoring</b><span lang="ru">обязательства, пересмотр</span><span lang="en">commitments, revisions</span></div>
+  </div>
+  <div class="note" lang="ru">Работа прерывается и продолжается в новом чате или другой среде: всё состояние — в файлах проекта. Выполненные шаги не повторяются.</div>
+  <div class="note" lang="en">Work can be interrupted and resumed in a new chat or another environment: all state lives in project files. Finished steps are never repeated.</div>
+</div></section>
+
+<section id="sixpager"><div class="wrap">
+  <h2 lang="ru">Six-pager для комитета + Excel-модели</h2><h2 lang="en">Committee six-pager + Excel models</h2>
+  <p class="lead" lang="ru">Одна команда собирает отчёт в структуре стратегического референса, а расчёты идут фоном и прикрепляются книгами Excel на формулах.</p>
+  <p class="lead" lang="en">One command assembles the report in the reference structure while calculations run in the background and attach as formula-driven Excel workbooks.</p>
+  <div class="two">
+    <pre>FAQ-1  Анализ текущего состояния · рынок, конкуренты
+FAQ-2  Сегменты и персоны · боли по этапам пути
+FAQ-3  Инициативы · варианты + возражения red team
+FAQ-4  Тактики · потребность → механика → эффект
+FAQ-5  План реализации и проверки
+FAQ-6  Метрики успеха · формулы и цели
+─────  Приложения: 4 книги Excel (лист «Ввод» + формулы)</pre>
+    <pre lang="ru">unit_economics.xlsx    CM · LTV/CAC · пейбек · чувствительность
+growth_model.xlsx      MAU → заказы → GMV → маржа, 12 мес
+cohort_retention.xlsx  когорты · кривая удержания · M1/M3/M6
+market_sizing.xlsx     PAM→TAM→SAM→SOM · PESTEL
+
+pfs calc all              # собрать книги
+pfs export --six-pager    # отчёт + приложения</pre>
+    <pre lang="en">unit_economics.xlsx    CM · LTV/CAC · payback · sensitivity
+growth_model.xlsx      MAU → orders → GMV → margin, 12 mo
+cohort_retention.xlsx  cohorts · retention curve · M1/M3/M6
+market_sizing.xlsx     PAM→TAM→SAM→SOM · PESTEL
+
+pfs calc all              # build workbooks
+pfs export --six-pager    # report + attachments</pre>
+  </div>
+  <p class="lead" lang="ru">Каждое значение на листе «Ввод» прослеживается до утверждения C###; формулы пересчитываются при открытии — допущения можно менять на лету.</p>
+  <p class="lead" lang="en">Every Input-sheet value traces to a claim C###; formulas recalculate on open — assumptions can be changed on the fly.</p>
+</div></section>
+
+<section id="quickstart"><div class="wrap">
+  <h2 lang="ru">Быстрый старт — 5 минут</h2><h2 lang="en">Quick start — 5 minutes</h2>
+  <p class="lead" lang="ru">Нужны Python 3.9+ и любая среда: Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot. Пакеты не устанавливаются.</p>
+  <p class="lead" lang="en">You need Python 3.9+ and any environment: Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot. No packages to install.</p>
+  <pre>git clone https://github.com/Fighter90/product-factory-strategist.git
+cd product-factory-strategist
+python3 -m tools.pfs doctor                    # проверка окружения
+python3 -m unittest discover -s tests          # самопроверка
+
+# в Claude Code (команда claude в папке) напишите задачу:
+# Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?</pre>
+  <p lang="ru">Агент сам создаст проект, задаст 1–3 вопроса, проведёт исследование и покажет прогресс. «Стоп» — остановить, «уточни: …» — скорректировать, «собери six-pager» — отчёт для комитета. Продолжение после перерыва: откройте новый чат — состояние подастся автоматически.</p>
+  <p lang="en">The agent creates the project, asks 1–3 questions, runs the research and shows progress. Say "stop" to pause, "clarify: …" to adjust, "build the six-pager" for the committee report. To resume after a break: open a new chat — state is restored automatically.</p>
+</div></section>
+
+<section id="commands"><div class="wrap">
+  <h2 lang="ru">Команды CLI</h2><h2 lang="en">CLI commands</h2>
+  <p class="lead" lang="ru">Большинство действий агент выполняет сам — команды нужны для контроля и ручных операций.</p>
+  <p class="lead" lang="en">The agent runs most actions itself — commands are for oversight and manual operations.</p>
+  <table lang="ru">
+    <tr><th>Группа</th><th>Команды</th><th>Что делают</th></tr>
+    <tr><td>Проекты</td><td><code>new · list · use · status</code></td><td>создать/выбрать проект, где остановились</td></tr>
+    <tr><td>Источники</td><td><code>source add/list/show</code></td><td>сайты, PDF, DOCX, XLSX → S###, с дедупликацией и защитой</td></tr>
+    <tr><td>Утверждения</td><td><code>claim add/list/supersede/retract/rebase</code></td><td>реестр C###: факт/гипотеза/прогноз/допущение/вывод, сила A–D</td></tr>
+    <tr><td>Качество</td><td><code>check --strict · impact</code></td><td>числа без тегов, мёртвые ссылки; что затронет изменение</td></tr>
+    <tr><td>Решения</td><td><code>decision add/due/done/rebase</code></td><td>основания, ответственные, обязательства, пересмотр</td></tr>
+    <tr><td>Данные</td><td><code>data profile/cohort</code></td><td>профиль таблицы, когортное удержание</td></tr>
+    <tr><td>Excel</td><td><code>calc all|unit-econ|growth|cohort|market</code></td><td>книги на формулах → outputs/attachments</td></tr>
+    <tr><td>Отчёты</td><td><code>export · export --six-pager</code></td><td>REPORT.md; six-pager FAQ-1…6 + Excel</td></tr>
+    <tr><td>Знания</td><td><code>kb search/show/index</code></td><td>поиск по 69 картам методик</td></tr>
+    <tr><td>Модели</td><td><code>models show/pick/use/escalate</code></td><td>какая модель на какую задачу, профили сред</td></tr>
+    <tr><td>Стоимость</td><td><code>cost · log --usd</code></td><td>токены и деньги за задачу</td></tr>
+    <tr><td>DOCX</td><td><code>docx файл.md</code></td><td>Markdown → Word без зависимостей</td></tr>
+  </table>
+  <table lang="en">
+    <tr><th>Group</th><th>Commands</th><th>Purpose</th></tr>
+    <tr><td>Projects</td><td><code>new · list · use · status</code></td><td>create/select a project, resume point</td></tr>
+    <tr><td>Sources</td><td><code>source add/list/show</code></td><td>websites, PDF, DOCX, XLSX → S###, deduped and protected</td></tr>
+    <tr><td>Claims</td><td><code>claim add/list/supersede/retract/rebase</code></td><td>C### registry: fact/hypothesis/forecast/assumption/inference, grade A–D</td></tr>
+    <tr><td>Quality</td><td><code>check --strict · impact</code></td><td>untagged numbers, dead links; what a change affects</td></tr>
+    <tr><td>Decisions</td><td><code>decision add/due/done/rebase</code></td><td>grounds, owners, commitments, revisions</td></tr>
+    <tr><td>Data</td><td><code>data profile/cohort</code></td><td>table profile, cohort retention</td></tr>
+    <tr><td>Excel</td><td><code>calc all|unit-econ|growth|cohort|market</code></td><td>formula workbooks → outputs/attachments</td></tr>
+    <tr><td>Reports</td><td><code>export · export --six-pager</code></td><td>REPORT.md; six-pager FAQ-1…6 + Excel</td></tr>
+    <tr><td>Knowledge</td><td><code>kb search/show/index</code></td><td>search across 69 method cards</td></tr>
+    <tr><td>Models</td><td><code>models show/pick/use/escalate</code></td><td>which model per task, environment profiles</td></tr>
+    <tr><td>Cost</td><td><code>cost · log --usd</code></td><td>tokens and money per task</td></tr>
+    <tr><td>DOCX</td><td><code>docx file.md</code></td><td>Markdown → Word, dependency-free</td></tr>
+  </table>
+</div></section>
+
+<section id="help"><div class="wrap">
+  <h2 lang="ru">Справка</h2><h2 lang="en">Help</h2>
+  <div class="toc">
+    <a href="#h-communicate" lang="ru">Как общаться с агентом</a><a href="#h-communicate" lang="en">Talking to the agent</a>
+    <a href="#h-workflow" lang="ru">Что происходит на каждом шаге</a><a href="#h-workflow" lang="en">What happens at each step</a>
+    <a href="#h-excel" lang="ru">Excel-расчёты и calcs.json</a><a href="#h-excel" lang="en">Excel models and calcs.json</a>
+    <a href="#h-sixpager-flow" lang="ru">Six-pager за 5 шагов</a><a href="#h-sixpager-flow" lang="en">Six-pager in 5 steps</a>
+    <a href="#h-resume" lang="ru">Продолжение после перерыва</a><a href="#h-resume" lang="en">Resuming after a break</a>
+    <a href="#h-environments" lang="ru">Среды: Claude Code, Cursor, OpenCode…</a><a href="#h-environments" lang="en">Environments: Claude Code, Cursor, OpenCode…</a>
+    <a href="#h-revise" lang="ru">Новые данные и пересмотр</a><a href="#h-revise" lang="en">New data and revisions</a>
+    <a href="#h-security" lang="ru">Безопасность и данные</a><a href="#h-security" lang="en">Security and data</a>
+    <a href="#h-trouble" lang="ru">Частые проблемы</a><a href="#h-trouble" lang="en">Troubleshooting</a>
+  </div>
+
+  <div class="faq" id="h-communicate"><h3 lang="ru">Как общаться с агентом</h3><h3 lang="en">Talking to the agent</h3>
+    <p lang="ru">Пишите обычным языком, как коллеге: опишите задачу, ответьте на его вопросы, выберите вариант. Управляющие фразы: <b>«стоп»</b> — пауза; <b>«уточни: …»</b> — скорректировать задачу; <b>«переделай раздел X»</b> — переработать только затронутое; <b>«собери six-pager»</b>, <b>«пересчитай Excel»</b>, <b>«что решать сейчас»</b> (decision due), <b>«что затронет новый источник»</b> (impact). Агент не задаёт больше трёх вопросов за раз и всегда объясняет, чего ему не хватает.</p>
+    <p lang="en">Write in plain language as to a colleague: describe the task, answer questions, pick options. Control phrases: <b>"stop"</b> — pause; <b>"clarify: …"</b> — adjust; <b>"redo section X"</b> — rework only the affected part; <b>"build the six-pager"</b>, <b>"recalculate Excel"</b>, <b>"what should I decide now"</b> (decision due), <b>"what will this new source affect"</b> (impact). The agent never asks more than three questions at once and always states what it is missing.</p></div>
+
+  <div class="faq" id="h-workflow"><h3 lang="ru">Что происходит на каждом шаге</h3><h3 lang="en">What happens at each step</h3>
+    <p lang="ru">0 · Бриф — агент задаёт до 3 вопросов (решение, цель, ограничения) и пишет <code>00_brief.md</code>; вы подтверждаете. 1 · Источники — ваши файлы и открытые сайты становятся <code>S###</code>. 2 · Исследование — план «вопрос → если да/нет», расчёты, интервью (ИИ-респонденты дают только гипотезы). 3 · Ситуация — что известно, откуда, чего не знаем. 4 · Варианты — ≥3 содержательно разных, каждый с возражениями red team. 5 · Выбор — <span class="pause">вы решаете</span>. 6 · Стратегии — продуктовая и коммуникационная, обещания сверяются с продуктом. 7 · План проверки — метрика, база, срок, контрметрики. 8 · Review — автопроверка <code>pfs check</code>, оценка по рубрике, six-pager. 9 · Решение — <span class="pause">вы утверждаете</span>; фиксируются основания и обязательства. 10 · Мониторинг — сроки и пересмотр при новых данных.</p>
+    <p lang="en">0 · Brief — the agent asks up to 3 questions (decision, goal, constraints) and writes <code>00_brief.md</code>; you approve. 1 · Sources — your files and public pages become <code>S###</code>. 2 · Research — a "question → if yes/no" plan, calculations, interviews (AI respondents yield hypotheses only). 3 · Situation — what is known, from where, what is missing. 4 · Options — ≥3 substantively distinct, each with red-team objections. 5 · Choice — <span class="pause">you decide</span>. 6 · Strategies — product and communication; promises are checked against the product. 7 · Validation — metric, baseline, duration, counter-metrics. 8 · Review — <code>pfs check</code>, rubric scoring, six-pager. 9 · Decision — <span class="pause">you approve</span>; grounds and commitments are recorded. 10 · Monitoring — deadlines and revisions on new data.</p></div>
+
+  <div class="faq" id="h-excel"><h3 lang="ru">Excel-расчёты и calcs.json</h3><h3 lang="en">Excel models and calcs.json</h3>
+    <p lang="ru">Параметры живут в <code>projects/&lt;slug&gt;/calcs.json</code>: секции <code>unit_econ</code> (arpu, vc_share, cac, churn_month), <code>growth</code> (mau_start, conv_order, aov, take_rate…), <code>cohort</code> (sizes, retention), <code>market</code> (pam, доли). Агент заполняет их числами из утверждений и помечает источник в <code>note</code>. Команда <code>pfs calc all</code> строит 4 книги в <code>outputs/attachments/</code>; лист «Ввод» — редактируемые параметры, расчётные листы — формулы. Чего нет в calcs.json — подставится пример с пометкой «ПРИМЕР». После правки повторите <code>calc</code> и <code>export --six-pager</code>, чтобы текст и Excel совпали.</p>
+    <p lang="en">Parameters live in <code>projects/&lt;slug&gt;/calcs.json</code>: sections <code>unit_econ</code> (arpu, vc_share, cac, churn_month), <code>growth</code> (mau_start, conv_order, aov, take_rate…), <code>cohort</code> (sizes, retention), <code>market</code> (pam, shares). The agent fills them from the claim registry and marks sources in <code>note</code>. <code>pfs calc all</code> builds 4 workbooks into <code>outputs/attachments/</code>; the Input sheet holds editable parameters, other sheets hold formulas. Missing values fall back to examples marked "EXAMPLE". After edits rerun <code>calc</code> and <code>export --six-pager</code> so text and Excel match.</p></div>
+
+  <div class="faq" id="h-sixpager-flow"><h3 lang="ru">Six-pager за 5 шагов</h3><h3 lang="en">Six-pager in 5 steps</h3>
+    <p lang="ru">1 · Дождитесь шагов situation…validation (документы 02/03/04/06). 2 · Скажите «собери six-pager» — агент заполнит calcs.json из C### и запустит расчёты субагентом <b>в фоне</b>. 3 · Получите <code>outputs/SIX_PAGER.md</code> + 4 xlsx. 4 · Откройте Excel и замените допущения на фактические значения — формулы пересчитаются. 5 · Сверьте числа текста и книг; при правках — <code>pfs calc all</code> и <code>pfs export --six-pager</code>.</p>
+    <p lang="en">1 · Wait for situation…validation steps (documents 02/03/04/06). 2 · Say "build the six-pager" — the agent fills calcs.json from C### and runs calculations in a <b>background subagent</b>. 3 · You get <code>outputs/SIX_PAGER.md</code> + 4 xlsx. 4 · Open Excel and replace assumptions with actual figures — formulas recalculate. 5 · Match text and workbook numbers; after edits run <code>pfs calc all</code> and <code>pfs export --six-pager</code>.</p></div>
+
+  <div class="faq" id="h-resume"><h3 lang="ru">Продолжение после перерыва</h3><h3 lang="en">Resuming after a break</h3>
+    <p lang="ru">Всё состояние — в файлах <code>projects/&lt;slug&gt;/</code>. Откройте новый чат в папке репозитория: хук SessionStart сам подаст агенту статус и «что решать сейчас». В средах без хуков напишите: «прочитай AGENTS.md и выполни <code>pfs status</code>». Перенос в другую среду — скопируйте папку проекта или сделайте git push/pull.</p>
+    <p lang="en">All state lives in <code>projects/&lt;slug&gt;/</code> files. Open a new chat in the repo folder: the SessionStart hook feeds the agent its status and "what to decide now". In hook-less environments write: "read AGENTS.md and run <code>pfs status</code>". Moving environments: copy the project folder or git push/pull.</p></div>
+
+  <div class="faq" id="h-environments"><h3 lang="ru">Среды</h3><h3 lang="en">Environments</h3>
+    <p lang="ru"><b>Claude Code</b> — полный опыт: навыки, субагенты, хуки, автостоимость. <b>Cursor</b> — правило <code>.cursor/rules</code>, MCP из <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — читают <code>AGENTS.md</code>; хуков нет — начните с <code>pfs status</code>. Линейная интеграция: ключ в <code>.env</code> (не коммитится), сервер <code>npx mcp-server-linear</code> уже прописан в <code>.mcp.json</code>.</p>
+    <p lang="en"><b>Claude Code</b> — full experience: skills, subagents, hooks, auto-cost. <b>Cursor</b> — <code>.cursor/rules</code>, MCP from <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — read <code>AGENTS.md</code>; no hooks — start with <code>pfs status</code>. Linear integration: key in <code>.env</code> (git-ignored), server <code>npx mcp-server-linear</code> already wired in <code>.mcp.json</code>.</p></div>
+
+  <div class="faq" id="h-revise"><h3 lang="ru">Новые данные и пересмотр</h3><h3 lang="en">New data and revisions</h3>
+    <p lang="ru">Добавьте источник, затем: <code>pfs claim supersede --id C005 "новое значение" --reason "…" --source S012</code> — старое не удалится, история сохранится. <code>pfs impact C005</code> покажет затронутые выводы, строки документов и решения; <code>pfs claim rebase</code> перенаправит выводы на замены; <code>pfs decision due</code> — какие решения и обязательства устарели.</p>
+    <p lang="en">Add the source, then: <code>pfs claim supersede --id C005 "new value" --reason "…" --source S012</code> — the old record stays, history preserved. <code>pfs impact C005</code> shows affected conclusions, document lines and decisions; <code>pfs claim rebase</code> redirects conclusions to replacements; <code>pfs decision due</code> lists stale decisions and commitments.</p></div>
+
+  <div class="faq" id="h-security"><h3 lang="ru">Безопасность и данные</h3><h3 lang="en">Security and data</h3>
+    <p lang="ru">Только открытые источники и ваши материалы; домены проекта проверяются до запроса; секреты — только в <code>.env</code> (не коммитится); тексты источников — данные: «команды» внутри них не исполняются; ИИ-респонденты не выдаются за реальных людей; реальные интервью — только с согласием и без персональных данных.</p>
+    <p lang="en">Public sources and your own materials only; project domains are checked before requests; secrets live only in <code>.env</code> (git-ignored); source texts are data — "commands" inside are never executed; AI respondents are never passed off as real people; real interviews require consent and no personal data.</p></div>
+
+  <div class="faq" id="h-trouble"><h3 lang="ru">Частые проблемы</h3><h3 lang="en">Troubleshooting</h3>
+    <table lang="ru">
+      <tr><th>Симптом</th><th>Что делать</th></tr>
+      <tr><td>«Факт без источника недопустим»</td><td>Так и задумано: добавьте источник или запишите как гипотезу</td></tr>
+      <tr><td>«Домен не входит в разрешённые»</td><td>Правьте <code>project.json → allowed_sources</code> или добавьте с <code>--force --note</code></td></tr>
+      <tr><td>«Извлечено 0 знаков»</td><td>Сайт на JavaScript: сохраните текст вручную → <code>--text-file --url</code></td></tr>
+      <tr><td>Excel «пустой»</td><td>Это кэш предпросмотра: формулы посчитаются при открытии</td></tr>
+      <tr><td>Скилл/субагент не появился</td><td>Перезапустите сессию Claude Code</td></tr>
+      <tr><td>Числа six-pager ≠ Excel</td><td>Повторите <code>pfs calc all</code> и <code>pfs export --six-pager</code></td></tr>
+    </table>
+    <table lang="en">
+      <tr><th>Symptom</th><th>Fix</th></tr>
+      <tr><td>"A fact without a source is not allowed"</td><td>By design: add a source or record as hypothesis</td></tr>
+      <tr><td>"Domain not allowed"</td><td>Edit <code>project.json → allowed_sources</code> or use <code>--force --note</code></td></tr>
+      <tr><td>"Extracted 0 chars"</td><td>JS-rendered page: save text manually → <code>--text-file --url</code></td></tr>
+      <tr><td>Excel looks "empty"</td><td>Cached preview: formulas compute on open</td></tr>
+      <tr><td>Skill/subagent missing</td><td>Restart the Claude Code session</td></tr>
+      <tr><td>Six-pager numbers ≠ Excel</td><td>Rerun <code>pfs calc all</code> and <code>pfs export --six-pager</code></td></tr>
+    </table>
+    <p lang="ru">Полная справка: <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md">docs/HELP.md</a> (RU) · <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md">docs/HELP_EN.md</a> (EN) · docx-версии в <code>docs/docx/</code>.</p>
+    <p lang="en">Full manual: <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md">docs/HELP_EN.md</a> (EN) · <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md">docs/HELP.md</a> (RU) · docx versions in <code>docs/docx/</code>.</p></div>
+</div></section>
+
+<footer><div class="wrap">
+  <div>
+    <div class="logo">◈ Стратег Фабрики продуктов</div>
+    <div lang="ru">ИИ-агент для руководителя цифрового продукта</div>
+    <div lang="en">An AI agent for digital product directors</div>
+  </div>
+  <div>
+    <a href="https://github.com/Fighter90/product-factory-strategist">GitHub</a> ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/README.md" lang="ru">README (RU)</a>
+    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/README_EN.md" lang="ru">README (EN)</a>
+    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/README.md" lang="en">README</a> ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md" lang="ru">Справка</a>
+    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md" lang="en">Help</a>
+  </div>
+</div></footer>
+
+<script>
+function setLang(l){
+  document.body.setAttribute('data-lang', l);
+  document.documentElement.lang = l;
+  document.getElementById('btn-ru').classList.toggle('active', l==='ru');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+}
+setLang((navigator.language||'').startsWith('ru') ? 'ru' : 'en');
+</script>
+</body>
+</html>

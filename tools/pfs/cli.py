@@ -7,7 +7,8 @@ import shutil
 import sys
 from pathlib import Path
 
-from . import (calc, check, claims, core, cost, data, decisions, export, impact, kb, models, project, route, sources)
+from . import (calc, check, claims, core, cost, data, decisions, docx, export, impact, kb, models,
+               project, route, sources)
 from .core import PfsError
 
 
@@ -212,6 +213,12 @@ def cmd_calc(a):
         print(f"Excel-приложение: {p}")
 
 
+def cmd_docx(a):
+    src = Path(a.file)
+    out = docx.convert(src, Path(a.out) if a.out else None)
+    print(f"DOCX: {out}")
+
+
 def cmd_doctor(a):
     ok = sys.version_info >= (3, 9)
     print(f"Python {sys.version.split()[0]}: {'ok' if ok else 'нужен 3.9+'}")
@@ -293,6 +300,9 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("calc", help="Excel-приложения: юнит-экономика, модель роста, когорты, рынок")
     s.add_argument("which", nargs="?", default="all", choices=["all", "unit-econ", "growth", "cohort", "market"])
     s.set_defaults(f=cmd_calc)
+    s = sp.add_parser("docx", help="Markdown → DOCX (без зависимостей)")
+    s.add_argument("file"); s.add_argument("--out")
+    s.set_defaults(f=cmd_docx)
     sp.add_parser("doctor", help="проверка окружения").set_defaults(f=cmd_doctor)
     return ap
 
