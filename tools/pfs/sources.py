@@ -23,6 +23,25 @@ INJECTION_PATTERNS = [
 ]
 
 
+SENSITIVE_DIRS = (".ssh", ".aws", ".gnupg", ".config", ".kube", ".docker", ".netrc", "Library/Keychains")
+SENSITIVE_EXT = (".pem", ".key", ".p12", ".pfx", ".cert", ".crt", ".keystore", ".kdbx")
+
+
+def assert_safe_local(path: Path) -> Path:
+    """Локальный файл можно добавить как источник, только если это не секреты/конфиги."""
+    rp = path.expanduser().resolve()
+    parts = rp.parts
+    if any(p.startswith(".") and p not in (".", "..") for p in parts[-1:]) or rp.name.startswith(".env"):
+        raise PfsError(f"Скрытые файлы и .env не добавляются как источники: {rp.name}")
+    home = Path.home().resolve()
+    for d in SENSITIVE_DIRS:
+        if rp == home / d or (home / d) in rp.parents:
+            raise PfsError(f"Путь {rp} в служебной папке ({d}) — добавление запрещено")
+    if rp.suffix.lower() in SENSITIVE_EXT or rp.name.endswith(("_rsa", "_ed25519", "_ecdsa")):
+        raise PfsError(f"Файлы ключей/сертификатов не добавляются как источники: {rp.name}")
+    return rp
+
+
 def load(pdir: Path) -> list[dict]:
     return core.read_jsonl(pdir / "sources.jsonl")
 
@@ -88,7 +107,7 @@ def add(pdir: Path, target: str | None = None, *, text: str | None = None, url: 
             page_title, body = extract.html_to_text(data.decode("utf-8", errors="replace"))
             kind, title = "web", title or page_title
     elif target:
-        path = Path(target).expanduser()
+        path = assert_safe_local(Path(target))
         if not path.exists():
             raise PfsError(f"Файл не найден: {path}")
         kind, body = extract.file_to_text(path)

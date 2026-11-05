@@ -21,7 +21,7 @@ def _price_for(model: str, p: dict) -> dict:
     return models.get(p.get("fallback_model", ""), {"input": 0, "output": 0, "cache_write": 0, "cache_read": 0})
 
 
-def parse_transcript(path: Path) -> dict:
+def parse_transcript(path: Path, since: str | None = None) -> dict:
     """Суммирует usage по моделям. Одно сообщение может занимать несколько строк — считаем по message.id один раз."""
     seen: set[str] = set()
     per_model: dict[str, dict] = {}
@@ -40,6 +40,8 @@ def parse_transcript(path: Path) -> dict:
             msg = row.get("message") if isinstance(row, dict) else None
             if not isinstance(msg, dict) or not isinstance(msg.get("usage"), dict):
                 continue
+            if since and str(row.get("timestamp", "")) < since:
+                continue  # учитываем только сообщения после момента начала задачи
             mid = msg.get("id") or row.get("uuid")
             if mid in seen:
                 continue
@@ -64,12 +66,12 @@ def price(per_model: dict) -> float:
     return usd
 
 
-def record_session(pdir: Path, session_id: str, transcript: Path) -> dict:
+def record_session(pdir: Path, session_id: str, transcript: Path, since: str | None = None) -> dict:
     """Идемпотентно: повторный вызов перезаписывает запись сессии, а не суммирует её дважды."""
-    per_model = parse_transcript(transcript)
+    per_model = parse_transcript(transcript, since)
     data = core.read_json(pdir / "costs.json", {"sessions": {}, "manual": []})
     data["sessions"][session_id] = {"models": per_model, "usd": round(price(per_model), 4), "updated": core.now(),
-                                    "stage": core.read_json(pdir / "state.json", {}).get("stage")}
+                                    "stage": core.read_json(pdir / "state.json", {}).get("stage"), "since": since}
     core.write_json(pdir / "costs.json", data)
     return data["sessions"][session_id]
 

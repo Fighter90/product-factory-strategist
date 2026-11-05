@@ -36,8 +36,6 @@ def main():
                 errs = [e for e in res["errors"] if e.startswith(name) or e.startswith("C")]
                 if errs:
                     notes.append(f"[pfs check] {name}: {len(errs)} ошибок: " + "; ".join(errs[:6]))
-    elif tool == "Bash" and "tools.pfs" in inp.get("command", ""):
-        core.log(pdir, "tool", f"pfs: {inp['command'][:150]}", tool="Bash")
     if notes:
         emit({"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "\n".join(notes)}})
 

@@ -17,6 +17,17 @@ def fresh(slug):
     return project.create(f"Тест {slug}", "Почему падает удержание подписчиков?", slug=slug)
 
 
+class SecurityTests(unittest.TestCase):
+    def test_ssrf_and_sensitive_paths(self):
+        from tools.pfs import extract
+        for bad in ("http://127.0.0.1/x", "http://localhost:8080", "http://169.254.169.254/latest", "file:///etc/passwd", "http://10.0.0.5/"):
+            with self.assertRaises(PfsError):
+                extract.assert_public_url(bad)
+        for bad in ("~/.ssh/id_rsa", "~/.aws/credentials", "/tmp/server.pem", "/tmp/.env"):
+            with self.assertRaises(PfsError):
+                sources.assert_safe_local(Path(bad))
+
+
 class ProjectTests(unittest.TestCase):
     def test_create_status_and_resume(self):
         pdir = fresh("p1")
@@ -79,6 +90,10 @@ class EvidenceTests(unittest.TestCase):
         self.assertNotEqual(new["id"], f["id"])
         with self.assertRaises(PfsError):
             claims.add(self.pdir, "Опора на старое", "inference", derived_from=[f["id"]])
+        # Замещение вывода, чьё основание уже замещено: мёртвое основание не переносится
+        inf2 = claims.supersede(self.pdir, inf["id"], "Рынок достаточен (пересчёт)", derived_from=[new["id"]])
+        self.assertEqual(inf2["derived_from"], [new["id"]])
+        self.assertEqual(len(impact.impact(self.pdir, new["id"])["doc_lines"]), 0)
 
 
 class CheckTests(unittest.TestCase):
