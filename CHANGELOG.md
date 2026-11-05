@@ -9,7 +9,7 @@
   обязательные карты шага (`pfs step` печатает `kb.cards_for`).
 - 27 скилов product-skills + интеграции sdd/deck/deep-research/premortem/board-of-directors/hallmark — всего 45; docs/SKILLS.md.
 - Личная библиотека скиллов (~59: дизайн, маркетинг, наука, документы/медиа, режимы мышления, мета)
-  + hallmark, board-of-directors, premortem, REA — всего 106 навыков.
+  + hallmark, board-of-directors, premortem, REA — всего 120 навыков.
 - База знаний 72 карты: Double Diamond, Lean Canvas, обзор фреймворков (RICE/ICE/WSJF, HADI, AARRR/HEART/Кано),
   Feynman deep-research skill.
 - Домен strategyproduct.ru (cname + site/CNAME), GitHub Release v1.0.0 с whl/sdist assets.
