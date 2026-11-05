@@ -2,10 +2,10 @@
 id: M-business-models
 title: Бизнес-модель, PLG / MLG / SLG и три линзы инноваций
 course: skills
-sources: ["product-skills: business-models", "product-skills: product-context-strategy (PLG/MLG/SLG, 4 fit)"]
+sources: ["product-skills: business-models", "product-skills: product-context-strategy (PLG/MLG/SLG, 4 fit)", "Продуктовые бизнес-модели и юнит-экономика, занятия 1–2: жизненный цикл, долина смерти, модели роста (HEART, Flywheel, ROSE), двусторонние рынки"]
 stages: [options, strategy, validation]
-tags: [бизнес-модель, plg, mlg, slg, desirability, feasibility, viability, защита-проекта]
-related: [M-growth-frameworks, M-monetization, M-unit-economics, M-market-sizing, M-strategy-growth, M-product-context, M-risks, M-product-communication, M-external-environment]
+tags: [бизнес-модель, plg, mlg, slg, desirability, feasibility, viability, защита-проекта, жизненный-цикл, маркетплейс]
+related: [M-growth-frameworks, M-monetization, M-unit-economics, M-market-sizing, M-strategy-growth, M-product-context, M-risks, M-product-communication, M-external-environment, M-auctions-marketplaces]
 ---
 
 # Бизнес-модель, PLG / MLG / SLG и три линзы инноваций
@@ -37,7 +37,14 @@ related: [M-growth-frameworks, M-monetization, M-unit-economics, M-market-sizing
 | Комиссионная | % от сделки | посредничество |
 | Рекламная | CPM/CPC/CPA | большой трафик, массовая аудитория |
 | Revenue Share | общая выручка × доля | партнёр оказывает сервис |
-Дополнительные: white label, лицензирование, франшиза, razor & blades, монетизация данных, retainer. Крупные компании комбинируют модели (Авито: подписка + freemium + pay-per-use + комиссия + реклама + revenue share).
+Дополнительные: white label, лицензирование, франшиза, razor & blades, монетизация данных, retainer. Крупные компании комбинируют модели (классифайд объявлений: подписка + freemium + pay-per-use + комиссия + реклама + revenue share).
+
+### Жизненный цикл, «долина смерти» и модель роста (дельта курса)
+- Стадии: идея/запуск (инноваторы терпят сырой продукт) → рост → зрелость (защита доли, оптимизация) → спад или новый виток (другая монетизация, новый сегмент). Логика стадии определяет и модель роста, и монетизацию: ошибка — применять логику не той стадии.
+- **«Долина смерти»** — период, когда продукт растёт, но ещё не самофинансируется: пользователи есть, выручка нет, расходы растут. Стратегия выживания: как можно раньше выйти хотя бы в ноль (подтвердить готовность платить), не рассчитывать на бесконечный приток инвестиций. Рост без экономической модели — иллюзия: каждый новый пользователь при отрицательной UE увеличивает убыток.
+- Баланс «ценность/цена»: на старте продукт отдаёт ценности больше, чем забирает денег (100 против 5), по мере взросления доля извлекаемой ценности растёт — иначе застреваешь в убыточном состоянии.
+- **Каркасы продуктовой модели (занятие 2):** AARRR (простая воронка, e-com), HEART (Google: Happiness/Engagement/Adoption/Retention/Task Success — UX-фокус), Flywheel (Stranger→Onlooker→Beginner→Regular→Champion, замыкание через чемпионов-рефереров — B2B/высокий LTV, кейс Zoom: встроенная виральность через участников), ROSE (сегмент, ценностное предложение, North Star, вау-магниты, привлечение/активация, Product DNA: удержание+монетизация+реферал). Связь с CJM прямая: это те же этапы пути с метриками и целями. Выбор по типу продукта и цели — см. [[M-growth-frameworks]].
+- **Двусторонние рынки:** classified (сводим стороны, транзакция вне платформы) vs marketplace (транзакция на платформе: больше операционной сложности — расписания, закрывающие документы — но контроль качества и возможность комиссии). Цикл ценности замыкается сетевым эффектом (больше соискателей → больше откликов → больше работодателей → больше вакансий); запуск — «курица и яйцо»: начинать с одной стороны, субсидировать её, фокусироваться географически.
 
 ### Three Lenses of Innovation
 Идея жизнеспособна, если проходит все три линзы одновременно:
