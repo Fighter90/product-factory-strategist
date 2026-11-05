@@ -12,7 +12,7 @@
     },
     "lovable": {
       "comment": "Lovable MCP (https://mcp.lovable.dev). Только OAuth: один раз выполните в клиенте '/mcp' → lovable → Authenticate (браузер). Потом: 'создай проект в Lovable'. create_project/send_message расходуют кредиты Lovable.",
-      "type": "remote",
+      "type": "http",
       "url": "https://mcp.lovable.dev",
       "enabled": true
     }

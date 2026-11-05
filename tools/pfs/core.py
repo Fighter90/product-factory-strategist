@@ -24,6 +24,7 @@ STAGES: tuple[dict[str, Any], ...] = (
     {"id": "intake", "title": "Постановка задачи", "human": True},
     {"id": "sources", "title": "Сбор материалов", "human": False},
     {"id": "research", "title": "Исследование и проверка гипотез", "human": False},
+    {"id": "discovery", "title": "Дискавери: персоны, JTBD, двойной ромб (Discover→Define)", "human": False},
     {"id": "situation", "title": "Картина ситуации", "human": False},
     {"id": "options", "title": "Варианты и возражения", "human": False},
     {"id": "choice", "title": "Выбор варианта руководителем", "human": True},

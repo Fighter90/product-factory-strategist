@@ -44,6 +44,31 @@ def cmd_status(a):
 def cmd_step(a):
     st = project.set_step(_p(a), a.step, a.status, a.note, a.next)
     print(f"Шаг {a.step} → {a.status}. Текущий: {st['stage']}. Далее: {st.get('next_action')}")
+    cards = kb.cards_for(a.step)
+    if cards:
+        print("Карты шага: " + ", ".join(cards))
+
+
+def cmd_questions(a):
+    blocks = core.read_json(core.CONFIG / "question_blocks.json", {})
+    key = a.block
+    rows = []
+    for stage, items in blocks.items():
+        if stage.startswith("_"):
+            continue
+        if stage == key:
+            rows.extend((stage, b) for b in items)
+        elif isinstance(items, list):
+            rows.extend((stage, b) for b in items if b.get("id") == key)
+    if not rows:
+        keys = [k for k in blocks if not k.startswith("_")]
+        raise core.PfsError(f"Блок не найден: {key}. Шаги: {', '.join(keys)}")
+    for stage, b in rows:
+        opts = " · ".join(
+            f"{i + 1}) {o}" + (" ←рекомендуется" if i == b.get("recommended") else "")
+            for i, o in enumerate(b.get("options", [])))
+        print(f"[{stage}/{b['id']}] {b['q']}\n   {opts}\n   Зачем: {b.get('why', '')}\n")
+    print("Задать руководителю: pfs ask \"<вопрос>\" --options \"A,B,C\"")
 
 
 def cmd_ask(a):
@@ -303,6 +328,9 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("docx", help="Markdown → DOCX (без зависимостей)")
     s.add_argument("file"); s.add_argument("--out")
     s.set_defaults(f=cmd_docx)
+    s = sp.add_parser("questions", help="вопросные блоки шага (настраиваемость стратегии)")
+    s.add_argument("block", nargs="?", default="intake", help="шаг или id блока, напр. options-criteria")
+    s.set_defaults(f=cmd_questions)
     sp.add_parser("doctor", help="проверка окружения").set_defaults(f=cmd_doctor)
     return ap
 
