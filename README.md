@@ -112,7 +112,7 @@ flowchart TB
   B & P & L & INT --> INV["Вызов: авто по триггерам · явно «используй skill X» · по шагам процесса"]
 ```
 
-**Структура (106):** четыре группы.
+**Структура (120):** четыре группы.
 - **Базовые 13** — шаги процесса: intake, research, situation, options, strategy, validation-plan,
   decision-support, data-analysis, interviews, ux-review, six-pager, deep-research, strategist.
 - **Product-skills 27** — процедуры методов: market-sizing, unit-economics, traction-modeling,
@@ -246,7 +246,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 
 ```
 AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject.toml
-.claude/skills/      (106)  базовые 13 · product-skills 27 · личная 60 · интеграции 6
+.claude/skills/      (120)  базовые 13 · product-skills 27 · личная 60 · интеграции 6
 .claude/agents/      (8)    researcher · red-team · evidence-auditor · synthetic-respondent ·
                             data-analyst · ux-analyst · comms-strategist · router
 .claude/hooks/       (4)    SessionStart · PreWeb-домены · PostTool-журнал · Stop-стоимость
