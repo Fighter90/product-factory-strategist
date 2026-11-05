@@ -98,7 +98,8 @@ def retract(pdir: Path, cid: str, reason: str) -> dict:
 
 
 def supersede(pdir: Path, cid: str, text: str, kind: str | None = None, sources: list[str] | None = None,
-              confidence: str | None = None, reason: str = "", derived_from: list[str] | None = None) -> dict:
+              confidence: str | None = None, reason: str = "", derived_from: list[str] | None = None,
+              grade: str | None = None) -> dict:
     old = get(pdir, cid)
     if old["status"] != "active":
         raise PfsError(f"{cid} уже не активно ({old['status']})")
@@ -109,13 +110,42 @@ def supersede(pdir: Path, cid: str, text: str, kind: str | None = None, sources:
         alive = {c["id"] for c in load(pdir) if c["status"] == "active"}
         base = derived_from if derived_from is not None else [d for d in old["derived_from"] if d in alive]
         new = add(pdir, text, kind or old["kind"], sources if sources is not None else old["sources"],
-                  base, confidence or old["confidence"], note=f"замещает {cid}: {reason}")
+                  base, confidence or old["confidence"], note=f"замещает {cid}: {reason}",
+                  grade=grade or old.get("grade"))  # сила доказательства не теряется при замещении
     except PfsError:
         _update(pdir, cid, status="active", superseded_at=None, supersede_reason=None)
         raise
     _update(pdir, cid, superseded_by=new["id"])
     core.log(pdir, "claim", f"{cid} замещено {new['id']}: {reason}")
     return new
+
+
+def rebase(pdir: Path, cid: str) -> list[str]:
+    """Перенаправить замещённые основания вывода на их замены (текст вывода не меняется).
+
+    Отозванные (retracted) основания не перенаправляются — такой вывод нужно пересмотреть по существу.
+    """
+    rows = load(pdir)
+    by_id = {r["id"]: r for r in rows}
+    target = by_id.get(cid)
+    if not target:
+        raise PfsError(f"Утверждение {cid} не найдено")
+    changes, new_base = [], []
+    for d in target["derived_from"]:
+        cur = d
+        while by_id.get(cur, {}).get("status") == "superseded" and by_id[cur].get("superseded_by"):
+            cur = by_id[cur]["superseded_by"]
+        if by_id.get(cur, {}).get("status") == "retracted":
+            raise PfsError(f"Основание {cur} отозвано — пересмотрите {cid} по существу (supersede/retract)")
+        if cur != d:
+            changes.append(f"{d}→{cur}")
+        new_base.append(cur)
+    if changes:
+        target["derived_from"] = list(dict.fromkeys(new_base))
+        target.setdefault("history", []).append({"ts": core.now(), "rebase": changes})
+        core.write_jsonl(pdir / "claims.jsonl", rows)
+        core.log(pdir, "claim", f"{cid}: основания перенаправлены {', '.join(changes)}")
+    return changes
 
 
 def table(rows: list[dict]) -> str:

@@ -23,6 +23,12 @@ class SecurityTests(unittest.TestCase):
         for bad in ("http://127.0.0.1/x", "http://localhost:8080", "http://169.254.169.254/latest", "file:///etc/passwd", "http://10.0.0.5/"):
             with self.assertRaises(PfsError):
                 extract.assert_public_url(bad)
+        import zipfile
+        bomb = Path(TMP) / "bomb.docx"
+        with zipfile.ZipFile(bomb, "w") as z:
+            z.writestr("word/document.xml", '<?xml version="1.0"?><!DOCTYPE l [<!ENTITY a "aaaa"><!ENTITY b "&a;&a;">]><w:document>&b;</w:document>')
+        with self.assertRaises(PfsError):
+            extract.docx_to_text(bomb)
         for bad in ("~/.ssh/id_rsa", "~/.aws/credentials", "/tmp/server.pem", "/tmp/.env"):
             with self.assertRaises(PfsError):
                 sources.assert_safe_local(Path(bad))
@@ -78,13 +84,14 @@ class EvidenceTests(unittest.TestCase):
             claims.add(self.pdir, "Спрос высокий", "fact", ["S002"])
         h = claims.add(self.pdir, "Возможно, людям важна цена", "hypothesis", ["S002"])
         self.assertEqual(h["basis"], "synthetic")
-        f = claims.add(self.pdir, "Рынок 10 млрд", "fact", ["S001"])
+        f = claims.add(self.pdir, "Рынок 10 млрд", "fact", ["S001"], grade="B")
         with self.assertRaises(PfsError):
             claims.add(self.pdir, "Вывод", "inference")
         inf = claims.add(self.pdir, "Рынок достаточен", "inference", derived_from=[f["id"]])
         self.assertEqual(claims.add(self.pdir, "Рынок 10 млрд", "fact", ["S001"])["id"], f["id"])  # без дублей
         new = claims.supersede(self.pdir, f["id"], "Рынок 8 млрд", reason="новый отчёт")
         self.assertEqual(claims.get(self.pdir, f["id"])["status"], "superseded")
+        self.assertEqual(new["grade"], "B")  # сила переносится в замену
         res = impact.impact(self.pdir, f["id"])
         self.assertIn(inf["id"], res["claims"])
         self.assertNotEqual(new["id"], f["id"])
@@ -94,6 +101,11 @@ class EvidenceTests(unittest.TestCase):
         inf2 = claims.supersede(self.pdir, inf["id"], "Рынок достаточен (пересчёт)", derived_from=[new["id"]])
         self.assertEqual(inf2["derived_from"], [new["id"]])
         self.assertEqual(len(impact.impact(self.pdir, new["id"])["doc_lines"]), 0)
+        # rebase: вывод на замещённом основании перенаправляется на замену без нового ID
+        inf3 = claims.add(self.pdir, "Рынок растёт", "inference", derived_from=[new["id"]])
+        newer = claims.supersede(self.pdir, new["id"], "Рынок 8,5 млрд", reason="уточнение")
+        self.assertEqual(claims.rebase(self.pdir, inf3["id"]), [f"{new['id']}→{newer['id']}"])
+        self.assertEqual(claims.get(self.pdir, inf3["id"])["derived_from"], [newer["id"]])
 
 
 class CheckTests(unittest.TestCase):
@@ -131,6 +143,9 @@ class DecisionTests(unittest.TestCase):
         self.assertEqual(len(res["overdue"]), 1)
         self.assertEqual(len(res["review_now"]), 1)
         self.assertTrue(res["stale_grounds"])
+        c2 = claims.supersede(pdir, c["id"], "Сегмент растёт на 5% в год", reason="уточнение")
+        self.assertTrue(any("superseded" in s for s in decisions.due(pdir, on="2026-06-01")["stale_grounds"]))
+        self.assertEqual(decisions.rebase(pdir, d["id"]), [f"{c['id']}→{c2['id']}"])
         decisions.update_commitment(pdir, d["id"], "K1", "done")
         self.assertEqual(decisions.due(pdir, on="2026-06-01")["overdue"], [])
 
@@ -148,6 +163,12 @@ class CostTests(unittest.TestCase):
         expected = (1000 * 4 + 500 * 20 + 2000 * 0.2 + 1000 * 0.1 + 500 * 0.5 + 2000 * 0.01) / 1e6
         self.assertAlmostEqual(s["usd"], round(expected, 4), places=4)
         cost.record_session(pdir, "s1", tr)  # повтор не удваивает
+        tr2 = Path(TMP) / "t2.jsonl"
+        tr2.write_text("\n".join(json.dumps(r) for r in [
+            {"timestamp": "2020-01-01T00:00:00Z", "message": {"id": "old", "model": "claude-opus-5-5", "usage": usage}},
+            {"timestamp": "2999-01-01T00:00:00Z", "message": {"id": "new", "model": "claude-haiku-5-5", "usage": usage}}]))
+        only_new = cost.parse_transcript(tr2, since="2026-01-01T00:00:00Z")
+        self.assertEqual(list(only_new), ["claude-haiku-5-5"])  # сообщения до начала задачи не считаются
         self.assertAlmostEqual(cost.summary(pdir)["usd"], round(expected, 4), places=4)
 
 

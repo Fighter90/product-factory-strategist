@@ -86,9 +86,15 @@ def cmd_claim(a):
     elif a.action == "retract":
         claims.retract(pdir, a.id, a.reason)
         print(impact.impact_text(impact.impact(pdir, a.id)))
+    elif a.action == "rebase":
+        ids = [a.id] if a.id else [c["id"] for c in claims.load(pdir) if c["status"] == "active"]
+        for cid in ids:
+            ch = claims.rebase(pdir, cid)
+            if ch:
+                print(f"{cid}: {', '.join(ch)}")
     elif a.action == "supersede":
         new = claims.supersede(pdir, a.id, a.text, a.kind, _split(a.source) or None, a.confidence, a.reason or "",
-                               _split(a.derived_from) if a.derived_from else None)
+                               _split(a.derived_from) if a.derived_from else None, grade=a.grade)
         print(f"{a.id} замещено {new['id']}")
         print(impact.impact_text(impact.impact(pdir, a.id)))
 
@@ -117,6 +123,8 @@ def cmd_decision(a):
     elif a.action == "done":
         decisions.update_commitment(pdir, a.id, a.commitment, "done", a.note)
         print("Обязательство выполнено")
+    elif a.action == "rebase":
+        print(", ".join(decisions.rebase(pdir, a.id, a.note or "")) or "Основания актуальны")
     elif a.action == "status":
         decisions.set_status(pdir, a.id, a.status, a.note or "")
         print("Статус решения обновлён")
@@ -226,7 +234,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--note"); s.add_argument("--published"); s.add_argument("--force", action="store_true")
     s.add_argument("--max-chars", type=int, default=4000); s.set_defaults(f=cmd_source)
 
-    s = sp.add_parser("claim", help="утверждения"); s.add_argument("action", choices=["add", "list", "retract", "supersede"])
+    s = sp.add_parser("claim", help="утверждения"); s.add_argument("action", choices=["add", "list", "retract", "supersede", "rebase"])
     s.add_argument("text", nargs="?"); s.add_argument("--id"); s.add_argument("--kind", choices=claims.KINDS)
     s.add_argument("--source"); s.add_argument("--from", dest="derived_from"); s.add_argument("--confidence", default="medium")
     s.add_argument("--note"); s.add_argument("--quote"); s.add_argument("--reason"); s.add_argument("--all", action="store_true")
@@ -237,7 +245,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--strict", action="store_true"); s.set_defaults(f=cmd_check)
     s = sp.add_parser("impact", help="что затронет изменение"); s.add_argument("id"); s.set_defaults(f=cmd_impact)
 
-    s = sp.add_parser("decision", help="решения"); s.add_argument("action", choices=["add", "list", "due", "done", "status"])
+    s = sp.add_parser("decision", help="решения"); s.add_argument("action", choices=["add", "list", "due", "done", "status", "rebase"])
     s.add_argument("--id"); s.add_argument("--title"); s.add_argument("--decision"); s.add_argument("--owner"); s.add_argument("--grounds")
     s.add_argument("--option"); s.add_argument("--rejected"); s.add_argument("--metric", action="append")
     s.add_argument("--review"); s.add_argument("--trigger", action="append"); s.add_argument("--commit", action="append")

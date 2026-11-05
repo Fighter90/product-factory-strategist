@@ -40,7 +40,7 @@ def parse_transcript(path: Path, since: str | None = None) -> dict:
             msg = row.get("message") if isinstance(row, dict) else None
             if not isinstance(msg, dict) or not isinstance(msg.get("usage"), dict):
                 continue
-            if since and str(row.get("timestamp", "")) < since:
+            if since and row.get("timestamp") and str(row["timestamp"]) < since:
                 continue  # учитываем только сообщения после момента начала задачи
             mid = msg.get("id") or row.get("uuid")
             if mid in seen:
@@ -66,8 +66,20 @@ def price(per_model: dict) -> float:
     return usd
 
 
+def _utc(iso: str) -> str:
+    from datetime import datetime, timezone
+    return datetime.fromisoformat(iso).astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S") + "Z"
+
+
 def record_session(pdir: Path, session_id: str, transcript: Path, since: str | None = None) -> dict:
-    """Идемпотентно: повторный вызов перезаписывает запись сессии, а не суммирует её дважды."""
+    """Идемпотентно: повторный вызов перезаписывает запись сессии, а не суммирует её дважды.
+
+    Один чат может охватывать несколько задач, поэтому по умолчанию учитываются только сообщения
+    после создания проекта (since = project.json → created).
+    """
+    if not since:
+        created = core.read_json(pdir / "project.json", {}).get("created")
+        since = _utc(created) if created else None
     per_model = parse_transcript(transcript, since)
     data = core.read_json(pdir / "costs.json", {"sessions": {}, "manual": []})
     data["sessions"][session_id] = {"models": per_model, "usd": round(price(per_model), 4), "updated": core.now(),

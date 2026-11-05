@@ -52,6 +52,9 @@ def run(pdir: Path) -> dict:
             errors.append(f"{c['id']}: факт опирается только на синтетические ответы")
         if c["kind"] == "fact" and c.get("grade") == "D":
             errors.append(f"{c['id']}: сила D не может быть фактом — переведите в допущение")
+        stale = [d for d in c["derived_from"] if claims.get(d, {}).get("status") != "active"]
+        if stale:
+            warnings.append(f"{c['id']}: основания {', '.join(stale)} замещены/отозваны — пересмотрите вывод (pfs claim supersede --from …)")
         if c["kind"] in ("hypothesis", "forecast", "assumption") and not (c["sources"] or c["derived_from"]):
             warnings.append(f"{c['id']}: {claims_mod.KIND_RU[c['kind']]} без оснований — укажите, откуда она")
     flagged = [s["id"] for s in srcs.values() if s.get("injection_flags")]

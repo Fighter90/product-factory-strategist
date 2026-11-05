@@ -118,13 +118,27 @@ def pdf_to_text(path: Path) -> str:
     return "\n\n".join(f"[стр. {i + 1}]\n{page.extract_text() or ''}" for i, page in enumerate(reader.pages))
 
 
+MAX_XML_PART = 50_000_000  # байт после распаковки: защита от zip-бомб
+
+
+def _safe_xml(z: zipfile.ZipFile, name: str):
+    """Безопасный разбор части OOXML: без DTD/ENTITY (billion laughs, XXE) и с лимитом размера."""
+    if z.getinfo(name).file_size > MAX_XML_PART:
+        raise PfsError(f"Часть {name} больше {MAX_XML_PART // 1_000_000} МБ после распаковки — файл отклонён")
+    raw = z.read(name)
+    head = raw.upper()
+    if b"<!DOCTYPE" in head or b"<!ENTITY" in head:
+        raise PfsError(f"Часть {name} содержит DTD/ENTITY — такие документы не обрабатываются")
+    return ET.fromstring(raw)
+
+
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 S = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 
 
 def docx_to_text(path: Path) -> str:
     with zipfile.ZipFile(path) as z:
-        root = ET.fromstring(z.read("word/document.xml"))
+        root = _safe_xml(z, "word/document.xml")
     paras = []
     for p in root.iter(W + "p"):
         txt = "".join(t.text or "" for t in p.iter(W + "t"))
@@ -149,10 +163,10 @@ def xlsx_rows(path: Path) -> dict[str, list[list[str]]]:
     with zipfile.ZipFile(path) as z:
         shared = []
         if "xl/sharedStrings.xml" in z.namelist():
-            for si in ET.fromstring(z.read("xl/sharedStrings.xml")).iter(S + "si"):
+            for si in _safe_xml(z, "xl/sharedStrings.xml").iter(S + "si"):
                 shared.append("".join(t.text or "" for t in si.iter(S + "t")))
-        wb = ET.fromstring(z.read("xl/workbook.xml"))
-        rels = ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))
+        wb = _safe_xml(z, "xl/workbook.xml")
+        rels = _safe_xml(z, "xl/_rels/workbook.xml.rels")
         rmap = {r.get("Id"): r.get("Target") for r in rels}
         sheets = {}
         for sh in wb.iter(S + "sheet"):
@@ -161,7 +175,7 @@ def xlsx_rows(path: Path) -> dict[str, list[list[str]]]:
             target = target.lstrip("/")
             target = target if target.startswith("xl/") else "xl/" + target
             rows = []
-            for row in ET.fromstring(z.read(target)).iter(S + "row"):
+            for row in _safe_xml(z, target).iter(S + "row"):
                 vals: dict[int, str] = {}
                 for c in row.iter(S + "c"):
                     v = c.find(S + "v")
