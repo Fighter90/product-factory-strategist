@@ -34,3 +34,26 @@
 {"ts": "2026-11-05T21:32:07+03:00", "kind": "claim", "msg": "C018 отозвано: число '≥15% эффекта' выведено без внутренних данных (red team: подгонка); см. открытый вопрос о P&L модуля"}
 {"ts": "2026-11-05T21:32:07+03:00", "kind": "step", "msg": "options → done: 5 вариантов A–E; красная команда применена: убраны псевдопроценты, добавлены фальсификаторы; C018 отозван", "step": "options"}
 {"ts": "2026-11-05T21:33:10+03:00", "kind": "step", "msg": "discovery → done: персоны и сегменты включены в 02_situation (раздел Сегменты); JTBD-фокус подтверждён вопросным блоком discovery", "step": "discovery"}
+{"ts": "2026-11-05T22:23:45+03:00", "kind": "human", "msg": "Ответ руководителя: Данные → B-lite/C: обязательства K1 (SQL-выгрузка дня оттока), K2 (майнинг отзывов сторов), K3 (P&L модуля); при подтверждении C013 — окончательно B-lite (white-label оповещения, без контент-анализа) + ремонт границы триала", "step": "choice"}
+{"ts": "2026-11-05T22:23:45+03:00", "kind": "step", "msg": "choice → done: руководитель: данные → B-lite/C (рекомендованный)", "step": "choice"}
+{"ts": "2026-11-05T22:23:45+03:00", "kind": "step", "msg": "strategy → in_progress", "step": "strategy"}
+{"ts": "2026-11-05T22:23:45+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-05T22:23:45+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-05T22:23:45+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-05T22:23:45+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-05T22:23:45+03:00", "kind": "cost", "msg": "Стратегия+валидация+Excel+six-pager: сессия теста сквозного прогона: $0.90, человек 25 мин"}
+{"ts": "2026-11-05T22:28:27+03:00", "kind": "claim", "msg": "C019 [факт] Стороннее премиум-решение родительского контроля — 1990 ₽/год (~166 ₽/мес)", "sources": ["S008"]}
+{"ts": "2026-11-05T22:28:27+03:00", "kind": "claim", "msg": "C010 замещено C019: верхняя граница «300 ₽/мес» не подтверждена S008 (замечание аудита); диапазон закрывают C005 (299 ₽) и C010 (166 ₽)"}
+{"ts": "2026-11-05T22:29:23+03:00", "kind": "step", "msg": "strategy → done: 04/05 согласованы; правки аудита применены (C019, дайджест, B-w)", "step": "strategy"}
+{"ts": "2026-11-05T22:29:23+03:00", "kind": "step", "msg": "validation → done: 2 гипотезы полные: база/MDE/сроки/контрметрики/критерии", "step": "validation"}
+{"ts": "2026-11-05T22:29:23+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-05T22:29:23+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-05T22:29:23+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-05T22:29:23+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-05T22:29:23+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-05T22:29:23+03:00", "kind": "step", "msg": "review → done: аудит 20/22; правки применены; SIX_PAGER собран с 4 Excel", "step": "review"}
+{"ts": "2026-11-05T22:29:23+03:00", "kind": "step", "msg": "decision → done: D001 утверждён: условный B-lite+C; K1–K3 зафиксированы", "step": "decision"}
+{"ts": "2026-11-05T22:29:23+03:00", "kind": "step", "msg": "monitoring → in_progress", "step": "monitoring"}
+{"ts": "2026-11-05T22:30:14+03:00", "kind": "decision", "msg": "D001 принято: Условный выбор: B-lite + ремонт триала (после K1/K2) (отв. PM семейной подписки (утверждено руководителем на шаге choice))", "step": "decision"}
+{"ts": "2026-11-05T22:30:14+03:00", "kind": "decision", "msg": "D001/K1 → done"}
+{"ts": "2026-11-05T22:30:15+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}

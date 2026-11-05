@@ -11,8 +11,7 @@ Windsurf, Copilot.
 
 **Ссылки:** [Сайт документации RU/EN](https://strategyproduct.ru) · [HELP на русском](docs/HELP.md) ·
 [HELP in English](docs/HELP_EN.md) · [Реестр навыков](docs/SKILLS.md) · [CHANGELOG](CHANGELOG.md) ·
-[Release v1.0.0](https://github.com/Fighter90/product-factory-strategist/releases/tag/v1.0.0) ·
-Задачи: Linear `PRO-5…PRO-25`
+[Release v1.0.0](https://github.com/Fighter90/product-factory-strategist/releases/tag/v1.0.0)
 
 English version: [README_EN.md](README_EN.md)
 
@@ -163,7 +162,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 
 | Инструмент | Как подключён | Что даёт |
 |---|---|---|
-| Linear | MCP `mcp-server-linear` (ключ в `.env`) | программа задач PRO-5…PRO-25, ведение работ |
+| Linear | MCP `mcp-server-linear` (ключ в `.env`) | ведение рабочих задач и бэклога |
 | Feynman | CLI + skill `deep-research` | глубокий ресёрч с provenance |
 | Lovable | MCP `https://mcp.lovable.dev` (OAuth `/mcp`) | web-дека/лендинг по брифу `docs/lovable-brief.md` |
 | Higgsfield | MCP среды | визуалы слайдов/сайта (кредиты — с вопросом) |
@@ -200,6 +199,6 @@ tests/ (21+) · demos: demo-antispam (готов), kids-guard (сквозной 
 
 ## Roadmap и ограничения
 
-Рабочая программа — в Linear (PRO-5…PRO-25): OpenCode-parity, PyPI-публикация, Feynman-прогоны.
+Дальше: паритет OpenCode (хуки → события), публикация на PyPI, живые прогоны Feynman, авто-дека PPTX.
 Ограничения: качество зависит от модели среды; сайты на JS сохраняются через `--text-file`; авто-стоимость
 — только по транскриптам Claude Code; Excel без диаграмм (stdlib); новые субагенты — после перезапуска.
