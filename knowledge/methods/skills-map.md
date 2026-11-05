@@ -2,7 +2,7 @@
 id: M-skills-map
 title: Карта методов: вопрос руководителя продукта → какие карты и в каком порядке
 course: skills
-sources: ["product-skills: product-navigator (карта навыков, комбинации под типовые задачи, переходы между фазами)"]
+sources: ["product-skills: product-navigator (карта навыков, комбинации под типовые задачи, переходы между фазами)", "Скиллсет продакта (xlsx учебной программы): 9 категорий компетенций, шкала самооценки 0–5, карта дисциплин"]
 stages: [intake, research, options, strategy, validation, after-decision]
 tags: [навигация, маршрут, карта-навыков, порядок-карт, типовые-задачи]
 related: [M-strategy-growth, M-external-environment, M-customers, M-competitors, M-goals-drivers-bets, M-landscapes, M-risks, M-outcome-roadmap, M-success-metrics, M-team, M-product-context, M-jtbd, M-problem-design, M-solution-design, M-roadmap, M-mvp-pilots, M-pmf-scaling, M-product-communication, M-product-metrics, M-decision-daci, M-delivery, M-research-types, M-audience-research, M-brief-hypotheses, M-loyalty-metrics, M-in-depth-interviews, M-interview-analysis, M-quant-methods, M-usp, M-marketing-research, M-ux-frameworks, M-cjm, M-usability-testing, M-ux-heuristics, M-dogfooding, M-ux-backlog, M-workshops, M-ai-in-research, M-synthetic-respondents, M-design-thinking, M-market-sizing, M-unit-economics, M-traction-model, M-cannibalization, M-monetization, M-growth-frameworks, M-business-models, M-benchmarking, M-source-criticism, M-trends-scenarios]
@@ -46,6 +46,23 @@ related: [M-strategy-growth, M-external-environment, M-customers, M-competitors,
 | mvp-pilot-launch | [[M-mvp-pilots]] |
 | team-org-structure | [[M-team]] |
 | scaling-communication | [[M-pmf-scaling]], [[M-product-communication]] |
+
+### Скиллсет продакта (учебная программа) → карты
+Официальная матрица компетенций программы: 9 категорий, каждая — набор поведенческих индикаторов; самооценка по шкале 0–5 (0 — не владею … 5 — могу научить других) против желаемой оценки и оценки со стороны. Использовать как второй вход маршрутизации: если руководитель формулирует запрос через компетенцию («научиться планировать», «прокачать аналитику») — идти по строке таблицы.
+
+| Категория скиллсета | О чём индикаторы | Карты |
+|---|---|---|
+| Структура, перевод «сложного в простое» | Структурирование в таблицы/схемы, декомпозиция задач, лаконичный статус и риски, выделение важных фактов, видение «сверху вниз» | [[M-source-criticism]], [[M-product-communication]], [[M-problem-design]], [[M-solution-design]] |
+| Менеджмент и коммуникации | Аргументированность, пауза в конфликте, активное слушание, презентация идеями/документами/прототипами, выбор канала (встреча/почта/чат) | [[M-product-communication]], [[M-decision-daci]], [[M-workshops]] |
+| Планирование и организация работ | Оценка ресурсов/зависимостей/рисков, слежение за роадмапом, работа с изменениями и эскалация, организация команды | [[M-roadmap]], [[M-delivery]], [[M-team]], [[M-risks]] |
+| Качество и скорость дискавери | Решения на данных дискавери, реакция на рынок, JTBD / User Story Mapping / CJM, исследования и инновации | [[M-research-types]], [[M-jtbd]], [[M-cjm]], [[M-problem-design]] |
+| Аналитика и метрики | Input→output, физический смысл данных и влияние на бизнес, traction model, учёт шума/сезонности, дерево метрик, дашборды и SQL | [[M-product-metrics]], [[M-traction-model]], [[M-quant-methods]] |
+| Формирование и управление PnL | Экономика продукта, LTV/CAC, окупаемость, монетизационные решения | [[M-unit-economics]], [[M-monetization]] |
+| Улучшение клиентского опыта | Пользователь на первом месте, сбор обратной связи, touchpoints и UX, CX-показатели (CSAT, обращения в поддержку, отток), осознанный скоуп MLP | [[M-cjm]], [[M-usability-testing]], [[M-loyalty-metrics]], [[M-ux-backlog]], [[M-mvp-pilots]] |
+| Продуктовый менеджмент и стратегия | Анализ конкурентов, бэклог спринта, презентация видения, квартальные планы и роадмап, end vision и УТП, анализ рынка | [[M-competitors]], [[M-product-context]], [[M-strategy-growth]], [[M-outcome-roadmap]], [[M-usp]], [[M-market-sizing]] |
+| ML-модели и AI в продуктах | Запуск продуктов с ML/DS, донесение техсложности руководителю, понимание принципов программирования и ограничений, язык с техэкспертами | Пробел базы: отдельной карты нет; частично [[M-solution-design]] (реализуемость, TDR-вопросы) и [[M-ai-in-research]] (AI в исследовании). При запросе — честно назвать пробел и собрать гипотезы из смежных карт |
+
+Карта дисциплин программы (для контекста, не маршрут): 1 модуль — продуктовый менеджмент, анализ данных, коммуникации, CX; 2 модуль — корпоративные финансы (под PnL); 3 модуль — стратегии роста, бизнес-модели и юнит-экономика, анализ рынка, управление проектами; 2 курс — ML/AI в продуктах, платформенные решения. Цели по компетенциям ведутся по структуре «компетенция → цель → что сделаю → как пойму, что выполнено → срок».
 
 ## Процедура
 1. Сформулировать вопрос руководителя одним предложением и найти ближайшую строку в таблице ниже; если нет — собрать маршрут по этапам процесса.

@@ -2,10 +2,10 @@
 id: M-traction-model
 title: Трекшн-модель (модель роста): построение, эффекты, валидация
 course: skills
-sources: ["product-skills: traction-modeling", "product-skills: growth-effects", "product-skills: model-validation", "product-skills: cannibalization (блок про закладку в модель)"]
+sources: ["product-skills: traction-modeling", "product-skills: growth-effects", "product-skills: model-validation", "product-skills: cannibalization (блок про закладку в модель)", "Продуктовые бизнес-модели и юнит-экономика, занятия 3–5: гипотезы, Top-Down, Bottom-up", "практикум: шаблон traction-модели (Avito Travel), xlsx ДЗ 1–3"]
 stages: [options, strategy, validation, after-decision]
-tags: [трекшн-модель, baseline, top-down, bottom-up, когорты, эффекты, эластичность, sensitivity, валидация, бизнес-кейс]
-related: [M-market-sizing, M-unit-economics, M-monetization, M-cannibalization, M-benchmarking, M-source-criticism, M-risks, M-trends-scenarios, M-goals-drivers-bets, M-pmf-scaling, M-product-communication]
+tags: [трекшн-модель, baseline, top-down, bottom-up, когорты, эффекты, эластичность, sensitivity, валидация, бизнес-кейс, assumptions, сценарии]
+related: [M-market-sizing, M-unit-economics, M-monetization, M-cannibalization, M-benchmarking, M-source-criticism, M-risks, M-trends-scenarios, M-goals-drivers-bets, M-pmf-scaling, M-product-communication, M-model-topdown-bottomup, M-model-validation]
 ---
 
 # Трекшн-модель (модель роста): построение, эффекты, валидация
@@ -38,6 +38,29 @@ related: [M-market-sizing, M-unit-economics, M-monetization, M-cannibalization, 
 
 **Top-down:** TAM→SAM → доля рынка → динамика (CAGR, макрофакторы) → SOM → внутренние факторы. Слабое место — допущения: усреднённый retention, ложная сезонность (промо-пики приняты за сезонность), недооценка cost-to-serve.
 **Bottom-up:** модули (PU, ARPPU, retention, конверсии), когорты (не агрегировать), прозрачные формулы, встроенная sensitivity. Ограничен при нехватке данных и для «видения» на годы вперёд. **Зелёная зона: расхождение bottom-up с top-down < 15%.**
+
+### Шаблон traction-модели курса (Excel)
+Эталонная структура листов — основа для Excel-шаблонов агента:
+
+**Лист `Assumptions`** — таблица параметров: `# (код) | Параметр | Значение | Ед. | Источник / обоснование | Confidence (high/medium/low)`. Группы кодов:
+- `M1–M6` рыночные допущения (top-down): TAM/SAM, доля SOM, AOV рынка, рост SAM %/мес, рост SOM п.п./мес;
+- `D1–D9` demand side (воронка): MAU, CR MAU→поиск, CR поиск→запрос, CR запрос→подтверждение, доля отмен, AOV, рост AOV %/мес, take rate, рост MAU %/год;
+- `S1–S6` supply side: объявления, доля активных, доля PRO, ARPU продавца/мес, рост ARPU %/мес, рост базы %/год;
+- `SS1–SS12` сезонные коэффициенты по месяцам (контрольная строка: сумма = 12.0).
+Каждый параметр — с источником и классом уверенности; захардкоженные значения = редактируемые ячейки (blue cells), вся модель — формулы (см. [[M-model-topdown-bottomup]]).
+
+**Лист `Traction model (Scenario N)`** — строки = метрики, столбцы = 60 месяцев (5 лет); строка 2 = маркер года; годовые итоги через `SUMIF` по маркеру года, средние через `AVERAGEIFS`. Блоки строк:
+1. MARKET (ограничение сверху): `SAM_GMV_мес = TAM × SAM% × AOV / 12`; рост MoM; `SOM_cap = SAM × SOM%` (растёт п.п./мес); сезонный коэффициент из Assumptions.
+2. BASELINE Demand side (драйверное дерево): `MAU_мес = MAU × сезонный коэфф.` → `×CR_поиск` → `×CR_запрос` → `×CR_подтверждение` → `Orders paid` → `×(1 − доля отмен) = Orders fulfilled (NSM)` → `×AOV = GMV` → `×Take rate = Revenue: комиссии`.
+3. BASELINE Supply side: `Active listings = объявления × доля активных × сезонный коэфф.`; `Revenue: VAS = Active listings × ARPU_мес` (растёт %/мес).
+4. TOTAL: `Total Revenue = комиссии + VAS`; `Revenue YoY growth`; чек `GMV < SOM cap` (TRUE = OK) — bottom-up не должен пробивать top-down потолок.
+Каждый месяц считается от предыдущего «продлением на формулах»: `значение_N = значение_(N−1) × (1 + ставка роста)` + сезонный коэффициент; старт первого месяца — ссылка на Assumptions.
+
+**Блок гипотез** (таблица в Assumptions или отдельный лист): `Гипотеза | Метрика (что меняем) | Status (done/wip/not started) | Confidence | Confidence rate | uplift | % раскатки | Источник / обоснование | Метод проверки | Риск каннибализации | Комментарий (сценарий 1/2, включено/не включено)`. В модели uplift применяется к строке конкретной метрики с месяца запуска: `значение = baseline × (1 + uplift × % раскатки)`. Переключатель сценария (включено/не включено гипотез) — ручка для сценариев base/optimistic/pessimistic: base = гипотезы выключены или с базовым uplift, оптимистичный = high-confidence гипотезы включены, пессимистичный = только done-гипотезы/пониженные uplift.
+
+**Лист `Costs assumptions`**: Cost of Sales (затраты на маркетинг на заказ, логистику на заказ — переменные, в юнитку), Staff cost (FTE × средняя зарплата с налогами), Marketing, IT (лицензии, IT для новых людей), прочее (travel). Сверху над выручкой это даёт вклад в P&L; переменные расходы на заказ — вход в UE ([[M-unit-economics]]).
+
+**Гигиена шаблона:** ни одного захардкоженного числа в расчётных строках (всё — ссылки на Assumptions); ретроспектива (факт из дашбордов) отделена от прогноза; вспомогательная строка коэффициентов вместо ручного заполнения месяцев.
 
 ## Процедура
 1. **Цель и аудитория модели** (решение, финансирование, трекинг); горизонт; стадия.
