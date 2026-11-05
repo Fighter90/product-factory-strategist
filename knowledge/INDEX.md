@@ -13,7 +13,7 @@
 - [Lean Canvas — гипотезы бизнеса на одном листе](methods/lean-canvas.md) `M-lean-canvas` — бизнес-модель, фреймворки, lean
 - [Дизайн проблемы — проблема vs симптом, первопричина, выбор исследований, приоритизация](methods/problem-design.md) `M-problem-design` — проблема, симптом, root-cause, 5-почему, гипотеза-проблемы
 - [Продуктовый контекст — роль PM, цикл продукта, периметр и стратегический срез](methods/product-cycle-context.md) `M-product-context` — контекст, стадия, жизненный-цикл, периметр, double-diamond
-- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс
+- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс, hadi
 - [Продуктовые метрики — типы, воронки, retention и когорты, дерево метрик, NSM, контр-метрики](methods/product-metrics-pm.md) `M-product-metrics` — метрики, воронка, retention, когорты, nsm
 - [Типы исследований и выбор метода под вопрос](methods/research-types.md) `M-research-types` — исследования, качественные, количественные, кабинетные, бенчмарк
 - [Карта методов: вопрос руководителя продукта → какие карты и в каком порядке](methods/skills-map.md) `M-skills-map` — навигация, маршрут, карта-навыков, порядок-карт, типовые-задачи
@@ -47,7 +47,7 @@
 - [Типы платформ и критерии платформизации](methods/platforms-types-criteria.md) `M-platforms-types-criteria` — платформы, платформизация, ядро, контракты, сетевые-эффекты
 - [Дизайн проблемы — проблема vs симптом, первопричина, выбор исследований, приоритизация](methods/problem-design.md) `M-problem-design` — проблема, симптом, root-cause, 5-почему, гипотеза-проблемы
 - [Продуктовый контекст — роль PM, цикл продукта, периметр и стратегический срез](methods/product-cycle-context.md) `M-product-context` — контекст, стадия, жизненный-цикл, периметр, double-diamond
-- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс
+- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс, hadi
 - [Продуктовые метрики — типы, воронки, retention и когорты, дерево метрик, NSM, контр-метрики](methods/product-metrics-pm.md) `M-product-metrics` — метрики, воронка, retention, когорты, nsm
 - [Количественные методы: опрос, выборка, анализ данных](methods/quant-methods.md) `M-quant-methods` — опрос, анкета, выборка, размер-выборки, репрезентативность
 - [Типы исследований и выбор метода под вопрос](methods/research-types.md) `M-research-types` — исследования, качественные, количественные, кабинетные, бенчмарк
@@ -98,7 +98,7 @@
 - [Риски платформы, оценка концепции, пилот, масштабирование и защита](methods/platform-risks-rollout.md) `M-platform-risks-rollout` — платформы, риски, risk-register, пилот, adoption
 - [Типы платформ и критерии платформизации](methods/platforms-types-criteria.md) `M-platforms-types-criteria` — платформы, платформизация, ядро, контракты, сетевые-эффекты
 - [Дизайн проблемы — проблема vs симптом, первопричина, выбор исследований, приоритизация](methods/problem-design.md) `M-problem-design` — проблема, симптом, root-cause, 5-почему, гипотеза-проблемы
-- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс
+- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс, hadi
 - [Типы исследований и выбор метода под вопрос](methods/research-types.md) `M-research-types` — исследования, качественные, количественные, кабинетные, бенчмарк
 - [Риски стратегии — идентификация, оценка, AATM, митигация и план Б](methods/risks-mitigation.md) `M-risks` — риски, матрица-рисков, accept-avoid-transfer-mitigate, план-б, триггер-метрика
 - [Six-pager — шести-страничный стратегический отчёт с Excel-приложениями](methods/six-pager-report.md) `M-six-pager` — отчёт, six-pager, комитет, excel
@@ -150,7 +150,7 @@
 - [Масштабирование и Product-Market Fit — когда расти, как измерять PMF (механизм Superhuman)](methods/pmf-scaling.md) `M-pmf-scaling` — pmf, масштабирование, юнит-экономика, retention, nps
 - [Коммуникация и защита продукта — от роадмапа к решению стейкхолдеров](methods/product-communication-defense.md) `M-product-communication` — защита-продукта, decision-memo, one-pager, стейкхолдеры, гейты
 - [Продуктовый контекст — роль PM, цикл продукта, периметр и стратегический срез](methods/product-cycle-context.md) `M-product-context` — контекст, стадия, жизненный-цикл, периметр, double-diamond
-- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс
+- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс, hadi
 - [Продуктовые метрики — типы, воронки, retention и когорты, дерево метрик, NSM, контр-метрики](methods/product-metrics-pm.md) `M-product-metrics` — метрики, воронка, retention, когорты, nsm
 - [Риски стратегии — идентификация, оценка, AATM, митигация и план Б](methods/risks-mitigation.md) `M-risks` — риски, матрица-рисков, accept-avoid-transfer-mitigate, план-б, триггер-метрика
 - [Роадмап — как устроен, как строится и как проверяется на качество](methods/roadmap.md) `M-roadmap` — роадмап, okr, приоритизация, зависимости, capacity
@@ -206,7 +206,7 @@
 - [Риски платформы, оценка концепции, пилот, масштабирование и защита](methods/platform-risks-rollout.md) `M-platform-risks-rollout` — платформы, риски, risk-register, пилот, adoption
 - [Масштабирование и Product-Market Fit — когда расти, как измерять PMF (механизм Superhuman)](methods/pmf-scaling.md) `M-pmf-scaling` — pmf, масштабирование, юнит-экономика, retention, nps
 - [Коммуникация и защита продукта — от роадмапа к решению стейкхолдеров](methods/product-communication-defense.md) `M-product-communication` — защита-продукта, decision-memo, one-pager, стейкхолдеры, гейты
-- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс
+- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс, hadi
 - [Продуктовые метрики — типы, воронки, retention и когорты, дерево метрик, NSM, контр-метрики](methods/product-metrics-pm.md) `M-product-metrics` — метрики, воронка, retention, когорты, nsm
 - [Количественные методы: опрос, выборка, анализ данных](methods/quant-methods.md) `M-quant-methods` — опрос, анкета, выборка, размер-выборки, репрезентативность
 - [Типы исследований и выбор метода под вопрос](methods/research-types.md) `M-research-types` — исследования, качественные, количественные, кабинетные, бенчмарк
@@ -248,7 +248,7 @@
 - [Риски платформы, оценка концепции, пилот, масштабирование и защита](methods/platform-risks-rollout.md) `M-platform-risks-rollout` — платформы, риски, risk-register, пилот, adoption
 - [Масштабирование и Product-Market Fit — когда расти, как измерять PMF (механизм Superhuman)](methods/pmf-scaling.md) `M-pmf-scaling` — pmf, масштабирование, юнит-экономика, retention, nps
 - [Коммуникация и защита продукта — от роадмапа к решению стейкхолдеров](methods/product-communication-defense.md) `M-product-communication` — защита-продукта, decision-memo, one-pager, стейкхолдеры, гейты
-- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс
+- [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс, hadi
 - [Продуктовые метрики — типы, воронки, retention и когорты, дерево метрик, NSM, контр-метрики](methods/product-metrics-pm.md) `M-product-metrics` — метрики, воронка, retention, когорты, nsm
 - [Количественные методы: опрос, выборка, анализ данных](methods/quant-methods.md) `M-quant-methods` — опрос, анкета, выборка, размер-выборки, репрезентативность
 - [Риски стратегии — идентификация, оценка, AATM, митигация и план Б](methods/risks-mitigation.md) `M-risks` — риски, матрица-рисков, accept-avoid-transfer-mitigate, план-б, триггер-метрика

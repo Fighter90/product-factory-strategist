@@ -14,7 +14,7 @@ LLM-среда (Claude Code / Cursor / Codex) — «мозг» и исполни
    продукта      └───────┬───────────────────────────┬───────────────────────────┬───────────────────┘
                          │ CLI / MCP                 │ hooks (события)           │ WebSearch/WebFetch
                          ▼                           ▼                           ▼
-            tools/pfs: state · sources · claims · check · impact · decisions · cost · kb · data · route · models · calc · export
+            tools/pfs: state · sources · claims · check · impact · decisions · cost · kb · data · route · models · calc · export · docx
                          │
      ┌───────────────────┼─────────────────────────────┬─────────────────────────────┐
      ▼                   ▼                             ▼                             ▼
@@ -30,6 +30,7 @@ LLM-среда (Claude Code / Cursor / Codex) — «мозг» и исполни
 | route | запрос | классификация по 6 сценариям | сценарий, карты, план моделей | уверенность ≥ medium или уточнение | fast (детерминированный код + субагент router при low) |
 | intake | запрос | ≤3 вопроса, бриф, допущения | 00_brief.md | человек | deep |
 | sources/research | бриф | план от вопросов, меняющих решение; поиск; выписка C### | 01_research_plan.md, sources/, claims.jsonl, analysis/ | каждый вопрос отвечен или назван пробел | balanced (researcher), fast (extract) |
+| discovery | реестр | персоны, JTBD, альтернативы пользователя (карты discovery) | 02, раздел «Сегменты» | сегмент зафиксирован | balanced |
 | situation | реестр | синтез: известно / не знаем / противоречия | 02_situation.md | pfs check | deep |
 | options | ситуация | ≥3 разных варианта, возражения, red team | 03_options.md | pfs check + red team | deep |
 | choice | варианты | выбор | state.json | человек | — |
@@ -53,6 +54,9 @@ LLM-среда (Claude Code / Cursor / Codex) — «мозг» и исполни
   `pfs check` помечает все места, где на него ссылаются.
 - **Исправление и отзыв.** `claim supersede` / `retract` сохраняют историю; `impact` — граф «источник → утверждение →
   вывод → строка документа → решение».
+- **Вопросные блоки и карты шага.** `config/question_blocks.json` — библиотека блоков вопросов по шагам (`pfs questions <шаг|id>`);
+  на каждом шаге агент обязан задать 1–3 вопроса из блока или отметить пропуск в журнале. Обязательные карты шага —
+  `kb.STAGE_CARDS`, `pfs step` печатает их список.
 
 ## 4. Инструменты (pfs)
 
@@ -70,6 +74,8 @@ LLM-среда (Claude Code / Cursor / Codex) — «мозг» и исполни
 | calc, xlsx | Excel-приложения к six-pager (юнит-экономика, модель роста, когорты, размер рынка): лист «Ввод» + формулы + кэш значений, параметры из `calcs.json`, без зависимостей |
 | route, models | сценарий запроса; модель под задачу, эскалация, профили, синхронизация субагентов |
 | export | REPORT.md и six-pager (FAQ-1…FAQ-6) с Excel-приложениями |
+| docx | Markdown → DOCX конвертер на stdlib (pfs docx) |
+| question_blocks | библиотека вопросных блоков шагов (config/question_blocks.json) |
 | mcp_server | те же функции по MCP (stdio JSON-RPC, без зависимостей) |
 
 ## 5. Хуки

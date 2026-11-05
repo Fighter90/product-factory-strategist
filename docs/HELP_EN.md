@@ -1,6 +1,8 @@
 # Help: How to use the Product Factory Strategist agent
 
-> Full user guide. Russian version: [HELP.md](HELP.md).
+**[RU](HELP.md) · [EN](HELP_EN.md)**
+
+> Full user guide.
 
 ---
 
@@ -15,13 +17,13 @@ Four layers to distinguish:
 
 | Layer | Where | What is inside |
 |---|---|---|
-| Rules and process | `AGENTS.md` | 10-step process, evidence rules, command cheat sheet |
-| Methods | `knowledge/methods/` | ~70 method cards: unit economics, A/B testing, platforms, GenAI, etc. |
+| Rules and process | `AGENTS.md` | 12-step process, evidence rules, command cheat sheet |
+| Methods | `knowledge/methods/` | 72 method cards: unit economics, A/B testing, platforms, GenAI, etc. |
 | Task materials | `projects/<slug>/` | sources, claim registry, documents, Excel models, state |
 | Tools | `python3 -m tools.pfs …` | CLI and MCP server with guarantees: no fact without a source |
 
 The agent drives the process and calls `pfs` itself. Your job: answer questions and decide at three checkpoints —
-**brief** (step 0), **option choice** (step 5), **decision approval** (step 9).
+**brief** (step 0), **option choice** (step 6), **decision approval** (step 10).
 
 ---
 
@@ -34,7 +36,7 @@ You need: Python 3.9+ (no packages), git, any environment above. Optional: `pdft
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # self-check (12+ tests)
+python3 -m unittest discover -s tests          # self-check (23 tests)
 ```
 
 `doctor` reports Python version, pdftotext/pypdf availability, number of knowledge cards, active project.
@@ -52,7 +54,7 @@ CLI needs no API keys. Keys (e.g., Linear API) go into `.env` — it is git-igno
 3. The agent will: create a project, ask 1–3 clarifying questions, build a research plan, collect sources,
    propose options and attack them with a red team, synthesize strategies, and show progress as:
 
-   `Step 3/10 · research · sources S001–S009 collected · next: situation`
+   `Step 2/12 · research · sources S001–S009 collected · next: discovery`
 
 4. At any moment you can say: **"stop"** — pause; **"clarify: …"** — adjust the task; **"redo section X"** —
    rework only the affected part; **"build the six-pager"** — get the committee report.
@@ -61,23 +63,24 @@ CLI needs no API keys. Keys (e.g., Linear API) go into `.env` — it is git-igno
 
 ---
 
-## 4. The 10-step process
+## 4. The 12-step process
 
 | # | Step | What happens | Your role |
 |---|---|---|---|
 | 0 | intake | Clarify question, goal, constraints, data → `00_brief.md` | **approve the brief** |
 | 1 | sources | Register your files and public sources → `sources/S###.md` | provide materials |
 | 2 | research | Plan from decision-changing questions; search; calculations; interviews | answer questions |
-| 3 | situation | Known/unknown, contradictions → `02_situation.md` | — |
-| 4 | options | ≥3 distinct options + objections (red team) → `03_options.md` | — |
-| 5 | choice | Comparison and recommendation | **you pick** |
-| 6 | strategy | Product + communication strategies → `04/05_*.md` | — |
-| 7 | validation | Test plan: metric, baseline, duration, counter-metrics → `06_validation_plan.md` | — |
-| 8 | review | `pfs check` + rubric review → `07_quality_review.md` | — |
-| 9 | decision | Grounds, owners, metrics, commitments → `decisions.jsonl` | **you approve** |
-| 10 | monitoring | Deadlines, new data, revision of affected conclusions | receive reminders |
+| 3 | discovery | Personas, JTBD, user alternatives → "Segments" section in 02 | answer discovery block |
+| 4 | situation | Known/unknown, contradictions → `02_situation.md` | — |
+| 5 | options | ≥3 distinct options + objections (red team) → `03_options.md` | — |
+| 6 | choice | Comparison and recommendation | **you pick** |
+| 7 | strategy | Product + communication strategies → `04/05_*.md` | — |
+| 8 | validation | Test plan: metric, baseline, duration, counter-metrics → `06_validation_plan.md` | — |
+| 9 | review | `pfs check` + rubric review → `07_quality_review.md` | — |
+| 10 | decision | Grounds, owners, metrics, commitments → `decisions.jsonl` | **you approve** |
+| 11 | monitoring | Deadlines, new data, revision of affected conclusions | receive reminders |
 
-After step 8 you can build the **six-pager with Excel attachments** (section 7) — a committee-ready report
+After step 9 (review) you can build the **six-pager with Excel attachments** (section 7) — a committee-ready report
 in the FAQ-1…FAQ-6 reference structure.
 
 ---
@@ -101,6 +104,7 @@ pfs step <step> in_progress|done --note "…" --next "…"
 pfs ask "Question?" --options "A,B,C"  # pause: agent waits for your answer
 pfs answer "Option B"
 pfs question "Open question" [--close]
+pfs questions <step|block>             # question blocks per step for strategy tuning (config/question_blocks.json); use `pfs ask` to pose to the director
 ```
 
 ### Sources (S###)
@@ -176,6 +180,7 @@ Trace every value to C###/S###: the source lives in the registry, the link goes 
 pfs export                     # REPORT.md: all documents + appendices A–E
 pfs export --six-pager         # SIX_PAGER.md (FAQ-1…6) + Excel rebuild
 pfs export --six-pager --no-calcs   # rebuild text without regenerating workbooks
+pfs docx <file.md> [--out]          # Markdown → Word, dependency-free (docx versions of HELP/README live in docs/docx/)
 ```
 Six-pager structure: FAQ-1 market & competitors · FAQ-2 segments & personas · FAQ-3 initiatives & objections ·
 FAQ-4 tactics · FAQ-5 plan & validation · FAQ-6 success metrics · Excel attachments table.
@@ -213,6 +218,11 @@ The agent offloads the main dialogue to subagents: `researcher` (reading long so
 Six-pager Excel models are built **in the background**: while `pfs calc` runs, you can keep chatting.
 The model per task is selected via `config/models.json` (cheap models for classification and extraction,
 strong ones for synthesis and strategy); escalation — `pfs models escalate`.
+
+Deep research — Feynman (feynman.is, skill `deep-research`): `feynman deepresearch/lit/compare` with a provenance
+file. Transfer rules: provenance → primary sources registered as S###; numbers are facts only from primary sources;
+the report itself is origin agent — hypotheses only. Telemetry: `FEYNMAN_TELEMETRY=off`;
+`OPENALEX`/`SEMANTIC_SCHOLAR_API_KEY` in `.env`.
 
 ---
 
@@ -258,6 +268,9 @@ Hooks never crash the session: errors go to `.claude/hooks/hook_errors.log`.
 | Claude Code | full | yes | yes | pfs + Linear |
 | Cursor | `.cursor/rules` | no | no | pfs from `.mcp.json` |
 | Codex / OpenCode / Copilot | via AGENTS.md | no | no | pfs |
+| Lovable | web deck/landing from `docs/lovable-brief.md` | — | no | https://mcp.lovable.dev (OAuth /mcp → Authenticate) |
+| Feynman | CLI + deep-research skill — deep research | — | no | — |
+| officecli | external CLI — PPTX/XLSX/DOCX (six-pager presentation via the deck skill) | — | no | — |
 | Any environment | run `pfs status` manually after a break | — | — | — |
 
 In hook-less environments, start the chat with "read AGENTS.md and `pfs status`" — enough to continue.
