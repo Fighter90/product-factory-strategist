@@ -69,7 +69,7 @@
 | 5 | `choice` | Показываешь сравнение и рекомендацию, ждёшь выбора | `pfs ask` | ответ в state.json | **Человек** выбирает |
 | 6 | `strategy` | Продуктовая и коммуникационная стратегии, согласованные между собой | skill `strategy`, субагент `comms-strategist` | `04_product_strategy.md`, `05_comms_strategy.md` | Каждое обещание подтверждено в продукте |
 | 7 | `validation` | Ожидаемое изменение, база сравнения, срок, контрметрики, критерии решения | skill `validation-plan` | `06_validation_plan.md` | Все 5 разделов |
-| 8 | `review` | Автопроверка + независимая оценка по рубрике | `pfs check`, субагент `evidence-auditor` | `07_quality_review.md` | Оценка ≥ порога или исправлено |
+| 8 | `review` | Автопроверка + независимая оценка по рубрике | `pfs check`, субагент `evidence-auditor` | `07_quality_review.md`; для комитета — six-pager с Excel (`pfs export --six-pager`, skill `six-pager`) | Оценка ≥ порога или исправлено |
 | 9 | `decision` | Фиксируешь решение: основания, ответственные, метрики, пересмотр, обязательства | skill `decision-support` | `decisions.jsonl` | **Человек** утверждает |
 | 10 | `monitoring` | Следишь за сроками, новыми данными; пересматриваешь затронутые выводы | skill `decision-support` | обновления документов | `pfs decision due` пуст |
 
@@ -131,5 +131,8 @@ pfs data profile file.csv --save profile     pfs data cohort file.csv --user id 
 pfs decision add --title … --decision … --owner … --grounds C001,C007 --metric "NSM: 10 -> 12 @2027-01-01" \
                  --review 2027-01-01 --trigger "…" --commit "что|кто|когда"
 pfs decision due [--on YYYY-MM-DD] | list | done --id D001 --commitment K1 | rebase --id D001 --note "…"
-pfs cost [--transcript <jsonl>] [--since|--until <ISO>] [--window] | pfs export | pfs doctor
+pfs cost [--transcript <jsonl>] [--since|--until <ISO>] [--window]
+pfs calc [all|unit-econ|growth|cohort|market]   # Excel-приложения (юнит-экономика, рост, когорты, рынок) → outputs/attachments/
+pfs export [--six-pager] [--no-calcs]           # REPORT.md; six-pager (FAQ-1…6) с Excel-приложениями
+pfs doctor
 ```

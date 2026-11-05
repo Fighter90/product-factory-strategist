@@ -55,13 +55,13 @@ python3 -m unittest discover -s tests
 | Слой | Где | Зачем |
 |---|---|---|
 | Постоянные инструкции | [`AGENTS.md`](AGENTS.md), [`CLAUDE.md`](CLAUDE.md) | Правила, процесс, ворота качества |
-| Навыки (skills) | [`.claude/skills/`](.claude/skills) — 11 | Повторяемые процедуры шагов |
+| Навыки (skills) | [`.claude/skills/`](.claude/skills) — 12 | Повторяемые процедуры шагов, включая фоновую сборку six-pager |
 | Субагенты | [`.claude/agents/`](.claude/agents) — 8 | researcher, red-team, evidence-auditor, synthetic-respondent, data-analyst, ux-analyst, comms-strategist, router |
 | Хуки | [`.claude/settings.json`](.claude/settings.json), [`.claude/hooks/`](.claude/hooks) | Контекст при старте, разрешённые домены, журнал, проверка на внедрённые инструкции, автопроверка, стоимость |
-| Методические знания | [`knowledge/methods/`](knowledge/methods) — 51 карта, [`INDEX.md`](knowledge/INDEX.md) | Дистилляция курсов ВШЭ × Авито и product-skills |
+| Методические знания | [`knowledge/methods/`](knowledge/methods) — 69 карт, [`INDEX.md`](knowledge/INDEX.md) | Дистилляция 7 учебных курсов и product-skills (только методики, без брендов) |
 | Шаблоны и рубрика | [`knowledge/templates/`](knowledge/templates), [`knowledge/rubrics/`](knowledge/rubrics) | Структура выходов и критерии качества |
 | Настройки | [`config/models.json`](config/models.json), [`pricing.json`](config/pricing.json), [`quality_gate.json`](config/quality_gate.json) | Модели под задачи, цены, правила проверки |
-| Инструменты | [`tools/pfs/`](tools/pfs) — CLI + MCP-сервер | Состояние, источники, реестр утверждений, проверка, влияние, решения, стоимость, поиск, данные |
+| Инструменты | [`tools/pfs/`](tools/pfs) — CLI + MCP-сервер | Состояние, источники, реестр утверждений, проверка, влияние, решения, стоимость, поиск, данные, Excel-расчёты, six-pager |
 | Проекты | `projects/<slug>/` | Материалы, состояние и результаты каждой задачи — отдельно от знаний |
 
 Подробно: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · ключевые решения: [`docs/DECISIONS.md`](docs/DECISIONS.md) ·
@@ -84,9 +84,14 @@ python3 -m unittest discover -s tests
    эскалации при ошибке; профили для других сред (`cursor-mixed`, `ru-local`). `pfs models` / `pfs models sync`.
 4. **Человек в контуре только там, где выбор существенный:** бриф, выбор варианта, утверждение решения.
 5. **Состояние в файлах:** любой шаг можно прервать и продолжить в новом чате или другой IDE — всё в `projects/<slug>/`.
-6. **Ноль зависимостей:** CLI, MCP-сервер и тесты — стандартная библиотека Python; запуск без скрытых настроек.
+6. **Ноль зависимостей:** CLI, MCP-сервер, тесты и Excel-генерация — стандартная библиотека Python; запуск без скрытых настроек.
 7. **Безопасность:** тексты источников помечаются как данные; фразы-инструкции детектируются; запрещённые домены
    блокируются до запроса; защита от SSRF и чтения секретов; синтетика и интервью без персональных данных.
+8. **Six-pager с Excel-приложениями.** `pfs export --six-pager` собирает отчёт в структуре референса
+   (FAQ-1…FAQ-6: состояние, персоны, инициативы, тактики, план, метрики), а `pfs calc` в фоне генерирует
+   Excel-книги на формулах (юнит-экономика с LTV/CAC и чувствительностью, модель роста на 12 месяцев,
+   когортное удержание, размер рынка PAM→TAM→SAM→SOM + PESTEL) — расчёты прикрепляются к отчёту и
+   пересчитываются при открытии.
 
 ---
 
@@ -94,7 +99,8 @@ python3 -m unittest discover -s tests
 
 `python3 -m tools.pfs --help` — полный список. Основные: `new`, `status`, `route`, `models`, `step`, `ask/answer`,
 `source add|list|show`, `claim add|list|retract|supersede`, `check`, `impact`, `decision add|due|done`,
-`data profile|cohort`, `kb search|index|show`, `cost`, `export`, `doctor`. Шпаргалка — в конце [`AGENTS.md`](AGENTS.md).
+`data profile|cohort`, `calc`, `kb search|index|show`, `cost`, `export --six-pager`, `doctor`.
+Шпаргалка — в конце [`AGENTS.md`](AGENTS.md), подробный Help — [`docs/HELP.md`](docs/HELP.md).
 
 ## Ограничения
 
@@ -102,6 +108,8 @@ python3 -m unittest discover -s tests
 - Некоторые сайты блокируют автоматическую загрузку — тогда текст сохраняется через `--text-file` с указанием URL.
 - Синтетические интервью дают только гипотезы; реальные интервью проводит человек (с согласием, без ПДн в репозитории).
 - Стоимость считается по транскриптам Claude Code; в других средах — ручными записями `pfs log --usd`.
+- Excel-книги генерируются без диаграмм и макросов (стандартная библиотека); открываются в Excel, Numbers,
+  LibreOffice и Google Sheets, формулы пересчитываются при открытии (кэш значений — предпросмотр).
 - Новые субагенты Claude Code подхватываются после перезапуска сессии.
 
 Полный список — [`docs/SUBMISSION.md`](docs/SUBMISSION.md#ограничения).
