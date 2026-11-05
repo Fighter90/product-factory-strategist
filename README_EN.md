@@ -7,9 +7,9 @@ the new service to", "what do we tell the audience") to a **verifiable** picture
 distinct options, and aligned product and communication strategies. After the decision, the agent keeps its
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
-This is a repository folder: instructions, a method base distilled from 7 product courses, 45 skills,
-8 subagents, 4 hooks, and a dependency-free Python CLI/MCP toolset. Works in Claude Code, Cursor, Codex,
-OpenCode, Windsurf, Copilot.
+This is a repository folder: instructions, knowledge sets organized by category (strategy · economics · product ·
+UX · data · platforms · Gen AI), 106 skills, 8 subagents, 4 hooks, and a dependency-free Python CLI/MCP toolset.
+Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
 [HELP (RU)](docs/HELP.md) · [Skills registry](docs/SKILLS.md) · [CHANGELOG](CHANGELOG.md) ·
@@ -42,6 +42,15 @@ At every step the agent **reads the mandatory knowledge cards** (printed by `pfs
 and hits **quality gates**. Double Diamond phases: Discover (0–3) → Define (4–6) → Develop (7–9) →
 Deliver (10–12).
 
+```mermaid
+flowchart TD
+  Q["director's request"] --> R["route: scenario · cards · models"]
+  R --> S0["0 intake: brief"] --> S1["1 sources"] --> S2["2 research"] --> S3["3 discovery: personas/JTBD"] --> S4["4 situation"] --> S5["5 options + red team"] --> S6{{"6 choice: HUMAN"}} --> S7["7 strategy"] --> S8["8 validation"] --> S9["9 review: check + rubric + six-pager"] --> S10{{"10 decision: HUMAN"}} --> S11["11 monitoring"]
+  S6 -.->|"pfs questions"| QB["question blocks"]
+  S9 --> DECK["six-pager + 4 Excel"]
+  S11 -->|"new data"| REF["impact → supersede → rebase"]
+```
+
 | # | Step | What the agent does | Mandatory cards | Question block | Gate |
 |---|---|---|---|---|---|
 | 0 | intake | ≤3 questions, brief, assumptions | M-brief-hypotheses, M-customers, M-jtbd | intake-* | **human approves** |
@@ -65,7 +74,7 @@ Deliver (10–12).
 flowchart TB
   U["Product director"] -->|"request · answers to question blocks"| ENV
   subgraph ENV["LLM environment (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 45<br/>(base + product-skills 27 + integrations: sdd · deck · deep-research · premortem · board-of-directors · hallmark)"]
+    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 106<br/>(base + product-skills 27 + integrations: sdd · deck · deep-research · premortem · board-of-directors · hallmark)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 4<br/>SessionStart · PreWeb-domains · PostTool-log · Stop-cost"]
   end
@@ -78,7 +87,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>grounds · commitments"] --> MON["decision due<br/>what to decide now"]
   end
-  KB["knowledge/ — 72 cards from 7 courses<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
+  KB["knowledge/ — 72 cards across categories<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → primary sources → S###"| S
   EX --> ATT["outputs/attachments/*.xlsx<br/>recalculated on open"]
@@ -88,6 +97,52 @@ Four layers you never mix: **instructions** (AGENTS.md, skills) ≠ **knowledge*
 **project materials** (projects/`<slug>`) ≠ **state** (state.json, *.jsonl). A previous agent answer never
 becomes a fact: it is stored as `inference` with grounds; when a ground is retracted, `pfs check` flags
 every place referencing it.
+
+---
+
+## Skills: structure and how to invoke
+
+```mermaid
+flowchart TB
+  SK["106 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
+  SK --> P["Product-skills 27: method procedures<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
+  SK --> L["Personal library ~60<br/>design · marketing · science · docs/media · thinking modes · meta"]
+  SK --> INT["Integrations 6<br/>hallmark · board-of-directors · premortem · rea · sdd · deck"]
+  B & P & L & INT --> INV["Invocation: automatic by triggers · explicit 'use skill X' · via process steps"]
+```
+
+106 skills in `.claude/skills/`, four groups:
+
+- **base 13** — process steps (one per workflow stage: intake → sources → research → … → monitoring).
+- **product-skills 27** — method procedures (problem and solution design, traction modeling, unit economics,
+  market sizing, interviews, UX review, …).
+- **personal library ~59** — domain expertise:
+  - Design: design-ui, refero-design, frontend-design, make-interfaces-feel-better, emil-design-eng,
+    web-design-guidelines.
+  - Marketing: ads, ad-creative, seo-audit, ai-seo, cro, pricing, offers, cold-email, emails, launch,
+    content-strategy, competitors, analytics, programmatic-seo, directory-submissions, customer-research,
+    marketing-psychology, prospecting, copywriting, onboarding, signup, paywalls, churn-prevention,
+    site-architecture, sales-enablement.
+  - Science: paper-lookup, research-lookup, literature-review, scientific-writing, scientific-critical-thinking,
+    peer-review, statistical-analysis, statsmodels, scikit-learn, hypothesis-generation, pydeseq2, biopython,
+    rdkit.
+  - Docs/media: pdf, docx, pptx, xlsx, markitdown, officecli, generate-image, video, infographics,
+    scientific-slides, scientific-schematics, scientific-visualization, latex-posters, matplotlib, seaborn.
+  - Thinking modes: consciousness-council, balanced, what-if-oracle, dhdna-profiler.
+  - Meta: skill-creator, find-skills, shap, watch, transcribe.
+- **integrations** — hallmark, board-of-directors, premortem, rea, sdd, deck.
+
+**How to invoke — three ways:**
+
+1. **Automatic** — the environment reads every skill's description and fires it on task wording
+   ("run a premortem", "audit the landing against web guidelines").
+2. **Explicit** — "use skill `<name>`: `<task>`".
+3. **In-process** — step skills chain the needed ones: `pfs step` prints the mandatory knowledge cards;
+   options → options + red-team + board-of-directors; decision → decision-support + premortem.
+   Examples: `pfs questions options`, `pfs export --deck`.
+
+**Consistency rule:** on conflict, `knowledge/` cards (methodology) take precedence over a skill's procedure.
+Full registry — `docs/SKILLS.md`.
 
 ---
 
@@ -103,13 +158,22 @@ every place referencing it.
 - **D### — decisions**: grounds (C###), owner, metric "X→Y by date", revisit triggers, commitments
   "what|who|when". `pfs decision due` — overdue work and stale grounds.
 
-### 2. Knowledge base (72 cards, 7 courses + frameworks)
-Distilled from a product master's courses: growth strategies · unit economics & traction models · product
-management · UX & customer metrics · data analysis (A/B with MDE formulas, SQL, dashboards, forecasting, ML) ·
-platform solutions · Gen AI in products. Techniques only — no brands. Framework layer: **Double Diamond**
-(mapped to the 12 steps), **Lean Canvas** (9 cells with C###), **frameworks overview** (RICE/ICE/WSJF, HADI,
-AARRR/HEART/Kano — "phase → tool"). Search: `pfs kb search` (BM25, Russian stemming); every step gets its
-mandatory card list.
+```mermaid
+flowchart LR
+  W["Web/files/interviews"] -->|"fetch · dedup · injection scan"| S["S### sources"]
+  S -->|"fact ⇐ source"| C["C### claims<br/>fact/hypothesis/forecast/assumption/inference<br/>grade A–D"]
+  C -->|"inference ⇒ derived_from"| I["inference conclusions"]
+  I --> DOC["documents 02–07"]
+  C --> DEC["D### decisions"]
+  NEW["new data"] -->|"refresh / supersede"| IMP["impact: affected conclusions · lines · decisions"]
+  IMP --> REV["revision: supersede · rebase"]
+```
+
+### 2. Knowledge base (72 cards across categories)
+Knowledge sets by category: growth strategy · unit economics & monetization · product management · UX & customer
+metrics · data analysis & A/B · platform solutions · Gen AI in products. Framework layer: Double Diamond, Lean
+Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Kano. Techniques only — no brands. Search: `pfs kb search` (BM25,
+Russian stemming); every step gets its mandatory card list.
 
 ### 3. Research framework (Feynman, feynman.is)
 For hard research questions the agent runs the open-source research agent: `feynman deepresearch|lit|compare`
@@ -184,15 +248,19 @@ consent and no personal data · the validator refuses a fact based on synthetic/
 
 ```
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
-.claude/skills/ (45)  .claude/agents/ (8)  .claude/hooks/ (4)  .claude/settings.json
-.cursor/rules/  .github/ (Pages workflow)  .mcp.json (pfs · linear · lovable)
-config/   models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/ methods/ (72 cards) · templates/ · rubrics/ · INDEX.md
-tools/pfs/ core · project · route · sources · claims · check · impact · decisions
-           data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
-projects/<slug>/ sources/ · claims.jsonl · decisions.jsonl · log.jsonl · costs.json
-                 state.json · outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx
-site/index.html (RU/EN) · docs/ (HELP×2, ARCHITECTURE, SKILLS, SUBMISSION, VERIFICATION…)
+.claude/
+  skills/ (106: base 13 · product-skills 27 · personal library ~59 · integrations)
+  agents/ (8) · hooks/ (4) · settings.json
+.cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable)
+config/     models.json · pricing.json · quality_gate.json · question_blocks.json
+knowledge/  methods/ (72 cards) · templates/ · rubrics/ · INDEX.md
+tools/pfs/  core · project · route · sources · claims · check · impact · decisions
+            data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
+projects/<slug>/
+            sources/ · claims.jsonl · decisions.jsonl · log.jsonl · costs.json · state.json
+            outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
+site/index.html (RU/EN)
+docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
 tests/ (55) · demos: demo-antispam (done), kids-guard (live end-to-end run)
 ```
 
@@ -201,9 +269,3 @@ tests/ (55) · demos: demo-antispam (done), kids-guard (live end-to-end run)
 `log.jsonl` — what was done; registries — what conclusions are based on; `pfs cost` — tokens and money
 (demo: $18.79; verifiable numbers 87% vs 0% in plain chat; independent rubric 19/22). Details:
 `docs/demo/comparison.md`.
-
-## Roadmap and limitations
-
-Next: OpenCode parity (hooks → events), PyPI publication, live Feynman runs, automated PPTX deck.
-Limitations: quality depends on the environment's model; JS-only sites saved via `--text-file`; auto-cost
-only from Claude Code transcripts; Excel without charts (stdlib); new subagents load after restart.

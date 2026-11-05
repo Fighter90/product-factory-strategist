@@ -131,6 +131,12 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 @keyframes blink{50%{opacity:0}}
 @keyframes cue{0%{opacity:0;top:6px}40%{opacity:1}100%{opacity:0;top:20px}}
 
+.arch-diagram{margin:4px 0 0}
+.arch-diagram svg{width:100%;height:auto;display:block}
+.arch-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.arch-legend span{flex:1 1 240px;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:11px 15px;font-size:13px;color:var(--muted)}
+.arch-legend b{color:var(--text);font-weight:700}
+
 body[data-lang=en] [lang=ru]{display:none}
 body[data-lang=ru] [lang=en]{display:none}
 
@@ -156,6 +162,7 @@ body[data-lang=ru] [lang=en]{display:none}
   <a class="nl" href="#features" lang="ru">Возможности</a><a class="nl" href="#features" lang="en">Features</a>
   <a class="nl" href="#process" lang="ru">Процесс</a><a class="nl" href="#process" lang="en">Process</a>
   <a class="nl" href="#sixpager" lang="ru">Six-pager</a><a class="nl" href="#sixpager" lang="en">Six-pager</a>
+  <a class="nl" href="#architecture" lang="ru">Архитектура</a><a class="nl" href="#architecture" lang="en">Architecture</a>
   <a class="nl" href="#commands" lang="ru">Команды</a><a class="nl" href="#commands" lang="en">Commands</a>
   <a class="nl" href="#help" lang="ru">Справка</a><a class="nl" href="#help" lang="en">Help</a>
   <div class="lang" role="group" aria-label="Language / Язык">
@@ -179,8 +186,8 @@ body[data-lang=ru] [lang=en]{display:none}
   </div>
   <div class="stats">
     <div class="stat"><b><span class="cnt" data-target="12">0</span></b><span lang="ru">шагов процесса, 3 паузы для человека</span><span lang="en">process steps, 3 human checkpoints</span></div>
-    <div class="stat"><b><span class="cnt" data-target="72">0</span></b><span lang="ru">карт методик из 7 курсов</span><span lang="en">method cards from 7 courses</span></div>
-    <div class="stat"><b><span class="cnt" data-target="45">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
+    <div class="stat"><b><span class="cnt" data-target="72">0</span></b><span lang="ru">карт методик по категориям</span><span lang="en">method cards across categories</span></div>
+    <div class="stat"><b><span class="cnt" data-target="106">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
     <div class="stat"><b>0</b><span lang="ru">зависимостей — только stdlib Python</span><span lang="en">dependencies — Python stdlib only</span></div>
     <div class="stat"><b><span class="cnt" data-target="87">0</span>%</b><span lang="ru">чисел проверяемы против 0% у чата</span><span lang="en">verifiable numbers vs 0% in plain chat</span></div>
   </div>
@@ -258,6 +265,110 @@ $ pfs export --six-pager    # report + attachments</pre>
   <p class="lead rv" lang="en">Every Input-sheet value traces to a claim C###; formulas recalculate on open — assumptions change on the fly.</p>
 </div></section>
 
+<section id="architecture"><div class="wrap">
+  <h2 class="rv" lang="ru">Архитектура: как устроен агент</h2><h2 class="rv" lang="en">Architecture: how the agent works</h2>
+  <p class="lead rv d1" lang="ru">Слои агента: среда (AGENTS.md, 106 skills, 8 субагентов, 4 хука) → CLI+MCP-ядро <code>tools/pfs</code> → база из 72 карт методик и интеграции. Гарантии — не в промптах, а в коде pfs; состояние — в файлах проекта, поэтому работа переживает перерывы и переезды между средами.</p>
+  <p class="lead rv d1" lang="en">The agent's layers: environment (AGENTS.md, 106 skills, 8 subagents, 4 hooks) → the <code>tools/pfs</code> CLI+MCP core → a knowledge base of 72 method cards and integrations. Guarantees live in pfs code, not in prompts; state lives in project files, so work survives breaks and moves between environments.</p>
+  <div class="arch-diagram rv d2">
+    <svg viewBox="0 0 1200 640" width="100%" role="img">
+      <title>Архитектура агента / Agent architecture</title>
+      <defs>
+        <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#4fd1c5"/></marker>
+        <marker id="ar-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8b7bff"/></marker>
+        <marker id="ar-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#38bdf8"/></marker>
+        <marker id="ar-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#4fd1c5"/></marker>
+      </defs>
+
+      <!-- A: product director -->
+      <rect x="30" y="110" width="215" height="70" rx="12" fill="rgba(20,28,46,.5)" stroke="#4fd1c5" stroke-opacity=".75"/>
+      <text x="137.5" y="139" text-anchor="middle" font-size="13" font-weight="600" fill="#eaf0fa">Руководитель продукта / Product director</text>
+      <text x="137.5" y="159" text-anchor="middle" font-size="11.5" fill="#9aa7bd">человек решает существенное · human decides</text>
+
+      <!-- A -> B -->
+      <path d="M245 145H330" fill="none" stroke="#4fd1c5" stroke-width="1.6" marker-end="url(#ar-a)"/>
+      <text x="287" y="88" text-anchor="middle" font-size="11" fill="#9aa7bd">запрос · ответы</text>
+      <text x="287" y="102" text-anchor="middle" font-size="11" fill="#9aa7bd">request · answers</text>
+
+      <!-- B: LLM environment (frame group) -->
+      <rect x="330" y="40" width="390" height="200" rx="14" fill="rgba(20,28,46,.45)" stroke="#8b7bff" stroke-opacity=".8"/>
+      <text x="346" y="64" font-size="13" font-weight="700" fill="#8b7bff">LLM-среда / LLM environment</text>
+      <rect x="350" y="76" width="350" height="32" rx="7" fill="rgba(10,16,30,.65)" stroke="rgba(139,123,255,.45)"/>
+      <text x="525" y="97" text-anchor="middle" font-size="12" fill="#eaf0fa">AGENTS.md · 12 шагов / steps</text>
+      <rect x="350" y="116" width="350" height="32" rx="7" fill="rgba(10,16,30,.65)" stroke="rgba(139,123,255,.45)"/>
+      <text x="525" y="137" text-anchor="middle" font-size="12" fill="#eaf0fa">skills 106</text>
+      <rect x="350" y="156" width="350" height="32" rx="7" fill="rgba(10,16,30,.65)" stroke="rgba(139,123,255,.45)"/>
+      <text x="525" y="177" text-anchor="middle" font-size="12" fill="#eaf0fa">subagents 8 · hooks 4</text>
+
+      <!-- B -> C -->
+      <path d="M520 240V300" fill="none" stroke="#4fd1c5" stroke-width="1.6" marker-end="url(#ar-a)"/>
+      <text x="532" y="272" font-size="11" fill="#9aa7bd">CLI pfs · MCP</text>
+
+      <!-- C: tools/pfs core -->
+      <rect x="450" y="300" width="340" height="316" rx="14" fill="rgba(20,28,46,.55)" stroke="#4fd1c5" stroke-width="1.6"/>
+      <text x="462" y="325" font-size="13.5" font-weight="700" fill="#4fd1c5">tools/pfs — CLI + MCP</text>
+      <rect x="462" y="336" width="316" height="28" rx="7" fill="rgba(10,16,30,.7)" stroke="rgba(90,110,160,.4)"/>
+      <text x="620" y="354" text-anchor="middle" font-size="11" fill="#eaf0fa">sources S### — дедуп · инъекции / dedup · injections</text>
+      <rect x="462" y="376" width="316" height="28" rx="7" fill="rgba(10,16,30,.7)" stroke="rgba(90,110,160,.4)"/>
+      <text x="620" y="394" text-anchor="middle" font-size="11" fill="#eaf0fa">claims C### — 5 типов · сила A–D / types · grade A–D</text>
+      <rect x="462" y="416" width="316" height="28" rx="7" fill="rgba(10,16,30,.7)" stroke="rgba(90,110,160,.4)"/>
+      <text x="620" y="434" text-anchor="middle" font-size="11" fill="#eaf0fa">check --strict</text>
+      <rect x="462" y="456" width="316" height="28" rx="7" fill="rgba(10,16,30,.7)" stroke="rgba(90,110,160,.4)"/>
+      <text x="620" y="474" text-anchor="middle" font-size="11" fill="#eaf0fa">calc → 4 книги Excel / Excel workbooks</text>
+      <rect x="462" y="496" width="316" height="28" rx="7" fill="rgba(10,16,30,.7)" stroke="rgba(90,110,160,.4)"/>
+      <text x="620" y="514" text-anchor="middle" font-size="11" fill="#eaf0fa">export — REPORT · SIX_PAGER</text>
+      <rect x="462" y="536" width="316" height="28" rx="7" fill="rgba(10,16,30,.7)" stroke="rgba(90,110,160,.4)"/>
+      <text x="620" y="554" text-anchor="middle" font-size="11" fill="#eaf0fa">decisions D###</text>
+      <rect x="462" y="576" width="316" height="28" rx="7" fill="rgba(10,16,30,.7)" stroke="rgba(90,110,160,.4)"/>
+      <text x="620" y="594" text-anchor="middle" font-size="11" fill="#eaf0fa">monitoring</text>
+      <path d="M620 365V372" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 405V412" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 445V452" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 485V492" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 525V532" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 565V572" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
+
+      <!-- D: knowledge base -->
+      <rect x="870" y="180" width="300" height="170" rx="12" fill="rgba(20,28,46,.5)" stroke="#38bdf8" stroke-opacity=".8"/>
+      <text x="886" y="204" font-size="13" font-weight="700" fill="#38bdf8">knowledge/ — 72 карты / cards</text>
+      <text x="886" y="230" font-size="11.5" fill="#9aa7bd">стратегия / strategy · экономика / economics</text>
+      <text x="886" y="252" font-size="11.5" fill="#9aa7bd">продукт / product · UX · данные / data</text>
+      <text x="886" y="274" font-size="11.5" fill="#9aa7bd">платформы / platforms · Gen AI</text>
+
+      <!-- C <-> D -->
+      <path d="M790 322H870" fill="none" stroke="#38bdf8" stroke-width="1.5" marker-start="url(#ar-b)" marker-end="url(#ar-b)"/>
+      <text x="830" y="314" text-anchor="middle" font-size="11" fill="#9aa7bd">kb search</text>
+
+      <!-- E: integrations -->
+      <rect x="870" y="420" width="300" height="110" rx="12" fill="rgba(20,28,46,.5)" stroke="#8b7bff" stroke-opacity=".8"/>
+      <text x="886" y="444" font-size="13" font-weight="700" fill="#8b7bff">Интеграции / Integrations</text>
+      <text x="886" y="470" font-size="11.5" fill="#9aa7bd">Linear · Lovable · Feynman · REA</text>
+      <text x="886" y="492" font-size="11.5" fill="#9aa7bd">Higgsfield · officecli · GitHub Pages</text>
+
+      <!-- E -> B (dashed, MCP) -->
+      <path d="M1170 475H1190V28H420V40" fill="none" stroke="#8b7bff" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ar-p)"/>
+      <text x="980" y="20" text-anchor="middle" font-size="11" fill="#8b7bff">MCP</text>
+
+      <!-- F: outputs -->
+      <rect x="30" y="545" width="380" height="70" rx="12" fill="rgba(20,28,46,.5)" stroke="#38bdf8" stroke-opacity=".8"/>
+      <text x="46" y="569" font-size="13" font-weight="700" fill="#38bdf8">outputs/</text>
+      <text x="46" y="591" font-size="12" fill="#9aa7bd">REPORT · SIX_PAGER · deck.html · 4 Excel</text>
+
+      <!-- C -> F -->
+      <path d="M450 580H410" fill="none" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#ar-b)"/>
+
+      <!-- F -> B loop (dashed, resume) -->
+      <path d="M220 545V260H470V240" fill="none" stroke="#8b7bff" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ar-p)"/>
+      <text x="232" y="380" font-size="11" fill="#9aa7bd">продолжение после перерыва</text>
+      <text x="232" y="396" font-size="11" fill="#9aa7bd">resume after a break</text>
+    </svg>
+  </div>
+  <div class="arch-legend rv d3">
+    <span><b lang="ru">Доказательства:</b><b lang="en">Evidence trail:</b> S### → C### → D###</span>
+    <span><b lang="ru">Гарантии — в коде pfs, не в промптах</b><b lang="en">Guarantees live in pfs code, not in prompts</b></span>
+    <span><b lang="ru">Состояние — в файлах проекта</b><b lang="en">State lives in project files</b></span>
+  </div>
+</div></section>
+
 <section id="quickstart"><div class="wrap">
   <h2 class="rv" lang="ru">Быстрый старт — 5 минут</h2><h2 class="rv" lang="en">Quick start — 5 minutes</h2>
   <p class="lead rv d1" lang="ru">Нужны Python 3.9+ и любая среда: Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot. Пакеты не устанавливаются.</p>
@@ -322,6 +433,7 @@ $ pfs export --six-pager    # report + attachments</pre>
     <a href="#h-environments" lang="ru">Среды: Claude Code, Cursor, Lovable…</a><a href="#h-environments" lang="en">Environments: Claude Code, Cursor, Lovable…</a>
     <a href="#h-revise" lang="ru">Новые данные и пересмотр</a><a href="#h-revise" lang="en">New data and revisions</a>
     <a href="#h-security" lang="ru">Безопасность и данные</a><a href="#h-security" lang="en">Security and data</a>
+    <a href="#h-skills" lang="ru">Навыки: структура и вызов</a><a href="#h-skills" lang="en">Skills: structure and invocation</a>
     <a href="#h-trouble" lang="ru">Частые проблемы</a><a href="#h-trouble" lang="en">Troubleshooting</a>
   </div>
 
@@ -356,6 +468,10 @@ $ pfs export --six-pager    # report + attachments</pre>
   <div class="faq rv" id="h-security"><h3 lang="ru">Безопасность и данные</h3><h3 lang="en">Security and data</h3>
     <p lang="ru">Только открытые источники и ваши материалы; домены проекта проверяются до запроса; секреты — только в <code>.env</code> (не коммитится); тексты источников — данные: «команды» внутри них не исполняются; ИИ-респонденты не выдаются за реальных людей; реальные интервью — только с согласием и без персональных данных.</p>
     <p lang="en">Public sources and your own materials only; project domains checked before requests; secrets only in <code>.env</code> (git-ignored); source texts are data — "commands" inside are never executed; AI respondents are never passed off as real people; real interviews require consent and no personal data.</p></div>
+
+  <div class="faq rv" id="h-skills"><h3 lang="ru">Навыки: структура и вызов</h3><h3 lang="en">Skills: structure and invocation</h3>
+    <p lang="ru">106 навыков в <code>.claude/skills/</code> — базовые по шагам процесса, 27 product-skills (процедуры методов), личная библиотека ~59 (дизайн / маркетинг / наука / документы-медиа / режимы мышления / мета) и интеграции: hallmark — анти-слоп-гейты страниц, board-of-directors — совет 5 перспектив + Red Team на шаге options, premortem — предразбор провала на шаге decision, rea — reverse-engineering JS-страниц и закрытых форматов, sdd — дисциплина разработки, deck — презентация из six-pager. Вызов: автоматически — по триггерам описания; явно — «используй skill <code>&lt;имя&gt;</code>: <code>&lt;задача&gt;</code>»; в процессе — по шагам. Полный реестр — <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/SKILLS.md">docs/SKILLS.md</a>.</p>
+    <p lang="en">106 skills in <code>.claude/skills/</code> — base ones per process step, 27 product-skills (method procedures), a personal library of ~59 (design / marketing / science / documents-media / thinking modes / meta) and integrations: hallmark — anti-slop gates for pages, board-of-directors — a council of 5 perspectives + Red Team at the options step, premortem — a failure pre-mortem at the decision step, rea — reverse-engineering of JS-rendered pages and closed file formats, sdd — development discipline, deck — a presentation built from the six-pager. Invocation: automatically — via description triggers; explicitly — "use skill <code>&lt;name&gt;</code>: <code>&lt;task&gt;</code>"; within the process — per step. Full registry — <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/SKILLS.md">docs/SKILLS.md</a>.</p></div>
 
   <div class="faq rv" id="h-trouble"><h3 lang="ru">Частые проблемы</h3><h3 lang="en">Troubleshooting</h3>
     <table lang="ru">
