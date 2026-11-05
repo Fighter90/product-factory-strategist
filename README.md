@@ -8,7 +8,7 @@
 за обязательствами и пересматривает выводы при новых данных.
 
 Это папка-репозиторий: инструкции, наборы знаний по категориям (стратегия · экономика · продукт · UX ·
-данные · платформы · Gen AI), 106 навыков, 8 субагентов, 4 хука
+данные · платформы · Gen AI), 120 навыка, 8 субагентов, 4 хука
 и CLI/MCP-инструменты на чистом Python (ноль зависимостей). Работает в Claude Code, Cursor, Codex, OpenCode,
 Windsurf, Copilot.
 
@@ -74,7 +74,7 @@ flowchart TD
 flowchart TB
   U["Руководитель продукта"] -->|"запрос · ответы на блоки вопросов"| ENV
   subgraph ENV["LLM-среда (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 106<br/>(базовые 13 + product-skills 27 + личная 60 + интеграции 6: sdd · deck · premortem · board-of-directors · hallmark · rea)"]
+    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 120<br/>(базовые 13 + product-skills 27 + личная 60 + интеграции 6: sdd · deck · premortem · board-of-directors · hallmark · rea)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 4<br/>SessionStart · PreWeb-домены · PostTool-журнал · Stop-стоимость"]
   end
@@ -105,7 +105,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  SK["106 навыков"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
+  SK["120 навыка"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: процедуры методов<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
   SK --> L["Личная библиотека ~60<br/>дизайн · маркетинг · наука · документы/медиа · режимы мышления · мета"]
   SK --> INT["Интеграции 6<br/>hallmark · board-of-directors · premortem · rea · sdd · deck"]
