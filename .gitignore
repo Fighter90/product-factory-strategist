@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+!.env.example
+.claude/hooks/hook_errors.log
+.claude/settings.local.json
+projects/**/.tmp-*
+*.swp
