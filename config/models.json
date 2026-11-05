@@ -1,0 +1,59 @@
+{
+  "_comment": "Маршрутизация моделей: какая модель решает какую задачу. Меняйте профиль (active_profile) или строки задач — код и инструкции агента читают только этот файл. pfs models — показать, pfs models pick <задача> — выбрать, pfs models sync — прописать модели в субагентов Claude Code.",
+  "active_profile": "claude",
+  "profiles": {
+    "claude": {
+      "description": "Claude Code / Claude Agent SDK (по умолчанию)",
+      "tiers": {
+        "fast":     {"model": "claude-haiku-5-5",  "alias": "haiku"},
+        "balanced": {"model": "claude-sonnet-5-5", "alias": "sonnet"},
+        "deep":     {"model": "claude-opus-5-5",   "alias": "opus"},
+        "frontier": {"model": "claude-fable-5-1",  "alias": "fable"}
+      }
+    },
+    "cursor-mixed": {
+      "description": "Cursor/Windsurf/Copilot с несколькими провайдерами: укажите модели, доступные в вашем тарифе",
+      "tiers": {
+        "fast":     {"model": "claude-haiku-5-5",  "alias": "haiku"},
+        "balanced": {"model": "claude-sonnet-5-5", "alias": "sonnet"},
+        "deep":     {"model": "claude-opus-5-5",   "alias": "opus"},
+        "frontier": {"model": "claude-opus-5-5",   "alias": "opus"}
+      }
+    },
+    "ru-local": {
+      "description": "Российский контур (GigaCode/Кодик и т.п.): заполните названия моделей своего провайдера. Цены добавьте в pricing.json",
+      "tiers": {
+        "fast":     {"model": "GigaChat-2-Lite",  "alias": "inherit"},
+        "balanced": {"model": "GigaChat-2-Pro",   "alias": "inherit"},
+        "deep":     {"model": "GigaChat-2-Max",   "alias": "inherit"},
+        "frontier": {"model": "GigaChat-2-Max",   "alias": "inherit"}
+      }
+    }
+  },
+  "tasks": {
+    "route":            {"tier": "fast",     "effort": "low",    "why": "Классификация запроса по 6 сценариям — шаблонная задача выбора из вариантов"},
+    "extract":          {"tier": "fast",     "effort": "low",    "why": "Выписать утверждения и цифры из источника с цитатами; дешёвый массовый проход"},
+    "classify_claim":   {"tier": "fast",     "effort": "low",    "why": "Факт/гипотеза/прогноз — классификация по заданным признакам"},
+    "judge":            {"tier": "fast",     "effort": "medium", "why": "Оценка по рубрике (как специализированный оценщик); при спорной оценке — эскалация", "escalate_to": "balanced"},
+    "synthetic_respondent": {"tier": "fast", "effort": "low",    "why": "Ролевые ответы для поиска гипотез; доказательной силы нет, поэтому дорогая модель не нужна"},
+    "intake":           {"tier": "deep",     "effort": "medium", "why": "Понять размытый запрос и задать только важные вопросы — нужна сильная модель, вызывается редко"},
+    "desk_research":    {"tier": "balanced", "effort": "medium", "why": "Поиск и чтение открытых источников, много инструментальных вызовов"},
+    "data_analysis":    {"tier": "balanced", "effort": "high",   "why": "Расчёты делает скрипт (воспроизводимо), модель — план анализа и интерпретация"},
+    "ux_analysis":      {"tier": "balanced", "effort": "medium", "why": "Разбор скриншотов/путей по эвристикам, мультимодальность"},
+    "interview_analysis": {"tier": "balanced", "effort": "medium", "why": "Кодирование и группировка ответов, поиск паттернов"},
+    "situation":        {"tier": "deep",     "effort": "high",   "why": "Синтез картины: что известно, откуда, чего не знаем"},
+    "options":          {"tier": "deep",     "effort": "high",   "why": "Содержательно разные варианты и сильные возражения — ядро ценности"},
+    "red_team":         {"tier": "deep",     "effort": "high",   "why": "Атака на рекомендацию другим «характером»; дешевле ошибиться здесь, чем после решения"},
+    "strategy":         {"tier": "deep",     "effort": "high",   "why": "Согласованные продуктовая и коммуникационная стратегии"},
+    "comms_copy":       {"tier": "balanced", "effort": "medium", "why": "Формулировки сообщений по утверждённой стратегии"},
+    "validation_plan":  {"tier": "balanced", "effort": "high",   "why": "Дизайн проверки по шаблону: метрика, база сравнения, срок, контрметрики"},
+    "revisit":          {"tier": "balanced", "effort": "medium", "why": "Пересмотр затронутых выводов по списку из pfs impact"},
+    "final_review":     {"tier": "frontier", "effort": "high",   "why": "Только для решений с высокой ценой ошибки; включается флагом --critical", "optional": true}
+  },
+  "escalation_rules": [
+    "Если pfs check после шага даёт ошибки дважды подряд — повторить шаг моделью уровнем выше и записать эскалацию: pfs models escalate <задача> --reason ...",
+    "Если оценщик (judge) ставит пограничный балл (в пределах ±1 от порога) — перепроверить на уровне balanced",
+    "Если источник длиннее 150 тыс. токенов — сначала extract на fast, затем синтез на deep по выпискам, а не по всему тексту",
+    "Если руководитель указал «экономный режим» — понизить deep→balanced для situation/options, кроме red_team"
+  ]
+}

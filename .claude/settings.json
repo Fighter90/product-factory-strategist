@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m tools.pfs:*)",
+      "Bash(python3 -m unittest:*)",
+      "Read(./knowledge/**)",
+      "Read(./projects/**)",
+      "WebSearch"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {"hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/session_start.py\"", "timeout": 20}]}
+    ],
+    "PreToolUse": [
+      {"matcher": "WebFetch", "hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre_web.py\"", "timeout": 10}]}
+    ],
+    "PostToolUse": [
+      {"matcher": "WebFetch|WebSearch|Write|Edit|MultiEdit|Bash", "hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/post_tool.py\"", "timeout": 20}]}
+    ],
+    "Stop": [
+      {"hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop.py\"", "timeout": 30}]}
+    ]
+  }
+}
