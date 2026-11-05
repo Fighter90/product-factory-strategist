@@ -9,6 +9,7 @@
 навыки, субагенты, хуки и небольшой CLI на чистом Python. Открывается в Claude Code, Cursor, Codex, OpenCode и др.
 
 > Демонстрационный проект с результатом: [`projects/demo-antispam/outputs/REPORT.md`](projects/demo-antispam/outputs/REPORT.md)
+> Сайт документации (RU/EN, раздел «Справка»): [`site/`](site/) — публикуется через GitHub Pages · docx-версии: [`docs/docx/`](docs/docx/)
 
 ---
 
