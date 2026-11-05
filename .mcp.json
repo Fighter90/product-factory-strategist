@@ -4,6 +4,11 @@
       "command": "python3",
       "args": ["-m", "tools.pfs.mcp_server"],
       "env": {}
+    },
+    "linear": {
+      "comment": "Ключ берётся из .env (LINEAR_API_KEY, не коммитится). Требуется node/npx в PATH.",
+      "command": "sh",
+      "args": ["-c", "LINEAR_ACCESS_TOKEN=$(grep -E '^LINEAR_API_KEY=' .env | head -1 | cut -d= -f2-) exec npx -y mcp-server-linear"]
     }
   }
 }
