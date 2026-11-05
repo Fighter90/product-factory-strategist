@@ -1,5 +1,7 @@
 # Product Factory Strategist
 
+**[RU](README.md) · [EN](README_EN.md)**
+
 An AI agent for a digital product director: from a vague request ("why is retention dropping", "who do we sell
 the new service to", "what do we tell the audience") to a **verifiable** picture of the situation, substantively
 distinct options, and aligned product and communication strategies. After the decision, the agent keeps its
@@ -12,8 +14,6 @@ OpenCode, Windsurf, Copilot.
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
 [HELP (RU)](docs/HELP.md) · [Skills registry](docs/SKILLS.md) · [CHANGELOG](CHANGELOG.md) ·
 [Release v1.0.0](https://github.com/Fighter90/product-factory-strategist/releases/tag/v1.0.0)
-
-Русская версия: [README.md](README.md)
 
 ---
 

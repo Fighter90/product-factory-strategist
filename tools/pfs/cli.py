@@ -52,6 +52,15 @@ def cmd_step(a):
 def cmd_questions(a):
     blocks = core.read_json(core.CONFIG / "question_blocks.json", {})
     key = a.block
+    if key is None:
+        print("Вопросные блоки по шагам:")
+        for stage, items in blocks.items():
+            if stage.startswith("_"):
+                continue
+            ids = ", ".join(b["id"] for b in items) if isinstance(items, list) else ""
+            print(f"  {stage}: {ids}")
+        print("Подсказка: pfs questions <шаг|id>")
+        return
     rows = []
     for stage, items in blocks.items():
         if stage.startswith("_"):
@@ -207,7 +216,13 @@ def cmd_route(a):
     pdir = core.project_dir(a.project) if core.active_slug() or a.project else None
     req = a.request or (core.read_json(pdir / "project.json", {}).get("question") if pdir else "")
     res = route.route(req, a.override, a.economy, pdir)
-    print(json.dumps(res, ensure_ascii=False, indent=2) if a.json else route.route_text(res))
+    if a.json:
+        print(json.dumps(res, ensure_ascii=False, indent=2))
+        return
+    print(route.route_text(res))
+    print("Карты по шагам:")
+    for stage in kb.STAGE_CARDS:
+        print(f"  {stage}: {', '.join(kb.cards_for(stage))}")
 
 
 def cmd_models(a):
@@ -329,7 +344,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("file"); s.add_argument("--out")
     s.set_defaults(f=cmd_docx)
     s = sp.add_parser("questions", help="вопросные блоки шага (настраиваемость стратегии)")
-    s.add_argument("block", nargs="?", default="intake", help="шаг или id блока, напр. options-criteria")
+    s.add_argument("block", nargs="?", default=None, help="шаг или id блока, напр. options-criteria; без аргумента — обзор всех шагов")
     s.set_defaults(f=cmd_questions)
     sp.add_parser("doctor", help="проверка окружения").set_defaults(f=cmd_doctor)
     return ap

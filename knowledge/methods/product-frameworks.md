@@ -4,7 +4,7 @@ title: Продуктовые фреймворки — что, когда и з�
 course: synthesis
 sources: ["Синтез курсов продуктовой магистратуры и product-skills"]
 stages: [intake, research, discovery, situation, options, choice, strategy, validation, review, after-decision]
-tags: [фреймворки, приоритизация, метрики, процесс]
+tags: [фреймворки, приоритизация, метрики, процесс, hadi, гипотезы]
 related: [M-double-diamond, M-lean-canvas, M-goals-drivers-bets, M-success-metrics, M-product-metrics, M-monetization]
 ---
 

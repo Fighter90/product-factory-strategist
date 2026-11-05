@@ -14,7 +14,8 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden;transition:opacity .18s ease}
+body.lang-switching{opacity:.55}
 ::selection{background:rgba(79,209,197,.35)}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
@@ -157,9 +158,9 @@ body[data-lang=ru] [lang=en]{display:none}
   <a class="nl" href="#sixpager" lang="ru">Six-pager</a><a class="nl" href="#sixpager" lang="en">Six-pager</a>
   <a class="nl" href="#commands" lang="ru">Команды</a><a class="nl" href="#commands" lang="en">Commands</a>
   <a class="nl" href="#help" lang="ru">Справка</a><a class="nl" href="#help" lang="en">Help</a>
-  <div class="lang">
-    <button id="btn-ru" onclick="setLang('ru')">RU</button>
-    <button id="btn-en" onclick="setLang('en')">EN</button>
+  <div class="lang" role="group" aria-label="Language / Язык">
+    <button id="btn-ru" onclick="setLang('ru')" aria-pressed="true">RU</button>
+    <button id="btn-en" onclick="setLang('en')" aria-pressed="false">EN</button>
   </div>
 </div></header>
 
@@ -177,8 +178,8 @@ body[data-lang=ru] [lang=en]{display:none}
     <a class="btn ghost" href="https://github.com/Fighter90/product-factory-strategist" lang="en">GitHub repository →</a>
   </div>
   <div class="stats">
-    <div class="stat"><b><span class="cnt" data-target="10">0</span></b><span lang="ru">шагов процесса, 3 паузы для человека</span><span lang="en">process steps, 3 human checkpoints</span></div>
-    <div class="stat"><b><span class="cnt" data-target="69">0</span></b><span lang="ru">карт методик из 7 курсов</span><span lang="en">method cards from 7 courses</span></div>
+    <div class="stat"><b><span class="cnt" data-target="12">0</span></b><span lang="ru">шагов процесса, 3 паузы для человека</span><span lang="en">process steps, 3 human checkpoints</span></div>
+    <div class="stat"><b><span class="cnt" data-target="72">0</span></b><span lang="ru">карт методик из 7 курсов</span><span lang="en">method cards from 7 courses</span></div>
     <div class="stat"><b><span class="cnt" data-target="12">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
     <div class="stat"><b>0</b><span lang="ru">зависимостей — только stdlib Python</span><span lang="en">dependencies — Python stdlib only</span></div>
     <div class="stat"><b><span class="cnt" data-target="87">0</span>%</b><span lang="ru">чисел проверяемы против 0% у чата</span><span lang="en">verifiable numbers vs 0% in plain chat</span></div>
@@ -205,13 +206,14 @@ body[data-lang=ru] [lang=en]{display:none}
 </div></section>
 
 <section id="process"><div class="wrap">
-  <h2 class="rv" lang="ru">Процесс: 10 шагов</h2><h2 class="rv" lang="en">Process: 10 steps</h2>
-  <p class="lead rv d1" lang="ru">Агент ведёт работу сам и зовёт человека только на существенный выбор. Прогресс — строкой: <code>Шаг N/10 · research · источники S001–S009 · дальше: ситуация</code></p>
-  <p class="lead rv d1" lang="en">The agent drives the work and calls the human only for a consequential choice. Progress shows as: <code>Step N/10 · research · sources S001–S009 · next: situation</code></p>
+  <h2 class="rv" lang="ru">Процесс: 12 шагов</h2><h2 class="rv" lang="en">Process: 12 steps</h2>
+  <p class="lead rv d1" lang="ru">Агент ведёт работу сам и зовёт человека только на существенный выбор. Прогресс — строкой: <code>Шаг N/12 · research · источники S001–S009 · дальше: ситуация</code>. Фазы двойного романа: Discover (0–3) → Define (4–6) → Develop (7–9) → Deliver (10–12).</p>
+  <p class="lead rv d1" lang="en">The agent drives the work and calls the human only for a consequential choice. Progress shows as: <code>Step N/12 · research · sources S001–S009 · next: situation</code>. Double Diamond phases: Discover (0–3) → Define (4–6) → Develop (7–9) → Deliver (10–12).</p>
   <div class="steps">
     <div class="step rv"><b lang="ru">Бриф</b><b lang="en">Brief</b><span lang="ru">вопрос, цель, ограничения — <span class="pause">человек подтверждает</span></span><span lang="en">question, goal, constraints — <span class="pause">human approves</span></span></div>
     <div class="step rv d1"><b lang="ru">Источники</b><b lang="en">Sources</b><span>materials → S###</span></div>
     <div class="step rv d2"><b lang="ru">Исследование</b><b lang="en">Research</b><span lang="ru">план, расчёты, интервью → C###</span><span lang="en">plan, calculations, interviews → C###</span></div>
+    <div class="step rv d3"><b lang="ru">Дискавери</b><b lang="en">Discovery</b><span lang="ru">персоны, JTBD, альтернативы</span><span lang="en">personas, JTBD, alternatives</span></div>
     <div class="step rv d3"><b lang="ru">Ситуация</b><b lang="en">Situation</b><span lang="ru">известно / не знаем / противоречия</span><span lang="en">known / unknown / contradictions</span></div>
     <div class="step rv"><b lang="ru">Варианты</b><b lang="en">Options</b><span lang="ru">≥3 + red team</span><span lang="en">≥3 + red team</span></div>
     <div class="step rv d1"><b lang="ru">Выбор</b><b lang="en">Choice</b><span class="pause" lang="ru">человек выбирает</span><span class="pause" lang="en">human decides</span></div>
@@ -273,6 +275,7 @@ $ pfs export --six-pager    # report + attachments</pre>
   <table lang="ru">
     <tr><th>Группа</th><th>Команды</th><th>Что делают</th></tr>
     <tr><td>Проекты</td><td><code>new · list · use · status</code></td><td>создать/выбрать проект, где остановились</td></tr>
+    <tr><td>Шаги</td><td><code>step · questions &lt;шаг&gt;</code></td><td>отметка шага + обязательные карты; вопросные блоки для настраиваемости</td></tr>
     <tr><td>Источники</td><td><code>source add/list/show</code></td><td>сайты, PDF, DOCX, XLSX → S###, с дедупликацией и защитой</td></tr>
     <tr><td>Утверждения</td><td><code>claim add/list/supersede/retract/rebase</code></td><td>реестр C###: факт/гипотеза/прогноз/допущение/вывод, сила A–D</td></tr>
     <tr><td>Качество</td><td><code>check --strict · impact</code></td><td>числа без тегов, мёртвые ссылки; что затронет изменение</td></tr>
@@ -280,7 +283,7 @@ $ pfs export --six-pager    # report + attachments</pre>
     <tr><td>Данные</td><td><code>data profile/cohort</code></td><td>профиль таблицы, когортное удержание</td></tr>
     <tr><td>Excel</td><td><code>calc all|unit-econ|growth|cohort|market</code></td><td>книги на формулах → outputs/attachments</td></tr>
     <tr><td>Отчёты</td><td><code>export · export --six-pager</code></td><td>REPORT.md; six-pager FAQ-1…6 + Excel</td></tr>
-    <tr><td>Знания</td><td><code>kb search/show/index</code></td><td>поиск по 69 картам методик</td></tr>
+    <tr><td>Знания</td><td><code>kb search/show/index</code></td><td>поиск по 72 картам методик</td></tr>
     <tr><td>Модели</td><td><code>models show/pick/use/escalate</code></td><td>какая модель на какую задачу, профили сред</td></tr>
     <tr><td>Стоимость</td><td><code>cost · log --usd</code></td><td>токены и деньги за задачу</td></tr>
     <tr><td>DOCX</td><td><code>docx файл.md</code></td><td>Markdown → Word без зависимостей</td></tr>
@@ -288,6 +291,7 @@ $ pfs export --six-pager    # report + attachments</pre>
   <table lang="en">
     <tr><th>Group</th><th>Commands</th><th>Purpose</th></tr>
     <tr><td>Projects</td><td><code>new · list · use · status</code></td><td>create/select a project, resume point</td></tr>
+    <tr><td>Steps</td><td><code>step · questions &lt;step&gt;</code></td><td>step mark + mandatory cards; question blocks for tuning</td></tr>
     <tr><td>Sources</td><td><code>source add/list/show</code></td><td>websites, PDF, DOCX, XLSX → S###, deduped and protected</td></tr>
     <tr><td>Claims</td><td><code>claim add/list/supersede/retract/rebase</code></td><td>C### registry: fact/hypothesis/forecast/assumption/inference, grade A–D</td></tr>
     <tr><td>Quality</td><td><code>check --strict · impact</code></td><td>untagged numbers, dead links; what a change affects</td></tr>
@@ -295,7 +299,7 @@ $ pfs export --six-pager    # report + attachments</pre>
     <tr><td>Data</td><td><code>data profile/cohort</code></td><td>table profile, cohort retention</td></tr>
     <tr><td>Excel</td><td><code>calc all|unit-econ|growth|cohort|market</code></td><td>formula workbooks → outputs/attachments</td></tr>
     <tr><td>Reports</td><td><code>export · export --six-pager</code></td><td>REPORT.md; six-pager FAQ-1…6 + Excel</td></tr>
-    <tr><td>Knowledge</td><td><code>kb search/show/index</code></td><td>search across 69 method cards</td></tr>
+    <tr><td>Knowledge</td><td><code>kb search/show/index</code></td><td>search across 72 method cards</td></tr>
     <tr><td>Models</td><td><code>models show/pick/use/escalate</code></td><td>which model per task, environment profiles</td></tr>
     <tr><td>Cost</td><td><code>cost · log --usd</code></td><td>tokens and money per task</td></tr>
     <tr><td>DOCX</td><td><code>docx file.md</code></td><td>Markdown → Word, dependency-free</td></tr>
@@ -322,8 +326,8 @@ $ pfs export --six-pager    # report + attachments</pre>
     <p lang="en">Write in plain language as to a colleague: describe the task, answer questions, pick options. Control phrases: <b>"stop"</b> — pause; <b>"clarify: …"</b> — adjust; <b>"redo section X"</b> — rework only the affected part; <b>"build the six-pager"</b>, <b>"recalculate Excel"</b>, <b>"what should I decide now"</b> (decision due), <b>"what will this new source affect"</b> (impact). The agent never asks more than three questions at once and always states what it is missing.</p></div>
 
   <div class="faq rv" id="h-workflow"><h3 lang="ru">Что происходит на каждом шаге</h3><h3 lang="en">What happens at each step</h3>
-    <p lang="ru">0 · Бриф — до 3 вопросов (решение, цель, ограничения) → <code>00_brief.md</code>, вы подтверждаете. 1 · Источники — файлы и сайты → <code>S###</code>. 2 · Исследование — план «вопрос → если да/нет», расчёты, интервью (ИИ-респонденты дают только гипотезы). 3 · Ситуация — что известно, откуда, чего не знаем. 4 · Варианты — ≥3 содержательно разных, каждый с возражениями red team. 5 · Выбор — <span class="pause">вы решаете</span>. 6 · Стратегии — продуктовая и коммуникационная, обещания сверяются с продуктом. 7 · План проверки — метрика, база, срок, контрметрики. 8 · Review — автопроверка <code>pfs check</code>, оценка по рубрике, six-pager. 9 · Решение — <span class="pause">вы утверждаете</span>; основания и обязательства фиксируются. 10 · Мониторинг — сроки и пересмотр при новых данных.</p>
-    <p lang="en">0 · Brief — up to 3 questions (decision, goal, constraints) → <code>00_brief.md</code>, you approve. 1 · Sources — files and pages → <code>S###</code>. 2 · Research — a "question → if yes/no" plan, calculations, interviews (AI respondents yield hypotheses only). 3 · Situation — known / unknown / contradictions. 4 · Options — ≥3 substantively distinct, each with red-team objections. 5 · Choice — <span class="pause">you decide</span>. 6 · Strategies — product and communication; promises checked against the product. 7 · Validation — metric, baseline, duration, counter-metrics. 8 · Review — <code>pfs check</code>, rubric scoring, six-pager. 9 · Decision — <span class="pause">you approve</span>; grounds and commitments recorded. 10 · Monitoring — deadlines and revisions on new data.</p></div>
+    <p lang="ru">0 · Бриф — до 3 вопросов (решение, цель, ограничения) → <code>00_brief.md</code>, вы подтверждаете. 1 · Источники — файлы и сайты → <code>S###</code>. 2 · Исследование — план «вопрос → если да/нет», расчёты, интервью (ИИ-респонденты дают только гипотезы). 3 · Дискавери — персоны, JTBD, альтернативы пользователя. 4 · Ситуация — что известно, откуда, чего не знаем. 5 · Варианты — ≥3 содержательно разных, каждый с возражениями red team. 6 · Выбор — <span class="pause">вы решаете</span>. 7 · Стратегии — продуктовая и коммуникационная, обещания сверяются с продуктом. 8 · План проверки — метрика, база, срок, контрметрики. 9 · Review — автопроверка <code>pfs check</code>, оценка по рубрике, six-pager. 10 · Решение — <span class="pause">вы утверждаете</span>; основания и обязательства фиксируются. 11 · Мониторинг — сроки и пересмотр при новых данных (шаги 0–11).</p>
+    <p lang="en">0 · Brief — up to 3 questions (decision, goal, constraints) → <code>00_brief.md</code>, you approve. 1 · Sources — files and pages → <code>S###</code>. 2 · Research — a "question → if yes/no" plan, calculations, interviews (AI respondents yield hypotheses only). 3 · Discovery — personas, JTBD, user alternatives. 4 · Situation — known / unknown / contradictions. 5 · Options — ≥3 substantively distinct, each with red-team objections. 6 · Choice — <span class="pause">you decide</span>. 7 · Strategies — product and communication; promises checked against the product. 8 · Validation — metric, baseline, duration, counter-metrics. 9 · Review — <code>pfs check</code>, rubric scoring, six-pager. 10 · Decision — <span class="pause">you approve</span>; grounds and commitments recorded. 11 · Monitoring — deadlines and revisions on new data (steps 0–11).</p></div>
 
   <div class="faq rv" id="h-excel"><h3 lang="ru">Excel-расчёты и calcs.json</h3><h3 lang="en">Excel models and calcs.json</h3>
     <p lang="ru">Параметры живут в <code>projects/&lt;slug&gt;/calcs.json</code>: секции <code>unit_econ</code> (arpu, vc_share, cac, churn_month), <code>growth</code> (mau_start, conv_order, aov, take_rate…), <code>cohort</code> (sizes, retention), <code>market</code> (pam, доли). Агент заполняет их числами из утверждений и помечает источник в <code>note</code>. Команда <code>pfs calc all</code> строит 4 книги в <code>outputs/attachments/</code>; лист «Ввод» — редактируемые параметры, остальные листы — формулы. Чего нет в calcs.json — подставится пример с пометкой «ПРИМЕР». После правки повторите <code>calc</code> и <code>export --six-pager</code>, чтобы текст и Excel совпали.</p>
@@ -391,13 +395,37 @@ $ pfs export --six-pager    # report + attachments</pre>
 <script>
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function setLang(l){
+const I18N = {
+  ru: {
+    title: "Стратег Фабрики продуктов — ИИ-агент для руководителя продукта",
+    desc: "ИИ-агент: от размытого запроса до обоснованной продуктовой и коммуникационной стратегии — с доказательствами, вариантами, red team, Excel-расчётами и six-pager для комитета."
+  },
+  en: {
+    title: "Product Factory Strategist — AI agent for product directors",
+    desc: "An AI agent: from a vague request to an evidence-based product & communication strategy — claims registry, red team, Excel models and a committee six-pager."
+  }
+};
+function setLang(l, save){
   document.body.setAttribute('data-lang', l);
   document.documentElement.lang = l;
   document.getElementById('btn-ru').classList.toggle('active', l==='ru');
   document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-ru').setAttribute('aria-pressed', l==='ru');
+  document.getElementById('btn-en').setAttribute('aria-pressed', l==='en');
+  document.title = I18N[l].title;
+  var m = document.querySelector('meta[name="description"]');
+  if (m) m.setAttribute('content', I18N[l].desc);
+  if (save !== false) { try { localStorage.setItem('pfs-lang', l); } catch(e){} }
+  if (!REDUCED){
+    document.body.classList.add('lang-switching');
+    setTimeout(function(){ document.body.classList.remove('lang-switching'); }, 180);
+  }
 }
-setLang((navigator.language||'').startsWith('ru') ? 'ru' : 'en');
+(function initLang(){
+  var saved = null;
+  try { saved = localStorage.getItem('pfs-lang'); } catch(e){}
+  setLang(saved || ((navigator.language||'').startsWith('ru') ? 'ru' : 'en'), false);
+})();
 
 const bar = document.getElementById('bar');
 const layers = [...document.querySelectorAll('.orb')];
@@ -456,7 +484,7 @@ const LINES = [
   '$ git clone https://github.com/Fighter90/product-factory-strategist.git',
   '$ cd product-factory-strategist',
   '$ python3 -m tools.pfs doctor',
-  '\u2713 Python 3.12: ok \u00b7 pdftotext: \u0435\u0441\u0442\u044c \u00b7 \u043a\u0430\u0440\u0442 \u0432 \u0431\u0430\u0437\u0435 \u0437\u043d\u0430\u043d\u0438\u0439: 69',
+  '\u2713 Python 3.12: ok \u00b7 pdftotext: \u0435\u0441\u0442\u044c \u00b7 \u043a\u0430\u0440\u0442 \u0432 \u0431\u0430\u0437\u0435 \u0437\u043d\u0430\u043d\u0438\u0439: 72',
   '$ python3 -m unittest discover -s tests',
   '\u2713 Ran 21 tests \u2014 OK'
 ];

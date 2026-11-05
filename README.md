@@ -1,5 +1,7 @@
 # Стратег Фабрики продуктов
 
+**[RU](README.md) · [EN](README_EN.md)**
+
 ИИ-агент для руководителя цифрового продукта: от размытого запроса («почему падает удержание», «кому продавать
 новый сервис», «что сказать аудитории») — к **проверяемой** картине ситуации, содержательно разным вариантам
 и согласованным продуктовой и коммуникационной стратегиям. После решения агент хранит его основания, следит
@@ -12,8 +14,6 @@ Windsurf, Copilot.
 **Ссылки:** [Сайт документации RU/EN](https://strategyproduct.ru) · [HELP на русском](docs/HELP.md) ·
 [HELP in English](docs/HELP_EN.md) · [Реестр навыков](docs/SKILLS.md) · [CHANGELOG](CHANGELOG.md) ·
 [Release v1.0.0](https://github.com/Fighter90/product-factory-strategist/releases/tag/v1.0.0)
-
-English version: [README_EN.md](README_EN.md)
 
 ---
 

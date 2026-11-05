@@ -2,6 +2,19 @@
 
 Формат — Keep a Changelog; версионирование — SemVer.
 
+## 1.0.1 — 2026-11-05 (вечер)
+
+### Added
+- Workflow v2: шаг discovery (персоны/JTBD), библиотека вопросных блоков (`pfs questions`, `config/question_blocks.json`),
+  обязательные карты шага (`pfs step` печатает `kb.cards_for`).
+- 27 скилов product-skills + новые sdd/deck/deep-research — всего 41; docs/SKILLS.md.
+- База знаний 72 карты: Double Diamond, Lean Canvas, обзор фреймворков (RICE/ICE/WSJF, HADI, AARRR/HEART/Кано),
+  Feynman deep-research skill.
+- Домен strategyproduct.ru (cname + site/CNAME), GitHub Release v1.0.0 с whl/sdist assets.
+- README RU/EN v2 (mermaid-архитектура, модель данных, research framework), лендинг site/ RU/EN (параллакс,
+  i18n-переключатель), Lovable-проект документации.
+- kids-guard: второй сквозной прогон (5 вариантов A–E, red team, D001, six-pager, аудит 20/22).
+
 ## 1.0.0 — 2026-11-05
 
 ### Added
