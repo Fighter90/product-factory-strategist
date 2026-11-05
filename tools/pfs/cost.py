@@ -86,6 +86,9 @@ def record_session(pdir: Path, session_id: str, transcript: Path, since: str | N
     until = until or window.get("until")
     per_model = parse_transcript(transcript, since, until)
     data = core.read_json(pdir / "costs.json", {"sessions": {}, "manual": []})
+    prev = data["sessions"].get(session_id)
+    if prev and prev.get("models") == per_model and prev.get("since") == since and prev.get("until") == until:
+        return prev  # ничего не изменилось — файл не трогаем (нет лишних изменений в git)
     data["sessions"][session_id] = {"models": per_model, "usd": round(price(per_model), 4), "updated": core.now(),
                                     "stage": core.read_json(pdir / "state.json", {}).get("stage"), "since": since, "until": until}
     core.write_json(pdir / "costs.json", data)
