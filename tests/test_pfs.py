@@ -170,7 +170,9 @@ class CostTests(unittest.TestCase):
         s = cost.record_session(pdir, "s1", tr)
         expected = (1000 * 4 + 500 * 20 + 2000 * 0.2 + 1000 * 0.1 + 500 * 0.5 + 2000 * 0.01) / 1e6
         self.assertAlmostEqual(s["usd"], round(expected, 4), places=4)
-        cost.record_session(pdir, "s1", tr)  # повтор не удваивает
+        before = (pdir / "costs.json").read_text()
+        cost.record_session(pdir, "s1", tr)  # повтор не удваивает и не переписывает файл
+        self.assertEqual((pdir / "costs.json").read_text(), before)
         tr2 = Path(TMP) / "t2.jsonl"
         tr2.write_text("\n".join(json.dumps(r) for r in [
             {"timestamp": "2020-01-01T00:00:00Z", "message": {"id": "old", "model": "claude-opus-5-5", "usage": usage}},

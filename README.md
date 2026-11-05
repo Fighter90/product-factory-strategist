@@ -65,7 +65,8 @@ python3 -m unittest discover -s tests
 | Проекты | `projects/<slug>/` | Материалы, состояние и результаты каждой задачи — отдельно от знаний |
 
 Подробно: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · ключевые решения: [`docs/DECISIONS.md`](docs/DECISIONS.md) ·
-описание для жюри: [`docs/SUBMISSION.md`](docs/SUBMISSION.md) · сценарий видео: [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md)
+описание для жюри: [`docs/SUBMISSION.md`](docs/SUBMISSION.md) · сценарий видео: [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) ·
+вердикт проверки: [`docs/VERIFICATION.md`](docs/VERIFICATION.md)
 
 ---
 
