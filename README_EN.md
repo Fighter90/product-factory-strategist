@@ -263,9 +263,3 @@ site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
 tests/ (55) · demos: demo-antispam (done), kids-guard (live end-to-end run)
 ```
-
-## Transparency and cost
-
-`log.jsonl` — what was done; registries — what conclusions are based on; `pfs cost` — tokens and money
-(demo: $18.79; verifiable numbers 87% vs 0% in plain chat; independent rubric 19/22). Details:
-`docs/demo/comparison.md`.

@@ -264,9 +264,3 @@ docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIAN
                      VERIFICATION · docx/ · demo/ · lovable-brief…
 tests/               (55)
 ```
-
-## Прозрачность и стоимость
-
-Журнал `log.jsonl` — что сделано; реестры — на чём основаны выводы; `pfs cost` — токены и деньги
-(демо-проект: $18,79 ≈ 1 785 ₽; проверяемость чисел 87% против 0% у обычного чата; независимая рубрика
-19/22). Подробно — `docs/demo/comparison.md`.
