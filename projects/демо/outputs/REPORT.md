@@ -1,6 +1,6 @@
 # CVStart: стратегия и обоснование
 
-> Собрано 2026-11-07T00:06 командой `pfs export`. Теги [C###] — утверждения, [S###] — источники, [D###] — решения (см. приложения).
+> Собрано 2026-11-07T00:44 командой `pfs export`. Теги [C###] — утверждения, [S###] — источники, [D###] — решения (см. приложения).
 
 ## 00 · Бриф — CVStart: коммерческая версия и глобальный GTM
 
@@ -659,10 +659,11 @@ CAC $60; churn 8%/mo; fixed costs ~$1,500/mo):
 | 5 | CAC payback = CAC / CM | $60 / $21.75 | **2.76 ≈ 2.8 months** |
 | 6 | Break-even = fixed costs / CM | $1,500 / $21.75 = 68.97 | **≈ 69 paying users** |
 
-**Beta funnel calculation** (synthetic model [S008], seed=7, week-1 base = 3,000 visitors, 22%/wk
-growth — a method illustration, not a forecast):
-week-12 visitors = 3,000 × 1.22¹¹ ≈ **26,700** → signups = × 5.5% ≈ **1,470** →
-activation (first resume) = × 62% ≈ **910** → payment = × 3.3% with a 6%/wk uplift ≈ **53 paying** →
+**Beta funnel calculation** (synthetic model [S008], seed=7: starting base of 3,000 visitors,
+22%/wk growth, week value = base × 1.22^week; a method illustration, not a forecast):
+week-12 visitors = 3,000 × 1.22¹² ≈ **32,600** → signups = × 5.5% ≈ **1,793** →
+activation (first resume) = × 62% ≈ **1,111** → payment = × 4.8% (base 2.8% with a weekly
+6% uplift: 0.028 × 1.72) ≈ **53 paying** →
 MRR = 53 × $29 = **$1,537** → run-rate = $1,537 × 12 = **$18,444 ARR/yr**.
 Cross-check vs break-even: 53 < 69 — the beta does not yet cover fixed costs, which is exactly what
 the "continue at ≥ 40" criterion encodes, with scaling only after confirmation.
@@ -682,8 +683,7 @@ the "continue at ≥ 40" criterion encodes, with scaling only after confirmation
 CAC ≈ $60), paid channels only after churn ≤ 10% is confirmed by actuals.
 
 **Conclusion (inference).** At base assumptions the unit economics are healthy (4.53 ≥ 3, payback
-< 3 months) and break-even is reachable on organic traffic (69 paying ≈ 0.23% of the model funnel's
-signups); the safety margin is one parameter. Therefore: Unlimited $29 is the anchor tier, Pro $12
+< 3 months) and break-even is reachable on organic traffic (69 paying ≈ 0.21% of week-12 visitors — 32.6K in the model); the safety margin is one parameter. Therefore: Unlimited $29 is the anchor tier, Pro $12
 is the downgrade-retention path, and the annual plan (from [C018]) is the churn-reduction instrument
 switched on in wave 2.
 
@@ -908,10 +908,11 @@ churn 8%/мес; фиксированные ~$1 500/мес):
 | 5 | Окупаемость CAC = CAC / CM | $60 / $21,75 | **2,76 ≈ 2,8 мес** |
 | 6 | Брейк-евен = фиксированные / CM | $1 500 / $21,75 = 68,97 | **≈ 69 платящих** |
 
-**Расчёт воронки беты** (синтетическая модель [S008], seed=7, база нед. 1 = 3 000 посетителей,
-рост 22%/нед — методическая иллюстрация, не прогноз):
-посетители нед. 12 = 3 000 × 1,22¹¹ ≈ **26 700** → регистрации = × 5,5% ≈ **1 470** →
-активация (первое резюме) = × 62% ≈ **910** → оплата = × 3,3% с ростом 6%/нед ≈ **53 платящих** →
+**Расчёт воронки беты** (синтетическая модель [S008], seed=7: стартовая база 3 000 посетителей,
+рост 22%/нед, значение недели = база × 1,22^неделя; методическая иллюстрация, не прогноз):
+посетители нед. 12 = 3 000 × 1,22¹² ≈ **32 600** → регистрации = × 5,5% ≈ **1 793** →
+активация (первое резюме) = × 62% ≈ **1 111** → оплата = × 4,8% (базовые 2,8% с недельным
+аплифтом 6%: 0,028 × 1,72) ≈ **53 платящих** →
 MRR = 53 × $29 = **$1 537** → run-rate = $1 537 × 12 = **$18 444 ARR/год**.
 Сверка с брейк-евеном: 53 < 69 — бета ещё не покрывает фиксированные затраты, что и задано
 критерием «продолжить при ≥ 40» с масштабированием после подтверждения.
@@ -931,7 +932,7 @@ MRR = 53 × $29 = **$1 537** → run-rate = $1 537 × 12 = **$18 444 ARR/год*
 (PH/HN/SEO, CAC ≈ $60), платные каналы — только после подтверждения churn ≤ 10% фактом.
 
 **Вывод (умозаключение).** При базовых допущениях юнит-экономика здоровая (4,53 ≥ 3, окупаемость
-< 3 мес), брейк-евен достижим на органике (69 платящих ≈ 0,23% от регистраций модели воронки);
+< 3 мес), брейк-евен достижим на органике (69 платящих ≈ 0,21% от посетителей нед. 12 — 32,6 тыс по модели);
 запас прочности — один параметр. Следовательно: тир Unlimited $29 — якорный, Pro $12 — даун-грейд
 путь удержания, а годовой тариф (из [C018]) — инструмент снижения churn, который включается волной 2.
 
