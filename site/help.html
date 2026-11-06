@@ -164,6 +164,7 @@ body[data-lang=ru] [lang=en]{display:none}
     <a href="#h-phrases" lang="ru">Управляющие фразы</a><a href="#h-phrases" lang="en">Control phrases</a>
     <a href="#h-quickstart" lang="ru">Быстрый старт</a><a href="#h-quickstart" lang="en">Quick start</a>
     <a href="#h-first" lang="ru">Первый проект</a><a href="#h-first" lang="en">First project</a>
+    <a href="#h-demo" lang="ru">Демо ROSE ★</a><a href="#h-demo" lang="en">ROSE demo ★</a>
 
     <div class="cap" lang="ru">Процесс</div><div class="cap" lang="en">Process</div>
     <a href="#h-workflow" lang="ru">Устройство цикла</a><a href="#h-workflow" lang="en">Cycle overview</a>
@@ -288,7 +289,24 @@ $ pfs new "Why is retention dropping" "the request verbatim"</pre>
       <p lang="ru">Переключение между проектами — <code>pfs use &lt;slug&gt;</code>, список — <code>pfs list</code>, состояние — <code>pfs status</code>.</p>
       <p lang="en">Switch projects with <code>pfs use &lt;slug&gt;</code>, list them with <code>pfs list</code>, inspect state with <code>pfs status</code>.</p></div>
 
-    <div class="faq rv" id="h-workflow"><h3 lang="ru">Устройство цикла: 12 шагов и фазы</h3><h3 lang="en">The cycle: 12 steps and phases</h3>
+    
+    <div class="faq rv" id="h-demo"><h3 lang="ru">Демо ROSE: как это сделано и что посмотреть</h3><h3 lang="en">ROSE demo: how it was made and what to look at</h3>
+      <p lang="ru">Полный сквозной прогон агента на реальной задаче — <b>закрытый клуб ужинов ROSE</b> (rosedate.ru): 12 шагов за 18 минут, 5 вариантов, 20 возражений red team, обе стратегии, six-pager + 4 книги Excel, <b>check --strict 100/100</b>. Проект: <code>projects/демо/</code>; интерактивный разбор: <a href="demo.html">demo.html</a>.</p>
+      <p lang="en">A full end-to-end run on a real task — the ROSE closed dinner club (rosedate.ru): 12 steps in 18 minutes, 5 options, 20 red-team objections, both strategies, six-pager + 4 Excel workbooks, <b>check --strict 100/100</b>. Project: <code>projects/демо/</code>; interactive walkthrough: <a href="demo.html">demo.html</a>.</p>
+      <p lang="ru"><b>Что смотреть (по порядку):</b> <code>00_brief.md</code> → <code>01_research_plan.md</code> → <code>02_situation.md</code> → <code>03_options.md</code> (5 вариантов + red team) → <code>04/05</code> (стратегии) → <code>06_validation_plan.md</code> (пороги 90 дней) → <code>REPORT.md</code> и <b>SIX_PAGER.md / .pdf / .docx</b>; Excel — <code>outputs/attachments/</code>; исходные материалы — <code>материалы/</code> (4 PDF продукта); журнал — <code>log.jsonl</code> (96 записей).</p>
+      <p lang="en"><b>What to look at (in order):</b> 00_brief → 01_research_plan → 02_situation → 03_options (5 options + red team) → 04/05 (strategies) → 06_validation_plan (90-day thresholds) → REPORT.md and SIX_PAGER.md/.pdf/.docx; Excel in outputs/attachments/; source PDFs in материалы/; the action log is log.jsonl (96 entries).</p>
+      <p lang="ru"><b>Как повторить:</b></p>
+      <pre lang="ru">$ python3 -m tools.pfs use демо     # переключиться на демо
+$ python3 -m tools.pfs next        # что решать сейчас
+$ python3 -m tools.pfs check --strict
+# своя задача:
+$ python3 -m tools.pfs new "Название" "Запрос дословно"</pre>
+      <p lang="ru"><b>Сверка с заданием:</b> обязательный минимум (задача · материалы · исследование · ≥3 варианта с возражениями · обе стратегии · план проверки · workflow · порядок в знаниях · продолжение после перерыва · прозрачность) и дополнительный уровень (синтетика · медиа · данные · решения · пересмотр · маршрутизация · субагенты/хуки · MCP/CLI · устойчивость · переносимость · сравнение с чатом) — закрыты; полная таблица соответствия — в <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/README.md#демонстрационный-проект-rose--полный-разбор">README</a> и <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/COMPLIANCE.md">docs/COMPLIANCE.md</a>.</p>
+      <p lang="ru"><b>Ошибки по пути (честно):</b> Forbes отдал 0 знаков — текст сохранён вручную; сдвиг нумерации источников — 5 supersede; случайное замещение живого факта — чекер поймал, восстановлено (C024). Человек помогал на трёх паузах: бриф, выбор варианта B, утверждение решения.</p>
+      <p lang="en"><b>Mistakes along the way (honestly):</b> Forbes returned 0 chars — text saved manually; a source-numbering shift — 5 supersedes; an accidental supersede of a live fact — caught by the checker and restored (C024). The human helped at three pauses: brief, option choice, decision approval.</p>
+    </div>
+
+<div class="faq rv" id="h-workflow"><h3 lang="ru">Устройство цикла: 12 шагов и фазы</h3><h3 lang="en">The cycle: 12 steps and phases</h3>
       <p lang="ru">Цикл = 12 шагов в четырёх фазах двойного романа: <b>Discover</b> (0–3) → <b>Define</b> (4–6) → <b>Develop</b> (7–9) → <b>Deliver</b> (10–11). У каждого шага: обязательные карты знаний (<code>pfs step</code> печатает какие), вопросный блок (<code>pfs questions &lt;шаг&gt;</code>), ворота качества и артефакт на выходе. Прогресс виден одной строкой: <code>Шаг N/12 · research · источники S001–S009 · дальше: ситуация</code>. Шаги 0, 6 и 10 — паузы человека: бриф, выбор варианта, утверждение решения.</p>
       <p lang="en">The cycle is 12 steps in four double-diamond phases: <b>Discover</b> (0–3) → <b>Define</b> (4–6) → <b>Develop</b> (7–9) → <b>Deliver</b> (10–11). Each step has mandatory knowledge cards (<code>pfs step</code> prints them), a question block (<code>pfs questions &lt;step&gt;</code>), quality gates and an artifact. Progress shows in one line: <code>Step N/12 · research · sources S001–S009 · next: situation</code>. Steps 0, 6, 10 are human pauses: brief, option choice, decision approval.</p></div>
 
