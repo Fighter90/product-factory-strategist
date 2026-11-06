@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Стратег Фабрики продуктов — ИИ-агент для руководителя продукта</title>
 <meta name="description" content="ИИ-агент: от размытого запроса до обоснованной стратегии — с доказательствами, вариантами, red team, Excel-расчётами и six-pager для комитета.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234fd1c5'/%3E%3Cstop offset='1' stop-color='%238b7bff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%230b0f17'/%3E%3Cpath d='M8 10l8-4 8 4v8l-8 4-8-4z' fill='none' stroke='url(%23g)' stroke-width='2.4'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='url(%23g)'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='1' stop-color='%23818cf8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%230b0f17'/%3E%3Cpath d='M8 10l8-4 8 4v8l-8 4-8-4z' fill='none' stroke='url(%23g)' stroke-width='2.4'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='url(%23g)'/%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Стратег Фабрики продуктов — ИИ-агент для руководителя продукта">
 <meta property="og:description" content="ИИ-агент: от размытого запроса до обоснованной стратегии — с доказательствами, вариантами, red team, Excel-расчётами и six-pager для комитета.">
 <meta property="og:url" content="https://strategyproduct.ru/">
 <meta name="twitter:card" content="summary"><style>
 :root{
-  --bg:#070b13; --card:rgba(20,28,46,.72); --card2:rgba(24,34,54,.9);
-  --text:#eaf0fa; --muted:#9aa7bd; --line:rgba(90,110,160,.22);
-  --accent:#4fd1c5; --accent2:#8b7bff; --accent3:#38bdf8; --warn:#f6ad55; --ok:#48bb78;
-  --code:rgba(10,16,30,.8);
+  --bg:#05070f; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06);
+  --text:#eef2ff; --muted:#9aa7bd; --line:rgba(148,163,184,.16);
+  --accent:#2dd4bf; --accent2:#818cf8; --accent3:#f472b6; --warn:#f6ad55; --ok:#48bb78;
+  --code:rgba(8,12,24,.75);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -25,7 +25,9 @@ section,.hero,footer{scroll-margin-top:76px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden;transition:opacity .18s ease}
 body.lang-switching{opacity:.55}
-::selection{background:rgba(79,209,197,.35)}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(1200px 800px at 78% -12%,rgba(129,140,248,.11),transparent 62%),radial-gradient(1000px 760px at -12% 32%,rgba(45,212,191,.09),transparent 62%),radial-gradient(1100px 820px at 108% 92%,rgba(244,114,182,.07),transparent 62%)}
+::selection{background:rgba(45,212,191,.35)}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
 .wrap{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
@@ -33,11 +35,11 @@ a:hover{text-decoration:underline}
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform;animation:orbPulse 9s ease-in-out infinite}
 .aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;opacity:.32;filter:blur(110px);
-  background:conic-gradient(from 0deg at 32% 28%,rgba(79,209,197,.16),transparent 28%,rgba(139,123,255,.16) 52%,transparent 76%,rgba(56,189,248,.14));
+  background:conic-gradient(from 0deg at 32% 28%,rgba(45,212,191,.16),transparent 28%,rgba(129,140,248,.16) 52%,transparent 76%,rgba(244,114,182,.14));
   animation:auroraSpin 40s linear infinite}
-.orb.a{width:640px;height:640px;left:-160px;top:-180px;background:radial-gradient(circle,rgba(79,209,197,.34),transparent 65%)}
-.orb.b{width:720px;height:720px;right:-220px;top:16vh;background:radial-gradient(circle,rgba(139,123,255,.32),transparent 65%)}
-.orb.c{width:560px;height:560px;left:30vw;bottom:-220px;background:radial-gradient(circle,rgba(56,189,248,.22),transparent 65%)}
+.orb.a{width:640px;height:640px;left:-160px;top:-180px;background:radial-gradient(circle,rgba(45,212,191,.34),transparent 65%)}
+.orb.b{width:720px;height:720px;right:-220px;top:16vh;background:radial-gradient(circle,rgba(129,140,248,.32),transparent 65%)}
+.orb.c{width:560px;height:560px;left:30vw;bottom:-220px;background:radial-gradient(circle,rgba(244,114,182,.22),transparent 65%)}
 .bg-grid{position:absolute;inset:0;opacity:.5;animation:gridDrift 26s ease-in-out infinite;
   background-image:linear-gradient(rgba(120,140,190,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(120,140,190,.055) 1px,transparent 1px);
   background-size:56px 56px;
@@ -52,19 +54,24 @@ a:hover{text-decoration:underline}
     radial-gradient(1px 1px at 22% 84%,rgba(255,255,255,.3) 50%,transparent 51%)}
 .noise{position:absolute;inset:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
 
-#bar{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));box-shadow:0 0 12px rgba(139,123,255,.7)}
-header{position:sticky;top:0;z-index:50;background:rgba(7,11,19,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#bar{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));box-shadow:0 0 12px rgba(129,140,248,.7)}
+header{position:sticky;top:0;z-index:50;background:rgba(5,7,15,.66);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .nav{display:flex;align-items:center;gap:16px;padding:13px 0;flex-wrap:wrap}
-.logo{font-weight:800;font-size:17px;letter-spacing:.2px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo{font-weight:800;font-size:17px;letter-spacing:.2px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
 .nav a.nl{color:var(--muted);font-size:14px;position:relative}
-.nav a.nl::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s}
+.nav a.nl::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transition:width .25s}
 .nav a.nl:hover{color:var(--text);text-decoration:none}
+.nav a.nl.on{color:var(--accent)}
+.nav a.nl.on::after{width:100%}
 .nav a.nl:hover::after{width:100%}
 .lang{margin-left:auto;display:flex;gap:6px}
 .lang button{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:8px;cursor:pointer;font-size:13px;transition:.2s}
-.lang button.active{color:#070b13;background:linear-gradient(90deg,var(--accent),var(--accent2));border-color:transparent;font-weight:700}
+.lang button.active{color:#05070f;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));border-color:transparent;font-weight:700}
 
 .hero{position:relative;padding:110px 0 90px;overflow:hidden}
+.hero-art{position:absolute;inset:0;z-index:0;overflow:hidden}
+.hero-art img{width:100%;height:100%;object-fit:cover;opacity:.48;transform-origin:60% 40%;animation:kenburns 38s ease-in-out infinite alternate;
+  -webkit-mask-image:radial-gradient(ellipse 100% 92% at 50% 30%,#000 42%,transparent 100%);mask-image:radial-gradient(ellipse 100% 92% at 50% 30%,#000 42%,transparent 100%)}
 .hero .wrap{z-index:2}
 .badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--accent);border-radius:999px;padding:5px 16px;font-size:13px;margin-bottom:20px;animation:rise .8s .05s both}
 .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(72,187,120,.6);animation:pulse 2s infinite}
@@ -74,8 +81,8 @@ h1 .grad{background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 40%,va
 .cta{display:flex;gap:14px;flex-wrap:wrap;animation:rise .8s .35s both}
 .btn{display:inline-block;padding:12px 26px;border-radius:12px;font-weight:700;font-size:15px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .btn:hover{transform:translateY(-2px)}
-.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#070b13;box-shadow:0 8px 30px rgba(79,209,197,.28)}
-.btn.primary:hover{box-shadow:0 12px 44px rgba(139,123,255,.4)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));color:#05070f;box-shadow:0 8px 30px rgba(45,212,191,.28)}
+.btn.primary:hover{box-shadow:0 12px 44px rgba(129,140,248,.4)}
 .btn.primary::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.5) 50%,transparent 60%);transform:translateX(-120%);transition:transform .6s}
 .btn.primary:hover::after{transform:translateX(120%)}
 .btn.ghost{border:1px solid var(--line);color:var(--text);background:var(--card)}
@@ -86,30 +93,34 @@ h1 .grad{background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 40%,va
 
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:56px;animation:rise .8s .45s both}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;backdrop-filter:blur(8px);transition:transform .25s,border-color .25s}
-.stat:hover{transform:translateY(-4px);border-color:rgba(79,209,197,.5)}
-.stat b{font-size:30px;display:block;font-variant-numeric:tabular-nums;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat:hover{transform:translateY(-4px);border-color:rgba(45,212,191,.5)}
+.stat b{font-size:30px;display:block;font-variant-numeric:tabular-nums;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
 .stat span{color:var(--muted);font-size:13px}
 
 section{padding:72px 0;position:relative}
 section+section{border-top:1px solid rgba(90,110,160,.14)}
 h2{font-size:clamp(24px,3.2vw,32px);margin-bottom:18px;letter-spacing:-.4px;position:relative;padding-bottom:12px}
 h2::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;border-radius:2px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transform-origin:left}
+  background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transform:scaleX(0);transform-origin:left}
 .rv.in h2::after{transform:scaleX(1);transition:transform .9s cubic-bezier(.2,.6,.2,1) .25s}
 .lead{color:var(--muted);max-width:800px;margin-bottom:34px;overflow-wrap:anywhere}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;position:relative;z-index:1}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;backdrop-filter:blur(8px);position:relative;transition:border-color .3s,box-shadow .3s;transform-style:preserve-3d;will-change:transform}
-.card::before{content:"";position:absolute;inset:0;border-radius:16px;background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(79,209,197,.13),transparent 42%);opacity:0;transition:opacity .3s;pointer-events:none}
+.card::before{content:"";position:absolute;inset:0;border-radius:16px;background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(45,212,191,.13),transparent 42%);opacity:0;transition:opacity .3s;pointer-events:none}
 .card:hover::before{opacity:1}
-.card:hover{border-color:rgba(139,123,255,.55);box-shadow:0 18px 50px rgba(10,16,32,.55)}
+.card:hover{border-color:rgba(129,140,248,.55);box-shadow:0 18px 50px rgba(10,16,32,.55)}
 .card h3{font-size:16.5px;margin-bottom:8px}
 .card p{color:var(--muted);font-size:14.5px;overflow-wrap:anywhere}
+a.card{display:block;color:inherit;text-decoration:none}
+a.card:hover{text-decoration:none}
+.card .go{color:var(--accent);font-size:13px;font-weight:600;display:inline-block;margin-top:12px;transition:transform .2s}
+a.card:hover .go{transform:translateX(4px)}
 .card .tag{display:inline-block;font-size:12px;color:var(--accent);border:1px solid var(--line);border-radius:6px;padding:1px 9px;margin-bottom:12px;background:var(--code)}
 
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px 14px;counter-reset:step;margin-top:10px}
 .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;position:relative;backdrop-filter:blur(8px);transition:transform .25s,border-color .25s}
-.step:hover{transform:translateY(-4px);border-color:rgba(79,209,197,.5)}
-.step::before{counter-increment:step;content:counter(step);position:absolute;top:-11px;left:14px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#070b13;font-weight:800;font-size:12px;border-radius:8px;padding:2px 9px;box-shadow:0 4px 14px rgba(79,209,197,.35)}
+.step:hover{transform:translateY(-4px);border-color:rgba(45,212,191,.5)}
+.step::before{counter-increment:step;content:counter(step);position:absolute;top:-11px;left:14px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));color:#05070f;font-weight:800;font-size:12px;border-radius:8px;padding:2px 9px;box-shadow:0 4px 14px rgba(45,212,191,.35)}
 .step b{font-size:14px;display:block;margin-top:6px}
 .step span{color:var(--muted);font-size:13px}
 
@@ -133,10 +144,18 @@ td{padding:9px 12px;border:1px solid var(--line);color:var(--muted);vertical-ali
 .toc a{display:block;color:var(--muted);font-size:14px;padding:3px 0;break-inside:avoid}
 @media(max-width:700px){.toc{columns:1}.nav a.nl{display:none}}
 
+.ticker{position:relative;z-index:2;border-block:1px solid var(--line);background:rgba(255,255,255,.02);overflow:hidden;display:flex}
+.tk{display:flex;padding:10px 0;width:max-content;animation:tick 42s linear infinite;flex-shrink:0}
+.ticker:hover .tk{animation-play-state:paused}
+.tk span{white-space:nowrap;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;padding:0 22px;border-right:1px solid rgba(148,163,184,.12)}
+.tk b{color:var(--accent);font-weight:600}
+@keyframes tick{to{transform:translateX(-100%)}}
 .rv{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.6,.2,1),transform .55s cubic-bezier(.2,.6,.2,1)}
 .rv.in{opacity:1;transform:none}
 .d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}.d4{transition-delay:.28s}.d5{transition-delay:.35s}
 
+.spot{position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(640px circle at var(--mx,50%) var(--my,30%),rgba(45,212,191,.075),transparent 62%)}
 footer{border-top:1px solid var(--line);padding:38px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
 footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 
@@ -148,6 +167,7 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 @keyframes gridDrift{0%{background-position:0 0,0 0}50%{background-position:26px 14px,-26px -14px}100%{background-position:0 0,0 0}}
 @keyframes orbPulse{0%,100%{opacity:.5}50%{opacity:.62}}
 @keyframes auroraSpin{to{transform:rotate(360deg)}}
+@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.14) translateY(-2.5%)}}
 
 .arch-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .arch-scroll svg{min-width:900px}
@@ -163,6 +183,8 @@ body[data-lang=ru] [lang=en]{display:none}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .aurora{display:none}
+  .spot{display:none}
+  .hero-art img{animation:none}
   .rv{opacity:1;transform:none}
 }
 </style>
@@ -178,6 +200,7 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="noise"></div>
 </div>
 <div id="bar"></div>
+<div class="spot" aria-hidden="true"></div>
 
 <header><div class="wrap nav">
   <div class="logo">◈ Стратег Фабрики продуктов</div>
@@ -186,14 +209,14 @@ body[data-lang=ru] [lang=en]{display:none}
   <a class="nl" href="#sixpager" lang="ru">Six-pager</a><a class="nl" href="#sixpager" lang="en">Six-pager</a>
   <a class="nl" href="#architecture" lang="ru">Архитектура</a><a class="nl" href="#architecture" lang="en">Architecture</a>
   <a class="nl" href="#commands" lang="ru">Команды</a><a class="nl" href="#commands" lang="en">Commands</a>
-  <a class="nl" href="#help" lang="ru">Справка</a><a class="nl" href="#help" lang="en">Help</a>
+  <a class="nl" href="help.html" lang="ru">Справка</a><a class="nl" href="help.html" lang="en">Help</a>
   <div class="lang" role="group" aria-label="Language / Язык">
     <button id="btn-ru" onclick="setLang('ru')" aria-pressed="true">RU</button>
     <button id="btn-en" onclick="setLang('en')" aria-pressed="false">EN</button>
   </div>
 </div></header>
 
-<div class="hero"><div class="wrap">
+<div class="hero"><div class="hero-art" aria-hidden="true"><img src="assets/hero_aurora.jpg" alt=""></div><div class="wrap">
   <div class="badge" lang="ru"><span class="dot"></span>ИИ-агент · доказательная стратегия · человек в контуре</div>
   <div class="badge" lang="en"><span class="dot"></span>AI agent · evidence-based strategy · human in the loop</div>
   <h1 lang="ru">От размытого запроса — до <span class="grad">обоснованной стратегии</span>, которой можно доверять</h1>
@@ -217,6 +240,7 @@ body[data-lang=ru] [lang=en]{display:none}
 <div class="scroll-cue" lang="ru">листайте вниз<span></span></div>
 <div class="scroll-cue" lang="en">scroll down<span></span></div>
 </div>
+<div class="ticker" aria-hidden="true"><div class="tk"><span><b>$</b> pfs new</span><span><b>$</b> pfs route</span><span><b>$</b> pfs ask</span><span><b>$</b> pfs questions research</span><span><b>$</b> pfs source add &lt;url&gt;</span><span><b>$</b> pfs claim add --source S###</span><span><b>$</b> pfs check --strict</span><span><b>$</b> pfs kb search &quot;когорты&quot;</span><span><b>$</b> pfs data cohort file.csv</span><span><b>$</b> pfs calc all</span><span><b>$</b> pfs export --six-pager</span><span><b>$</b> pfs decision due</span></div><div class="tk"><span><b>$</b> pfs new</span><span><b>$</b> pfs route</span><span><b>$</b> pfs ask</span><span><b>$</b> pfs questions research</span><span><b>$</b> pfs source add &lt;url&gt;</span><span><b>$</b> pfs claim add --source S###</span><span><b>$</b> pfs check --strict</span><span><b>$</b> pfs kb search &quot;когорты&quot;</span><span><b>$</b> pfs data cohort file.csv</span><span><b>$</b> pfs calc all</span><span><b>$</b> pfs export --six-pager</span><span><b>$</b> pfs decision due</span></div></div>
 
 <section id="features"><div class="wrap">
   <h2 class="rv" lang="ru">Что умеет агент</h2><h2 class="rv" lang="en">What the agent does</h2>
@@ -295,40 +319,40 @@ $ pfs export --six-pager    # report + attachments</pre>
     <svg viewBox="0 0 1200 640" width="100%" role="img">
       <title>Архитектура агента / Agent architecture</title>
       <defs>
-        <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#4fd1c5"/></marker>
-        <marker id="ar-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8b7bff"/></marker>
-        <marker id="ar-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#38bdf8"/></marker>
-        <marker id="ar-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#4fd1c5"/></marker>
+        <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2dd4bf"/></marker>
+        <marker id="ar-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#818cf8"/></marker>
+        <marker id="ar-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#f472b6"/></marker>
+        <marker id="ar-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2dd4bf"/></marker>
       </defs>
 
       <!-- A: product director -->
-      <rect x="20" y="108" width="290" height="74" rx="12" fill="rgba(20,28,46,.5)" stroke="#4fd1c5" stroke-opacity=".75"/>
+      <rect x="20" y="108" width="290" height="74" rx="12" fill="rgba(20,28,46,.5)" stroke="#2dd4bf" stroke-opacity=".75"/>
       <text x="165" y="133" text-anchor="middle" font-size="13" font-weight="600" fill="#eaf0fa">Руководитель продукта</text>
       <text x="165" y="153" text-anchor="middle" font-size="11" fill="#9aa7bd">Product director · человек решает существенное</text>
       <text x="165" y="171" text-anchor="middle" font-size="10.5" fill="#9aa7bd">human decides</text>
 
       <!-- A -> B -->
-      <path d="M310 145H330" fill="none" stroke="#4fd1c5" stroke-width="1.6" marker-end="url(#ar-a)"/>
+      <path d="M310 145H330" fill="none" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#ar-a)"/>
       <text x="292" y="88" text-anchor="middle" font-size="11" fill="#9aa7bd">запрос · ответы</text>
       <text x="292" y="102" text-anchor="middle" font-size="11" fill="#9aa7bd">request · answers</text>
 
       <!-- B: LLM environment (frame group) -->
-      <rect x="330" y="40" width="390" height="200" rx="14" fill="rgba(20,28,46,.45)" stroke="#8b7bff" stroke-opacity=".8"/>
-      <text x="346" y="64" font-size="13" font-weight="700" fill="#8b7bff">LLM-среда / LLM environment</text>
-      <rect x="350" y="76" width="350" height="32" rx="7" fill="rgba(10,16,30,.65)" stroke="rgba(139,123,255,.45)"/>
+      <rect x="330" y="40" width="390" height="200" rx="14" fill="rgba(20,28,46,.45)" stroke="#818cf8" stroke-opacity=".8"/>
+      <text x="346" y="64" font-size="13" font-weight="700" fill="#818cf8">LLM-среда / LLM environment</text>
+      <rect x="350" y="76" width="350" height="32" rx="7" fill="rgba(10,16,30,.65)" stroke="rgba(129,140,248,.45)"/>
       <text x="525" y="97" text-anchor="middle" font-size="12" fill="#eaf0fa">AGENTS.md · 12 шагов / steps</text>
-      <rect x="350" y="116" width="350" height="32" rx="7" fill="rgba(10,16,30,.65)" stroke="rgba(139,123,255,.45)"/>
+      <rect x="350" y="116" width="350" height="32" rx="7" fill="rgba(10,16,30,.65)" stroke="rgba(129,140,248,.45)"/>
       <text x="525" y="137" text-anchor="middle" font-size="12" fill="#eaf0fa">skills 120</text>
-      <rect x="350" y="156" width="350" height="32" rx="7" fill="rgba(10,16,30,.65)" stroke="rgba(139,123,255,.45)"/>
+      <rect x="350" y="156" width="350" height="32" rx="7" fill="rgba(10,16,30,.65)" stroke="rgba(129,140,248,.45)"/>
       <text x="525" y="177" text-anchor="middle" font-size="12" fill="#eaf0fa">subagents 8 · hooks 4</text>
 
       <!-- B -> C -->
-      <path d="M520 240V300" fill="none" stroke="#4fd1c5" stroke-width="1.6" marker-end="url(#ar-a)"/>
+      <path d="M520 240V300" fill="none" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#ar-a)"/>
       <text x="532" y="272" font-size="11" fill="#9aa7bd">CLI pfs · MCP</text>
 
       <!-- C: tools/pfs core -->
-      <rect x="450" y="300" width="340" height="316" rx="14" fill="rgba(20,28,46,.55)" stroke="#4fd1c5" stroke-width="1.6"/>
-      <text x="462" y="325" font-size="13.5" font-weight="700" fill="#4fd1c5">tools/pfs — CLI + MCP</text>
+      <rect x="450" y="300" width="340" height="316" rx="14" fill="rgba(20,28,46,.55)" stroke="#2dd4bf" stroke-width="1.6"/>
+      <text x="462" y="325" font-size="13.5" font-weight="700" fill="#2dd4bf">tools/pfs — CLI + MCP</text>
       <rect x="462" y="336" width="316" height="28" rx="7" fill="rgba(10,16,30,.7)" stroke="rgba(90,110,160,.4)"/>
       <text x="620" y="354" text-anchor="middle" font-size="11" fill="#eaf0fa" textLength="300" lengthAdjust="spacingAndGlyphs">sources S### — дедуп · инъекции / dedup · injections</text>
       <rect x="462" y="376" width="316" height="28" rx="7" fill="rgba(10,16,30,.7)" stroke="rgba(90,110,160,.4)"/>
@@ -343,44 +367,44 @@ $ pfs export --six-pager    # report + attachments</pre>
       <text x="620" y="554" text-anchor="middle" font-size="11" fill="#eaf0fa">decisions D###</text>
       <rect x="462" y="576" width="316" height="28" rx="7" fill="rgba(10,16,30,.7)" stroke="rgba(90,110,160,.4)"/>
       <text x="620" y="594" text-anchor="middle" font-size="11" fill="#eaf0fa">monitoring</text>
-      <path d="M620 365V372" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
-      <path d="M620 405V412" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
-      <path d="M620 445V452" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
-      <path d="M620 485V492" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
-      <path d="M620 525V532" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
-      <path d="M620 565V572" fill="none" stroke="#4fd1c5" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 365V372" fill="none" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 405V412" fill="none" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 445V452" fill="none" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 485V492" fill="none" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 525V532" fill="none" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#ar-s)"/>
+      <path d="M620 565V572" fill="none" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#ar-s)"/>
 
       <!-- D: knowledge base -->
-      <rect x="870" y="180" width="300" height="170" rx="12" fill="rgba(20,28,46,.5)" stroke="#38bdf8" stroke-opacity=".8"/>
-      <text x="886" y="204" font-size="13" font-weight="700" fill="#38bdf8">knowledge/ — 72 карты / cards</text>
+      <rect x="870" y="180" width="300" height="170" rx="12" fill="rgba(20,28,46,.5)" stroke="#f472b6" stroke-opacity=".8"/>
+      <text x="886" y="204" font-size="13" font-weight="700" fill="#f472b6">knowledge/ — 72 карты / cards</text>
       <text x="886" y="230" font-size="11.5" fill="#9aa7bd">стратегия / strategy · экономика / economics</text>
       <text x="886" y="252" font-size="11.5" fill="#9aa7bd">продукт / product · UX · данные / data</text>
       <text x="886" y="274" font-size="11.5" fill="#9aa7bd">платформы / platforms · Gen AI</text>
 
       <!-- C <-> D -->
-      <path d="M790 322H870" fill="none" stroke="#38bdf8" stroke-width="1.5" marker-start="url(#ar-b)" marker-end="url(#ar-b)"/>
+      <path d="M790 322H870" fill="none" stroke="#f472b6" stroke-width="1.5" marker-start="url(#ar-b)" marker-end="url(#ar-b)"/>
       <text x="830" y="314" text-anchor="middle" font-size="11" fill="#9aa7bd">kb search</text>
 
       <!-- E: integrations -->
-      <rect x="870" y="420" width="300" height="110" rx="12" fill="rgba(20,28,46,.5)" stroke="#8b7bff" stroke-opacity=".8"/>
-      <text x="886" y="444" font-size="13" font-weight="700" fill="#8b7bff">Интеграции / Integrations</text>
+      <rect x="870" y="420" width="300" height="110" rx="12" fill="rgba(20,28,46,.5)" stroke="#818cf8" stroke-opacity=".8"/>
+      <text x="886" y="444" font-size="13" font-weight="700" fill="#818cf8">Интеграции / Integrations</text>
       <text x="886" y="470" font-size="11.5" fill="#9aa7bd">Linear · Lovable · Feynman · REA</text>
       <text x="886" y="492" font-size="11.5" fill="#9aa7bd">Higgsfield · officecli · GitHub Pages</text>
 
       <!-- E -> B (dashed, MCP) -->
-      <path d="M1170 475H1190V28H420V40" fill="none" stroke="#8b7bff" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ar-p)"/>
-      <text x="980" y="20" text-anchor="middle" font-size="11" fill="#8b7bff">MCP</text>
+      <path d="M1170 475H1190V28H420V40" fill="none" stroke="#818cf8" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ar-p)"/>
+      <text x="980" y="20" text-anchor="middle" font-size="11" fill="#818cf8">MCP</text>
 
       <!-- F: outputs -->
-      <rect x="30" y="545" width="380" height="70" rx="12" fill="rgba(20,28,46,.5)" stroke="#38bdf8" stroke-opacity=".8"/>
-      <text x="46" y="569" font-size="13" font-weight="700" fill="#38bdf8">outputs/</text>
+      <rect x="30" y="545" width="380" height="70" rx="12" fill="rgba(20,28,46,.5)" stroke="#f472b6" stroke-opacity=".8"/>
+      <text x="46" y="569" font-size="13" font-weight="700" fill="#f472b6">outputs/</text>
       <text x="46" y="591" font-size="12" fill="#9aa7bd">REPORT · SIX_PAGER · deck.html · 4 Excel</text>
 
       <!-- C -> F -->
-      <path d="M450 580H410" fill="none" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#ar-b)"/>
+      <path d="M450 580H410" fill="none" stroke="#f472b6" stroke-width="1.5" marker-end="url(#ar-b)"/>
 
       <!-- F -> B loop (dashed, resume) -->
-      <path d="M220 545V260H470V240" fill="none" stroke="#8b7bff" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ar-p)"/>
+      <path d="M220 545V260H470V240" fill="none" stroke="#818cf8" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ar-p)"/>
       <text x="232" y="380" font-size="11" fill="#9aa7bd">продолжение после перерыва</text>
       <text x="232" y="396" font-size="11" fill="#9aa7bd">resume after a break</text>
     </svg>
@@ -448,76 +472,15 @@ $ pfs export --six-pager    # report + attachments</pre>
 
 <section id="help"><div class="wrap">
   <h2 class="rv" lang="ru">Справка</h2><h2 class="rv" lang="en">Help</h2>
-  <div class="toc rv d1">
-    <a href="#h-communicate" lang="ru">Как общаться с агентом</a><a href="#h-communicate" lang="en">Talking to the agent</a>
-    <a href="#h-workflow" lang="ru">Что происходит на каждом шаге</a><a href="#h-workflow" lang="en">What happens at each step</a>
-    <a href="#h-excel" lang="ru">Excel-расчёты и calcs.json</a><a href="#h-excel" lang="en">Excel models and calcs.json</a>
-    <a href="#h-sixpager-flow" lang="ru">Six-pager за 5 шагов</a><a href="#h-sixpager-flow" lang="en">Six-pager in 5 steps</a>
-    <a href="#h-resume" lang="ru">Продолжение после перерыва</a><a href="#h-resume" lang="en">Resuming after a break</a>
-    <a href="#h-environments" lang="ru">Среды: Claude Code, Cursor, Lovable…</a><a href="#h-environments" lang="en">Environments: Claude Code, Cursor, Lovable…</a>
-    <a href="#h-revise" lang="ru">Новые данные и пересмотр</a><a href="#h-revise" lang="en">New data and revisions</a>
-    <a href="#h-security" lang="ru">Безопасность и данные</a><a href="#h-security" lang="en">Security and data</a>
-    <a href="#h-skills" lang="ru">Навыки: структура и вызов</a><a href="#h-skills" lang="en">Skills: structure and invocation</a>
-    <a href="#h-trouble" lang="ru">Частые проблемы</a><a href="#h-trouble" lang="en">Troubleshooting</a>
+  <p class="lead rv d1" lang="ru">Полная документация — на отдельной странице: как общаться с агентом, что происходит на каждом шаге, Excel-модели, продолжение после перерыва, среды, безопасность, навыки и частые проблемы — с поиском по странице.</p>
+  <p class="lead rv d1" lang="en">Full documentation lives on a dedicated page: talking to the agent, what happens at each step, Excel models, resuming after a break, environments, security, skills and troubleshooting — with in-page search.</p>
+  <div class="grid">
+    <a class="card rv" href="help.html#h-communicate"><span class="tag" lang="ru">общение</span><span class="tag" lang="en">talk</span><h3 lang="ru">Как общаться с агентом</h3><h3 lang="en">Talking to the agent</h3><p lang="ru">Управляющие фразы: «стоп», «уточни: …», «что решать сейчас», «собери six-pager».</p><p lang="en">Control phrases: "stop", "clarify: …", "what should I decide now", "build the six-pager".</p><span class="go" lang="ru">Открыть →</span><span class="go" lang="en">Open →</span></a>
+    <a class="card rv d1" href="help.html#h-workflow"><span class="tag">12</span><h3 lang="ru">Что происходит на каждом шаге</h3><h3 lang="en">What happens at each step</h3><p lang="ru">От брифа до мониторинга: кто решает, какие документы появляются.</p><p lang="en">From brief to monitoring: who decides, which documents appear.</p><span class="go" lang="ru">Открыть →</span><span class="go" lang="en">Open →</span></a>
+    <a class="card rv d2" href="help.html#h-excel"><span class="tag">Excel</span><h3 lang="ru">Excel-модели и six-pager</h3><h3 lang="en">Excel models and six-pager</h3><p lang="ru">calcs.json, пересчёт формул, сверка чисел текста и книг.</p><p lang="en">calcs.json, formula recalculation, matching text and workbook numbers.</p><span class="go" lang="ru">Открыть →</span><span class="go" lang="en">Open →</span></a>
+    <a class="card rv d3" href="help.html#h-trouble"><span class="tag">FAQ</span><h3 lang="ru">Частые проблемы</h3><h3 lang="en">Troubleshooting</h3><p lang="ru">Симптом → решение: источники, домены, Excel, среды.</p><p lang="en">Symptom → fix: sources, domains, Excel, environments.</p><span class="go" lang="ru">Открыть →</span><span class="go" lang="en">Open →</span></a>
   </div>
-
-  <div class="faq rv" id="h-communicate"><h3 lang="ru">Как общаться с агентом</h3><h3 lang="en">Talking to the agent</h3>
-    <p lang="ru">Пишите обычным языком, как коллеге: опишите задачу, ответьте на вопросы, выберите вариант. Управляющие фразы: <b>«стоп»</b> — пауза; <b>«уточни: …»</b> — скорректировать задачу; <b>«переделай раздел X»</b> — переработать только затронутое; <b>«собери six-pager»</b>, <b>«пересчитай Excel»</b>, <b>«что решать сейчас»</b> (decision due), <b>«что затронет новый источник»</b> (impact). Агент не задаёт больше трёх вопросов за раз и всегда объясняет, чего ему не хватает.</p>
-    <p lang="en">Write in plain language as to a colleague: describe the task, answer questions, pick options. Control phrases: <b>"stop"</b> — pause; <b>"clarify: …"</b> — adjust; <b>"redo section X"</b> — rework only the affected part; <b>"build the six-pager"</b>, <b>"recalculate Excel"</b>, <b>"what should I decide now"</b> (decision due), <b>"what will this new source affect"</b> (impact). The agent never asks more than three questions at once and always states what it is missing.</p></div>
-
-  <div class="faq rv" id="h-workflow"><h3 lang="ru">Что происходит на каждом шаге</h3><h3 lang="en">What happens at each step</h3>
-    <p lang="ru">0 · Бриф — до 3 вопросов (решение, цель, ограничения) → <code>00_brief.md</code>, вы подтверждаете. 1 · Источники — файлы и сайты → <code>S###</code>. 2 · Исследование — план «вопрос → если да/нет», расчёты, интервью (ИИ-респонденты дают только гипотезы). 3 · Дискавери — персоны, JTBD, альтернативы пользователя. 4 · Ситуация — что известно, откуда, чего не знаем. 5 · Варианты — ≥3 содержательно разных, каждый с возражениями red team. 6 · Выбор — <span class="pause">вы решаете</span>. 7 · Стратегии — продуктовая и коммуникационная, обещания сверяются с продуктом. 8 · План проверки — метрика, база, срок, контрметрики. 9 · Review — автопроверка <code>pfs check</code>, оценка по рубрике, six-pager. 10 · Решение — <span class="pause">вы утверждаете</span>; основания и обязательства фиксируются. 11 · Мониторинг — сроки и пересмотр при новых данных (шаги 0–11).</p>
-    <p lang="en">0 · Brief — up to 3 questions (decision, goal, constraints) → <code>00_brief.md</code>, you approve. 1 · Sources — files and pages → <code>S###</code>. 2 · Research — a "question → if yes/no" plan, calculations, interviews (AI respondents yield hypotheses only). 3 · Discovery — personas, JTBD, user alternatives. 4 · Situation — known / unknown / contradictions. 5 · Options — ≥3 substantively distinct, each with red-team objections. 6 · Choice — <span class="pause">you decide</span>. 7 · Strategies — product and communication; promises checked against the product. 8 · Validation — metric, baseline, duration, counter-metrics. 9 · Review — <code>pfs check</code>, rubric scoring, six-pager. 10 · Decision — <span class="pause">you approve</span>; grounds and commitments recorded. 11 · Monitoring — deadlines and revisions on new data (steps 0–11).</p></div>
-
-  <div class="faq rv" id="h-excel"><h3 lang="ru">Excel-расчёты и calcs.json</h3><h3 lang="en">Excel models and calcs.json</h3>
-    <p lang="ru">Параметры живут в <code>projects/&lt;slug&gt;/calcs.json</code>: секции <code>unit_econ</code> (arpu, vc_share, cac, churn_month), <code>growth</code> (mau_start, conv_order, aov, take_rate…), <code>cohort</code> (sizes, retention), <code>market</code> (pam, доли). Агент заполняет их числами из утверждений и помечает источник в <code>note</code>. Команда <code>pfs calc all</code> строит 4 книги в <code>outputs/attachments/</code>; лист «Ввод» — редактируемые параметры, остальные листы — формулы. Чего нет в calcs.json — подставится пример с пометкой «ПРИМЕР». После правки повторите <code>calc</code> и <code>export --six-pager</code>, чтобы текст и Excel совпали.</p>
-    <p lang="en">Parameters live in <code>projects/&lt;slug&gt;/calcs.json</code>: sections <code>unit_econ</code> (arpu, vc_share, cac, churn_month), <code>growth</code> (mau_start, conv_order, aov, take_rate…), <code>cohort</code> (sizes, retention), <code>market</code> (pam, shares). The agent fills them from the claim registry and marks sources in <code>note</code>. <code>pfs calc all</code> builds 4 workbooks into <code>outputs/attachments/</code>; the Input sheet holds editable parameters, other sheets hold formulas. Missing values fall back to examples marked "EXAMPLE". After edits rerun <code>calc</code> and <code>export --six-pager</code> so text and Excel match.</p></div>
-
-  <div class="faq rv" id="h-sixpager-flow"><h3 lang="ru">Six-pager за 5 шагов</h3><h3 lang="en">Six-pager in 5 steps</h3>
-    <p lang="ru">1 · Дождитесь шагов situation…validation (документы 02/03/04/06). 2 · Скажите «собери six-pager» — агент заполнит calcs.json из C### и запустит расчёты субагентом <b>в фоне</b>. 3 · Получите <code>outputs/SIX_PAGER.md</code> + 4 xlsx. 4 · Откройте Excel и замените допущения на фактические значения — формулы пересчитаются. 5 · Сверьте числа текста и книг; при правках — <code>pfs calc all</code> и <code>pfs export --six-pager</code>.</p>
-    <p lang="en">1 · Wait for situation…validation steps (documents 02/03/04/06). 2 · Say "build the six-pager" — the agent fills calcs.json from C### and runs calculations in a <b>background subagent</b>. 3 · You get <code>outputs/SIX_PAGER.md</code> + 4 xlsx. 4 · Open Excel and replace assumptions with actual figures — formulas recalculate. 5 · Match text and workbook numbers; after edits run <code>pfs calc all</code> and <code>pfs export --six-pager</code>.</p></div>
-
-  <div class="faq rv" id="h-resume"><h3 lang="ru">Продолжение после перерыва</h3><h3 lang="en">Resuming after a break</h3>
-    <p lang="ru">Всё состояние — в файлах <code>projects/&lt;slug&gt;/</code>. Откройте новый чат в папке репозитория: хук SessionStart сам подаст агенту статус и «что решать сейчас». В средах без хуков напишите: «прочитай AGENTS.md и выполни <code>pfs status</code>». Перенос в другую среду — скопируйте папку проекта или git push/pull.</p>
-    <p lang="en">All state lives in <code>projects/&lt;slug&gt;/</code> files. Open a new chat in the repo folder: the SessionStart hook feeds the agent its status and "what to decide now". In hook-less environments write: "read AGENTS.md and run <code>pfs status</code>". Moving environments: copy the project folder or git push/pull.</p></div>
-
-  <div class="faq rv" id="h-environments"><h3 lang="ru">Среды</h3><h3 lang="en">Environments</h3>
-    <p lang="ru"><b>Claude Code</b> — полный опыт: навыки, субагенты, хуки, автостоимость. <b>Cursor</b> — правило <code>.cursor/rules</code>, MCP из <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — читают <code>AGENTS.md</code>; хуков нет — начните с <code>pfs status</code>. <b>Linear</b>: ключ в <code>.env</code> (не коммитится), сервер <code>npx mcp-server-linear</code>. <b>Lovable</b>: MCP-сервер <code>https://mcp.lovable.dev</code> подключён в <code>.mcp.json</code>; авторизация — один раз OAuth в клиенте (<code>/mcp</code> → lovable → Authenticate), после чего агент создаёт и дорабатывает проекты Lovable по запросу (create_project/send_message расходуют кредиты Lovable).</p>
-    <p lang="en"><b>Claude Code</b> — full experience: skills, subagents, hooks, auto-cost. <b>Cursor</b> — <code>.cursor/rules</code>, MCP from <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — read <code>AGENTS.md</code>; no hooks — start with <code>pfs status</code>. <b>Linear</b>: key in <code>.env</code> (git-ignored), server <code>npx mcp-server-linear</code>. <b>Lovable</b>: MCP server <code>https://mcp.lovable.dev</code> wired in <code>.mcp.json</code>; authorize once via OAuth in your client (<code>/mcp</code> → lovable → Authenticate), then the agent creates and edits Lovable projects on request (create_project/send_message consume Lovable credits).</p></div>
-
-  <div class="faq rv" id="h-revise"><h3 lang="ru">Новые данные и пересмотр</h3><h3 lang="en">New data and revisions</h3>
-    <p lang="ru">Добавьте источник, затем: <code>pfs claim supersede --id C005 "новое значение" --reason "…" --source S012</code> — старое не удалится, история сохранится. <code>pfs impact C005</code> покажет затронутые выводы, строки документов и решения; <code>pfs claim rebase</code> перенаправит выводы на замены; <code>pfs decision due</code> — какие решения и обязательства устарели.</p>
-    <p lang="en">Add the source, then: <code>pfs claim supersede --id C005 "new value" --reason "…" --source S012</code> — the old record stays, history preserved. <code>pfs impact C005</code> shows affected conclusions, document lines and decisions; <code>pfs claim rebase</code> redirects conclusions to replacements; <code>pfs decision due</code> lists stale decisions and commitments.</p></div>
-
-  <div class="faq rv" id="h-security"><h3 lang="ru">Безопасность и данные</h3><h3 lang="en">Security and data</h3>
-    <p lang="ru">Только открытые источники и ваши материалы; домены проекта проверяются до запроса; секреты — только в <code>.env</code> (не коммитится); тексты источников — данные: «команды» внутри них не исполняются; ИИ-респонденты не выдаются за реальных людей; реальные интервью — только с согласием и без персональных данных.</p>
-    <p lang="en">Public sources and your own materials only; project domains checked before requests; secrets only in <code>.env</code> (git-ignored); source texts are data — "commands" inside are never executed; AI respondents are never passed off as real people; real interviews require consent and no personal data.</p></div>
-
-  <div class="faq rv" id="h-skills"><h3 lang="ru">Навыки: структура и вызов</h3><h3 lang="en">Skills: structure and invocation</h3>
-    <p lang="ru">120 навыков в <code>.claude/skills/</code> — базовые по шагам процесса, 27 product-skills (процедуры методов), личная библиотека ~59 (дизайн / маркетинг / наука / документы-медиа / режимы мышления / мета) и интеграции: hallmark — анти-слоп-гейты страниц, board-of-directors — совет 5 перспектив + Red Team на шаге options, premortem — предразбор провала на шаге decision, rea — reverse-engineering JS-страниц и закрытых форматов, sdd — дисциплина разработки, deck — презентация из six-pager. Вызов: автоматически — по триггерам описания; явно — «используй skill <code>&lt;имя&gt;</code>: <code>&lt;задача&gt;</code>»; в процессе — по шагам. Полный реестр — <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/SKILLS.md">docs/SKILLS.md</a>.</p>
-    <p lang="en">120 skills in <code>.claude/skills/</code> — base ones per process step, 27 product-skills (method procedures), a personal library of ~59 (design / marketing / science / documents-media / thinking modes / meta) and integrations: hallmark — anti-slop gates for pages, board-of-directors — a council of 5 perspectives + Red Team at the options step, premortem — a failure pre-mortem at the decision step, rea — reverse-engineering of JS-rendered pages and closed file formats, sdd — development discipline, deck — a presentation built from the six-pager. Invocation: automatically — via description triggers; explicitly — "use skill <code>&lt;name&gt;</code>: <code>&lt;task&gt;</code>"; within the process — per step. Full registry — <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/SKILLS.md">docs/SKILLS.md</a>.</p></div>
-
-  <div class="faq rv" id="h-trouble"><h3 lang="ru">Частые проблемы</h3><h3 lang="en">Troubleshooting</h3>
-    <table lang="ru">
-      <tr><th>Симптом</th><th>Что делать</th></tr>
-      <tr><td>«Факт без источника недопустим»</td><td>Так и задумано: добавьте источник или запишите как гипотезу</td></tr>
-      <tr><td>«Домен не входит в разрешённые»</td><td>Правьте <code>project.json → allowed_sources</code> или добавьте с <code>--force --note</code></td></tr>
-      <tr><td>«Извлечено 0 знаков»</td><td>Сайт на JavaScript: сохраните текст вручную → <code>--text-file --url</code></td></tr>
-      <tr><td>Excel «пустой»</td><td>Это кэш предпросмотра: формулы посчитаются при открытии</td></tr>
-      <tr><td>Скилл/субагент не появился</td><td>Перезапустите сессию Claude Code</td></tr>
-      <tr><td>Числа six-pager ≠ Excel</td><td>Повторите <code>pfs calc all</code> и <code>pfs export --six-pager</code></td></tr>
-    </table>
-    <table lang="en">
-      <tr><th>Symptom</th><th>Fix</th></tr>
-      <tr><td>"A fact without a source is not allowed"</td><td>By design: add a source or record as hypothesis</td></tr>
-      <tr><td>"Domain not allowed"</td><td>Edit <code>project.json → allowed_sources</code> or use <code>--force --note</code></td></tr>
-      <tr><td>"Extracted 0 chars"</td><td>JS-rendered page: save text manually → <code>--text-file --url</code></td></tr>
-      <tr><td>Excel looks "empty"</td><td>Cached preview: formulas compute on open</td></tr>
-      <tr><td>Skill/subagent missing</td><td>Restart the Claude Code session</td></tr>
-      <tr><td>Six-pager numbers ≠ Excel</td><td>Rerun <code>pfs calc all</code> and <code>pfs export --six-pager</code></td></tr>
-    </table>
-    <p lang="ru">Полная справка: <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md">docs/HELP.md</a> (RU) · <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md">docs/HELP_EN.md</a> (EN) · docx-версии в <code>docs/docx/</code>.</p>
-    <p lang="en">Full manual: <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md">docs/HELP_EN.md</a> (EN) · <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md">docs/HELP.md</a> (RU) · docx versions in <code>docs/docx/</code>.</p></div>
+  <p class="rv d2" style="margin-top:24px"><a class="btn primary" href="help.html" lang="ru">Открыть полную справку</a><a class="btn primary" href="help.html" lang="en">Open the full help</a></p>
 </div></section>
 
 <footer><div class="wrap">
@@ -531,8 +494,8 @@ $ pfs export --six-pager    # report + attachments</pre>
     <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/README.md" lang="ru">README (RU)</a>
     <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/README_EN.md" lang="ru">README (EN)</a>
     <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/README.md" lang="en">README</a> ·
-    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md" lang="ru">Справка</a>
-    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md" lang="en">Help</a>
+    <a href="help.html" lang="ru">Справка</a>
+    <a href="help.html" lang="en">Help</a>
   </div>
 </div></footer>
 
@@ -623,6 +586,20 @@ if (!REDUCED && matchMedia('(pointer:fine)').matches){
     card.addEventListener('mouseleave', () => { card.style.transform = ''; });
   });
 }
+
+if (!REDUCED && matchMedia('(pointer:fine)').matches){
+  const spot = document.querySelector('.spot');
+  addEventListener('pointermove', e => {
+    spot.style.setProperty('--mx', e.clientX + 'px');
+    spot.style.setProperty('--my', e.clientY + 'px');
+  }, {passive:true});
+}
+
+const spy = new IntersectionObserver(es => es.forEach(e => {
+  const l = document.querySelector('.nav a.nl[href="#' + e.target.id + '"]');
+  if (l) l.classList.toggle('on', e.isIntersecting);
+}), {rootMargin:'-42% 0px -52% 0px'});
+document.querySelectorAll('section[id]').forEach(s => spy.observe(s));
 
 const LINES = [
   '$ git clone https://github.com/Fighter90/product-factory-strategist.git',

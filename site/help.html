@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Справка — Стратег Фабрики продуктов</title>
+<meta name="description" content="Полная справка ИИ-агента «Стратег Фабрики продуктов»: общение с агентом, шаги процесса, Excel-модели, продолжение после перерыва, среды, безопасность, навыки, частые проблемы.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='1' stop-color='%23818cf8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%2305070f'/%3E%3Cpath d='M8 10l8-4 8 4v8l-8 4-8-4z' fill='none' stroke='url(%23g)' stroke-width='2.4'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='url(%23g)'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Справка — Стратег Фабрики продуктов">
+<meta property="og:url" content="https://strategyproduct.ru/help.html">
+<style>
+:root{
+  --bg:#05070f; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06);
+  --text:#eef2ff; --muted:#9aa7bd; --line:rgba(148,163,184,.16);
+  --accent:#2dd4bf; --accent2:#818cf8; --accent3:#f472b6; --warn:#f6ad55; --ok:#48bb78;
+  --code:rgba(8,12,24,.75);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+[id]{scroll-margin-top:92px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden;transition:opacity .18s ease}
+body.lang-switching{opacity:.55}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(1200px 800px at 78% -12%,rgba(129,140,248,.10),transparent 62%),radial-gradient(1000px 760px at -12% 32%,rgba(45,212,191,.08),transparent 62%),radial-gradient(1100px 820px at 108% 92%,rgba(244,114,182,.06),transparent 62%)}
+::selection{background:rgba(45,212,191,.3)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;opacity:.26;filter:blur(110px);
+  background:conic-gradient(from 0deg at 32% 28%,rgba(45,212,191,.15),transparent 28%,rgba(129,140,248,.15) 52%,transparent 76%,rgba(244,114,182,.12));
+  animation:auroraSpin 44s linear infinite}
+.noise{position:absolute;inset:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+
+#bar{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));box-shadow:0 0 12px rgba(129,140,248,.7)}
+header{position:sticky;top:0;z-index:50;background:rgba(5,7,15,.66);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:16px;padding:13px 0;flex-wrap:wrap}
+.logo{font-weight:800;font-size:17px;letter-spacing:.2px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav a.nl{color:var(--muted);font-size:14px;position:relative}
+.nav a.nl::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transition:width .25s}
+.nav a.nl:hover{color:var(--text);text-decoration:none}
+.nav a.nl:hover::after{width:100%}
+.nav a.nl.on{color:var(--accent)}
+.nav a.nl.on::after{width:100%}
+.lang{margin-left:auto;display:flex;gap:6px}
+.lang button{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:8px;cursor:pointer;font-size:13px;transition:.2s}
+.lang button.active{color:#05070f;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));border-color:transparent;font-weight:700}
+
+.help-hero{position:relative;padding:72px 0 56px;overflow:hidden;border-bottom:1px solid var(--line)}
+.help-art{position:absolute;inset:0;z-index:0;overflow:hidden}
+.help-art img{width:100%;height:100%;object-fit:cover;opacity:.42;
+  -webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent 100%);mask-image:linear-gradient(to bottom,#000 30%,transparent 100%)}
+.help-hero h1{font-size:clamp(30px,4vw,44px);font-weight:850;letter-spacing:-.8px;position:relative}
+.help-hero h1 .grad{background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 45%,var(--accent3) 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.help-hero .sub{color:var(--muted);font-size:16.5px;max-width:760px;margin:14px 0 0;position:relative}
+.search{margin-top:24px;max-width:540px;position:relative}
+.search input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px 12px 42px;color:var(--text);font-size:14px;outline:none;backdrop-filter:blur(8px);transition:border-color .2s}
+.search input:focus{border-color:var(--accent)}
+.search input::placeholder{color:rgba(154,167,189,.75)}
+.search::before{content:"⌕";position:absolute;left:15px;top:50%;transform:translateY(-52%);color:var(--muted);font-size:17px}
+
+.layout{display:grid;grid-template-columns:248px 1fr;gap:44px;padding:48px 0 72px;position:relative;z-index:2}
+.side{position:sticky;top:96px;align-self:start;display:flex;flex-direction:column;gap:2px}
+.side .cap{font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;color:rgba(154,167,189,.6);padding:0 12px 8px}
+.side a{color:var(--muted);font-size:13.5px;padding:7px 12px;border-left:2px solid var(--line);transition:.2s}
+.side a:hover{color:var(--text);border-color:var(--accent);text-decoration:none}
+.side a.on{color:var(--accent);border-color:var(--accent);background:rgba(45,212,191,.06)}
+.content{min-width:0}
+.noresult{display:none;color:var(--muted);border:1px dashed var(--line);border-radius:12px;padding:18px 20px;font-size:14px}
+
+.faq{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:14px;backdrop-filter:blur(8px);position:relative;overflow:hidden}
+.faq::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2.5px;background:linear-gradient(to bottom,var(--accent),var(--accent2),var(--accent3));opacity:.55}
+.faq.hidden{display:none}
+.faq h3{font-size:15.5px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:9px}
+.faq p{color:var(--muted);font-size:14.5px;margin-bottom:8px}
+.note{border-left:3px solid var(--accent);background:var(--card);padding:13px 17px;border-radius:0 12px 12px 0;color:var(--muted);font-size:14px;margin:16px 0}
+.pause{color:var(--warn);font-weight:700}
+
+pre{background:var(--code);border:1px solid var(--line);border-radius:14px;padding:18px 20px;overflow-x:auto;font-size:13.5px;line-height:1.65;margin:16px 0}
+code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+p code,li code,td code{background:var(--code);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.9em;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;display:block;overflow-x:auto}
+th{background:var(--card2);text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:700}
+td{padding:9px 12px;border:1px solid var(--line);color:var(--muted);vertical-align:top;overflow-wrap:anywhere}
+
+.rv{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.6,.2,1),transform .55s cubic-bezier(.2,.6,.2,1)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
+
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
+footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
+.backline{margin-top:6px}
+
+body[data-lang=en] [lang=ru]{display:none}
+body[data-lang=ru] [lang=en]{display:none}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;gap:26px;padding-top:34px}
+  .side{position:static;flex-direction:row;flex-wrap:wrap;gap:8px}
+  .side .cap{display:none}
+  .side a{border:1px solid var(--line);border-radius:999px;padding:5px 13px}
+  .side a.on{border-color:var(--accent)}
+}
+@media(max-width:700px){.nav a.nl,.nav a.nl.keep{display:none}.logo{font-size:15px}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .aurora{display:none}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body data-lang="ru">
+<div class="bg" aria-hidden="true"><div class="aurora"></div><div class="noise"></div></div>
+<div id="bar"></div>
+
+<header><div class="wrap nav">
+  <a class="logo" href="index.html">◈ Стратег Фабрики продуктов</a>
+  <a class="nl keep" href="index.html#features" lang="ru">Возможности</a><a class="nl keep" href="index.html#features" lang="en">Features</a>
+  <a class="nl" href="index.html#process" lang="ru">Процесс</a><a class="nl" href="index.html#process" lang="en">Process</a>
+  <a class="nl" href="index.html#architecture" lang="ru">Архитектура</a><a class="nl" href="index.html#architecture" lang="en">Architecture</a>
+  <a class="nl" href="index.html#commands" lang="ru">Команды</a><a class="nl" href="index.html#commands" lang="en">Commands</a>
+  <a class="nl on" href="help.html" lang="ru">Справка</a><a class="nl on" href="help.html" lang="en">Help</a>
+  <div class="lang" role="group" aria-label="Language / Язык">
+    <button id="btn-ru" onclick="setLang('ru')" aria-pressed="true">RU</button>
+    <button id="btn-en" onclick="setLang('en')" aria-pressed="false">EN</button>
+  </div>
+</div></header>
+
+<div class="help-hero"><div class="wrap">
+  <div class="help-art" aria-hidden="true"><img src="assets/help_network.jpg" alt=""></div>
+  <h1 lang="ru">Справка <span class="grad">·</span> агент</h1><h1 lang="en">Agent <span class="grad">help</span></h1>
+  <p class="sub" lang="ru">Всё, что нужно руководителю: как общаться с агентом, что происходит на каждом шаге, Excel-модели и six-pager, продолжение после перерыва, среды, безопасность и частые проблемы.</p>
+  <p class="sub" lang="en">Everything a product director needs: talking to the agent, what happens at each step, Excel models and the six-pager, resuming after a break, environments, security and troubleshooting.</p>
+  <div class="search"><input id="q" type="search" placeholder="Поиск по справке… / Search the help…" aria-label="Поиск по справке"></div>
+</div></div>
+
+<div class="wrap"><div class="layout">
+  <nav class="side" aria-label="Разделы справки">
+    <div class="cap" lang="ru">Разделы</div><div class="cap" lang="en">Sections</div>
+    <a href="#h-communicate" lang="ru">Как общаться с агентом</a><a href="#h-communicate" lang="en">Talking to the agent</a>
+    <a href="#h-workflow" lang="ru">Шаги процесса</a><a href="#h-workflow" lang="en">Process steps</a>
+    <a href="#h-quickstart" lang="ru">Быстрый старт</a><a href="#h-quickstart" lang="en">Quick start</a>
+    <a href="#h-excel" lang="ru">Excel-расчёты</a><a href="#h-excel" lang="en">Excel models</a>
+    <a href="#h-sixpager-flow" lang="ru">Six-pager за 5 шагов</a><a href="#h-sixpager-flow" lang="en">Six-pager in 5 steps</a>
+    <a href="#h-resume" lang="ru">После перерыва</a><a href="#h-resume" lang="en">After a break</a>
+    <a href="#h-environments" lang="ru">Среды</a><a href="#h-environments" lang="en">Environments</a>
+    <a href="#h-revise" lang="ru">Новые данные</a><a href="#h-revise" lang="en">New data</a>
+    <a href="#h-security" lang="ru">Безопасность</a><a href="#h-security" lang="en">Security</a>
+    <a href="#h-skills" lang="ru">Навыки</a><a href="#h-skills" lang="en">Skills</a>
+    <a href="#h-trouble" lang="ru">Частые проблемы</a><a href="#h-trouble" lang="en">Troubleshooting</a>
+  </nav>
+
+  <div class="content" id="clist">
+    <div class="faq rv" id="h-communicate"><h3 lang="ru">Как общаться с агентом</h3><h3 lang="en">Talking to the agent</h3>
+      <p lang="ru">Пишите обычным языком, как коллеге: опишите задачу, ответьте на вопросы, выберите вариант. Управляющие фразы: <b>«стоп»</b> — пауза; <b>«уточни: …»</b> — скорректировать задачу; <b>«переделай раздел X»</b> — переработать только затронутое; <b>«собери six-pager»</b>, <b>«пересчитай Excel»</b>, <b>«что решать сейчас»</b> (decision due), <b>«что затронет новый источник»</b> (impact). Агент не задаёт больше трёх вопросов за раз и всегда объясняет, чего ему не хватает.</p>
+      <p lang="en">Write in plain language as to a colleague: describe the task, answer questions, pick options. Control phrases: <b>"stop"</b> — pause; <b>"clarify: …"</b> — adjust; <b>"redo section X"</b> — rework only the affected part; <b>"build the six-pager"</b>, <b>"recalculate Excel"</b>, <b>"what should I decide now"</b> (decision due), <b>"what will this new source affect"</b> (impact). The agent never asks more than three questions at once and always states what it is missing.</p></div>
+
+    <div class="faq rv" id="h-workflow"><h3 lang="ru">Что происходит на каждом шаге</h3><h3 lang="en">What happens at each step</h3>
+      <p lang="ru">0 · Бриф — до 3 вопросов (решение, цель, ограничения) → <code>00_brief.md</code>, вы подтверждаете. 1 · Источники — файлы и сайты → <code>S###</code>. 2 · Исследование — план «вопрос → если да/нет», расчёты, интервью (ИИ-респонденты дают только гипотезы). 3 · Дискавери — персоны, JTBD, альтернативы пользователя. 4 · Ситуация — что известно, откуда, чего не знаем. 5 · Варианты — ≥3 содержательно разных, каждый с возражениями red team. 6 · Выбор — <span class="pause">вы решаете</span>. 7 · Стратегии — продуктовая и коммуникационная, обещания сверяются с продуктом. 8 · План проверки — метрика, база, срок, контрметрики. 9 · Review — автопроверка <code>pfs check</code>, оценка по рубрике, six-pager. 10 · Решение — <span class="pause">вы утверждаете</span>; основания и обязательства фиксируются. 11 · Мониторинг — сроки и пересмотр при новых данных (шаги 0–11).</p>
+      <p lang="en">0 · Brief — up to 3 questions (decision, goal, constraints) → <code>00_brief.md</code>, you approve. 1 · Sources — files and pages → <code>S###</code>. 2 · Research — a "question → if yes/no" plan, calculations, interviews (AI respondents yield hypotheses only). 3 · Discovery — personas, JTBD, user alternatives. 4 · Situation — known / unknown / contradictions. 5 · Options — ≥3 substantively distinct, each with red-team objections. 6 · Choice — <span class="pause">you decide</span>. 7 · Strategies — product and communication; promises checked against the product. 8 · Validation — metric, baseline, duration, counter-metrics. 9 · Review — <code>pfs check</code>, rubric scoring, six-pager. 10 · Decision — <span class="pause">you approve</span>; grounds and commitments recorded. 11 · Monitoring — deadlines and revisions on new data (steps 0–11).</p></div>
+
+    <div class="faq rv" id="h-quickstart"><h3 lang="ru">Быстрый старт</h3><h3 lang="en">Quick start</h3>
+      <pre lang="ru">$ git clone https://github.com/Fighter90/product-factory-strategist.git
+$ cd product-factory-strategist
+$ python3 -m tools.pfs doctor      # проверка окружения
+$ pfs new "Почему падает удержание" "запрос дословно"</pre>
+      <pre lang="en">$ git clone https://github.com/Fighter90/product-factory-strategist.git
+$ cd product-factory-strategist
+$ python3 -m tools.pfs doctor      # environment check
+$ pfs new "Why is retention dropping" "the request verbatim"</pre>
+      <p lang="ru">Нужны Python 3.9+ и любая среда: Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot. Пакеты не устанавливаются. Затем просто общайтесь: агент ведёт шаги сам.</p>
+      <p lang="en">You need Python 3.9+ and any environment: Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot. No packages to install. Then just talk: the agent drives the steps itself.</p></div>
+
+    <div class="faq rv" id="h-excel"><h3 lang="ru">Excel-расчёты и calcs.json</h3><h3 lang="en">Excel models and calcs.json</h3>
+      <p lang="ru">Параметры живут в <code>projects/&lt;slug&gt;/calcs.json</code>: секции <code>unit_econ</code> (arpu, vc_share, cac, churn_month), <code>growth</code> (mau_start, conv_order, aov, take_rate…), <code>cohort</code> (sizes, retention), <code>market</code> (pam, доли). Агент заполняет их числами из утверждений и помечает источник в <code>note</code>. Команда <code>pfs calc all</code> строит 4 книги в <code>outputs/attachments/</code>; лист «Ввод» — редактируемые параметры, остальные листы — формулы. Чего нет в calcs.json — подставится пример с пометкой «ПРИМЕР». После правки повторите <code>calc</code> и <code>export --six-pager</code>, чтобы текст и Excel совпали.</p>
+      <p lang="en">Parameters live in <code>projects/&lt;slug&gt;/calcs.json</code>: sections <code>unit_econ</code> (arpu, vc_share, cac, churn_month), <code>growth</code> (mau_start, conv_order, aov, take_rate…), <code>cohort</code> (sizes, retention), <code>market</code> (pam, shares). The agent fills them from the claim registry and marks sources in <code>note</code>. <code>pfs calc all</code> builds 4 workbooks into <code>outputs/attachments/</code>; the Input sheet holds editable parameters, other sheets hold formulas. Missing values fall back to examples marked "EXAMPLE". After edits rerun <code>calc</code> and <code>export --six-pager</code> so text and Excel match.</p></div>
+
+    <div class="faq rv" id="h-sixpager-flow"><h3 lang="ru">Six-pager за 5 шагов</h3><h3 lang="en">Six-pager in 5 steps</h3>
+      <p lang="ru">1 · Дождитесь шагов situation…validation (документы 02/03/04/06). 2 · Скажите «собери six-pager» — агент заполнит calcs.json из C### и запустит расчёты субагентом <b>в фоне</b>. 3 · Получите <code>outputs/SIX_PAGER.md</code> + 4 xlsx. 4 · Откройте Excel и замените допущения на фактические значения — формулы пересчитаются. 5 · Сверьте числа текста и книг; при правках — <code>pfs calc all</code> и <code>pfs export --six-pager</code>.</p>
+      <p lang="en">1 · Wait for situation…validation steps (documents 02/03/04/06). 2 · Say "build the six-pager" — the agent fills calcs.json from C### and runs calculations in a <b>background subagent</b>. 3 · You get <code>outputs/SIX_PAGER.md</code> + 4 xlsx. 4 · Open Excel and replace assumptions with actual figures — formulas recalculate. 5 · Match text and workbook numbers; after edits run <code>pfs calc all</code> and <code>pfs export --six-pager</code>.</p></div>
+
+    <div class="faq rv" id="h-resume"><h3 lang="ru">Продолжение после перерыва</h3><h3 lang="en">Resuming after a break</h3>
+      <p lang="ru">Всё состояние — в файлах <code>projects/&lt;slug&gt;/</code>. Откройте новый чат в папке репозитория: хук SessionStart сам подаст агенту статус и «что решать сейчас». В средах без хуков напишите: «прочитай AGENTS.md и выполни <code>pfs status</code>». Перенос в другую среду — скопируйте папку проекта или git push/pull.</p>
+      <p lang="en">All state lives in <code>projects/&lt;slug&gt;/</code> files. Open a new chat in the repo folder: the SessionStart hook feeds the agent its status and "what to decide now". In hook-less environments write: "read AGENTS.md and run <code>pfs status</code>". Moving environments: copy the project folder or git push/pull.</p></div>
+
+    <div class="faq rv" id="h-environments"><h3 lang="ru">Среды</h3><h3 lang="en">Environments</h3>
+      <p lang="ru"><b>Claude Code</b> — полный опыт: навыки, субагенты, хуки, автостоимость. <b>Cursor</b> — правило <code>.cursor/rules</code>, MCP из <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — читают <code>AGENTS.md</code>; хуков нет — начните с <code>pfs status</code>. <b>Linear</b>: ключ в <code>.env</code> (не коммитится), сервер <code>npx mcp-server-linear</code>. <b>Lovable</b>: MCP-сервер <code>https://mcp.lovable.dev</code> подключён в <code>.mcp.json</code>; авторизация — один раз OAuth в клиенте (<code>/mcp</code> → lovable → Authenticate), после чего агент создаёт и дорабатывает проекты Lovable по запросу (create_project/send_message расходуют кредиты Lovable).</p>
+      <p lang="en"><b>Claude Code</b> — full experience: skills, subagents, hooks, auto-cost. <b>Cursor</b> — <code>.cursor/rules</code>, MCP from <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — read <code>AGENTS.md</code>; no hooks — start with <code>pfs status</code>. <b>Linear</b>: key in <code>.env</code> (git-ignored), server <code>npx mcp-server-linear</code>. <b>Lovable</b>: MCP server <code>https://mcp.lovable.dev</code> wired in <code>.mcp.json</code>; authorize once via OAuth in your client (<code>/mcp</code> → lovable → Authenticate), then the agent creates and edits Lovable projects on request (create_project/send_message consume Lovable credits).</p></div>
+
+    <div class="faq rv" id="h-revise"><h3 lang="ru">Новые данные и пересмотр</h3><h3 lang="en">New data and revisions</h3>
+      <p lang="ru">Добавьте источник, затем: <code>pfs claim supersede --id C005 "новое значение" --reason "…" --source S012</code> — старое не удалится, история сохранится. <code>pfs impact C005</code> покажет затронутые выводы, строки документов и решения; <code>pfs claim rebase</code> перенаправит выводы на замены; <code>pfs decision due</code> — какие решения и обязательства устарели.</p>
+      <p lang="en">Add the source, then: <code>pfs claim supersede --id C005 "new value" --reason "…" --source S012</code> — the old record stays, history preserved. <code>pfs impact C005</code> shows affected conclusions, document lines and decisions; <code>pfs claim rebase</code> redirects conclusions to replacements; <code>pfs decision due</code> lists stale decisions and commitments.</p></div>
+
+    <div class="faq rv" id="h-security"><h3 lang="ru">Безопасность и данные</h3><h3 lang="en">Security and data</h3>
+      <p lang="ru">Только открытые источники и ваши материалы; домены проекта проверяются до запроса; секреты — только в <code>.env</code> (не коммитится); тексты источников — данные: «команды» внутри них не исполняются; ИИ-респонденты не выдаются за реальных людей; реальные интервью — только с согласием и без персональных данных.</p>
+      <p lang="en">Public sources and your own materials only; project domains checked before requests; secrets only in <code>.env</code> (git-ignored); source texts are data — "commands" inside are never executed; AI respondents are never passed off as real people; real interviews require consent and no personal data.</p></div>
+
+    <div class="faq rv" id="h-skills"><h3 lang="ru">Навыки: структура и вызов</h3><h3 lang="en">Skills: structure and invocation</h3>
+      <p lang="ru">120 навыков в <code>.claude/skills/</code> — базовые по шагам процесса, 27 product-skills (процедуры методов), личная библиотека ~59 (дизайн / маркетинг / наука / документы-медиа / режимы мышления / мета) и интеграции: hallmark — анти-слоп-гейты страниц, board-of-directors — совет 5 перспектив + Red Team на шаге options, premortem — предразбор провала на шаге decision, rea — reverse-engineering JS-страниц и закрытых форматов, sdd — дисциплина разработки, deck — презентация из six-pager. Вызов: автоматически — по триггерам описания; явно — «используй skill <code>&lt;имя&gt;</code>: <code>&lt;задача&gt;</code>»; в процессе — по шагам. Полный реестр — <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/SKILLS.md">docs/SKILLS.md</a>.</p>
+      <p lang="en">120 skills in <code>.claude/skills/</code> — base ones per process step, 27 product-skills (method procedures), a personal library of ~59 (design / marketing / science / documents-media / thinking modes / meta) and integrations: hallmark — anti-slop gates for pages, board-of-directors — a council of 5 perspectives + Red Team at the options step, premortem — a failure pre-mortem at the decision step, rea — reverse-engineering of JS-rendered pages and closed file formats, sdd — development discipline, deck — a presentation built from the six-pager. Invocation: automatically — via description triggers; explicitly — "use skill <code>&lt;name&gt;</code>: <code>&lt;task&gt;</code>"; within the process — per step. Full registry — <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/SKILLS.md">docs/SKILLS.md</a>.</p></div>
+
+    <div class="faq rv" id="h-trouble"><h3 lang="ru">Частые проблемы</h3><h3 lang="en">Troubleshooting</h3>
+      <table lang="ru">
+        <tr><th>Симптом</th><th>Что делать</th></tr>
+        <tr><td>«Факт без источника недопустим»</td><td>Так и задумано: добавьте источник или запишите как гипотезу</td></tr>
+        <tr><td>«Домен не входит в разрешённые»</td><td>Правьте <code>project.json → allowed_sources</code> или добавьте с <code>--force --note</code></td></tr>
+        <tr><td>«Извлечено 0 знаков»</td><td>Сайт на JavaScript: сохраните текст вручную → <code>--text-file --url</code></td></tr>
+        <tr><td>Excel «пустой»</td><td>Это кэш предпросмотра: формулы посчитаются при открытии</td></tr>
+        <tr><td>Скилл/субагент не появился</td><td>Перезапустите сессию Claude Code</td></tr>
+        <tr><td>Числа six-pager ≠ Excel</td><td>Повторите <code>pfs calc all</code> и <code>pfs export --six-pager</code></td></tr>
+      </table>
+      <table lang="en">
+        <tr><th>Symptom</th><th>Fix</th></tr>
+        <tr><td>"A fact without a source is not allowed"</td><td>By design: add a source or record as hypothesis</td></tr>
+        <tr><td>"Domain not allowed"</td><td>Edit <code>project.json → allowed_sources</code> or use <code>--force --note</code></td></tr>
+        <tr><td>"Extracted 0 chars"</td><td>JS-rendered page: save text manually → <code>--text-file --url</code></td></tr>
+        <tr><td>Excel looks "empty"</td><td>Cached preview: formulas compute on open</td></tr>
+        <tr><td>Skill/subagent missing</td><td>Restart the Claude Code session</td></tr>
+        <tr><td>Six-pager numbers ≠ Excel</td><td>Rerun <code>pfs calc all</code> and <code>pfs export --six-pager</code></td></tr>
+      </table>
+      <p lang="ru">Полная справка: <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md">docs/HELP.md</a> (RU) · <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md">docs/HELP_EN.md</a> (EN) · docx-версии в <code>docs/docx/</code>.</p>
+      <p lang="en">Full manual: <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md">docs/HELP_EN.md</a> (EN) · <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md">docs/HELP.md</a> (RU) · docx versions in <code>docs/docx/</code>.</p></div>
+
+    <div class="noresult" id="nores" lang="ru">Ничего не найдено — попробуйте другое слово.<span lang="en"> · Nothing found — try another word.</span></div>
+    <p class="backline rv"><a href="index.html" lang="ru">← На главную</a><a href="index.html" lang="en">← Back to the landing page</a></p>
+  </div>
+</div></div>
+
+<footer><div class="wrap">
+  <div>
+    <div class="logo">◈ Стратег Фабрики продуктов</div>
+    <div lang="ru">ИИ-агент для руководителя цифрового продукта</div>
+    <div lang="en">An AI agent for digital product directors</div>
+  </div>
+  <div>
+    <a href="index.html" lang="ru">← Лендинг</a><a href="index.html" lang="en">← Landing</a> ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/wiki">Wiki</a> ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md" lang="ru">HELP.md</a>
+    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md" lang="en">HELP_EN.md</a>
+  </div>
+</div></footer>
+
+<script>
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const I18N = {
+  ru: { title: "Справка — Стратег Фабрики продуктов", desc: "Полная справка ИИ-агента «Стратег Фабрики продуктов»." },
+  en: { title: "Help — Product Factory Strategist", desc: "Full help for the Product Factory Strategist AI agent." }
+};
+function setLang(l, save){
+  document.body.setAttribute('data-lang', l);
+  document.documentElement.lang = l;
+  document.getElementById('btn-ru').classList.toggle('active', l==='ru');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-ru').setAttribute('aria-pressed', l==='ru');
+  document.getElementById('btn-en').setAttribute('aria-pressed', l==='en');
+  document.title = I18N[l].title;
+  var m = document.querySelector('meta[name="description"]');
+  if (m) m.setAttribute('content', I18N[l].desc);
+  if (save !== false) { try { localStorage.setItem('pfs-lang', l); } catch(e){} }
+  if (!REDUCED){
+    document.body.classList.add('lang-switching');
+    setTimeout(function(){ document.body.classList.remove('lang-switching'); }, 180);
+  }
+}
+(function(){
+  var saved = null;
+  try { saved = localStorage.getItem('pfs-lang'); } catch(e){}
+  setLang(saved || ((navigator.language||'').startsWith('ru') ? 'ru' : 'en'), false);
+})();
+
+const bar = document.getElementById('bar');
+function frame(){
+  const y = window.scrollY;
+  const h = document.documentElement.scrollHeight - innerHeight;
+  bar.style.width = (h > 0 ? (y/h*100) : 0) + '%';
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), {threshold:.1, rootMargin:'0px 0px -4% 0px'});
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+// scrollspy сайдбара
+const sio = new IntersectionObserver(es => es.forEach(e => {
+  const l = document.querySelector('.side a[href="#' + e.target.id + '"]');
+  if (l) l.classList.toggle('on', e.isIntersecting);
+}), {rootMargin:'-30% 0px -60% 0px'});
+document.querySelectorAll('.faq[id]').forEach(s => sio.observe(s));
+
+// поиск-фильтр
+(function(){
+  const q = document.getElementById('q');
+  if (!q) return;
+  const blocks = [...document.querySelectorAll('.content > .faq')];
+  const nores = document.getElementById('nores');
+  q.addEventListener('input', () => {
+    const v = q.value.trim().toLowerCase();
+    let vis = 0;
+    for (const b of blocks){
+      const hit = !v || b.textContent.toLowerCase().includes(v);
+      b.classList.toggle('hidden', !hit);
+      if (hit){ vis++; b.classList.add('in'); }
+    }
+    if (nores) nores.style.display = vis ? 'none' : 'block';
+  });
+})();
+</script>
+</body>
+</html>
