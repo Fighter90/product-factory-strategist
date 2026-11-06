@@ -122,10 +122,16 @@ def main() -> None:
     dst = pathlib.Path(sys.argv[2]).resolve()
     title = sys.argv[3] if len(sys.argv) > 3 else src.stem
     doc = md_to_html(src.read_text(encoding="utf-8"))
-    page = (f"<!doctype html><html><head><meta charset='utf-8'><title>{html.escape(title)}</title>"
+    lang = "en" if re.search(r"[_-]EN$", dst.stem, re.I) else "ru"
+    if lang == "en":
+        footer = (f"CVStart · {html.escape(title)} · assembled by the Product Factory Strategist agent, "
+                  f"Nov 6–7, 2026 · evidence base: REPORT.md")
+    else:
+        footer = (f"CVStart · {html.escape(title)} · собрано агентом «Стратег Фабрики продуктов», "
+                  f"06–07.11.2026 · доказательная база: REPORT.md")
+    page = (f"<!doctype html><html lang=\"{lang}\"><head><meta charset='utf-8'><title>{html.escape(title)}</title>"
             f"<style>{CSS}</style></head><body>{doc}"
-            f"<footer>CVStart · {html.escape(title)} · собрано агентом «Стратег Фабрики продуктов», 06.11.2026 · "
-            f"доказательная база: REPORT.md</footer></body></html>")
+            f"<footer>{footer}</footer></body></html>")
     with tempfile.NamedTemporaryFile("w", suffix=".html", delete=False, encoding="utf-8") as f:
         f.write(page)
         tmp_html = f.name
