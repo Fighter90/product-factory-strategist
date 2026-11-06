@@ -1,0 +1,92 @@
+{"ts": "2026-11-06T12:28:20+03:00", "kind": "action", "msg": "Создан проект «ROSE»", "step": "intake"}
+{"ts": "2026-11-06T12:28:20+03:00", "kind": "route", "msg": "Сценарий: growth (medium); доп.: —"}
+{"ts": "2026-11-06T12:30:36+03:00", "kind": "human", "msg": "Ответ руководителя: intake-decision: выбор направления развития ROSE (масштабирование / города / гибрид — сравнить содержательно разные варианты)", "step": "intake"}
+{"ts": "2026-11-06T12:30:36+03:00", "kind": "human", "msg": "Ответ руководителя: intake-success: рост выручки/ARPU — ось сравнения вариантов", "step": "intake"}
+{"ts": "2026-11-06T12:30:37+03:00", "kind": "human", "msg": "Ответ руководителя: intake-constraints: цена/маржа + бренд/тон — премиум-опыт не приносим в жертву росту", "step": "intake"}
+{"ts": "2026-11-06T12:30:37+03:00", "kind": "note", "msg": "intake: ответы руководителя зафиксированы (выбор направления, выручка/ARPU, цена/маржа+бренд)"}
+{"ts": "2026-11-06T12:33:16+03:00", "kind": "source", "msg": "S001 добавлен: ROSE — сайт-прототип: концепция, механика, вечера, цены", "tool": "pfs source add", "url": "https://rosedate.ru/"}
+{"ts": "2026-11-06T12:35:36+03:00", "kind": "source", "msg": "S002 добавлен: RB.ru: крупные сервисы знакомств теряют пользователей (Ведомости/Mediascope)", "tool": "pfs source add", "url": "https://rb.ru/news/krupnye-rossijskie-servisy-dlya-znakomstv-prodolzhayut-teryat-polzovatelej-u-nekotoryh-padenie-do-5-za-polgoda"}
+{"ts": "2026-11-06T12:35:39+03:00", "kind": "source", "msg": "S003 добавлен: ВЦИОМ: за шесть лет россияне стали чаще искать пару в интернете", "tool": "pfs source add", "url": "https://buffett.ru/v-rossii/vcziom-za-shest-let-rossiyane-stali-chashhe-iskat-paru-v-internete"}
+{"ts": "2026-11-06T12:35:41+03:00", "kind": "source", "msg": "S004 добавлен: Коммерсантъ: почему сервисы знакомств теряют аудиторию", "tool": "pfs source add", "url": "https://www.kommersant.ru/doc/7959012"}
+{"ts": "2026-11-06T12:35:41+03:00", "kind": "claim", "msg": "C001 [факт] Механика ROSE: стол на шестерых (3 мужчины + 3 женщины), подбор по тому, как человек говор", "sources": ["S001"]}
+{"ts": "2026-11-06T12:35:41+03:00", "kind": "claim", "msg": "C002 [факт] Верификация участников через Госуслуги: за стол садятся только подтверждённые", "sources": ["S001"]}
+{"ts": "2026-11-06T12:35:41+03:00", "kind": "claim", "msg": "C003 [факт] Цены в прототипе: билеты на ужин 15 000–18 000 ₽; также встречаются 60 000 ₽ и 600 000 ₽ (", "sources": ["S001"]}
+{"ts": "2026-11-06T12:35:41+03:00", "kind": "claim", "msg": "C004 [факт] Вечера тематические и датированы (джаз, сомелье, шеф-дегустация, ужин у огня), на экранах ", "sources": ["S001"]}
+{"ts": "2026-11-06T12:35:41+03:00", "kind": "claim", "msg": "C005 [факт] Выручка крупнейших российских сервисов знакомств в 2025 году: 6,2 млрд ₽, +25% г/г (Smart ", "sources": ["S002"]}
+{"ts": "2026-11-06T12:35:42+03:00", "kind": "claim", "msg": "C006 [факт] 75% выручки рынка у трёх игроков: VK Знакомства, Mamba, Twinby", "sources": ["S002"]}
+{"ts": "2026-11-06T12:35:42+03:00", "kind": "claim", "msg": "C007 [факт] Кризис свайп-модели: спрос смещается к качеству подбора, персонализации и быстрому переход", "sources": ["S002"]}
+{"ts": "2026-11-06T12:35:42+03:00", "kind": "claim", "msg": "C008 [факт] MAU крупных сервисов падает (Mamba 1,8→1,7 млн; «Друг вокруг» 2,2→2,1 млн за полугодие), а", "sources": ["S003"]}
+{"ts": "2026-11-06T12:35:42+03:00", "kind": "claim", "msg": "C009 [факт] 24% россиян использовали сайты знакомств для поиска партнёра (2018: 19%); опрос ВЦИОМ, 160", "sources": ["S004"]}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "source", "msg": "S005 добавлен: Forbes: рынок онлайн-дейтинга +25% до 6,2 млрд ₽ (Smart Ranking), текст сохранён", "tool": "pfs source add", "url": "https://www.forbes.ru/tekhnologii/563354-uslugi-po-znakomstvu-rynok-onlajn-dejtinga-vyros-na-cetvert-i-boretsa-s-krizisom"}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C010 [факт] Выручка крупнейших российских сервисов знакомств в 2025 году: 6,2 млрд ₽, +25% г/г (Smart ", "sources": ["S005"]}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C005 замещено C010: исправлен источник: Forbes/Smart Ranking = S005 (нумерация сдвинулась из-за JS-страницы Forbes)"}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C011 [факт] 75% выручки рынка у трёх игроков: VK Знакомства, Mamba, Twinby", "sources": ["S005"]}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C006 замещено C011: исправлен источник → S005 Forbes"}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C012 [факт] Кризис свайп-модели: спрос смещается к качеству подбора, персонализации и быстрому переход", "sources": ["S005"]}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C007 замещено C012: исправлен источник → S005 Forbes"}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C013 [факт] MAU крупных сервисов падает (Mamba 1,8→1,7 млн; «Друг вокруг» 2,2→2,1 млн за полугодие), а", "sources": ["S002"]}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C008 замещено C013: исправлен источник: Ведомости/Mediascope = S002 RB.ru"}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C014 [факт] 24% россиян использовали сайты знакомств для поиска партнёра (2018: 19%); опрос ВЦИОМ, 160", "sources": ["S003"]}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C009 замещено C014: исправлен источник: опрос ВЦИОМ = S003"}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C015 [факт] Число оформляющих подписку на дейтинг-приложения сократилось за год на 11% до 2,5 млн; сер", "sources": ["S004"]}
+{"ts": "2026-11-06T12:36:28+03:00", "kind": "claim", "msg": "C016 [допущение] Решение — о развитии ROSE на горизонте 12 месяцев; внутренние данные (посещаемость, конвер"}
+{"ts": "2026-11-06T12:36:29+03:00", "kind": "claim", "msg": "C017 [допущение] Юнит-допущения для модели (демо): средний билет 16 500 ₽, переменные издержки стола ~45% ("}
+{"ts": "2026-11-06T12:36:29+03:00", "kind": "claim", "msg": "C018 [гипотеза] Сегмент офлайн-премиум-знакомств растёт быстрее рынка: спрос смещается от свайпов к офайну", "sources": ["S005"]}
+{"ts": "2026-11-06T12:36:29+03:00", "kind": "claim", "msg": "C010 замещено C018: C010 была фактом с несуществующим источником; переводится в гипотезу с корректными основаниями"}
+{"ts": "2026-11-06T12:37:34+03:00", "kind": "claim", "msg": "C019 [гипотеза] Большие платформы слабы в офлайн-операциях (event-логистика, площадки, хозяйки вечеров) — "}
+{"ts": "2026-11-06T12:37:34+03:00", "kind": "claim", "msg": "C020 [гипотеза] Юнит-экономика ROSE держится на повторных ужинах: ценность участника — 2–4 вечера за жизнь"}
+{"ts": "2026-11-06T12:37:35+03:00", "kind": "source", "msg": "S006 добавлен: Интервью (синтетика): Анна, 29, креативный директор", "tool": "pfs source add"}
+{"ts": "2026-11-06T12:37:35+03:00", "kind": "interview", "msg": "S006: синтетическое интервью, персона: Анна, 29, креативный директор", "tool": "pfs interview save"}
+{"ts": "2026-11-06T12:37:35+03:00", "kind": "source", "msg": "S007 добавлен: Интервью (синтетика): Артём, 36, основатель продукта", "tool": "pfs source add"}
+{"ts": "2026-11-06T12:37:35+03:00", "kind": "interview", "msg": "S007: синтетическое интервью, персона: Артём, 36, основатель продукта", "tool": "pfs interview save"}
+{"ts": "2026-11-06T12:37:35+03:00", "kind": "claim", "msg": "C021 [гипотеза] Гипотеза (синтетика, Анна): премиум-аудитория готова платить 15–18 тыс. ₽ при клубной пода", "sources": ["S006"]}
+{"ts": "2026-11-06T12:37:35+03:00", "kind": "claim", "msg": "C022 [гипотеза] Гипотеза (синтетика, Артём): возврат участника решает состав стола и «режиссура» вечера; к", "sources": ["S007"]}
+{"ts": "2026-11-06T12:37:35+03:00", "kind": "step", "msg": "sources → done", "step": "sources"}
+{"ts": "2026-11-06T12:37:35+03:00", "kind": "step", "msg": "research → done", "step": "research"}
+{"ts": "2026-11-06T12:41:25+03:00", "kind": "step", "msg": "discovery → done", "step": "discovery"}
+{"ts": "2026-11-06T12:41:25+03:00", "kind": "step", "msg": "situation → done", "step": "situation"}
+{"ts": "2026-11-06T12:42:28+03:00", "kind": "source", "msg": "S008 добавлен: Ответ руководителя (демо): выбран вариант B с условиями", "tool": "pfs source add"}
+{"ts": "2026-11-06T12:42:28+03:00", "kind": "claim", "msg": "C023 [допущение] Комитет (демо) выбрал вариант B — глубина Москвы; Rose Circle только во 2-й фазе после под", "sources": ["S008"]}
+{"ts": "2026-11-06T12:42:28+03:00", "kind": "step", "msg": "options → done", "step": "options"}
+{"ts": "2026-11-06T12:42:28+03:00", "kind": "step", "msg": "choice → done", "step": "choice"}
+{"ts": "2026-11-06T12:43:31+03:00", "kind": "step", "msg": "strategy → done", "step": "strategy"}
+{"ts": "2026-11-06T12:43:32+03:00", "kind": "step", "msg": "validation → done", "step": "validation"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "step", "msg": "review → done", "step": "review"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:01+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-06T12:44:27+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-06T12:44:27+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:27+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:27+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:27+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:27+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-06T12:44:45+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-06T12:44:45+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:45+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:45+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:45+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:44:45+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-06T12:45:11+03:00", "kind": "claim", "msg": "C024 [факт] Выручка крупнейших российских сервисов знакомств в 2025 году: 6,2 млрд ₽, +25% г/г (Smart ", "sources": ["S005"]}
+{"ts": "2026-11-06T12:45:23+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-06T12:45:23+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:45:23+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:45:23+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:45:23+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:45:23+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-06T12:45:35+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-06T12:45:35+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:45:35+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:45:35+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:45:35+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T12:45:35+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-06T12:46:22+03:00", "kind": "decision", "msg": "D001 принято: ROSE: вариант B — глубина Москвы (отв. Founder (демо))", "step": "decision"}
+{"ts": "2026-11-06T12:46:22+03:00", "kind": "step", "msg": "decision → done", "step": "decision"}
+{"ts": "2026-11-06T12:46:22+03:00", "kind": "step", "msg": "monitoring → in_progress", "step": "monitoring"}
