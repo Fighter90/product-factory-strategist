@@ -82,7 +82,7 @@ PDF/DOCX, cover letters, трекер, карта вакансий; 100% лок�
 - **Синтетика помечена** `origin=synthetic` (S008–S010) — гипотезы и метод, не факты; инструмент не даёт
   записать на неё факт.
 - **Артефакты:** `outputs/00…07_*.md`, `REPORT.md`, `SIX_PAGER_RU.md/.pdf/.docx` + `SIX_PAGER_EN.md/.pdf/.docx`
-  (со скриншотами соответствующего языка), `outputs/attachments/` (4 xlsx), `outputs/img/` (скриншоты RU/EN),
+  (детальный текст комитета: выводы, обоснования, расчёты — без скриншотов), `outputs/attachments/` (4 xlsx), `outputs/img/` (скриншоты RU/EN),
   `interviews/synthetic/` (2 ИИ-интервью), `analysis/` (gen_synthetic.py, synthetic_funnel.csv, md_to_pdf.py).
 
 ## 4. Как проверить

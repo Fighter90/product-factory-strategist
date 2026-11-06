@@ -1,6 +1,6 @@
 # CVStart: стратегия и обоснование
 
-> Собрано 2026-11-06T16:20 командой `pfs export`. Теги [C###] — утверждения, [S###] — источники, [D###] — решения (см. приложения).
+> Собрано 2026-11-07T00:06 командой `pfs export`. Теги [C###] — утверждения, [S###] — источники, [D###] — решения (см. приложения).
 
 ## 00 · Бриф — CVStart: коммерческая версия и глобальный GTM
 
@@ -276,7 +276,7 @@
 - **Факты ≠ гипотезы**: рыночные оценки даны диапазонами с пометкой надёжности (агрегаторы расходятся ×2 — честно указано); синтетика — только гипотезы.
 - **Варианты**: A–E содержательно разные; red team (15 возражений + 5 допущений) интегрирован; митигации B встроены (BYOK-free, opt-in облако, честный прайсинг).
 - **Согласованность**: таблица «обещание → подтверждение» закрыта механиками (MIT, локальный режим, тарифы, методология).
-- **RU/EN**: six-pager в двух версиях — русская с русскими скриншотами, английская с английскими.
+- **RU/EN**: six-pager в двух версиях — детальный текст комитета (данные → обоснование → расчёт → вывод, все расчёты пошагово), без скриншотов; метод сборки — knowledge/templates/SIX_PAGER_PROMPT.md.
 
 ## Ограничения (честно)
 
@@ -294,7 +294,7 @@
 
 ## CVStart: six-pager
 
-> Собрано 2026-11-06T15:54 командой `pfs export --six-pager`. Теги [C###]/[S###] — происхождение чисел (полный реестр в REPORT.md).
+> Собрано 2026-11-06T16:20 командой `pfs export --six-pager`. Теги [C###]/[S###] — происхождение чисел (полный реестр в REPORT.md).
 
 **Запрос:** Разработать коммерческую версию проекта cvstart.org (open-source AI-конструктор резюме и поиск вакансий: скан 129 джоб-бордов, AI-скоринг, CV Studio, локальный пайплайн, 19 языков) — формирование резюме, поиск вакансий — и стратегию вывода на рынок на весь мир. Продукт: https://cvstart.org/, репозиторий: https://github.com/Fighter90/career-ops-ui
 
@@ -509,33 +509,63 @@
 ## CVStart · Six-pager (EN)
 
 > **Commercial version & global go-to-market strategy for cvstart.org** — a complete 12-step run of the
-> "Product Factory Strategist" agent (Nov 6, 2026). Six committee questions — six answers.
-> Evidence base: claims C001–C020, sources S001–S011, decision D001 — full registry in REPORT.md.
-> Model figures rely on assumptions [C016][C020]; market figures are ranges from aggregators [S006].
-
-![cvstart.org landing page — English version: 129 job boards, AI scoring, 19 languages](img/en_landing.png)
+> "Product Factory Strategist" agent (Nov 6–7, 2026). Committee format: every section follows the chain
+> **"data → reasoning → calculation → conclusion"**. Screenshots are deliberately excluded — only
+> verifiable logic, formulas and origin-tagged numbers. Evidence base: claims C001–C020, sources
+> S001–S011, decision D001 (full registry — REPORT.md). Model figures rely on assumptions [C016][C020];
+> market figures are ranges from aggregators [S006].
 
 ## FAQ-1. Current state
 
-**Product.** CVStart (career-ops UI) is a dashboard over an AI job-search pipeline: scanning ~129 job boards,
-AI fit-scoring of every vacancy 0.0–5.0 against the user's resume, CV Studio (JD-targeted tuning, humanize,
-ATS bullets), PDF/DOCX export, cover letters, an auto pipeline, an application tracker with follow-up cadence,
-a job map, and mock interviews. 100% local (data stays with the user), 18 BYOK LLM providers + keyless mode,
-19 UI languages, ~7,602 automated tests, MIT license [C001][C004].
+**Data — product.** CVStart (career-ops UI) is an open-source (MIT) AI resume builder and job-search
+dashboard: scanning ~129 job boards (124 EN + 5 RU: hh.ru, Habr Career, GeekJob, GetMatch, Trudvsem),
+AI fit-scoring of every vacancy 0.0–5.0 against the user's resume, CV Studio (JD-targeted tuning,
+humanize, ATS bullets), PDF/DOCX export, cover letters, an auto pipeline, an application tracker with
+follow-up cadence, a job map, mock interviews; 100% local (data stays with the user), 18 BYOK LLM
+providers + keyless mode, 19 UI languages, ~7,602 automated tests [C001][C004]. No monetization yet:
+"$0 forever", no public hosting [C002][C003].
 
-**No monetization yet.** The project is free ("$0 forever"); there is no public hosting — installation
-requires the parent career-ops repository; Windows only via WSL [C002][C003].
+**Data — market.** Resume builders: a $1.2–2.4B estimate range; the AI sub-segment $1.3 → 1.47B,
+13.1% CAGR [C005]. Online recruitment: $37.97B in 2025, 7.1% CAGR to 2033 [C011]. 31–74% of job
+seekers already use AI (2025–2026 surveys); 84% say AI made the search easier [C009]; 1.2M+ AI users
+at Kickresume in 2025 [C010].
 
-**Market.** Resume builders: a $1.2–2.4B estimate range; the AI segment grows at 13.1% a year [C005].
-Online recruitment: $37.97B in 2025, 7.1% CAGR [C011]. 98% of Fortune 500 companies use ATS [C008].
-31–74% of job seekers already use AI in their search (2025–2026 surveys) [C009].
+**Data — competitors.** 7 direct players — Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal,
+Rezi: freemium, paid tiers $8–40/mo, aggressive auto-renewals [C006]; language coverage EN+5 [C007];
+ATS is used by 98% of the Fortune 500 [C008].
 
-**Competitors.** 7 direct players — Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi: freemium,
-paid tiers at $8–40/mo, aggressive auto-renewals [C006]; language coverage EN+5 [C007].
-The open angle: 19-language coverage + privacy + open source [C013].
+**Reasoning.**
+1. **Engineering maturity ≠ commercial maturity.** The engineering asset exists (129 adapters,
+   19 locales, 7,602 tests) but monetization is not switched on — meaning the asset is subsidized
+   with no return; any commercial option must first pay back this support debt, not "earn on top".
+2. **Market estimates diverge ×2** ($1.2B vs $2.35B across aggregators) — therefore every market
+   conclusion below uses the **conservative floor of $1.2B**: if the case closes on the conservative
+   number, it closes even harder on the optimistic one.
+3. **AI has become a hygiene factor.** When 31–74% of job seekers already use AI, "having AI features"
+   is not a differentiator — the differentiators are output quality, honest terms, and privacy.
+4. **ATS-compatibility is purchase factor #1.** With 98% of the Fortune 500 on ATS, a resume that
+   "fails ATS" devalues everything else; an open ATS-check methodology is a trust argument, not a
+   marketing promise.
+5. **All 7 competitors run the same model — a subscription trap.** This creates a verifiable
+   positioning window of "honest pricing without auto-renewals": dissatisfaction with the pattern is
+   supported by synthetic interviews [C017][C018] and testable in the beta.
 
-**Tension.** "100% local" as a public promise [C001] vs a commercial cloud. Resolution: an opt-in hybrid
-(the local core stays; cloud is a choice), verified by a 90-day beta (FAQ-5).
+**Capacity calculation (PAM→SOM funnel, Excel market_sizing).**
+PAM 1.8B economically active job seekers → **TAM** = 1.8B × 30% (digital professions, EN-first
+markets) = 540M → **SAM** = 540M × 40% (actively searching for 1–6 months) = 216M → **SOM** =
+216M × 5% (a realistic 12-month share for a new entrant) = **10.8M users**. Sanity check: even
+0.01% of SOM = 1,080 paying × $29 ≈ $31K MRR — the order of magnitude confirms the market is large
+enough for a niche player without aggressive share-grabbing.
+
+**Tension and its resolution.** "100% local" is a public promise [C001] — against a commercial
+cloud. Resolution: an opt-in hybrid — the local core stays forever, the cloud is a choice; the
+tension becomes a testable beta hypothesis (FAQ-5).
+
+**Conclusion (inference).** The product is engineering-mature and commercially dormant; the market
+grows at double digits in the AI sub-segment; competitors have opened the "honest pricing" window.
+Therefore the commercial version is justified, and the main risk is not demand but the trust of the
+local community; it is managed by product architecture (BYOK + opt-in) and measured by
+counter-metrics (FAQ-5).
 
 ## FAQ-2. Users: segments and personas
 
@@ -544,76 +574,185 @@ The open angle: 19-language coverage + privacy + open source [C013].
 | Core (EN-first) | tech job seekers 25–40, US/EU, actively searching 1–6 months | "Find relevant openings across all sources and quickly tailor a resume for each one that passes ATS — without subscription traps or handing my data to someone's cloud" | [C017] |
 | Wave 2 | non-EN segments: DE, ES, PT-BR, JA, ZH | "Think about my resume in my native language; local conventions matter more than price" | [C004][C018] |
 
-Persona hypotheses (synthetic AI interviews [S009][S010] — to be validated, not proof): **Sarah, 32, software
-engineer (Austin)** — tried Zety/Teal, furious about auto-renewals; would pay $10–15/mo, $29 only if the tool
-actually finds jobs. **Markus, 35, product manager (Berlin)** — existing tools are US-centric; GDPR-sensitive;
-accepts an annual €100–120 plan, categorically against monthly auto-renewals.
+**Persona hypotheses (synthetic [S009][S010] — testable hypotheses, not proof of demand).**
+**Sarah, 32, software engineer (Austin):** tried Zety/Teal; furious about auto-renewals ("cancelled —
+they charged me again"); refuses to keep her resume in someone else's cloud; would pay $10–15/mo,
+$29 only if the tool actually finds jobs. **Inference:** $29 will not be paid "for text generation" —
+it is justified only by the bundle "job scan + scoring + tracker", i.e. what is sold is the *search*
+function, not generation; this confirms the tier model (FAQ-4).
+**Markus, 35, product manager (Berlin):** existing tools are US-centric; interface and local
+conventions matter more than price; GDPR-sensitive; accepts an annual €100–120 plan, categorically
+against monthly auto-renewals. **Inference:** in non-EN segments willingness to pay is not lower, and
+the persuasion levers differ — an annual plan and local communities work better than a monthly
+subscription and paid targeting.
+
+**Segment prioritization calculation.** Core EN-first: higher capacity (US/EU is the bulk of the
+540M TAM), lower CAC (English-language Product Hunt / HN / SEO), higher competition (all 7
+competitors are EN+5 [C007]). Wave 2: lower competition (narrow competitor language coverage),
+higher readiness for annual payments [C018], but costlier channels and support. Hence — **waves in
+sequence, not in parallel**: EN validates conversion and unit economics, then locales scale the
+proven model without product changes (19 locales already exist [C004] — zero switching cost, only
+operational).
+
+**Conclusion (inference).** The core is EN-market tech job seekers with the "subscription trap + ATS"
+pain; wave 2 is a deferred multiplier on ready-made locales. Therefore the product launches
+EN-first with honest pricing as the headline message, and locales are switched on in waves after
+conversion is confirmed (criterion — FAQ-5).
 
 ## FAQ-3. Strategic options: 5 variants + red team
 
-| Option | Essence | ARR in 12 months (model) | Sharpest red-team hit |
+| Option | Essence | ARR in 12 mo (model) | Sharpest red-team hit | Hidden assumption | Verdict |
+|---|---|---|---|---|---|
+| A. Status quo | free local OSS | $0 | $0 ARR on the "paying growth" axis; domain/CI/129 integrations subsidized forever; MIT lets a fork monetize your work (WordPress/WP Engine precedent) | locality is a mass-market selection driver | fails the brief |
+| **B. Hosted freemium SaaS** | cloud, global: Free BYOK / Pro $12 / Unlimited $29 | $35–105K [C016][S008] | PII/GDPR liability and ToS-hostile scraping; "$0 forever" is a public promise; freemium conversion 2–5% [C020]; episodic product (landed a job — churned) | the OSS crowd will buy hosted | **selected** — with mitigations below |
+| C. B2B white-label | licenses to universities and career centers | $24–60K [C020] | tenders/RFP/SOC2, 6–18-month cycles; a different product is needed (SSO, cohorts, reporting); vertical vendors own the niche | unmet white-label demand exists | postponed until presence |
+| D. Dual-license | enterprise self-host + ATS integrations | $10–50K [C020] | legally void on top of MIT — rights already granted to everyone forever; Greenhouse/Workday serve employers, not candidates | enterprise will pay for what is already free | rejected |
+| E. Shut down commerce | stays a non-commercial OSS | $0 | abandoning the asset at the widest market window; "non-commercial forever" blocks the future with backlash | the community will sustain itself (a myth — the Heartbleed effect) | the stop-loss path |
+
+**Why B — the inference chain.**
+1. The leader's axis is paying subscribers and ARR. A and E produce $0 by construction → excluded as
+   growth strategies (E remains as the stop path).
+2. C requires a sales motion (tenders, security review) that a solo founder does not have → the
+   probability of closing a cycle within 12 months is ~0 → postponed, not rejected.
+3. D is legally impossible on top of MIT without relicensing (fork risk + community loss) → rejected.
+4. B is the only option that directly grows the axis; its risks (PII, trust, conversion) are
+   **manageable**: PII → DPA and data minimization; trust → opt-in cloud on top of the local core;
+   conversion → the BYOK-free tier removes both the barrier and the inference cost.
+5. Therefore B with built-in mitigations dominates on "axis growth / risk controllability"; the
+   leader's choice is recorded in D001 [C019].
+
+**Red team → mitigations (20 hits: 15 objections + 5 hidden assumptions).**
+
+| Red-team hit | Mitigation built into B |
+|---|---|
+| LLM inference eats the free-tier economics | BYOK-free tier: users bring their own key — free-tier variable cost ≈ 0 |
+| "$0 forever" is a public promise; bait-and-switch | opt-in cloud; the MIT version stays; the local mode is never switched off |
+| hosted GDPR/PII liability | data minimization, DPA, EU hosting in wave 2 |
+| freemium conversion 2–5% [C020] | stop-loss thresholds (FAQ-5): if actuals fall below the model, the branch closes |
+| a PH/HN spike that fades in days | the "open-source Jobscan alternative" SEO strategy — a long channel with no budget |
+
+## FAQ-4. Tactics and unit economics (every calculation, step by step)
+
+**Tactics** (each is a conclusion from FAQ-1–3):
+1. **Three tiers** — Free (user's BYOK key, 3 resumes/mo) / Pro $12 (cloud AI) / Unlimited $29
+   (129-board scan + auto pipeline + tracker). Reasoning: Sarah accepts $10–15, and $29 only for
+   *search* [C017] → generation and search are separated across tiers.
+2. **Opt-in cloud on top of the local MIT core** — the cloud is a choice, not a requirement.
+   Reasoning: resolves the FAQ-1 tension while preserving the core asset — trust [C001][C019].
+3. **Honest pricing**: no auto-renewals, one-click cancel, discounted annual plan. Reasoning: all
+   competitors run auto-renewals [C006] → a differentiator with confirmed demand [C014].
+4. **Language waves** EN (US/EU) → DE/ES/PT-BR → JA/ZH. Reasoning: 19 locales already exist [C004],
+   competitors cover EN+5 [C007]; the next wave opens only after the previous one's conversion is
+   confirmed.
+5. **Open scoring methodology** — a public description of the ATS criteria. Reasoning: 98% of the
+   F500 run ATS [C008]; transparency removes the "black magic" fear [C009].
+
+**Unit economics — step-by-step calculation** (assumptions [C016]: ARPU $29; variable costs 25%;
+CAC $60; churn 8%/mo; fixed costs ~$1,500/mo):
+
+| # | Formula | Calculation | Result |
 |---|---|---|---|
-| A. Status quo | free local OSS | $0 | Zero on the goal axis; MIT lets a fork monetize your work; asset stagnates within 12–24 months [C005] |
-| **B. Hosted freemium SaaS** | cloud, global: Free BYOK / Pro $12 / Unlimited $29 | $35–105K [C016][S008] | PII/GDPR and scraping liability shifts to the developer; "$0 forever" is a public promise; freemium conversion 2–5% [C020] |
-| C. B2B white-label | licenses to universities and career centers | $24–60K [C020] | Sales motion mismatched to a solo founder: RFPs, SOC2, 6–18-month cycles; vertical vendors own the niche |
-| D. Dual-license | enterprise self-host + ATS integrations | $10–50K [C020] | Legally impossible on top of MIT: rights already granted to everyone, forever |
-| E. Shut down commerce | stays a non-commercial OSS | $0 | Abandoning the asset at the market's widest window |
+| 1 | CM = ARPU × (1 − variable share) | $29 × (1 − 0.25) = $29 × 0.75 | **CM = $21.75** |
+| 2 | Average paying lifetime = 1 / churn | 1 / 0.08 | **12.5 months** |
+| 3 | LTV = CM × lifetime (equivalent to CM / churn) | $21.75 / 0.08 | **LTV = $271.88** |
+| 4 | LTV/CAC | $271.88 / $60 | **4.53** (health criterion ≥ 3) |
+| 5 | CAC payback = CAC / CM | $60 / $21.75 | **2.76 ≈ 2.8 months** |
+| 6 | Break-even = fixed costs / CM | $1,500 / $21.75 = 68.97 | **≈ 69 paying users** |
 
-**Recommendation — B** (the leader's choice is recorded in D001 [C019]) with built-in mitigations:
-BYOK-free tier (zero inference cost on free) · opt-in cloud on top of the local core · honest pricing
-without auto-renewals as positioning [C014] · stop-loss thresholds (FAQ-5). D is legally rejected,
-C is postponed until there is presence, E is the stop-loss path.
+**Beta funnel calculation** (synthetic model [S008], seed=7, week-1 base = 3,000 visitors, 22%/wk
+growth — a method illustration, not a forecast):
+week-12 visitors = 3,000 × 1.22¹¹ ≈ **26,700** → signups = × 5.5% ≈ **1,470** →
+activation (first resume) = × 62% ≈ **910** → payment = × 3.3% with a 6%/wk uplift ≈ **53 paying** →
+MRR = 53 × $29 = **$1,537** → run-rate = $1,537 × 12 = **$18,444 ARR/yr**.
+Cross-check vs break-even: 53 < 69 — the beta does not yet cover fixed costs, which is exactly what
+the "continue at ≥ 40" criterion encodes, with scaling only after confirmation.
 
-## FAQ-4. Tactics
+**Sensitivity** (Excel unit_economics — what happens when an assumption deviates):
 
-1. **Three tiers**: Free — user's BYOK key, 3 resumes/mo; Pro $12 — cloud AI; Unlimited $29 — 129-board scan + auto pipeline + tracker.
-2. **Opt-in cloud**: the MIT version stays forever; cloud is a choice, not a requirement [C001][C019].
-3. **Honest pricing**: no auto-renewals, one-click cancel, discounted annual plan — the opposite of the competitors' pattern [C006][C014].
-4. **Language waves**: EN (US/EU) → DE/ES/PT-BR → JA/ZH — next wave only after the previous one's conversion is confirmed [C004][C007].
-5. **Open scoring methodology**: a public description of ATS criteria — transparency as trust [C008].
+| Scenario | Calculation | LTV | LTV/CAC | Interpretation |
+|---|---|---|---|---|
+| Base [C016] | 21.75 / 0.08 | $271.88 | 4.53 | green zone |
+| Churn 10%/mo | 21.75 / 0.10 | $217.50 | 3.63 | acceptable |
+| Churn 12%/mo | 21.75 / 0.12 | $181.25 | 3.02 | red zone — below the 3 criterion |
+| ARPU $19 (tier rebuild) | $19 × 0.75 = $14.25; / 0.08 | $178.13 | 2.97 | requires a lower CAC |
+| CAC $90 (paid channels) | 271.88 / 90 | $271.88 | 3.02 | only organic channels stay healthy |
 
-**Unit economics** (model on assumptions [C016]): ARPU $29 · variable costs 25% → **CM $21.75** ·
-8%/mo churn → **LTV ≈ $271.88** · **LTV/CAC ≈ 4.5** · CAC payback ≈ 2.8 months · break-even ≈ **69 paying users**.
-Synthetic beta funnel (a method illustration, not a forecast [S008]): by week 12 — **53 paying, $1,537 MRR**.
-Sensitivity analysis — the unit_economics workbook (Appendices).
+**Sensitivity inference:** the model survives a deviation of any **single** assumption (churn up to
+12% or CAC up to $90) but not two at once; hence the channel rule — organic first (PH/HN/SEO,
+CAC ≈ $60), paid channels only after churn ≤ 10% is confirmed by actuals.
 
-![CVStart dashboard — English locale: fit scores, statuses, funnel](img/en_dashboard.png)
+**Conclusion (inference).** At base assumptions the unit economics are healthy (4.53 ≥ 3, payback
+< 3 months) and break-even is reachable on organic traffic (69 paying ≈ 0.23% of the model funnel's
+signups); the safety margin is one parameter. Therefore: Unlimited $29 is the anchor tier, Pro $12
+is the downgrade-retention path, and the annual plan (from [C018]) is the churn-reduction instrument
+switched on in wave 2.
 
 ## FAQ-5. Implementation & validation plan (90 days)
 
-Launch the hosted beta in 3 EN geos (US/EU). Expectation by week 12: **50–60 paying (model: 53), MRR ≥ $1,500**,
-activation ≥ 50% of signups [S008]. Comparison base — the funnel model + public freemium-conversion benchmarks.
-Decision D001: commitment "hosted beta in 3 EN geos by 2026-12-15", review on 2027-02-10.
+**Plan logic.** 90 days ≈ 2 full job-seeker decision cycles (average active search is 1–6 months,
+core 1–3 months): the beta sees both the first arrival and the first natural churn — it measures
+both parameters of the unit model (conversion and retention), not just signups.
 
-- **Continue** (paid ≥ 40, activation ≥ 50%, churn ≤ 10%): scale channels, open the DE/ES/PT-BR wave.
-- **Change** (paid 20–40): rebuild tiers/pricing, strengthen onboarding.
-- **Stop** (paid < 20 with activation < 35%): the commercial branch closes; the project remains OSS.
+**Expectation by week 12** [S008]: 50–60 paying (model: 53), MRR ≥ $1,500, activation ≥ 50% of
+signups. **Comparison base:** the funnel model + public freemium-conversion benchmarks of 2–5%
+[C020] — there is no real history, so the comparison is weekly "model vs actual" with the gap
+recorded.
 
-Counter-metrics: OSS-community churn (GitHub stars/forks), privacy/GDPR complaints, free-tier inference costs,
-beta NPS below 30 while signups grow.
+**Decision thresholds (stop-loss logic):**
+- **Continue** — paid ≥ 40, activation ≥ 50%, churn ≤ 10%/mo → scale channels, open the
+  DE/ES/PT-BR wave (the next multiplier on a proven model).
+- **Change** — paid 20–40 → rebuild tiers/pricing (the $19 hypothesis from sensitivity), strengthen
+  activation onboarding; paid channels stay closed.
+- **Stop** — paid < 20 with activation < 35% → the value hypothesis is unconfirmed: the commercial
+  branch closes, the project stays OSS (option E), resources go to the community.
+
+**Counter-metrics** (each proxies a specific red-team hit): GitHub stars/forks (a > 30% drop = the
+community reads bait-and-switch) · GDPR complaints > 5 (the jurisdictional risk materializes) ·
+free-tier inference > $200/mo (the free economics break) · beta NPS < 30 while signups grow
+("growing trash").
+
+**Decision D001** [C019]: grounds C019/C013/C014/C016/C005/C006 · commitment "hosted beta in
+3 EN geos by 2026-12-15" · review 2027-02-10 · stop trigger — the "Stop" threshold above.
+
+**Conclusion (inference).** The plan tests not "do they like it" but three numbers of the unit model
+(conversion, activation, churn) on real money; every threshold has a pre-written action — this turns
+the "success/failure" debate into arithmetic.
 
 ## FAQ-6. Success metrics
 
-| Metric | Baseline | Target by week 12 | Type |
-|---|---|---|---|
-| Paying subscribers | 0 | ≥ 40 (model: 53) | NSM proxy |
-| MRR | $0 | ≥ $1,500 | revenue |
-| Activation (first resume) | — | ≥ 50% of signups | product |
-| Paying churn | — | ≤ 10%/mo | retention |
-| LTV/CAC | model 4.5 | ≥ 3 actual | unit economics |
-| GitHub stars (counter) | current level | drop < 30% | OSS trust |
-| Beta NPS (counter) | — | ≥ 30 | quality |
+| Metric | Baseline | Target by week 12 | Type | Why this metric |
+|---|---|---|---|---|
+| Paying subscribers | 0 | ≥ 40 (model: 53) | NSM proxy | a direct money vote for the "scan+scoring" value — signups without payment prove nothing |
+| MRR | $0 | ≥ $1,500 | revenue | MRR = paying × $29 — a derivative, but a discrete trigger for operational decisions |
+| Activation (first resume) | — | ≥ 50% of signups | product | if generation never reaches a first result, the paid upgrade is impossible |
+| Paying churn | — | ≤ 10%/mo | retention | the dominant LTV parameter (step 3 of FAQ-4); product episodicity makes it critical |
+| LTV/CAC | model 4.53 | ≥ 3 actual | unit economics | the healthy-model boundary; below 3, growth via paid channels is forbidden |
+| GitHub stars (counter) | current level | drop < 30% | OSS trust | an early signal that "$0 forever / local" is being read as bait-and-switch |
+| Beta NPS (counter) | — | ≥ 30 | quality | growing signups at low NPS = burning the channel |
+
+**Target-point calculation:** 40 paying × $29 = $1,160 MRR by week 12; at the 10% retention target
+the same 40 payers carry an LTV base of $217.50 × 40 = $8,700 per cohort — against organic CAC spend
+of ~40 × $60 = $2,400; the 3.63 ratio means scaling is justified only when both targets hold at once.
+
+**Conclusion (inference).** The metric system closes the unit model: paying users prove value,
+activation explains conversion, churn and LTV/CAC hold the economics, counter-metrics guard the
+trust asset. No metric is vanity — each has a threshold and a pre-written action.
 
 ## Appendices (Excel workbooks, `outputs/attachments/`)
 
-| File | Editable inputs |
-|---|---|
-| unit_economics.xlsx | ARPU, variable costs, CAC, churn — unit economics & sensitivity |
-| growth_model.xlsx | MAU, growth, conversion, AOV — 12-month model |
-| cohort_retention.xlsx | cohort sizes, retention curve |
-| market_sizing.xlsx | PAM/TAM/SAM/SOM, environment factors |
+| File | Editable inputs (the "Input" sheet) | Recalculated |
+|---|---|---|
+| unit_economics.xlsx | ARPU, variable costs, CAC, churn | CM, LTV, LTV/CAC, payback, break-even, sensitivity |
+| growth_model.xlsx | MAU, growth, conversion, AOV | the 12-month model |
+| cohort_retention.xlsx | cohort sizes, retention curve | M1/M3/M6 retention |
+| market_sizing.xlsx | PAM, funnel shares | TAM/SAM/SOM, environment factors |
 
-Formulas recalculate on open (Excel / Numbers / LibreOffice). The full evidence-backed version — REPORT.md.
+Every "Input"-sheet value traces to a claim C###; formulas recalculate on open (Excel / Numbers /
+LibreOffice). The full evidence-backed version — REPORT.md; the method for assembling this document —
+knowledge/templates/SIX_PAGER_PROMPT.md.
+
+> Inferences are marked "Conclusion"/"Inference" and rest only on C###/S### tags or the explicit
+> assumptions [C016][C020] — no number in this document appeared without provenance.
 
 
 ---
@@ -621,33 +760,64 @@ Formulas recalculate on open (Excel / Numbers / LibreOffice). The full evidence-
 ## CVStart · Six-pager (RU)
 
 > **Стратегия коммерческой версии и глобального запуска cvstart.org** — результат полного 12-шагового
-> прогона агента «Стратег Фабрики продуктов» (06.11.2026). Шесть вопросов комитета — шесть ответов.
-> Доказательная база: утверждения C001–C020, источники S001–S011, решение D001 — полный реестр в REPORT.md.
-> Модельные цифры — на допущениях [C016][C020]; рыночные — диапазонами по агрегаторам [S006].
-
-![Лендинг cvstart.org — русская версия: 129 джоб-бордов, AI-скоринг, 19 языков](img/ru_landing.png)
+> прогона агента «Стратег Фабрики продуктов» (06–07.11.2026). Формат комитета: каждый раздел построен
+> по схеме **«данные → обоснование → расчёт → вывод»**. Скриншоты исключены сознательно — только
+> проверяемая логика, формулы и числа с тегами происхождения. Доказательная база: утверждения
+> C001–C020, источники S001–S011, решение D001 (полный реестр — REPORT.md). Модельные цифры — на
+> допущениях [C016][C020]; рыночные — диапазонами [S006].
 
 ## FAQ-1. Анализ текущего состояния
 
-**Продукт.** CVStart (career-ops UI) — дашборд над AI-пайплайном поиска работы: скан ~129 джоб-бордов,
-AI-скоринг вакансий 0.0–5.0 против резюме пользователя, CV Studio (тюминг под JD, humanize, ATS-буллеты),
-PDF/DOCX-экспорт, cover letters, авто-пайплайн, трекер заявок с follow-up, карта вакансий, mock-интервью.
-100% локально (данные у пользователя), 18 LLM-провайдеров BYOK + keyless-режим, 19 языков интерфейса,
-~7 602 автотеста, лицензия MIT [C001][C004].
+**Данные — продукт.** CVStart (career-ops UI) — открытый (MIT) AI-конструктор резюме и дашборд поиска
+работы: скан ~129 джоб-бордов (124 EN + 5 RU: hh.ru, Habr Career, GeekJob, GetMatch, Trudvsem),
+AI-скоринг вакансий 0.0–5.0 против резюме пользователя, CV Studio (тюминг под JD, humanize,
+ATS-буллеты), PDF/DOCX-экспорт, cover letters, авто-пайплайн, трекер заявок с follow-up, карта
+вакансий, mock-интервью; 100% локально (данные у пользователя), 18 LLM-провайдеров BYOK + keyless,
+19 языков интерфейса, ~7 602 автотеста [C001][C004]. Монетизации нет: «$0 forever», публичного
+хостинга нет [C002][C003].
 
-**Монетизации нет.** Проект бесплатный («$0 forever»), публичного хостинга нет — установка требует
-родительского репозитория career-ops; Windows — только через WSL [C002][C003].
+**Данные — рынок.** Resume builders: коридор оценок $1,2–2,4 млрд; AI-подсегмент $1,3 → 1,47 млрд,
+CAGR 13,1% [C005]. Онлайн-рекрутинг: $37,97 млрд (2025), CAGR 7,1% до 2033 [C011]. AI в поиске
+работы применяют 31–74% соискателей (опросы 2025–2026); 84% говорят, что AI облегчило поиск [C009];
+1,2+ млн AI-юзеров у Kickresume за 2025 [C010].
 
-**Рынок.** Resume builders — коридор оценок $1,2–2,4 млрд; AI-подсегмент растёт на 13,1% в год [C005].
-Онлайн-рекрутинг: $37,97 млрд (2025), CAGR 7,1% [C011]. ATS используется у 98% Fortune 500 [C008].
-AI в поиске работы применяют 31–74% соискателей (опросы 2025–2026) [C009].
+**Данные — конкуренты.** 7 прямых — Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi:
+freemium, платный тариф $8–40/мес, агрессивные автопродления [C006]; языковое покрытие EN+5 [C007];
+ATS используется у 98% Fortune 500 [C008].
 
-**Конкуренты.** 7 прямых — Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi: freemium,
-платный тариф $8–40/мес, агрессивные автопродления [C006]; языковое покрытие — EN+5 [C007].
-Незанятый угол: мультиязычность (19 локалей) + приватность + open source [C013].
+**Обоснования.**
+1. **Зрелость продукта ≠ коммерческая зрелость.** Инженерный актив собран (129 адаптеров, 19 локалей,
+   7 602 теста), но монетизация не запущена — значит, весь актив сейчас субсидируется без возврата;
+   любой коммерческий вариант должен сначала окупать именно этот долг поддержки, а не «зарабатывать
+   сверху».
+2. **Оценки рынка расходятся ×2** ($1,2 млрд против $2,35 млрд у разных агрегаторов) — поэтому все
+   рыночные выводы ниже строятся на **нижней консервативной границе $1,2 млрд**: если кейс сходится
+   на консервативной цифре, он тем более сходится на оптимистичной.
+3. **AI стал гигиеническим фактором.** Когда 31–74% соискателей уже используют AI, само наличие
+   «AI-функций» не дифференциатор — дифференциатором остаются качество результата, честность условий
+   и приватность.
+4. **ATS-совместимость — фактор покупки №1.** При 98% ATS у Fortune 500 резюме, которое «не проходит
+   ATS», обесценивает весь остальной функционал; открытая методология ATS-проверки — аргумент
+   доверия, а не маркетинговое обещание.
+5. **Все 7 конкурентов держат одну модель — подписку с автопродлением.** Это создаёт проверяемое
+   окно позиционирования «честная цена без автопродлений»: недовольство паттерном подтверждено
+   синтетикой [C017][C018] и поддаётся проверке на бете.
 
-**Противоречие.** «100% локально» как публичное обещание [C001] против коммерческого облака.
-Разрешение: opt-in-гибрид (локальный core остаётся, облако — выбор), проверяется 90-дневной бетой (FAQ-5).
+**Расчёт ёмкости (воронка PAM→SOM, Excel market_sizing).**
+PAM 1,8 млрд экономически активных соискателей → **TAM** = 1,8 млрд × 30% (цифровые профессии,
+EN-first рынки) = 540 млн → **SAM** = 540 млн × 40% (активно ищут работу 1–6 мес) = 216 млн →
+**SOM** = 216 млн × 5% (реалистичная доля за 12 мес для нового игрока) = **10,8 млн пользователей**.
+Проверка порядка величины: даже 0,01% от SOM = 1 080 платящих × $29 ≈ $31 тыс MRR — порядок
+подтверждает, что рынок достаточен для нишевого игрока без агрессивного захвата доли.
+
+**Противоречие и его разрешение.** «100% локально» — публичное обещание [C001] — против
+коммерческого облака. Разрешение: opt-in-гибрид — локальный core остаётся навсегда, облако — выбор;
+противоречие переводится в проверяемую гипотезу беты (FAQ-5).
+
+**Вывод (умозаключение).** Продукт инженерно зрел и коммерчески не активирован; рынок растёт
+двузначными темпами в AI-подсегменте; конкуренты открыли окно «честной цены». Следовательно,
+коммерческая версия оправдана, а главный риск — не спрос, а доверие локального сообщества; оно
+управляется архитектурой продукта (BYOK + opt-in) и замеряется контр-метриками (FAQ-5).
 
 ## FAQ-2. Пользователи: сегменты и персоны
 
@@ -656,76 +826,181 @@ AI в поиске работы применяют 31–74% соискателе
 | Ядро (EN-first) | соискатели tech 25–40, US/EU, активный поиск 1–6 мес | «Найти релевантные вакансии из всех источников и быстро сделать резюме под каждую, которое пройдёт ATS — без подписных ловушек и без данных в чужом облаке» | [C017] |
 | Волна 2 | не-EN сегменты: DE, ES, PT-BR, JA, ZH | «Думать о резюме на родном языке; локальные конвенции важнее цены» | [C004][C018] |
 
-Персоны-гипотезы (синтетические ИИ-интервью [S009][S010] — гипотезы для проверки, не доказательства):
-**Sarah, 32, инженер (Остин)** — перепробовала Zety/Teal, злится на автопродления; готова платить $10–15/мес,
-$29 — только если инструмент реально находит вакансии. **Markus, 35, продакт (Берлин)** — инструменты
-англоцентричны, GDPR-чувствителен, принимает годовой тариф €100–120, принципиально против помесячных автопродлений.
+**Персоны-гипотезы (синтетика [S009][S010] — проверяемые гипотезы, не доказательства спроса).**
+**Sarah, 32, инженер (Остин):** перепробовала Zety/Teal; раздражена автопродлениями («отменила —
+списали ещё раз»); резюме не хочет держать в чужом облаке; готова платить $10–15/мес, $29 — только
+если инструмент реально находит вакансии. **Умозаключение:** цена $29 не будет принята «за
+генерацию текста» — она оправдана только связкой «скан вакансий + скоринг + трекер», то есть
+продаётся функция *поиска*, а не генерации; это подтверждает тировую модель (FAQ-4).
+**Markus, 35, продакт (Берлин):** инструменты англоцентричны; интерфейс и локальные конвенции
+важнее цены; GDPR-чувствителен; принимает годовой тариф €100–120, категорически против помесячных
+автопродлений. **Умозаключение:** в не-EN сегментах платёжеспособность не ниже, а каналы отпугивания
+другие — годовой тариф и локальные сообщества работают лучше помесячной подписки и таргета.
+
+**Расчёт приоритизации сегментов.** Ядро EN-first: ёмкость выше (US/EU — ядро TAM 540 млн),
+CAC ниже (англоязычные Product Hunt / HN / SEO), конкуренция выше (все 7 конкурентов EN+5 [C007]).
+Волна 2: конкуренция ниже (языковое покрытие конкурентов узкое), готовность к годовым платежам выше
+[C018], но каналы дороже и поддержка дороже. Отсюда — **последовательность волн, а не параллель**:
+EN подтверждает конверсию и юнит-экономику, затем локали масштабируют доказанную модель без
+изменения продукта (19 локалей уже существуют [C004] — нулевая стоимость включения, только операционная).
+
+**Вывод (умозаключение).** Ядро — tech-соискатели EN-рынков с болью «подписки-ловушки + ATS»;
+волна 2 — отложенный мультипликатор на готовых локалях. Следовательно, продукт запускается
+EN-first с честным прайсингом как главным сообщением, а локали включаются волнами после
+подтверждения конверсии (критерий — в FAQ-5).
 
 ## FAQ-3. Стратегические инициативы: 5 вариантов + red team
 
-| Вариант | Суть | ARR 12 мес (модель) | Главный удар red team |
+| Вариант | Суть | ARR 12 мес (модель) | Сильнейший удар red team | Скрытое допущение | Вывод |
+|---|---|---|---|---|---|
+| A. Статус-кво | бесплатный локальный OSS | $0 | $0 ARR при оси «рост платящих»; домен/CI/129 интеграций субсидируются бессрочно; MIT позволяет форку монетизировать ваш труд (прецедент WordPress/WP Engine) | локальность — драйвер выбора для массового пользователя | не соответствует брифу |
+| **B. Hosted freemium SaaS** | облако глобально: Free BYOK / Pro $12 / Unlimited $29 | $35–105 тыс [C016][S008] | PII/GDPR-ответственность и скрапинг против ToS; «$0 forever» — публичное обещание; freemium-конверсия 2–5% [C020]; эпизодичность продукта (нашёл работу — отписался) | пришедшие ради OSS купят hosted | **выбран** — с митигациями ниже |
+| C. B2B white-label | лицензии вузам и карьерным центрам | $24–60 тыс [C020] | тендеры/RFP/SOC2, циклы 6–18 мес; нужен другой продукт (SSO, когорты, отчётность); ниша занята вертикальными вендорами | есть неудовлетворённый спрос на white-label | отложен до presence |
+| D. Dual-license | enterprise self-host + ATS-интеграции | $10–50 тыс [C020] | юридически пусто поверх MIT — права уже розданы всем навсегда; Greenhouse/Workday — инструменты работодателей, не кандидатов | энтерпрайз заплатит за то, что уже бесплатно | отклонён |
+| E. Закрыть коммерцию | остаётся некоммерческий OSS | $0 | отказ от актива в момент максимального окна; «некоммерческий навсегда» блокирует будущее с бэклэшем | сообщество поддержит само (миф, эффект Heartbleed) | путь стоп-лосса |
+
+**Почему B — цепочка умозаключений.**
+1. Ось руководителя — платящие и ARR. A и E дают $0 по построению → исключаются как стратегии роста
+   (E остаётся как путь остановки).
+2. C требует продаж-компетенции (тендеры, security review), которой у соло-разработчика нет →
+   вероятность закрытия цикла ~0 в горизонте 12 мес → откладывается, не отклоняется.
+3. D юридически невозможен поверх MIT без relicensing (форк-риск + потеря комьюнити) → отклонён.
+4. B — единственный вариант, напрямую растящий ось; его риски (PII, доверие, конверсия) —
+   **управляемые**: PII → DPA и минимизация данных; доверие → opt-in облако при локальном core;
+   конверсия → BYOK-free-тир снимает барьер и инференс-затраты.
+5. Следовательно, B с встроенными митигациями доминирует по соотношению «рост оси / управляемость
+   рисков»; выбор руководителя зафиксирован в D001 [C019].
+
+**Red team → митигации (20 ударов: 15 возражений + 5 скрытых допущений).**
+
+| Удар red team | Митигация в варианте B |
+|---|---|
+| Инференс LLM съест экономику free | BYOK-free-тир: пользователь приносит свой ключ — переменные затраты на free ≈ 0 |
+| «$0 forever» — публичное обещание, bait-and-switch | opt-in облако; MIT-версия остаётся; локальный режим не отключается никогда |
+| GDPR/PII-ответственность hosted | минимизация данных, DPA, EU-хостинг волной 2 |
+| Конверсия freemium 2–5% [C020] | пороги остановки (FAQ-5): если факт ниже модели — ветка закрывается |
+| PH/HN-спайк на дни, дальше тишина | SEO-стратегия «open-source Jobscan alternative» — долгий канал без бюджета |
+
+## FAQ-4. Тактики и юнит-экономика (все расчёты пошагово)
+
+**Тактики** (каждая — вывод из FAQ-1–3):
+1. **Три тира** — Free (BYOK-ключ пользователя, 3 резюме/мес) / Pro $12 (облачный AI) / Unlimited $29
+   (скан 129 бордов + авто-пайплайн + трекер). Обоснование: Sarah принимает $10–15, а $29 — только
+   за *поиск* [C017] → генерация и поиск разделены по тирам.
+2. **Opt-in облако при локальном MIT-core** — облако выбор, не требование. Обоснование: разрешение
+   противоречия FAQ-1, сохранение главного актива — доверия [C001][C019].
+3. **Честный прайсинг**: без автопродлений, отмена в клик, годовой тариф со скидкой. Обоснование:
+   все конкуренты на автопродлениях [C006] → дифференциатор с подтверждённым спросом [C014].
+4. **Волны локалей** EN (US/EU) → DE/ES/PT-BR → JA/ZH. Обоснование: 19 локалей уже есть [C004],
+   конкуренты EN+5 [C007]; следующая волна — только после подтверждения конверсии предыдущей.
+5. **Открытая методология скоринга** — публичное описание ATS-критериев. Обоснование: 98% F500 —
+   ATS [C008], прозрачность снимает страх «магии» [C009].
+
+**Юнит-экономика — расчёт пошагово** (допущения [C016]: ARPU $29; переменные 25%; CAC $60;
+churn 8%/мес; фиксированные ~$1 500/мес):
+
+| # | Формула | Расчёт | Результат |
 |---|---|---|---|
-| A. Статус-кво | бесплатный локальный OSS | $0 | Ноль по оси задачи; MIT позволяет форку монетизировать ваш труд; стагнация актива за 12–24 мес [C005] |
-| **B. Hosted freemium SaaS** | облако глобально: Free BYOK / Pro $12 / Unlimited $29 | $35–105 тыс [C016][S008] | PII/GDPR и скрапинг переходят на разработчика; «$0 forever» — публичное обещание; конверсия freemium 2–5% [C020] |
-| C. B2B white-label | лицензии вузам и карьерным центрам | $24–60 тыс [C020] | Продажи не по размеру соло: тендеры, SOC2, циклы 6–18 мес; ниша занята вертикальными вендорами |
-| D. Dual-license | enterprise self-host + ATS-интеграции | $10–50 тыс [C020] | Юридически не работает поверх MIT: права уже розданы всем навсегда |
-| E. Закрыть коммерцию | остаётся некоммерческий OSS | $0 | Отказ от актива в момент максимального окна рынка |
+| 1 | CM = ARPU × (1 − доля переменных) | $29 × (1 − 0,25) = $29 × 0,75 | **CM = $21,75** |
+| 2 | Средняя жизнь платящего = 1 / churn | 1 / 0,08 | **12,5 мес** |
+| 3 | LTV = CM × срок жизни (эквивалент CM/churn) | $21,75 / 0,08 | **LTV = $271,88** |
+| 4 | LTV/CAC | $271,88 / $60 | **4,53** (критерий здоровья ≥ 3) |
+| 5 | Окупаемость CAC = CAC / CM | $60 / $21,75 | **2,76 ≈ 2,8 мес** |
+| 6 | Брейк-евен = фиксированные / CM | $1 500 / $21,75 = 68,97 | **≈ 69 платящих** |
 
-**Рекомендация — B** (выбор руководителя зафиксирован в D001 [C019]) со встроенными митигациями:
-BYOK-free-тир (нулевые инференс-затраты на free) · opt-in облако при локальном core · честный прайсинг
-без автопродлений как позиционирование [C014] · пороги остановки (FAQ-5). D отклонён юридически,
-C — отложен до presence, E — по критериям остановки.
+**Расчёт воронки беты** (синтетическая модель [S008], seed=7, база нед. 1 = 3 000 посетителей,
+рост 22%/нед — методическая иллюстрация, не прогноз):
+посетители нед. 12 = 3 000 × 1,22¹¹ ≈ **26 700** → регистрации = × 5,5% ≈ **1 470** →
+активация (первое резюме) = × 62% ≈ **910** → оплата = × 3,3% с ростом 6%/нед ≈ **53 платящих** →
+MRR = 53 × $29 = **$1 537** → run-rate = $1 537 × 12 = **$18 444 ARR/год**.
+Сверка с брейк-евеном: 53 < 69 — бета ещё не покрывает фиксированные затраты, что и задано
+критерием «продолжить при ≥ 40» с масштабированием после подтверждения.
 
-## FAQ-4. Тактики
+**Чувствительность** (Excel unit_economics — что произойдёт с моделью при отклонении допущений):
 
-1. **Три тира**: Free — BYOK-ключ пользователя, 3 резюме/мес; Pro $12 — облачный AI; Unlimited $29 — скан 129 бордов + авто-пайплайн + трекер.
-2. **Opt-in облако**: MIT-версия остаётся навсегда; облако — выбор, не требование [C001][C019].
-3. **Честный прайсинг**: без автопродлений, отмена в клик, годовой тариф со скидкой — противоположность паттерну конкурентов [C006][C014].
-4. **Волны локалей**: EN (US/EU) → DE/ES/PT-BR → JA/ZH — следующая волна после подтверждения конверсии предыдущей [C004][C007].
-5. **Открытая методология скоринга**: публичное описание ATS-критериев — прозрачность как доверие [C008].
+| Сценарий | Расчёт | LTV | LTV/CAC | Интерпретация |
+|---|---|---|---|---|
+| База [C016] | 21,75 / 0,08 | $271,88 | 4,53 | зелёная зона |
+| Churn 10%/мес | 21,75 / 0,10 | $217,50 | 3,63 | допустимо |
+| Churn 12%/мес | 21,75 / 0,12 | $181,25 | 3,02 | красная зона — ниже критерия 3 |
+| ARPU $19 (пересбор тира) | $19 × 0,75 = $14,25; / 0,08 | $178,13 | 2,97 | требует снижения CAC |
+| CAC $90 (платные каналы) | 181,25 не нужен: 271,88 / 90 | $271,88 | 3,02 | только organic-каналы остаются здоровыми |
 
-**Экономика направления** (модель на допущениях [C016]): ARPU $29 · переменные 25% → **CM $21,75** ·
-churn 8%/мес → **LTV ≈ $271,88** · **LTV/CAC ≈ 4,5** · окупаемость CAC ≈ 2,8 мес · брейк-евен ≈ **69 платящих**.
-Синтетическая бета-воронка (метод, не прогноз [S008]): к неделе 12 — **53 платящих, MRR $1 537**.
-Чувствительность — Excel-книга unit_economics (Приложения).
+**Умозаключение по чувствительности:** модель выдерживает отклонение любого **одного** допущения
+(churn до 12% или CAC до $90), но не двух одновременно; отсюда правило каналов — сначала органика
+(PH/HN/SEO, CAC ≈ $60), платные каналы — только после подтверждения churn ≤ 10% фактом.
 
-![Дашборд CVStart — русская локаль: скоринг, статусы, воронка](img/ru_dashboard.png)
+**Вывод (умозаключение).** При базовых допущениях юнит-экономика здоровая (4,53 ≥ 3, окупаемость
+< 3 мес), брейк-евен достижим на органике (69 платящих ≈ 0,23% от регистраций модели воронки);
+запас прочности — один параметр. Следовательно: тир Unlimited $29 — якорный, Pro $12 — даун-грейд
+путь удержания, а годовой тариф (из [C018]) — инструмент снижения churn, который включается волной 2.
 
 ## FAQ-5. План реализации и проверки (90 дней)
 
-Запуск hosted-беты в 3 EN-гео (US/EU). Ожидание к неделе 12: **50–60 платящих (модель: 53), MRR ≥ $1 500**,
-активация ≥ 50% регистраций [S008]. База сравнения — модель воронки + публичные ориентиры freemium-конверсии.
-Решение D001: обязательство «hosted beta в 3 EN-гео к 2026-12-15», пересмотр 2027-02-10.
+**Логика плана.** 90 дней = ~2 полных цикла решения соискателя (средний активный поиск 1–6 мес,
+ядро — 1–3 мес): бета успевает увидеть и первый приход, и первый естественный churn — то есть
+замеряет оба параметра юнит-модели (конверсию и удержание), а не только регистрацию.
 
-- **Продолжить** (paid ≥ 40, activation ≥ 50%, churn ≤ 10%): масштабирование каналов, волна DE/ES/PT-BR.
-- **Изменить** (paid 20–40): пересбор тира/цены, усиление онбординга.
-- **Остановить** (paid < 20 при activation < 35%): коммерческая ветка закрывается, проект остаётся OSS.
+**Ожидание к неделе 12** [S008]: 50–60 платящих (модель: 53), MRR ≥ $1 500, активация ≥ 50%
+регистраций. **База сравнения:** модель воронки + публичные ориентиры freemium-конверсии 2–5%
+[C020] — реальной истории нет, поэтому сравнение еженедельное «модель vs факт» с фиксацией
+расхождения.
 
-Контрметрики: отток OSS-комьюнити (звёзды/форки GitHub), жалобы на приватность/GDPR, затраты на инференс
-free-тира, NPS беты < 30 при росте регистраций.
+**Пороги решения (стоп-лосс логика):**
+- **Продолжить** — paid ≥ 40, activation ≥ 50%, churn ≤ 10%/мес → масштабирование каналов,
+  включение волны DE/ES/PT-BR (следующий мультипликатор на доказанной модели).
+- **Изменить** — paid 20–40 → пересбор тира/цены ($19-гипотеза из чувствительности), усиление
+  онбординга активации; платные каналы не открываются.
+- **Остановить** — paid < 20 при activation < 35% → гипотеза ценности не подтверждена: коммерческая
+  ветка закрывается, проект остаётся OSS (вариант E), ресурсы — в комьюнити.
+
+**Контр-метрики** (каждая — прокси конкретного удара red team): звёзды/форки GitHub (падение
+> 30% = bait-and-switch принят сообществом) · GDPR-жалобы > 5 (юрисдикционный риск реализуется) ·
+инференс free-тира > $200/мес (экономика free ломается) · NPS беты < 30 при росте регистраций
+(«растём в мусор»).
+
+**Решение D001** [C019]: основания C019/C013/C014/C016/C005/C006 · обязательство «hosted beta в
+3 EN-гео к 2026-12-15» · пересмотр 2027-02-10 · триггер стопа — порог «Остановить» выше.
+
+**Вывод (умозаключение).** План проверяет не «понравится ли», а три числа юнит-модели (конверсия,
+активация, churn) на реальных деньгах; у каждого порога есть заранее определённое действие —
+это переводит спор «успех/неуспех» в арифметику.
 
 ## FAQ-6. Метрики успеха
 
-| Метрика | База | Цель к нед. 12 | Тип |
-|---|---|---|---|
-| Платящие подписчики | 0 | ≥ 40 (модель: 53) | NSM-прокси |
-| MRR | $0 | ≥ $1 500 | выручка |
-| Активация (первое резюме) | — | ≥ 50% регистраций | продукт |
-| Churn платящих | — | ≤ 10%/мес | удержание |
-| LTV/CAC | модель 4,5 | ≥ 3 фактически | юнит-экономика |
-| Звёзды GitHub (контр) | текущий уровень | падение < 30% | доверие OSS |
-| NPS беты (контр) | — | ≥ 30 | качество |
+| Метрика | База | Цель к нед. 12 | Тип | Почему эта метрика |
+|---|---|---|---|---|
+| Платящие подписчики | 0 | ≥ 40 (модель: 53) | NSM-прокси | прямое голосование деньгами за ценность «скан+скоринг» — регистрации без оплаты не доказывают ценность |
+| MRR | $0 | ≥ $1 500 | выручка | MRR = платящие × $29 — производная, но дискретный порог для операционных решений |
+| Активация (первое резюме) | — | ≥ 50% регистраций | продукт | если генерация не доходит до первого результата, платный апгрейд невозможен |
+| Churn платящих | — | ≤ 10%/мес | удержание | главный параметр LTV (шаг 3 FAQ-4); эпизодичность продукта делает его критичным |
+| LTV/CAC | модель 4,53 | ≥ 3 фактически | юнит-экономика | граница здоровой модели; при < 3 рост через платные каналы запрещён |
+| Звёзды GitHub (контр) | текущий уровень | падение < 30% | доверие OSS | ранний сигнал ломки обещания «$0 forever / локально» |
+| NPS беты (контр) | — | ≥ 30 | качество | рост регистраций при низком NPS = сжигание канала |
+
+**Расчёт целевой точки:** 40 платящих × $29 = $1 160 MRR к нед. 12; при удержании 10% (цель) тот же
+40 платящих дают LTV-базу $217,50 × 40 = $8 700 на когорту — против CAC-затрат органики ~40 × $60 =
+$2 400; соотношение 3,63 — масштабирование оправдано только при выполнении обеих целей одновременно.
+
+**Вывод (умозаключение).** Система метрик замыкает юнит-модель: платящие доказывают ценность,
+активация объясняет конверсию, churn и LTV/CAC держат экономику, контр-метрики охраняют актив
+доверия. Ни одна метрика не « vanity» — у каждой есть порог и заранее записанное действие.
 
 ## Приложения (Excel-модели, `outputs/attachments/`)
 
-| Файл | Что редактировать |
-|---|---|
-| unit_economics.xlsx | ARPU, переменные, CAC, отток — юнит-экономика и чувствительность |
-| growth_model.xlsx | MAU, рост, конверсия, AOV — модель на 12 месяцев |
-| cohort_retention.xlsx | размеры когорт, кривая удержания |
-| market_sizing.xlsx | PAM/TAM/SAM/SOM, факторы среды |
+| Файл | Что редактировать (лист «Ввод») | Что пересчитывается |
+|---|---|---|
+| unit_economics.xlsx | ARPU, переменные, CAC, отток | CM, LTV, LTV/CAC, окупаемость, брейк-евен, чувствительность |
+| growth_model.xlsx | MAU, рост, конверсия, AOV | модель на 12 месяцев |
+| cohort_retention.xlsx | размеры когорт, кривая удержания | удержание M1/M3/M6 |
+| market_sizing.xlsx | PAM, доли воронки | TAM/SAM/SOM, факторы среды |
 
-Формулы пересчитываются при открытии (Excel / Numbers / LibreOffice). Полная версия с доказательствами — REPORT.md.
+Каждое значение листа «Ввод» прослеживается до утверждения C###; формулы пересчитываются при
+открытии (Excel / Numbers / LibreOffice). Полная доказательная версия с реестром источников —
+REPORT.md; метод сборки этого документа — knowledge/templates/SIX_PAGER_PROMPT.md.
+
+> Умозаключения помечены «Вывод»/«Умозаключение» и опираются только на теги C###/S### или явные
+> допущения [C016][C020] — ни одно число в документе не появилось без происхождения.
 
 
 ---

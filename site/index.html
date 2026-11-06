@@ -59,22 +59,17 @@ header.solid{background:rgba(4,6,12,.82);backdrop-filter:blur(14px);border-color
 @keyframes appear{from{opacity:0}to{opacity:1}}
 @keyframes loadmove{from{transform:translateX(-110%)}to{transform:translateX(360%)}}
 @keyframes loadhide{to{opacity:0}}
+.hero-media .hero-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
 .hero.vid-ready .loadline{opacity:0;transition:opacity .6s}
-.hero-load{position:absolute;left:50%;bottom:92px;transform:translateX(-50%);z-index:3;width:min(340px,72%);text-align:center;transition:opacity .5s}
-.hero.vid-ready .hero-load{opacity:0;pointer-events:none}
-.hero-load .lbl{font-size:10.5px;font-weight:700;letter-spacing:.22em;color:rgba(242,236,230,.62);margin-bottom:8px;font-family:"SF Mono",ui-monospace,Menlo,monospace}
-.hero-load .track{height:3px;border-radius:3px;background:rgba(242,236,230,.14);overflow:hidden;position:relative}
-.hero-load .fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
-.hero-load .fill.indet{width:34%;animation:ride 1.1s linear infinite}
 @keyframes ride{from{transform:translateX(-110%)}to{transform:translateX(330%)}}
 
 .hero-media{opacity:1}
 .hero{position:relative;min-height:92vh;display:flex;align-items:center;overflow:hidden;border-bottom:1px solid var(--line)}
 .hero-media{position:absolute;inset:0;z-index:0}
-.hero-media video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s ease}
+.hero-media video{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.1s ease}
 .hero.vid-ready .hero-media video{opacity:.55}
-.hero-media::before{content:"";position:absolute;inset:0;background:rgba(4,6,12,.5)}
-.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(4,6,12,.25) 0%,rgba(4,6,12,.15) 45%,var(--bg) 100%)}
+.hero-media::before{content:"";position:absolute;inset:0;background:rgba(4,6,12,.5);z-index:1}
+.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(4,6,12,.25) 0%,rgba(4,6,12,.15) 45%,var(--bg) 100%);z-index:1}
 .hero .wrap{position:relative;z-index:2;text-align:center;padding-top:110px;padding-bottom:90px}
 .hero .kicker{display:inline-flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--bone);opacity:.85;margin-bottom:26px;border:1px solid rgba(242,236,230,.25);border-radius:999px;padding:7px 18px;background:rgba(4,6,12,.35);backdrop-filter:blur(6px)}
 .hero .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
@@ -152,13 +147,13 @@ td{padding:9px 12px;border:1px solid var(--line);color:var(--muted);vertical-ali
 .dchips{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 4px}
 .dchip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 14px;font-size:12.5px;color:var(--muted)}
 .dchip b{color:var(--accent);font-weight:700}
-.shot-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.shot-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
 .shot-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--card)}
 .shot-bar i{width:10px;height:10px;border-radius:50%;background:rgba(154,167,189,.35)}
 .shot-bar i:nth-child(1){background:#f472b6}.shot-bar i:nth-child(2){background:#f6ad55}.shot-bar i:nth-child(3){background:#48bb78}
 .shot-bar span{margin-left:10px;font-size:12px;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,monospace}
 .shot-card img{width:100%;display:block}
-.shot-crop{aspect-ratio:16/10;overflow:hidden}
+.shot-crop{aspect-ratio:16/10;overflow:hidden;flex:1 1 auto;min-height:220px}
 .shot-crop img{width:100%;height:100%;object-fit:cover;object-position:top center}
 .shot-cap{padding:10px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
 .tl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -167,7 +162,7 @@ td{padding:9px 12px;border:1px solid var(--line);color:var(--muted);vertical-ali
 @keyframes draw{from{stroke-dashoffset:1600}to{stroke-dashoffset:0}}
 .wf-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .wf-svg{min-width:760px;width:100%;height:auto;display:block}
-.wf-svg rect.b{transform-origin:bottom;transform-box:fill-box;animation:grow linear both;animation-timeline:view();animation-range:entry 30% exit 75%}
+.wf-svg .bar-g{animation:appear linear both;animation-timeline:view();animation-range:entry 30% exit 75%}
 .wf-svg text{animation:appear linear both;animation-timeline:view();animation-range:entry 40% exit 85%}
 .faq6{display:grid;gap:8px}
 .f6{display:flex;gap:10px;align-items:baseline;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 13px}
@@ -228,9 +223,8 @@ body[data-lang=ru] [lang=en]{display:none}
   .hero.vid-ready .hero-media video{opacity:.4}
   .rv{animation:none}
   .tl-svg .path{animation:none;stroke-dashoffset:0}
-  .wf-svg rect.b{animation:none;transform:scaleY(1)}
+  .wf-svg .bar-g{animation:none}
   .wf-svg text{animation:none;opacity:1}
-  .hero-load{display:none}
   .tl-svg .path{stroke-dashoffset:0}
   .wf-svg rect.b{transform:scaleY(1)}
   .wf-svg text{opacity:1}
@@ -261,11 +255,11 @@ body[data-lang=ru] [lang=en]{display:none}
 <div class="hero" id="top">
   <div class="loadline" aria-hidden="true"><i></i></div>
   <div class="hero-media" aria-hidden="true">
-    <video autoplay muted loop playsinline preload="auto" poster="assets/hero_aurora.jpg?v=8" disablepictureinpicture>
+    <img class="hero-poster" src="assets/hero_aurora.jpg?v=9" alt="">
+    <video autoplay muted loop playsinline preload="auto" disablepictureinpicture>
       <source src="assets/hero-swarm-2.mp4?v=8" type="video/mp4">
     </video>
   </div>
-  <div class="hero-load" aria-hidden="true"><div class="lbl">LOADING</div><div class="track"><div class="fill indet"></div></div></div>
   <div class="wrap">
     <div class="kicker"><span class="dot"></span><span lang="ru">ИИ-агент · доказательная стратегия · человек в контуре</span><span lang="en">AI agent · evidence-based strategy · human in the loop</span></div>
     <h1 lang="ru">От размытого запроса — до <span class="grad">обоснованной стратегии</span>, которой можно доверять</h1>
@@ -423,14 +417,10 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="wf-wrap rv d3" style="margin-top:26px"><svg class="wf-svg" viewBox="0 0 860 300" role="img" aria-label="Экономика платящего CVStart">
     <defs><linearGradient id="wfg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
     <g font-size="13">
-      <rect class="b" x="40"  y="170" width="120" height="60"  rx="8" fill="url(#wfg)" opacity=".9" style="--d:.15s"/>
-      <text x="100" y="160" text-anchor="middle" fill="#eef2ff" font-weight="700">$29</text>
-      <rect class="b" x="230" y="200" width="120" height="30" rx="8" fill="#f472b6" opacity=".75" style="--d:.35s"/>
-      <text x="290" y="190" text-anchor="middle" fill="#f472b6" font-weight="700">−$7,25</text>
-      <rect class="b" x="420" y="170" width="120" height="60" rx="8" fill="url(#wfg)" opacity=".9" style="--d:.55s"/>
-      <text x="480" y="160" text-anchor="middle" fill="#eef2ff" font-weight="700">$21,75</text>
-      <rect class="b" x="610" y="80" width="120" height="150" rx="8" fill="#818cf8" opacity=".6" style="--d:.75s"/>
-      <text x="670" y="70" text-anchor="middle" fill="#eef2ff" font-weight="700">$271,88</text>
+      <g class="bar-g"><rect x="40"  y="170" width="120" height="60"  rx="8" fill="url(#wfg)" opacity=".9"/><text x="100" y="162" text-anchor="middle" fill="#eef2ff" font-weight="700">$29</text></g>
+      <g class="bar-g"><rect x="230" y="200" width="120" height="30" rx="8" fill="#f472b6" opacity=".75"/><text x="290" y="192" text-anchor="middle" fill="#f472b6" font-weight="700">−$7,25</text></g>
+      <g class="bar-g"><rect x="420" y="170" width="120" height="60" rx="8" fill="url(#wfg)" opacity=".9"/><text x="480" y="162" text-anchor="middle" fill="#eef2ff" font-weight="700">$21,75</text></g>
+      <g class="bar-g"><rect x="610" y="80" width="120" height="150" rx="8" fill="#818cf8" opacity=".6"/><text x="670" y="72" text-anchor="middle" fill="#eef2ff" font-weight="700">$271,88</text></g>
       <text x="100" y="252" text-anchor="middle" fill="#9aa7bd">ARPU платящего / мес</text>
       <text x="290" y="252" text-anchor="middle" fill="#9aa7bd">инференс + инфра ~25%</text>
       <text x="480" y="252" text-anchor="middle" fill="#9aa7bd">вклад (CM) платящего</text>
@@ -474,8 +464,8 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="split2 rv d1" style="margin-top:16px">
     <div class="acard">
       <h4 lang="ru">Форматы: комитету на любом языке</h4><h4 lang="en">Formats: for the committee in any language</h4>
-      <p lang="ru">Six-pager собирается в <b>двух языковых версиях</b> — RU и EN — и в <b>трёх форматах</b> для каждого: Markdown (реестр доказательств с тегами), PDF (печатная вёрстка A4: типографика, таблицы, скриншоты) и DOCX (Word с вшитыми изображениями — без сторонних пакетов). Скриншоты продукта подставляются своей локали: русская версия — русские экраны, английская — английские.</p>
-      <p lang="en">The six-pager is assembled in <b>two language versions</b> — RU and EN — and <b>three formats</b> each: Markdown (the tagged evidence registry), PDF (print A4 layout: typography, tables, screenshots) and DOCX (Word with embedded images — no third-party packages). Product screenshots match the locale: the Russian version gets Russian screens, the English one — English screens.</p>
+      <p lang="ru">Six-pager собирается в <b>двух языковых версиях</b> — RU и EN — и в <b>трёх форматах</b> для каждого: Markdown (реестр доказательств с тегами), PDF (печатная вёрстка A4: типографика, таблицы, формулы) и DOCX (Word — без сторонних пакетов). Скриншоты исключены сознательно: документ комитета — это проверяемая логика, выводы и расчёты, а не картинки. Метод сборки — <code>knowledge/templates/SIX_PAGER_PROMPT.md</code>.</p>
+      <p lang="en">The six-pager is assembled in <b>two language versions</b> — RU and EN — and <b>three formats</b> each: Markdown (the tagged evidence registry), PDF (print A4 layout: typography, tables, formulas) and DOCX (Word — no third-party packages). Screenshots are deliberately excluded: a committee document is verifiable reasoning, conclusions and calculations, not pictures. The assembly method — <code>knowledge/templates/SIX_PAGER_PROMPT.md</code>.</p>
       <p><code>$ pfs export --six-pager</code> · <code>$ pfs docx outputs/SIX_PAGER_RU.md</code> · <code>$ pfs export --deck</code></p>
     </div>
     <div class="acard">
@@ -724,19 +714,6 @@ if (heroV){
   if (heroV.readyState >= 3) vidDone();
   else { heroV.addEventListener('canplay', vidDone); heroV.addEventListener('error', vidDone); }
   setTimeout(vidDone, 3500);
-  var hl = document.querySelector('.hero-load');
-  if (hl){
-    var hf = hl.querySelector('.fill'), hlbl = hl.querySelector('.lbl'), hmeta = false;
-    heroV.addEventListener('loadedmetadata', function(){ hmeta = true; if (hf){ hf.classList.remove('indet'); hf.style.width = '12%'; } });
-    heroV.addEventListener('progress', function(){
-      if (!hmeta || !heroV.duration || !hf) return;
-      try { var hb = heroV.buffered; if (hb.length){
-        var hp = Math.max(12, Math.min(99, Math.round(hb.end(hb.length-1)/heroV.duration*100)));
-        hf.style.width = hp + '%'; if (hlbl) hlbl.textContent = 'LOADING · ' + hp + '%';
-      } } catch(e){}
-    });
-    heroV.addEventListener('error', function(){ if (hl) hl.style.display = 'none'; });
-  }
 }
 setTimeout(function(){document.querySelectorAll('.cnt').forEach(function(e){ if (e.textContent === '0' && e.dataset.target) e.textContent = e.dataset.target; });}, 1200);
 
