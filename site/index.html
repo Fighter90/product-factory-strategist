@@ -277,7 +277,7 @@ body[data-lang=ru] [lang=en]{display:none}
 
 <div class="strip"><div class="wrap">
   <div class="stat"><b><span class="cnt" data-target="12">0</span></b><span lang="ru">шагов процесса, 3 паузы для человека</span><span lang="en">process steps, 3 human checkpoints</span></div>
-  <div class="stat"><b><span class="cnt" data-target="72">0</span></b><span lang="ru">карт методик по категориям</span><span lang="en">method cards across categories</span></div>
+  <div class="stat"><b><span class="cnt" data-target="80">0</span></b><span lang="ru">карт методик по категориям</span><span lang="en">method cards across categories</span></div>
   <div class="stat"><b><span class="cnt" data-target="120">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
   <div class="stat"><b>0</b><span lang="ru">зависимостей — только stdlib Python</span><span lang="en">dependencies — Python stdlib only</span></div>
   <div class="stat"><b><span class="cnt" data-target="87">0</span>%</b><span lang="ru">чисел подтверждены источниками · у обычного чата 0%</span><span lang="en">of numbers verifiable — plain chat: 0%</span></div>
@@ -461,7 +461,7 @@ $ pfs export --six-pager    # report + attachments</pre>
   <div class="sec-head">
     <span class="overline" lang="ru">05 · Архитектура</span><span class="overline" lang="en">05 · Architecture</span>
     <h2 class="rv" lang="ru">Архитектура: как устроен агент</h2><h2 class="rv" lang="en">Architecture: how the agent works</h2>
-    <p class="lead rv d1" lang="ru">Слои агента: среда (AGENTS.md, 120 skills, 8 субагентов, 4 хука) → CLI+MCP-ядро <code>tools/pfs</code> → база из 72 карт методик и интеграции. Гарантии — не в промптах, а в коде pfs; состояние — в файлах проекта, поэтому работа переживает перерывы и переезды между средами.</p>
+    <p class="lead rv d1" lang="ru">Слои агента: среда (AGENTS.md, 120 skills, 8 субагентов, 4 хука) → CLI+MCP-ядро <code>tools/pfs</code> → база из 80 карт методик (RU + EN-индекс) и интеграции. Гарантии — не в промптах, а в коде pfs; состояние — в файлах проекта, поэтому работа переживает перерывы и переезды между средами.</p>
     <p class="lead rv d1" lang="en">The agent's layers: environment (AGENTS.md, 120 skills, 8 subagents, 4 hooks) → the <code>tools/pfs</code> CLI+MCP core → a knowledge base of 72 method cards and integrations. Guarantees live in pfs code, not in prompts; state lives in project files, so work survives breaks and moves between environments.</p>
   </div>
   <div class="arch-scroll rv d2"><svg viewBox="0 0 1200 640" width="100%" role="img">
@@ -512,7 +512,7 @@ $ pfs export --six-pager    # report + attachments</pre>
       <path d="M620 525V532" fill="none" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#ar-s)"/>
       <path d="M620 565V572" fill="none" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#ar-s)"/>
       <rect x="870" y="180" width="300" height="170" rx="12" fill="rgba(9,14,24,.6)" stroke="#f472b6" stroke-opacity=".8"/>
-      <text x="886" y="204" font-size="13" font-weight="700" fill="#f472b6">knowledge/ — 72 карты / cards</text>
+      <text x="886" y="204" font-size="13" font-weight="700" fill="#f472b6">knowledge/ — 80 карт / cards</text>
       <text x="886" y="230" font-size="11.5" fill="#9aa7bd">стратегия / strategy · экономика / economics</text>
       <text x="886" y="252" font-size="11.5" fill="#9aa7bd">продукт / product · UX · данные / data</text>
       <text x="886" y="274" font-size="11.5" fill="#9aa7bd">платформы / platforms · Gen AI</text>
@@ -569,7 +569,7 @@ $ pfs export --six-pager    # report + attachments</pre>
     <tr><td>Решения</td><td><code>decision add/due/done/rebase</code></td><td>основания, ответственные, обязательства, пересмотр</td></tr>
     <tr><td>Данные</td><td><code>data profile/cohort/funnel/stats</code></td><td>профиль таблицы, когорты, воронка, статистика с ДИ 95%</td></tr>
     <tr><td>Excel и отчёты</td><td><code>calc · export [--six-pager|--deck] · docx</code></td><td>книги на формулах; REPORT; six-pager; HTML-дека; Word</td></tr>
-    <tr><td>Знания и модели</td><td><code>kb search/show/index · models</code></td><td>поиск по 72 картам; модели под задачи</td></tr>
+    <tr><td>Знания и модели</td><td><code>kb search/show/index · models</code></td><td>поиск по 80 картам; модели под задачи</td></tr>
     <tr><td>Стоимость</td><td><code>cost · log --usd</code></td><td>токены и деньги за задачу</td></tr>
   </table>
   <table lang="en">
@@ -593,7 +593,7 @@ $ pfs export --six-pager    # report + attachments</pre>
     <span class="overline" lang="ru">08 · FAQ</span><span class="overline" lang="en">08 · FAQ</span>
     <h2 class="rv" lang="ru">Частые вопросы</h2><h2 class="rv" lang="en">Frequently asked questions</h2>
   </div>
-  <details class="qa rv" lang="ru"><summary>Что такое «Стратег Фабрики продуктов»?</summary><p>ИИ-агент — папка с инструкциями, базой знаний из 72 методических карт и CLI/MCP-инструментами (<code>pfs</code>). Он ведёт руководителя продукта от размытого запроса до обоснованной продуктовой и коммуникационной стратегии с планом проверки — и не бросает после решения.</p></details>
+  <details class="qa rv" lang="ru"><summary>Что такое «Стратег Фабрики продуктов»?</summary><p>ИИ-агент — папка с инструкциями, базой знаний из 80 методических карт (RU + EN-индекс) и CLI/MCP-инструментами (<code>pfs</code>). Он ведёт руководителя продукта от размытого запроса до обоснованной продуктовой и коммуникационной стратегии с планом проверки — и не бросает после решения.</p></details>
   <details class="qa rv" lang="ru"><summary>Чем он отличается от обычного чата с ИИ?</summary><p>Каждое существенное сведение — с источником (S###) и типом (факт/гипотеза/прогноз/допущение/вывод) и силой A–D. В демо-прогоне 100% чисел прослеживаются до источников; у обычного чата — 0%. Плюс: варианты с red team, план проверки, решение с основаниями и журналом.</p></details>
   <details class="qa rv" lang="ru"><summary>Мои данные и источники в безопасности?</summary><p>Только открытые источники и ваши материалы. Секреты — в <code>.env</code>, не в репозитории. Команды, найденные внутри источников, не исполняются — помечаются как попытка инъекции. Разрешённые домены проверяются до запроса.</p></details>
   <details class="qa rv" lang="ru"><summary>Можно ли перенести проект в другую среду?</summary><p>Да. Проект — обычная папка (<code>projects/&lt;slug&gt;/</code>): скопируйте или git push/pull и откройте в Claude Code, Cursor, Codex, OpenCode, Windsurf или Copilot. <code>pfs status</code> восстановит контекст.</p></details>

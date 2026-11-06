@@ -98,7 +98,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>grounds · commitments"] --> MON["decision due<br/>what to decide now"]
   end
-  KB["knowledge/ — 72 cards across categories<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
+  KB["knowledge/ — 80 cards across categories (RU) + EN index<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → primary sources → S###"| S
   EX --> ATT["outputs/attachments/*.xlsx<br/>recalculated on open"]
@@ -180,7 +180,7 @@ flowchart LR
   IMP --> REV["revision: supersede · rebase"]
 ```
 
-### 2. Knowledge base (72 cards across categories)
+### 2. Knowledge base (80 cards across categories + EN index)
 Knowledge sets by category: growth strategy · unit economics & monetization · product management · UX & customer
 metrics · data analysis & A/B · platform solutions · Gen AI in products. Framework layer: Double Diamond, Lean
 Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Kano. Techniques only — no brands. Search: `pfs kb search` (BM25,
@@ -264,7 +264,7 @@ AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
   agents/ (8) · hooks/ (4) · settings.json
 .cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/  methods/ (72 cards) · templates/ · rubrics/ · INDEX.md
+knowledge/  methods/ (80 RU cards) · methods_en/ (EN mirrors) · INDEX.md · INDEX_EN.md
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions
             data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/

@@ -190,7 +190,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>основания · обязательства"] --> MON["decision due<br/>что решать сейчас"]
   end
-  KB["knowledge/ — 72 карты по категориям<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
+  KB["knowledge/ — 80 карт по категориям (RU) + EN-индекс<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → первоисточники → S###"| S
   SUB -->|"отчёты"| ENV
@@ -268,7 +268,7 @@ flowchart LR
   IMP --> REV["пересмотр: supersede · rebase"]
 ```
 
-### 2. База знаний (72 карты по категориям)
+### 2. База знаний (80 карт по категориям + EN-индекс)
 Наборы знаний по категориям: стратегия и рост · юнит-экономика и монетизация · продуктовый менеджмент ·
 UX и клиентские метрики · анализ данных и A/B · платформенные решения · Gen AI в продукте. Поверх —
 фреймворки: Double Diamond, Lean Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Кано. Только методики —
@@ -356,7 +356,7 @@ AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject
 .claude/settings.json
 .cursor/rules/       .github/ (Pages workflow) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable)
 config/              models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/           methods/ (72 карты) · templates/ · rubrics/ · INDEX.md
+knowledge/           methods/ (80 карт RU) · methods_en/ (EN-зеркала) · INDEX.md · INDEX_EN.md
 tools/pfs/           core · project · route · sources · claims · check · impact · decisions ·
                      data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl · log.jsonl · costs.json ·

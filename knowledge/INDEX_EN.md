@@ -1,0 +1,291 @@
+# Knowledge base — English index
+
+> English navigation for the methodology cards. Cards themselves are mostly in **Russian** (canonical, searchable via `pfs kb search`); full EN summaries exist for the *PM approaches* set in `methods_en/` — more EN mirrors are added progressively.
+>
+
+## PM approaches (EN summaries available)
+
+- [Continuous Discovery — opportunity solution tree and weekly touchpoints](methods_en/continuous-discovery-en.md) `M-continuous-discovery-en` — EN summary of the RU methodology card
+- [PMF Survey (Sean Ellis) — the 40% 'very disappointed' test](methods_en/pmf-survey-en.md) `M-pmf-survey-en` — EN summary of the RU methodology card
+- [Lean Startup — Build-Measure-Learn, validated learning, pivots](methods_en/lean-startup-en.md) `M-lean-startup-en` — EN summary of the RU methodology card
+- [North Star Playbook — one value metric and an input-metric tree](methods_en/north-star-playbook-en.md) `M-north-star-playbook-en` — EN summary of the RU methodology card
+- [Crossing the Chasm — from early enthusiasts to pragmatics](methods_en/crossing-chasm-en.md) `M-crossing-chasm-en` — EN summary of the RU methodology card
+- [Dual-Track Agile — discovery and delivery in parallel](methods_en/dual-track-agile-en.md) `M-dual-track-agile-en` — EN summary of the RU methodology card
+- [Wardley Mapping — component evolution and build/buy/rent](methods_en/wardley-mapping-en.md) `M-wardley-mapping-en` — EN summary of the RU methodology card
+- [Strategy by product life-cycle stage](methods_en/product-lifecycle-strategy-en.md) `M-product-lifecycle-strategy-en` — EN summary of the RU methodology card
+
+## All cards (RU canon; EN titles)
+
+- [AI in research](methods/ai-in-research.md) `M-ai-in-research` — RU card
+- [Brief & hypotheses](methods/brief-hypotheses.md) `M-brief-hypotheses` — RU card
+- [Double Diamond](methods/double-diamond.md) `M-double-diamond` — RU card
+- [External environment](methods/external-environment.md) `M-external-environment` — RU card
+- [GenAI product development](methods/genai-product-development.md) `M-genai-product-development` — RU card
+- [Jobs to be done](methods/jtbd-ajtbd.md) `M-jtbd` — RU card
+- [Lean Canvas](methods/lean-canvas.md) `M-lean-canvas` — RU card
+- [Problem design](methods/problem-design.md) `M-problem-design` — RU card
+- [Product context](methods/product-cycle-context.md) `M-product-context` — RU card
+- [Product frameworks](methods/product-frameworks.md) `M-product-frameworks` — RU card
+- [Product metrics](methods/product-metrics-pm.md) `M-product-metrics` — RU card
+- [Research types](methods/research-types.md) `M-research-types` — RU card
+- [Skills map](methods/skills-map.md) `M-skills-map` — RU card
+- [Growth strategy](methods/strategy-growth-types.md) `M-strategy-growth` — RU card
+- [Synthetic respondents](methods/synthetic-respondents.md) `M-synthetic-respondents` — RU card
+- [UX frameworks](methods/ux-research-frameworks.md) `M-ux-frameworks` — RU card
+- [Continuous Discovery Habits](methods/M-continuous-discovery.md) `M-continuous-discovery` — RU card
+- [Dual-Track Agile](methods/M-dual-track-agile.md) `M-dual-track-agile` — RU card
+- [Lean Startup](methods/M-lean-startup.md) `M-lean-startup` — RU card
+- [PMF Survey (Sean Ellis)](methods/M-pmf-survey.md) `M-pmf-survey` — RU card
+- [AI in research](methods/ai-in-research.md) `M-ai-in-research` — RU card
+- [Audience research](methods/audience-research.md) `M-audience-research` — RU card
+- [Basic statistics for PM](methods/basic-statistics-pm.md) `M-basic-statistics-pm` — RU card
+- [Benchmarking](methods/benchmarking.md) `M-benchmarking` — RU card
+- [Brief & hypotheses](methods/brief-hypotheses.md) `M-brief-hypotheses` — RU card
+- [Customer journey map](methods/cjm.md) `M-cjm` — RU card
+- [Competitive analysis](methods/competitors.md) `M-competitors` — RU card
+- [Customers & segmentation](methods/customers-segments.md) `M-customers` — RU card
+- [Dashboards & visualization](methods/dashboards-visualization.md) `M-dashboards-visualization` — RU card
+- [Double Diamond](methods/double-diamond.md) `M-double-diamond` — RU card
+- [Dogfooding](methods/ethnography-dogfooding.md) `M-dogfooding` — RU card
+- [External environment](methods/external-environment.md) `M-external-environment` — RU card
+- [GenAI assistant architecture](methods/genai-assistant-architecture.md) `M-genai-assistant-architecture` — RU card
+- [GenAI product development](methods/genai-product-development.md) `M-genai-product-development` — RU card
+- [In-depth interviews](methods/in-depth-interviews.md) `M-in-depth-interviews` — RU card
+- [Interview analysis](methods/interview-analysis.md) `M-interview-analysis` — RU card
+- [Jobs to be done](methods/jtbd-ajtbd.md) `M-jtbd` — RU card
+- [Landscapes](methods/landscapes-marketing-tech-business.md) `M-landscapes` — RU card
+- [Market sizing](methods/market-sizing.md) `M-market-sizing` — RU card
+- [Marketing research](methods/marketing-research.md) `M-marketing-research` — RU card
+- [Platform ecosystem audit](methods/platform-ecosystem-audit.md) `M-platform-ecosystem-audit` — RU card
+- [Platform types & criteria](methods/platforms-types-criteria.md) `M-platforms-types-criteria` — RU card
+- [Problem design](methods/problem-design.md) `M-problem-design` — RU card
+- [Product context](methods/product-cycle-context.md) `M-product-context` — RU card
+- [Product frameworks](methods/product-frameworks.md) `M-product-frameworks` — RU card
+- [Product metrics](methods/product-metrics-pm.md) `M-product-metrics` — RU card
+- [Quantitative methods](methods/quant-methods.md) `M-quant-methods` — RU card
+- [Research types](methods/research-types.md) `M-research-types` — RU card
+- [Skills map](methods/skills-map.md) `M-skills-map` — RU card
+- [Source criticism](methods/source-criticism.md) `M-source-criticism` — RU card
+- [SQL for PM](methods/sql-for-pm.md) `M-sql-for-pm` — RU card
+- [Synthetic respondents](methods/synthetic-respondents.md) `M-synthetic-respondents` — RU card
+- [Trends & scenarios](methods/trends-scenarios.md) `M-trends-scenarios` — RU card
+- [UX backlog](methods/ux-backlog-knowledge-base.md) `M-ux-backlog` — RU card
+- [Design thinking](methods/ux-design-thinking.md) `M-design-thinking` — RU card
+- [UX frameworks](methods/ux-research-frameworks.md) `M-ux-frameworks` — RU card
+- [Workshops](methods/workshops-facilitation.md) `M-workshops` — RU card
+- [Continuous Discovery Habits](methods/M-continuous-discovery.md) `M-continuous-discovery` — RU card
+- [Crossing the Chasm](methods/M-crossing-chasm.md) `M-crossing-chasm` — RU card
+- [Dual-Track Agile](methods/M-dual-track-agile.md) `M-dual-track-agile` — RU card
+- [Lean Startup](methods/M-lean-startup.md) `M-lean-startup` — RU card
+- [Wardley Mapping](methods/M-wardley-mapping.md) `M-wardley-mapping` — RU card
+- [A/B testing — full cycle and alternatives](methods/ab-testing.md) `M-ab-testing` — RU card
+- [AI in research](methods/ai-in-research.md) `M-ai-in-research` — RU card
+- [Auctions & marketplaces](methods/auctions-marketplaces.md) `M-auctions-marketplaces` — RU card
+- [Audience research](methods/audience-research.md) `M-audience-research` — RU card
+- [Benchmarking](methods/benchmarking.md) `M-benchmarking` — RU card
+- [Business models](methods/business-models-lenses.md) `M-business-models` — RU card
+- [Cannibalization](methods/cannibalization.md) `M-cannibalization` — RU card
+- [Customer journey map](methods/cjm.md) `M-cjm` — RU card
+- [Competitive analysis](methods/competitors.md) `M-competitors` — RU card
+- [Customers & segmentation](methods/customers-segments.md) `M-customers` — RU card
+- [Double Diamond](methods/double-diamond.md) `M-double-diamond` — RU card
+- [Dogfooding](methods/ethnography-dogfooding.md) `M-dogfooding` — RU card
+- [External environment](methods/external-environment.md) `M-external-environment` — RU card
+- [Product forecasting](methods/forecasting-product.md) `M-forecasting-product` — RU card
+- [GenAI assistant architecture](methods/genai-assistant-architecture.md) `M-genai-assistant-architecture` — RU card
+- [GenAI product development](methods/genai-product-development.md) `M-genai-product-development` — RU card
+- [GenAI prototyping](methods/genai-prototyping.md) `M-genai-prototyping` — RU card
+- [Goals, drivers & bets](methods/goals-drivers-bets.md) `M-goals-drivers-bets` — RU card
+- [Growth frameworks](methods/growth-frameworks.md) `M-growth-frameworks` — RU card
+- [Interview analysis](methods/interview-analysis.md) `M-interview-analysis` — RU card
+- [Jobs to be done](methods/jtbd-ajtbd.md) `M-jtbd` — RU card
+- [Landscapes](methods/landscapes-marketing-tech-business.md) `M-landscapes` — RU card
+- [Lean Canvas](methods/lean-canvas.md) `M-lean-canvas` — RU card
+- [Market sizing](methods/market-sizing.md) `M-market-sizing` — RU card
+- [Marketing research](methods/marketing-research.md) `M-marketing-research` — RU card
+- [ML for product](methods/ml-for-product.md) `M-ml-for-product` — RU card
+- [Top-down & bottom-up models](methods/model-topdown-bottomup.md) `M-model-topdown-bottomup` — RU card
+- [Monetization](methods/monetization.md) `M-monetization` — RU card
+- [MVP & pilots](methods/mvp-pilots.md) `M-mvp-pilots` — RU card
+- [Platform case & concept](methods/platform-case-concept.md) `M-platform-case-concept` — RU card
+- [Platform economics](methods/platform-economics.md) `M-platform-economics` — RU card
+- [Platform ecosystem audit](methods/platform-ecosystem-audit.md) `M-platform-ecosystem-audit` — RU card
+- [Platform risks & rollout](methods/platform-risks-rollout.md) `M-platform-risks-rollout` — RU card
+- [Platform types & criteria](methods/platforms-types-criteria.md) `M-platforms-types-criteria` — RU card
+- [Problem design](methods/problem-design.md) `M-problem-design` — RU card
+- [Product frameworks](methods/product-frameworks.md) `M-product-frameworks` — RU card
+- [Research types](methods/research-types.md) `M-research-types` — RU card
+- [Risks](methods/risks-mitigation.md) `M-risks` — RU card
+- [Six-pager](methods/six-pager-report.md) `M-six-pager` — RU card
+- [Skills map](methods/skills-map.md) `M-skills-map` — RU card
+- [Solution design](methods/solution-design.md) `M-solution-design` — RU card
+- [Source criticism](methods/source-criticism.md) `M-source-criticism` — RU card
+- [Growth strategy](methods/strategy-growth-types.md) `M-strategy-growth` — RU card
+- [Synthetic respondents](methods/synthetic-respondents.md) `M-synthetic-respondents` — RU card
+- [Traction model](methods/traction-model.md) `M-traction-model` — RU card
+- [Trends & scenarios](methods/trends-scenarios.md) `M-trends-scenarios` — RU card
+- [Unit economics](methods/unit-economics.md) `M-unit-economics` — RU card
+- [Usability testing](methods/usability-testing.md) `M-usability-testing` — RU card
+- [USP](methods/usp.md) `M-usp` — RU card
+- [Design thinking](methods/ux-design-thinking.md) `M-design-thinking` — RU card
+- [UX heuristics](methods/ux-heuristics.md) `M-ux-heuristics` — RU card
+- [UX frameworks](methods/ux-research-frameworks.md) `M-ux-frameworks` — RU card
+- [Workshops](methods/workshops-facilitation.md) `M-workshops` — RU card
+- [Crossing the Chasm](methods/M-crossing-chasm.md) `M-crossing-chasm` — RU card
+- [North Star Playbook](methods/M-north-star-playbook.md) `M-north-star-playbook` — RU card
+- [Product life-cycle strategy](methods/M-product-lifecycle-strategy.md) `M-product-lifecycle-strategy` — RU card
+- [Wardley Mapping](methods/M-wardley-mapping.md) `M-wardley-mapping` — RU card
+- [A/B testing — full cycle and alternatives](methods/ab-testing.md) `M-ab-testing` — RU card
+- [Auctions & marketplaces](methods/auctions-marketplaces.md) `M-auctions-marketplaces` — RU card
+- [Audience research](methods/audience-research.md) `M-audience-research` — RU card
+- [Business models](methods/business-models-lenses.md) `M-business-models` — RU card
+- [Cannibalization](methods/cannibalization.md) `M-cannibalization` — RU card
+- [Customer journey map](methods/cjm.md) `M-cjm` — RU card
+- [Competitive analysis](methods/competitors.md) `M-competitors` — RU card
+- [Customers & segmentation](methods/customers-segments.md) `M-customers` — RU card
+- [DACI decision framework](methods/decision-daci.md) `M-decision-daci` — RU card
+- [Delivery](methods/delivery.md) `M-delivery` — RU card
+- [Double Diamond](methods/double-diamond.md) `M-double-diamond` — RU card
+- [External environment](methods/external-environment.md) `M-external-environment` — RU card
+- [Product forecasting](methods/forecasting-product.md) `M-forecasting-product` — RU card
+- [GenAI assistant architecture](methods/genai-assistant-architecture.md) `M-genai-assistant-architecture` — RU card
+- [Goals, drivers & bets](methods/goals-drivers-bets.md) `M-goals-drivers-bets` — RU card
+- [Growth frameworks](methods/growth-frameworks.md) `M-growth-frameworks` — RU card
+- [Jobs to be done](methods/jtbd-ajtbd.md) `M-jtbd` — RU card
+- [Landscapes](methods/landscapes-marketing-tech-business.md) `M-landscapes` — RU card
+- [Lean Canvas](methods/lean-canvas.md) `M-lean-canvas` — RU card
+- [Market sizing](methods/market-sizing.md) `M-market-sizing` — RU card
+- [Marketing research](methods/marketing-research.md) `M-marketing-research` — RU card
+- [ML for product](methods/ml-for-product.md) `M-ml-for-product` — RU card
+- [Top-down & bottom-up models](methods/model-topdown-bottomup.md) `M-model-topdown-bottomup` — RU card
+- [Model validation](methods/model-validation.md) `M-model-validation` — RU card
+- [Monetization](methods/monetization.md) `M-monetization` — RU card
+- [Platform case & concept](methods/platform-case-concept.md) `M-platform-case-concept` — RU card
+- [Platform economics](methods/platform-economics.md) `M-platform-economics` — RU card
+- [Platform types & criteria](methods/platforms-types-criteria.md) `M-platforms-types-criteria` — RU card
+- [PMF & scaling](methods/pmf-scaling.md) `M-pmf-scaling` — RU card
+- [Product communication](methods/product-communication-defense.md) `M-product-communication` — RU card
+- [Product context](methods/product-cycle-context.md) `M-product-context` — RU card
+- [Product frameworks](methods/product-frameworks.md) `M-product-frameworks` — RU card
+- [Product metrics](methods/product-metrics-pm.md) `M-product-metrics` — RU card
+- [Risks](methods/risks-mitigation.md) `M-risks` — RU card
+- [Roadmap](methods/roadmap.md) `M-roadmap` — RU card
+- [Six-pager](methods/six-pager-report.md) `M-six-pager` — RU card
+- [Skills map](methods/skills-map.md) `M-skills-map` — RU card
+- [Source criticism](methods/source-criticism.md) `M-source-criticism` — RU card
+- [Growth strategy](methods/strategy-growth-types.md) `M-strategy-growth` — RU card
+- [Outcome-based roadmap](methods/strategy-timeline-outcome-roadmap.md) `M-outcome-roadmap` — RU card
+- [Success metrics](methods/success-metrics-nsm-okr.md) `M-success-metrics` — RU card
+- [Team](methods/team-people.md) `M-team` — RU card
+- [Traction model](methods/traction-model.md) `M-traction-model` — RU card
+- [Trends & scenarios](methods/trends-scenarios.md) `M-trends-scenarios` — RU card
+- [Unit economics](methods/unit-economics.md) `M-unit-economics` — RU card
+- [USP](methods/usp.md) `M-usp` — RU card
+- [UX backlog](methods/ux-backlog-knowledge-base.md) `M-ux-backlog` — RU card
+- [Design thinking](methods/ux-design-thinking.md) `M-design-thinking` — RU card
+- [Workshops](methods/workshops-facilitation.md) `M-workshops` — RU card
+- [Lean Startup](methods/M-lean-startup.md) `M-lean-startup` — RU card
+- [North Star Playbook](methods/M-north-star-playbook.md) `M-north-star-playbook` — RU card
+- [PMF Survey (Sean Ellis)](methods/M-pmf-survey.md) `M-pmf-survey` — RU card
+- [A/B testing — full cycle and alternatives](methods/ab-testing.md) `M-ab-testing` — RU card
+- [AI in research](methods/ai-in-research.md) `M-ai-in-research` — RU card
+- [Auctions & marketplaces](methods/auctions-marketplaces.md) `M-auctions-marketplaces` — RU card
+- [Basic statistics for PM](methods/basic-statistics-pm.md) `M-basic-statistics-pm` — RU card
+- [Benchmarking](methods/benchmarking.md) `M-benchmarking` — RU card
+- [Brief & hypotheses](methods/brief-hypotheses.md) `M-brief-hypotheses` — RU card
+- [Business models](methods/business-models-lenses.md) `M-business-models` — RU card
+- [Cannibalization](methods/cannibalization.md) `M-cannibalization` — RU card
+- [Customer journey map](methods/cjm.md) `M-cjm` — RU card
+- [Competitive analysis](methods/competitors.md) `M-competitors` — RU card
+- [Customers & segmentation](methods/customers-segments.md) `M-customers` — RU card
+- [DACI decision framework](methods/decision-daci.md) `M-decision-daci` — RU card
+- [Delivery](methods/delivery.md) `M-delivery` — RU card
+- [Double Diamond](methods/double-diamond.md) `M-double-diamond` — RU card
+- [Dogfooding](methods/ethnography-dogfooding.md) `M-dogfooding` — RU card
+- [Product forecasting](methods/forecasting-product.md) `M-forecasting-product` — RU card
+- [GenAI assistant architecture](methods/genai-assistant-architecture.md) `M-genai-assistant-architecture` — RU card
+- [GenAI product development](methods/genai-product-development.md) `M-genai-product-development` — RU card
+- [GenAI prototyping](methods/genai-prototyping.md) `M-genai-prototyping` — RU card
+- [Goals, drivers & bets](methods/goals-drivers-bets.md) `M-goals-drivers-bets` — RU card
+- [In-depth interviews](methods/in-depth-interviews.md) `M-in-depth-interviews` — RU card
+- [Interview analysis](methods/interview-analysis.md) `M-interview-analysis` — RU card
+- [Landscapes](methods/landscapes-marketing-tech-business.md) `M-landscapes` — RU card
+- [Lean Canvas](methods/lean-canvas.md) `M-lean-canvas` — RU card
+- [Loyalty metrics](methods/loyalty-metrics.md) `M-loyalty-metrics` — RU card
+- [Market sizing](methods/market-sizing.md) `M-market-sizing` — RU card
+- [ML for product](methods/ml-for-product.md) `M-ml-for-product` — RU card
+- [Top-down & bottom-up models](methods/model-topdown-bottomup.md) `M-model-topdown-bottomup` — RU card
+- [Model validation](methods/model-validation.md) `M-model-validation` — RU card
+- [Monetization](methods/monetization.md) `M-monetization` — RU card
+- [MVP & pilots](methods/mvp-pilots.md) `M-mvp-pilots` — RU card
+- [Platform economics](methods/platform-economics.md) `M-platform-economics` — RU card
+- [Platform risks & rollout](methods/platform-risks-rollout.md) `M-platform-risks-rollout` — RU card
+- [PMF & scaling](methods/pmf-scaling.md) `M-pmf-scaling` — RU card
+- [Product communication](methods/product-communication-defense.md) `M-product-communication` — RU card
+- [Product frameworks](methods/product-frameworks.md) `M-product-frameworks` — RU card
+- [Product metrics](methods/product-metrics-pm.md) `M-product-metrics` — RU card
+- [Quantitative methods](methods/quant-methods.md) `M-quant-methods` — RU card
+- [Research types](methods/research-types.md) `M-research-types` — RU card
+- [Risks](methods/risks-mitigation.md) `M-risks` — RU card
+- [Roadmap](methods/roadmap.md) `M-roadmap` — RU card
+- [Six-pager](methods/six-pager-report.md) `M-six-pager` — RU card
+- [Skills map](methods/skills-map.md) `M-skills-map` — RU card
+- [Solution design](methods/solution-design.md) `M-solution-design` — RU card
+- [Source criticism](methods/source-criticism.md) `M-source-criticism` — RU card
+- [SQL for PM](methods/sql-for-pm.md) `M-sql-for-pm` — RU card
+- [Growth strategy](methods/strategy-growth-types.md) `M-strategy-growth` — RU card
+- [Outcome-based roadmap](methods/strategy-timeline-outcome-roadmap.md) `M-outcome-roadmap` — RU card
+- [Success metrics](methods/success-metrics-nsm-okr.md) `M-success-metrics` — RU card
+- [Synthetic respondents](methods/synthetic-respondents.md) `M-synthetic-respondents` — RU card
+- [Team](methods/team-people.md) `M-team` — RU card
+- [Traction model](methods/traction-model.md) `M-traction-model` — RU card
+- [Unit economics](methods/unit-economics.md) `M-unit-economics` — RU card
+- [Usability testing](methods/usability-testing.md) `M-usability-testing` — RU card
+- [USP](methods/usp.md) `M-usp` — RU card
+- [UX backlog](methods/ux-backlog-knowledge-base.md) `M-ux-backlog` — RU card
+- [Design thinking](methods/ux-design-thinking.md) `M-design-thinking` — RU card
+- [UX heuristics](methods/ux-heuristics.md) `M-ux-heuristics` — RU card
+- [Auctions & marketplaces](methods/auctions-marketplaces.md) `M-auctions-marketplaces` — RU card
+- [Basic statistics for PM](methods/basic-statistics-pm.md) `M-basic-statistics-pm` — RU card
+- [Benchmarking](methods/benchmarking.md) `M-benchmarking` — RU card
+- [Cannibalization](methods/cannibalization.md) `M-cannibalization` — RU card
+- [Dashboards & visualization](methods/dashboards-visualization.md) `M-dashboards-visualization` — RU card
+- [DACI decision framework](methods/decision-daci.md) `M-decision-daci` — RU card
+- [Delivery](methods/delivery.md) `M-delivery` — RU card
+- [Product forecasting](methods/forecasting-product.md) `M-forecasting-product` — RU card
+- [Loyalty metrics](methods/loyalty-metrics.md) `M-loyalty-metrics` — RU card
+- [Marketing research](methods/marketing-research.md) `M-marketing-research` — RU card
+- [Model validation](methods/model-validation.md) `M-model-validation` — RU card
+- [Monetization](methods/monetization.md) `M-monetization` — RU card
+- [MVP & pilots](methods/mvp-pilots.md) `M-mvp-pilots` — RU card
+- [Platform risks & rollout](methods/platform-risks-rollout.md) `M-platform-risks-rollout` — RU card
+- [PMF & scaling](methods/pmf-scaling.md) `M-pmf-scaling` — RU card
+- [Product communication](methods/product-communication-defense.md) `M-product-communication` — RU card
+- [Product frameworks](methods/product-frameworks.md) `M-product-frameworks` — RU card
+- [Product metrics](methods/product-metrics-pm.md) `M-product-metrics` — RU card
+- [Quantitative methods](methods/quant-methods.md) `M-quant-methods` — RU card
+- [Risks](methods/risks-mitigation.md) `M-risks` — RU card
+- [Roadmap](methods/roadmap.md) `M-roadmap` — RU card
+- [Skills map](methods/skills-map.md) `M-skills-map` — RU card
+- [Solution design](methods/solution-design.md) `M-solution-design` — RU card
+- [SQL for PM](methods/sql-for-pm.md) `M-sql-for-pm` — RU card
+- [Outcome-based roadmap](methods/strategy-timeline-outcome-roadmap.md) `M-outcome-roadmap` — RU card
+- [Success metrics](methods/success-metrics-nsm-okr.md) `M-success-metrics` — RU card
+- [Team](methods/team-people.md) `M-team` — RU card
+- [Traction model](methods/traction-model.md) `M-traction-model` — RU card
+- [Unit economics](methods/unit-economics.md) `M-unit-economics` — RU card
+- [Usability testing](methods/usability-testing.md) `M-usability-testing` — RU card
+- [UX backlog](methods/ux-backlog-knowledge-base.md) `M-ux-backlog` — RU card
+- [UX heuristics](methods/ux-heuristics.md) `M-ux-heuristics` — RU card
+- [Workshops](methods/workshops-facilitation.md) `M-workshops` — RU card
+
+## Courses
+
+**Strategy**: `M-crossing-chasm`, `M-lean-startup`, `M-north-star-playbook`, `M-product-lifecycle-strategy`, `M-wardley-mapping`, `M-auctions-marketplaces`, `M-competitors`, `M-customers`, `M-external-environment`, `M-goals-drivers-bets`, `M-landscapes`, `M-lean-canvas`, `M-model-topdown-bottomup`, `M-model-validation`, `M-platform-case-concept`, `M-platform-economics`, `M-platform-ecosystem-audit`, `M-platform-risks-rollout`, `M-platforms-types-criteria`, `M-risks`, `M-six-pager`, `M-strategy-growth`, `M-outcome-roadmap`, `M-success-metrics`, `M-team`
+**pm**: `M-decision-daci`, `M-delivery`, `M-jtbd`, `M-mvp-pilots`, `M-pmf-scaling`, `M-problem-design`, `M-product-communication`, `M-product-context`, `M-product-metrics`, `M-roadmap`, `M-solution-design`
+**UX**: `M-ai-in-research`, `M-audience-research`, `M-brief-hypotheses`, `M-cjm`, `M-dogfooding`, `M-in-depth-interviews`, `M-interview-analysis`, `M-loyalty-metrics`, `M-marketing-research`, `M-quant-methods`, `M-research-types`, `M-synthetic-respondents`, `M-usability-testing`, `M-usp`, `M-ux-backlog`, `M-design-thinking`, `M-ux-heuristics`, `M-ux-frameworks`, `M-workshops`
+**skills**: `M-benchmarking`, `M-business-models`, `M-cannibalization`, `M-growth-frameworks`, `M-market-sizing`, `M-monetization`, `M-skills-map`, `M-source-criticism`, `M-traction-model`, `M-trends-scenarios`, `M-unit-economics`
+**synthesis**: `M-double-diamond`, `M-product-frameworks`
+
+## Search
+`pfs kb search "opportunity solution tree"` — BM25 search runs over RU and EN cards (recursive scan of knowledge/).
