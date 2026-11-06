@@ -82,6 +82,8 @@ h2::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;bor
 .shot-bar i:nth-child(1){background:#f472b6}.shot-bar i:nth-child(2){background:#f6ad55}.shot-bar i:nth-child(3){background:#48bb78}
 .shot-bar span{margin-left:10px;font-size:12px;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,monospace}
 .shot-card img{width:100%;display:block}
+.shot-crop{aspect-ratio:16/10;overflow:hidden}
+.shot-crop img{width:100%;height:100%;object-fit:cover;object-position:top center}
 .shot-cap{padding:10px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
 .shot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:14px}
 @media(max-width:980px){.shot-grid{grid-template-columns:1fr}}
@@ -211,32 +213,32 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
   <div class="shot-grid rv d2">
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — лендинг · RU</span></div>
-      <img src="assets/cv_landing_ru.jpg?v=8" alt="Лендинг cvstart.org (русский): AI-конструктор резюме, скан ~129 джоб-бордов, 19 языков">
+      <div class="shot-crop"><img src="assets/cv_landing_ru.jpg?v=8" alt="Лендинг cvstart.org (русский): AI-конструктор резюме, скан ~129 джоб-бордов, 19 языков"></div>
       <div class="shot-cap">Лендинг в русской локали: «$0 forever», скан ~129 джоб-бордов (124 EN + 5 RU), 19 языков [S001].</div>
     </div>
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — landing · EN</span></div>
-      <img src="assets/cv_landing_en.jpg?v=8" alt="Лендинг cvstart.org (English): open-source AI resume builder">
+      <div class="shot-crop"><img src="assets/cv_landing_en.jpg?v=8" alt="Лендинг cvstart.org (English): open-source AI resume builder"></div>
       <div class="shot-cap">Английская локаль лендинга — из неё начинается волна EN в стратегии вывода на рынок.</div>
     </div>
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — дашборд · RU</span></div>
-      <img src="assets/cv_dash_ru.jpg?v=8" alt="Дашборд поиска работы CVStart (русский): AI-скоринг вакансий 0.0–5.0">
+      <div class="shot-crop"><img src="assets/cv_dash_ru.jpg?v=8" alt="Дашборд поиска работы CVStart (русский): AI-скоринг вакансий 0.0–5.0"></div>
       <div class="shot-cap">Дашборд поиска работы: AI-скоринг вакансий 0.0–5.0 против резюме — ядро продукта.</div>
     </div>
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — dashboard · EN</span></div>
-      <img src="assets/cv_dash_en.jpg?v=8" alt="Job-search dashboard CVStart (English): vacancy fit scoring">
+      <div class="shot-crop"><img src="assets/cv_dash_en.jpg?v=8" alt="Job-search dashboard CVStart (English): vacancy fit scoring"></div>
       <div class="shot-cap">Английский дашборд: fit-скоринг против резюме — то, что сравнивают с Jobscan и Teal.</div>
     </div>
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — карта вакансий · EN</span></div>
-      <img src="assets/cv_map_en.jpg?v=8" alt="Карта вакансий CVStart (English): job map">
+      <div class="shot-crop"><img src="assets/cv_map_en.jpg?v=8" alt="Карта вакансий CVStart (English): job map"></div>
       <div class="shot-cap">Карта вакансий поверх скана ~129 джоб-бордов — география предложений.</div>
     </div>
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — трекер заявок · EN</span></div>
-      <img src="assets/cv_tracker_en.jpg?v=8" alt="Трекер заявок CVStart (English): application tracker with follow-up">
+      <div class="shot-crop"><img src="assets/cv_tracker_en.jpg?v=8" alt="Трекер заявок CVStart (English): application tracker with follow-up"></div>
       <div class="shot-cap">Трекер заявок с follow-up — воронка откликов между сессиями поиска, база retention hosted-версии.</div>
     </div>
   </div>
