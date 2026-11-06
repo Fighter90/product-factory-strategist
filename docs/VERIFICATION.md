@@ -76,3 +76,18 @@
 | Домен strategyproduct.ru | ✅ DNS через API Timeweb: апекс A → 185.199.108.153, www → CNAME fighter90.github.io; cname на Pages установлен; HTTPS-сертификат выпускается GitHub автоматически |
 
 Сайт по домену откроется после DNS-настройки у регистратора (проверка повторяется `dig strategyproduct.ru A` — ждём 185.199.108–111.153); рабочая ссылка сейчас — strategyproduct.lovable.app.
+
+## Дополнение: 06.11.2026 — редизайн лендинга, страница справки, 100/100
+
+| Проверка | Результат |
+|---|---|
+| Тесты | ✅ 55 OK (`python3 -m unittest discover -s tests`) |
+| Контроль качества демо | ✅ kids-guard 100/100 strict; demo-antispam 100/100 strict (допущения C001/C002/C047 получили основания: бриф → S020, ответ руководителя → S021, через `claim supersede`; документы перетагированы, REPORT/SIX_PAGER пересобраны) |
+| База знаний | ✅ 72 карты, битых связей 0 (`pfs kb index`) |
+| MCP | ✅ 18 инструментов отвечает |
+| Секреты | ✅ реальных ключей в трекаемых файлах нет и не было в истории (`git log -S`); `.env` игнорируется; совпадения grep — ложные (подстрока `sk-` внутри слов) |
+| Лендинг | ✅ https://strategyproduct.ru — 200, редизайн «Aurora Ink» (палитра teal/iris/rose, hero-аврора Higgsfield, курсор-прожектор, бегущая строка CLI, scrollspy); HTML без ошибок, JS валиден, рендер проверен на 1440/390 |
+| Справка | ✅ https://strategyproduct.ru/help.html — 200; отдельная страница: липкий сайдбар, поиск-фильтр, констелляция Higgsfield; RU/EN |
+| Ассеты | ✅ site/assets/hero_aurora.jpg (352 КБ), help_network.jpg (275 КБ) — 200 на домене |
+| SSL | ✅ Let's Encrypt, Enforce HTTPS: http→301→https, www→301 |
+| Linear | ✅ PRO-5…15, 17…21 Done; PRO-25 и служебные PRO-1…4 Canceled с комментариями; открыт только PRO-16 (видео ≤10 мин + PDF — команда) |
