@@ -127,7 +127,7 @@ p code,td code,.kp code{background:var(--code);border:1px solid var(--line);bord
 .trio .agent-card p{font-size:13.5px}
 .wf-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .wf-svg{min-width:760px;width:100%;height:auto;display:block}
-.wf-svg rect.b{transform-origin:bottom;transform-box:fill-box;animation:grow linear both;animation-timeline:view();animation-range:entry 30% exit 75%}
+.wf-svg .bar-g{animation:appear linear both;animation-timeline:view();animation-range:entry 30% exit 75%}
 .wf-svg text{animation:appear linear both;animation-timeline:view();animation-range:entry 40% exit 85%}
 @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes appear{from{opacity:0}to{opacity:1}}
@@ -148,13 +148,13 @@ footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-s
 footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 
 
-.shot-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;backdrop-filter:blur(8px)}
+.shot-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;backdrop-filter:blur(8px);display:flex;flex-direction:column}
 .shot-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--card2)}
 .shot-bar i{width:10px;height:10px;border-radius:50%;background:rgba(154,167,189,.35)}
 .shot-bar i:nth-child(1){background:#f472b6}.shot-bar i:nth-child(2){background:#f6ad55}.shot-bar i:nth-child(3){background:#48bb78}
 .shot-bar span{margin-left:10px;font-size:12px;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,monospace}
 .shot-card img{width:100%;display:block}
-.shot-crop{aspect-ratio:16/10;overflow:hidden}
+.shot-crop{aspect-ratio:16/10;overflow:hidden;flex:1 1 auto;min-height:220px}
 .shot-crop img{width:100%;height:100%;object-fit:cover;object-position:top center}
 .shot-cap{padding:10px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
 .shots4{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:14px;margin-top:20px}
@@ -357,17 +357,13 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 <section id="econ"><div class="wrap">
   <h2 class="rv">Экономика модели: юнит-математика платящего</h2>
   <p class="lead rv d1">Юнит-модель платящего подписчика на допущениях [C016]: ARPU $29/мес, переменные (инференс + инфра) 25%, CAC $60 (SEO/Product Hunt/сарафан). В Excel-книгах те же числа считаются живыми формулами — поменяйте «Ввод», пересчитается всё.</p>
-  <div class="wf-wrap rv d2"><svg class="wf-svg" viewBox="0 0 860 300" role="img" aria-label="Экономика платящего CVStart">
+  <div class="wf-wrap rv d2">><svg class="wf-svg" viewBox="0 0 860 300" role="img" aria-label="Экономика платящего CVStart">
     <defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
     <g font-size="13">
-      <rect class="b" x="40"  y="170" width="120" height="60"  rx="8" fill="url(#wg)" opacity=".9" style="--d:.15s"/>
-      <text x="100" y="160" text-anchor="middle" fill="#eef2ff" font-weight="700">$29</text>
-      <rect class="b" x="230" y="200" width="120" height="30" rx="8" fill="#f472b6" opacity=".75" style="--d:.35s"/>
-      <text x="290" y="190" text-anchor="middle" fill="#f472b6" font-weight="700">−$7,25</text>
-      <rect class="b" x="420" y="170" width="120" height="60" rx="8" fill="url(#wg)" opacity=".9" style="--d:.55s"/>
-      <text x="480" y="160" text-anchor="middle" fill="#eef2ff" font-weight="700">$21,75</text>
-      <rect class="b" x="610" y="80" width="120" height="150" rx="8" fill="#818cf8" opacity=".6" style="--d:.75s"/>
-      <text x="670" y="70" text-anchor="middle" fill="#eef2ff" font-weight="700">$271,88</text>
+      <g class="bar-g"><rect x="40"  y="170" width="120" height="60"  rx="8" fill="url(#wg)" opacity=".9"/><text x="100" y="162" text-anchor="middle" fill="#eef2ff" font-weight="700">$29</text></g>
+      <g class="bar-g"><rect x="230" y="200" width="120" height="30" rx="8" fill="#f472b6" opacity=".75"/><text x="290" y="192" text-anchor="middle" fill="#f472b6" font-weight="700">−$7,25</text></g>
+      <g class="bar-g"><rect x="420" y="170" width="120" height="60" rx="8" fill="url(#wg)" opacity=".9"/><text x="480" y="162" text-anchor="middle" fill="#eef2ff" font-weight="700">$21,75</text></g>
+      <g class="bar-g"><rect x="610" y="80" width="120" height="150" rx="8" fill="#818cf8" opacity=".6"/><text x="670" y="72" text-anchor="middle" fill="#eef2ff" font-weight="700">$271,88</text></g>
       <text x="100" y="252" text-anchor="middle" fill="#9aa7bd">ARPU платящего / мес</text>
       <text x="290" y="252" text-anchor="middle" fill="#9aa7bd">инференс + инфра ~25%</text>
       <text x="480" y="252" text-anchor="middle" fill="#9aa7bd">вклад (CM) платящего</text>

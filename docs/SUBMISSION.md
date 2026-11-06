@@ -84,7 +84,7 @@ PDF/DOCX, cover letters, трекер, карта вакансий; 100% лок�
 соло-разработчик, сохранить доверие локального режима.
 Результат: [REPORT.md](../projects/демо/outputs/REPORT.md), six-pager на двух языках —
 [SIX_PAGER_RU](../projects/демо/outputs/SIX_PAGER_RU.md) и [SIX_PAGER_EN](../projects/демо/outputs/SIX_PAGER_EN.md),
-каждый в трёх форматах (MD/PDF/DOCX, со скриншотами соответствующего языка), Excel-модель — 4 книги в `outputs/attachments/`.
+каждый в трёх форматах (MD/PDF/DOCX — детальный текст комитета: выводы, обоснования, расчёты; без скриншотов), Excel-модель — 4 книги в `outputs/attachments/`.
 
 **Как шла работа (12 шагов, по журналу `log.jsonl`):** route → сценарий вывода на рынок → intake (≤3 вопроса
 руководителю: коммерциализация + GTM · ось платящие/ARR · ограничения «MIT-core, соло, локальный режим») →
