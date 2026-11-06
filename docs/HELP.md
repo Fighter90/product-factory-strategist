@@ -18,7 +18,7 @@
 | Слой | Где | Что там |
 |---|---|---|
 | Правила и процесс | `AGENTS.md` | 12-шаговый процесс, правила доказательности, шпаргалка команд |
-| Методики | `knowledge/methods/` | 80 карт методов (RU) + EN-индекс: юнит-экономика, A/B-тесты, платформы, GenAI и др. |
+| Методики | `knowledge/methods/` | 88 карт методов (RU) + 16 EN-зеркал и EN-индекс: юнит-экономика, A/B-тесты, платформы, GenAI и др. |
 | Материалы задачи | `projects/<slug>/` | источники, реестр утверждений, документы, Excel-расчёты, состояние |
 | Инструменты | `python3 -m tools.pfs …` | CLI и MCP-сервер с гарантиями: без источника факт не записать |
 
@@ -36,7 +36,7 @@
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor     # проверка окружения
-python3 -m unittest discover -s tests   # самопроверка (55 тестов)
+python3 -m unittest discover -s tests   # самопроверка (103 теста)
 ```
 
 `doctor` показывает: версию Python, наличие pdftotext/pypdf, число карт в базе знаний, активный проект.
