@@ -144,7 +144,7 @@ pfs decision add --title … --decision … --owner … --grounds C001,C007 --me
 pfs decision due [--on YYYY-MM-DD] | list | done --id D001 --commitment K1 | rebase --id D001 --note "…"
 pfs cost [--transcript <jsonl>] [--since|--until <ISO>] [--window]
 pfs calc [all|unit-econ|growth|cohort|market]   # Excel-приложения (юнит-экономика, рост, когорты, рынок) → outputs/attachments/
-pfs export [--six-pager] [--no-calcs]           # REPORT.md; six-pager (FAQ-1…6) с Excel-приложениями
+pfs export [--six-pager] [--no-calcs]           # REPORT.md; six-pager в формате референса стратегии (спецификация: knowledge/templates/SIX_PAGER_PROMPT.md) с Excel-приложениями
 pfs export --deck                            # HTML-дека 16:9 из SIX_PAGER.md
 pfs doctor
 ```

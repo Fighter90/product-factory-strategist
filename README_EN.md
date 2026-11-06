@@ -29,8 +29,7 @@ python3 -m unittest discover -s tests          # 103 tests
 ```
 
 The agent creates the project, runs question blocks, builds the research and shows progress as
-`Step N/12 · …`. Say **"stop"** to pause, **"clarify: …"** to adjust, **"build the six-pager"** for the
-committee report, **"make the presentation"** for a deck from the six-pager. After a break, open a new
+`Step N/12 · …`. Say **"stop"** to pause, **"clarify: …"** to adjust, **"build the six-pager in two languages with an Excel model and a committee report"**, **"make the presentation"** for a deck from the six-pager. After a break, open a new
 chat — state is restored automatically.
 
 ---
@@ -60,7 +59,7 @@ a tracker, a job map; 100% local; 18 BYOK LLM providers; 19 languages; ~7,602 au
   not a forecast. Synthetic material is registered with `origin=synthetic` — the tool refuses to record facts on it.
 
 What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_PAGER_RU and SIX_PAGER_EN — each as
-.md/.pdf/.docx**, attachments/*.xlsx — 4 workbooks, img/ screenshots), `projects/демо/interviews/synthetic/`
+.md/.pdf/.docx**, attachments/*.xlsx — 4 workbooks, img/ screenshots), `projects/демо/interviews/synthetic/`. The six-pager follows the growth-strategy reference format: subsections 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs in two planes, source footnotes; the draft is assembled by `pfs export --six-pager` (spec: `knowledge/templates/SIX_PAGER_PROMPT.md`)
 (2 AI personas), `projects/демо/analysis/` (generators + funnel CSV). Product screenshots: `site/assets/`.
 Full RU breakdown with a task-requirements mapping table — in
 [README.md](README.md#демонстрационный-проект-cvstart--полный-разбор).
