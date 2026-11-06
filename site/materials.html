@@ -59,9 +59,8 @@ h2::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;bor
 .lead{color:var(--muted);max-width:860px;margin-bottom:26px}
 .flow-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .flow-svg{min-width:900px;width:100%;height:auto;display:block}
-.flow-svg .path{stroke-dasharray:1400;stroke-dashoffset:1400}
-.rv.in .flow-svg .path{animation:draw 2.2s cubic-bezier(.4,0,.2,1) .2s forwards}
-@keyframes draw{to{stroke-dashoffset:0}}
+.flow-svg .path{stroke-dasharray:1400;stroke-dashoffset:0;animation:draw linear both;animation-timeline:view();animation-range:entry 15% exit 75%}
+@keyframes draw{from{stroke-dashoffset:1400}to{stroke-dashoffset:0}}
 .pdf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
 .pdf-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;backdrop-filter:blur(8px);transition:transform .25s,border-color .25s}
 .pdf-card:hover{transform:translateY(-3px);border-color:rgba(244,114,182,.5)}
@@ -90,9 +89,11 @@ h2::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;bor
 .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));color:#05070f;box-shadow:0 8px 30px rgba(45,212,191,.28)}
 .btn.ghost{border:1px solid var(--line);color:var(--text);background:var(--card)}
 .btn.ghost:hover{border-color:var(--accent)}
-html.js .rv{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.6,.2,1),transform .55s cubic-bezier(.2,.6,.2,1)}
-html.js .rv.in{opacity:1;transform:none}
 .d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
+.rv{animation:rvIn linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+@keyframes rvIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@supports not (animation-timeline: view()){ .rv{animation:none} }
+
 footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
 footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 @media(max-width:700px){.nav a.nl{display:none}}
@@ -110,9 +111,9 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 <header><div class="wrap nav">
   <a class="logo" href="index.html"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t">Стратег Фабрики продуктов</span></a>
   <a class="nl" href="index.html#features">Возможности</a>
-  <a class="nl" href="demo.html">Демо</a>
+  <a class="nl" href="demo.html?v=7">Демо</a>
   <a class="nl on" href="materials.html">Материалы</a>
-  <a class="nl" href="help.html">Справка</a>
+  <a class="nl" href="help.html?v=7">Справка</a>
   <div class="lang" aria-hidden="true"><button class="active">RU</button><button disabled style="opacity:.4;cursor:default">EN</button></div>
 </div></header>
 
@@ -122,7 +123,7 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
   <div class="chips">
     <span class="chip"><b>4</b> PDF исходных материалов</span>
     <span class="chip"><b>20</b> экранов прототипа</span>
-    <span class="chip"><b>12</b> источников проекта (S001–S012)</span>
+    <span class="chip"><b>13</b> источников проекта (S001–S013)</span>
     <span class="chip"><b>24</b> утверждения с силой A–D</span>
     <span class="chip"><b>6</b> форматов стратегии (MD · PDF · DOCX · XLSX ×4)</span>
   </div>
@@ -183,7 +184,7 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
   <div class="split2 rv d2">
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>SIX_PAGER.pdf — страница 1</span></div>
-      <img src="assets/shot_sixpager.jpg" alt="Первая страница six-pager ROSE">
+      <img src="assets/shot_sixpager.jpg?v=7" alt="Первая страница six-pager ROSE">
       <div class="shot-cap">Собран командой <code>pfs export --six-pager</code> · Excel-модель: <code>outputs/attachments/</code> (4 книги, 180 живых формул)</div>
     </div>
     <div>
@@ -211,19 +212,19 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
   <div class="split2 rv d2">
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>rosedate.ru — мобильный вид</span></div>
-      <img src="assets/rose_screen_m.jpg" alt="Экран ROSE: роза и слоган «Сначала разговор. Потом взгляд.»">
+      <img src="assets/rose_screen_m.jpg?v=7" alt="Экран ROSE: роза и слоган «Сначала разговор. Потом взгляд.»">
       <div class="shot-cap">Первый экран участника: живая роза на чёрном, «Подать заявку» / «Я уже в клубе». Только 21+, только подтверждённые через Госуслуги.</div>
     </div>
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>rosedate.ru — концепт · карта экранов</span></div>
-      <img src="assets/rose_screen.jpg" alt="Прототип ROSE: карта 20 экранов">
+      <img src="assets/rose_screen.jpg?v=7" alt="Прототип ROSE: карта 20 экранов">
       <div class="shot-cap">Экраны: «Как это работает», «Госуслуги», «Анкета из 5 шагов», «Интервью с матчмейкером», «За столом · колоды», «Тайная роза», «Взаимная роза», «Клуб и тарифы».</div>
     </div>
   </div>
   <div class="cta rv">
-    <a class="btn primary" href="demo.html">← Демо-разбор</a>
+    <a class="btn primary" href="demo.html?v=7">← Демо-разбор</a>
     <a class="btn ghost" href="https://rosedate.ru/" target="_blank" rel="noopener">Прототип rosedate.ru</a>
-    <a class="btn ghost" href="help.html">Справка</a>
+    <a class="btn ghost" href="help.html?v=7">Справка</a>
   </div>
 </div></section>
 
@@ -233,13 +234,12 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
     <div>ИИ-агент для руководителя цифрового продукта</div>
   </div>
   <div>
-    <a href="index.html">← Лендинг</a> · <a href="demo.html">Демо</a> · <a href="help.html">Справка</a> ·
+    <a href="index.html">← Лендинг</a> · <a href="demo.html?v=7">Демо</a> · <a href="help.html?v=7">Справка</a> ·
     <a href="https://github.com/Fighter90/product-factory-strategist/wiki">Wiki</a>
   </div>
 </div></footer>
 
 <script>
-document.documentElement.classList.add('js');
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const bar = document.getElementById('bar');
 (function frame(){
@@ -247,10 +247,6 @@ const bar = document.getElementById('bar');
   bar.style.width = (h > 0 ? (y/h*100) : 0) + '%';
   requestAnimationFrame(frame);
 })();
-const io = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-}), {threshold:.12, rootMargin:'0px 0px -5% 0px'});
-document.querySelectorAll('.rv').forEach(el => io.observe(el));
 setTimeout(function(){ document.querySelectorAll('.rv:not(.in)').forEach(function(e){ e.classList.add('in'); }); }, 1400);
 </script>
 </body>

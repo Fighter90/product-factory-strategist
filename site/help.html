@@ -102,8 +102,6 @@ th{background:var(--card2);text-align:left;padding:9px 12px;border:1px solid var
 td{padding:8px 12px;border:1px solid var(--line);color:var(--muted);vertical-align:top;overflow-wrap:anywhere}
 td code{white-space:nowrap}
 
-html.js .rv{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.6,.2,1),transform .55s cubic-bezier(.2,.6,.2,1)}
-html.js .rv.in{opacity:1;transform:none}
 .d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
 
 footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
@@ -124,7 +122,7 @@ body[data-lang=ru] [lang=en]{display:none}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .aurora{display:none}
-  .rv{opacity:1;transform:none}
+  .rv{animation:rvIn linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
 }
 </style>
 </head>
@@ -715,7 +713,6 @@ pfs data stats file.csv --col revenue --group seg              # статист�
 </div></footer>
 
 <script>
-document.documentElement.classList.add('js');
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const I18N = {
@@ -753,11 +750,8 @@ function frame(){
 }
 requestAnimationFrame(frame);
 
-const io = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-}), {threshold:.08, rootMargin:'0px 0px -3% 0px'});
-document.querySelectorAll('.rv').forEach(el => io.observe(el));
-setTimeout(function(){ document.querySelectorAll('.rv:not(.in)').forEach(function(e){ e.classList.add('in'); }); }, 1400);
+const io = new IntersectionObserver(() => {});
+
 
 // scrollspy сайдбара
 const sio = new IntersectionObserver(es => es.forEach(e => {
