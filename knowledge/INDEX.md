@@ -23,6 +23,10 @@
 
 ## Исследование (`research`)
 
+- [Continuous Discovery — постоянный дискавери: дерево возможностей и еженедельные касания клиента](methods/M-continuous-discovery.md) `M-continuous-discovery` — discovery, opportunity-solution-tree, интервью, касания, риски
+- [Dual-Track Agile — параллельные треки дискавери и поставки](methods/M-dual-track-agile.md) `M-dual-track-agile` — discovery, поставка, спринт, параллель, готовность
+- [Lean Startup — Build-Measure-Learn, проверяемое обучение и развороты](methods/M-lean-startup.md) `M-lean-startup` — bml, mvp, инновационный учёт, pivot, гипотезы
+- [PMF-опрос Шона Эллиса — «как разочаруетесь, если продукт исчезнет?» и работа с 40%](methods/M-pmf-survey.md) `M-pmf-survey` — pmf, опрос, 40%, сегменты, удержание
 - [AI в исследованиях — что делегировать, риски, проверка и категории инструментов](methods/ai-in-research.md) `M-ai-in-research` — ai, llm, промптинг, rag, context-engineering
 - [Исследование целевой аудитории, сегментация, персоны и рекрутинг](methods/audience-research.md) `M-audience-research` — ца, сегментация, персоны, портрет-аудитории, рекрутинг
 - [Базовая статистика для продуктовых решений — средние, разброс, доверительные интервалы, ошибки I/II рода, мощность](methods/basic-statistics-pm.md) `M-basic-statistics-pm` — статистика, среднее, медиана, перцентиль, дисперсия
@@ -63,6 +67,11 @@
 
 ## Варианты (`options`)
 
+- [Continuous Discovery — постоянный дискавери: дерево возможностей и еженедельные касания клиента](methods/M-continuous-discovery.md) `M-continuous-discovery` — discovery, opportunity-solution-tree, интервью, касания, риски
+- [Crossing the Chasm — переход от ранних энтузиастов к прагматикам](methods/M-crossing-chasm.md) `M-crossing-chasm` — chasm, сегмент, beachhead, whole product, прагматики
+- [Dual-Track Agile — параллельные треки дискавери и поставки](methods/M-dual-track-agile.md) `M-dual-track-agile` — discovery, поставка, спринт, параллель, готовность
+- [Lean Startup — Build-Measure-Learn, проверяемое обучение и развороты](methods/M-lean-startup.md) `M-lean-startup` — bml, mvp, инновационный учёт, pivot, гипотезы
+- [Wardley Mapping — карта эволюции компонентов и решения build/buy/rent](methods/M-wardley-mapping.md) `M-wardley-mapping` — wardley, карта, эволюция, genesis, commodity
 - [A/B-тесты — полный цикл от гипотезы до решения и альтернативы, когда классика невозможна](methods/ab-testing.md) `M-ab-testing` — ab-тест, эксперимент, mde, выборка, p-value
 - [AI в исследованиях — что делегировать, риски, проверка и категории инструментов](methods/ai-in-research.md) `M-ai-in-research` — ai, llm, промптинг, rag, context-engineering
 - [Аукционы и маркетплейсы (механики, метрики, здоровье рынка)](methods/auctions-marketplaces.md) `M-auctions-marketplaces` — аукцион, gsp, vcg, gfp, first-price
@@ -119,6 +128,10 @@
 
 ## Стратегия (`strategy`)
 
+- [Crossing the Chasm — переход от ранних энтузиастов к прагматикам](methods/M-crossing-chasm.md) `M-crossing-chasm` — chasm, сегмент, beachhead, whole product, прагматики
+- [North Star Playbook — главная метрика и дерево входных метрик (подход Amplitude)](methods/M-north-star-playbook.md) `M-north-star-playbook` — nsm, северная звезда, входные метрики, дерево метрик, цель
+- [Стратегия по стадии жизненного цикла — внедрение, рост, зрелость, спад](methods/M-product-lifecycle-strategy.md) `M-product-lifecycle-strategy` — жизненный цикл, стадия, внедрение, рост, зрелость
+- [Wardley Mapping — карта эволюции компонентов и решения build/buy/rent](methods/M-wardley-mapping.md) `M-wardley-mapping` — wardley, карта, эволюция, genesis, commodity
 - [A/B-тесты — полный цикл от гипотезы до решения и альтернативы, когда классика невозможна](methods/ab-testing.md) `M-ab-testing` — ab-тест, эксперимент, mde, выборка, p-value
 - [Аукционы и маркетплейсы (механики, метрики, здоровье рынка)](methods/auctions-marketplaces.md) `M-auctions-marketplaces` — аукцион, gsp, vcg, gfp, first-price
 - [Исследование целевой аудитории, сегментация, персоны и рекрутинг](methods/audience-research.md) `M-audience-research` — ца, сегментация, персоны, портрет-аудитории, рекрутинг
@@ -171,6 +184,9 @@
 
 ## План проверки (`validation`)
 
+- [Lean Startup — Build-Measure-Learn, проверяемое обучение и развороты](methods/M-lean-startup.md) `M-lean-startup` — bml, mvp, инновационный учёт, pivot, гипотезы
+- [North Star Playbook — главная метрика и дерево входных метрик (подход Amplitude)](methods/M-north-star-playbook.md) `M-north-star-playbook` — nsm, северная звезда, входные метрики, дерево метрик, цель
+- [PMF-опрос Шона Эллиса — «как разочаруетесь, если продукт исчезнет?» и работа с 40%](methods/M-pmf-survey.md) `M-pmf-survey` — pmf, опрос, 40%, сегменты, удержание
 - [A/B-тесты — полный цикл от гипотезы до решения и альтернативы, когда классика невозможна](methods/ab-testing.md) `M-ab-testing` — ab-тест, эксперимент, mde, выборка, p-value
 - [AI в исследованиях — что делегировать, риски, проверка и категории инструментов](methods/ai-in-research.md) `M-ai-in-research` — ai, llm, промптинг, rag, context-engineering
 - [Аукционы и маркетплейсы (механики, метрики, здоровье рынка)](methods/auctions-marketplaces.md) `M-auctions-marketplaces` — аукцион, gsp, vcg, gfp, first-price
@@ -268,7 +284,7 @@
 
 ## Все карты по курсам
 
-**strategy**: [M-auctions-marketplaces](methods/auctions-marketplaces.md), [M-competitors](methods/competitors.md), [M-customers](methods/customers-segments.md), [M-external-environment](methods/external-environment.md), [M-goals-drivers-bets](methods/goals-drivers-bets.md), [M-landscapes](methods/landscapes-marketing-tech-business.md), [M-lean-canvas](methods/lean-canvas.md), [M-model-topdown-bottomup](methods/model-topdown-bottomup.md), [M-model-validation](methods/model-validation.md), [M-platform-case-concept](methods/platform-case-concept.md), [M-platform-economics](methods/platform-economics.md), [M-platform-ecosystem-audit](methods/platform-ecosystem-audit.md), [M-platform-risks-rollout](methods/platform-risks-rollout.md), [M-platforms-types-criteria](methods/platforms-types-criteria.md), [M-risks](methods/risks-mitigation.md), [M-six-pager](methods/six-pager-report.md), [M-strategy-growth](methods/strategy-growth-types.md), [M-outcome-roadmap](methods/strategy-timeline-outcome-roadmap.md), [M-success-metrics](methods/success-metrics-nsm-okr.md), [M-team](methods/team-people.md)
+**strategy**: [M-crossing-chasm](methods/M-crossing-chasm.md), [M-lean-startup](methods/M-lean-startup.md), [M-north-star-playbook](methods/M-north-star-playbook.md), [M-product-lifecycle-strategy](methods/M-product-lifecycle-strategy.md), [M-wardley-mapping](methods/M-wardley-mapping.md), [M-auctions-marketplaces](methods/auctions-marketplaces.md), [M-competitors](methods/competitors.md), [M-customers](methods/customers-segments.md), [M-external-environment](methods/external-environment.md), [M-goals-drivers-bets](methods/goals-drivers-bets.md), [M-landscapes](methods/landscapes-marketing-tech-business.md), [M-lean-canvas](methods/lean-canvas.md), [M-model-topdown-bottomup](methods/model-topdown-bottomup.md), [M-model-validation](methods/model-validation.md), [M-platform-case-concept](methods/platform-case-concept.md), [M-platform-economics](methods/platform-economics.md), [M-platform-ecosystem-audit](methods/platform-ecosystem-audit.md), [M-platform-risks-rollout](methods/platform-risks-rollout.md), [M-platforms-types-criteria](methods/platforms-types-criteria.md), [M-risks](methods/risks-mitigation.md), [M-six-pager](methods/six-pager-report.md), [M-strategy-growth](methods/strategy-growth-types.md), [M-outcome-roadmap](methods/strategy-timeline-outcome-roadmap.md), [M-success-metrics](methods/success-metrics-nsm-okr.md), [M-team](methods/team-people.md)
 
 **pm**: [M-decision-daci](methods/decision-daci.md), [M-delivery](methods/delivery.md), [M-jtbd](methods/jtbd-ajtbd.md), [M-mvp-pilots](methods/mvp-pilots.md), [M-pmf-scaling](methods/pmf-scaling.md), [M-problem-design](methods/problem-design.md), [M-product-communication](methods/product-communication-defense.md), [M-product-context](methods/product-cycle-context.md), [M-product-metrics](methods/product-metrics-pm.md), [M-roadmap](methods/roadmap.md), [M-solution-design](methods/solution-design.md)
 
