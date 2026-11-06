@@ -102,8 +102,6 @@ python3 -m unittest discover -s tests          # 103 теста
 | Реестр и журнал | `projects/демо/claims.jsonl`, `decisions.jsonl`, `log.jsonl` |
 | Deck-презентация | `projects/демо/outputs/presentations/deck.html` |
 
-![Дашборд CVStart](site/assets/cv_dash_ru.jpg)
-
 ### Сверка с заданием — где что в демо
 
 | Требование задания | Где доказательство |
