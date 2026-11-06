@@ -151,10 +151,11 @@ CAC $60; churn 8%/mo; fixed costs ~$1,500/mo):
 | 5 | CAC payback = CAC / CM | $60 / $21.75 | **2.76 ≈ 2.8 months** |
 | 6 | Break-even = fixed costs / CM | $1,500 / $21.75 = 68.97 | **≈ 69 paying users** |
 
-**Beta funnel calculation** (synthetic model [S008], seed=7, week-1 base = 3,000 visitors, 22%/wk
-growth — a method illustration, not a forecast):
-week-12 visitors = 3,000 × 1.22¹¹ ≈ **26,700** → signups = × 5.5% ≈ **1,470** →
-activation (first resume) = × 62% ≈ **910** → payment = × 3.3% with a 6%/wk uplift ≈ **53 paying** →
+**Beta funnel calculation** (synthetic model [S008], seed=7: starting base of 3,000 visitors,
+22%/wk growth, week value = base × 1.22^week; a method illustration, not a forecast):
+week-12 visitors = 3,000 × 1.22¹² ≈ **32,600** → signups = × 5.5% ≈ **1,793** →
+activation (first resume) = × 62% ≈ **1,111** → payment = × 4.8% (base 2.8% with a weekly
+6% uplift: 0.028 × 1.72) ≈ **53 paying** →
 MRR = 53 × $29 = **$1,537** → run-rate = $1,537 × 12 = **$18,444 ARR/yr**.
 Cross-check vs break-even: 53 < 69 — the beta does not yet cover fixed costs, which is exactly what
 the "continue at ≥ 40" criterion encodes, with scaling only after confirmation.
@@ -174,8 +175,7 @@ the "continue at ≥ 40" criterion encodes, with scaling only after confirmation
 CAC ≈ $60), paid channels only after churn ≤ 10% is confirmed by actuals.
 
 **Conclusion (inference).** At base assumptions the unit economics are healthy (4.53 ≥ 3, payback
-< 3 months) and break-even is reachable on organic traffic (69 paying ≈ 0.23% of the model funnel's
-signups); the safety margin is one parameter. Therefore: Unlimited $29 is the anchor tier, Pro $12
+< 3 months) and break-even is reachable on organic traffic (69 paying ≈ 0.21% of week-12 visitors — 32.6K in the model); the safety margin is one parameter. Therefore: Unlimited $29 is the anchor tier, Pro $12
 is the downgrade-retention path, and the annual plan (from [C018]) is the churn-reduction instrument
 switched on in wave 2.
 
