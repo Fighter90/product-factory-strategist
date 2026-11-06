@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Материалы демо ROSE — Стратег Фабрики продуктов</title>
+<meta name="description" content="Исходные материалы демонстрационного проекта ROSE: презентация, руководство пользователя и администратора, фирменный стиль — и стратегия агента (six-pager в MD/PDF/DOCX).">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='.55' stop-color='%23818cf8'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='11' fill='%2305070f'/%3E%3Cg fill='none' stroke='url(%23g)' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M14 10H34L42 19L24 42L6 19Z'/%3E%3Cpath d='M6 19H42' opacity='.7'/%3E%3Cpath d='M14 10L20 19L24 42' opacity='.55'/%3E%3Cpath d='M34 10L28 19L24 42' opacity='.55'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#05070f; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06);
+  --text:#eef2ff; --muted:#9aa7bd; --line:rgba(148,163,184,.16);
+  --accent:#2dd4bf; --accent2:#818cf8; --accent3:#f472b6; --rose:#e3122f; --bone:#f2ece6; --velvet:#151313;
+  --code:rgba(8,12,24,.75);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+[id]{scroll-margin-top:92px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(1200px 800px at 78% -12%,rgba(129,140,248,.10),transparent 62%),radial-gradient(1000px 760px at -12% 32%,rgba(45,212,191,.08),transparent 62%),radial-gradient(1100px 820px at 108% 92%,rgba(227,18,47,.07),transparent 62%)}
+::selection{background:rgba(45,212,191,.3)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;opacity:.24;filter:blur(110px);
+  background:conic-gradient(from 0deg at 32% 28%,rgba(45,212,191,.15),transparent 28%,rgba(129,140,248,.15) 52%,transparent 76%,rgba(227,18,47,.12));
+  animation:auroraSpin 44s linear infinite}
+.noise{position:absolute;inset:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+#bar{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));box-shadow:0 0 12px rgba(129,140,248,.7)}
+header{position:sticky;top:0;z-index:50;background:rgba(5,7,15,.66);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:16px;padding:13px 0;flex-wrap:wrap}
+.logo{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:.2px}
+.logo-t{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo .mark{width:25px;height:25px;flex:none;filter:drop-shadow(0 0 10px rgba(45,212,191,.28))}
+.nav a.nl{color:var(--muted);font-size:14px;position:relative}
+.nav a.nl::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transition:width .25s}
+.nav a.nl:hover{color:var(--text);text-decoration:none}
+.nav a.nl:hover::after{width:100%}
+.nav a.nl.on{color:var(--accent)}
+.nav a.nl.on::after{width:100%}
+.lang{margin-left:auto;display:flex;gap:6px}
+.lang button{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:8px;cursor:pointer;font-size:13px}
+.lang button.active{color:#05070f;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));border-color:transparent;font-weight:700}
+.hero{position:relative;padding:70px 0 50px;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(30px,4vw,44px);font-weight:850;letter-spacing:-.8px;position:relative}
+.hero h1 .grad{background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 45%,var(--accent3) 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{color:var(--muted);font-size:16.5px;max-width:860px;margin:14px 0 0;position:relative}
+.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px;position:relative}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 14px;font-size:12.5px;color:var(--muted)}
+.chip b{color:var(--accent);font-weight:700}
+section{padding:56px 0;position:relative}
+section+section{border-top:1px solid rgba(148,163,184,.12)}
+h2{font-size:clamp(22px,3vw,29px);letter-spacing:-.4px;margin-bottom:12px;position:relative;padding-bottom:12px}
+h2::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;border-radius:2px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transform:scaleX(0);transform-origin:left}
+.rv.in h2::after{transform:scaleX(1);transition:transform .9s cubic-bezier(.2,.6,.2,1) .25s}
+.lead{color:var(--muted);max-width:860px;margin-bottom:26px}
+.flow-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.flow-svg{min-width:900px;width:100%;height:auto;display:block}
+.flow-svg .path{stroke-dasharray:1400;stroke-dashoffset:1400}
+.rv.in .flow-svg .path{animation:draw 2.2s cubic-bezier(.4,0,.2,1) .2s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.pdf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.pdf-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;backdrop-filter:blur(8px);transition:transform .25s,border-color .25s}
+.pdf-card:hover{transform:translateY(-3px);border-color:rgba(244,114,182,.5)}
+.pdf-ic{margin-bottom:4px}
+.pdf-card h3{font-size:14.5px;margin:8px 0 6px;color:var(--text)}
+.pdf-card p{color:var(--muted);font-size:13px}
+.pdf-meta{font-size:11.5px;color:rgba(154,167,189,.7);margin:8px 0}
+.pdf-btns{display:flex;gap:8px;flex-wrap:wrap}
+.pbtn{display:inline-block;border:1px solid rgba(244,114,182,.45);color:#f472b6;border-radius:9px;padding:5px 12px;font-size:12.5px;font-weight:600}
+.pbtn:hover{text-decoration:none;background:rgba(244,114,182,.08)}
+.pbtn.ghost2{border-color:var(--line);color:var(--muted)}
+.pbtn.ghost2:hover{color:var(--text);border-color:var(--accent)}
+.shot-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;backdrop-filter:blur(8px)}
+.shot-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--card2)}
+.shot-bar i{width:10px;height:10px;border-radius:50%;background:rgba(154,167,189,.35)}
+.shot-bar i:nth-child(1){background:#f472b6}.shot-bar i:nth-child(2){background:#f6ad55}.shot-bar i:nth-child(3){background:#48bb78}
+.shot-bar span{margin-left:10px;font-size:12px;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,monospace}
+.shot-card img{width:100%;display:block}
+.shot-cap{padding:10px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:860px){.split2{grid-template-columns:1fr}}
+.note{border-left:3px solid var(--accent);background:var(--card);padding:13px 17px;border-radius:0 12px 12px 0;color:var(--muted);font-size:14px;margin:16px 0}
+.cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-block;padding:12px 26px;border-radius:12px;font-weight:700;font-size:15px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));color:#05070f;box-shadow:0 8px 30px rgba(45,212,191,.28)}
+.btn.ghost{border:1px solid var(--line);color:var(--text);background:var(--card)}
+.btn.ghost:hover{border-color:var(--accent)}
+.rv{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.6,.2,1),transform .55s cubic-bezier(.2,.6,.2,1)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
+footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
+@media(max-width:700px){.nav a.nl{display:none}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .aurora{display:none}
+  .rv{opacity:1;transform:none}
+  .flow-svg .path{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="aurora"></div><div class="noise"></div></div>
+<div id="bar"></div>
+<header><div class="wrap nav">
+  <a class="logo" href="index.html"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t">Стратег Фабрики продуктов</span></a>
+  <a class="nl" href="index.html#features">Возможности</a>
+  <a class="nl" href="demo.html">Демо</a>
+  <a class="nl on" href="materials.html">Материалы</a>
+  <a class="nl" href="help.html">Справка</a>
+  <div class="lang" aria-hidden="true"><button class="active">RU</button><button disabled style="opacity:.4;cursor:default">EN</button></div>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <h1>Материалы демо <span class="grad">ROSE</span></h1>
+  <p class="sub">Исходные материалы демонстрационного проекта — четыре документа продукта и кликабельный прототип — и то, что агент из них собрал: стратегия six-pager в трёх форматах и Excel-модель. Всё лежит в репозитории: <code>projects/демо/</code>.</p>
+  <div class="chips">
+    <span class="chip"><b>4</b> PDF исходных материалов</span>
+    <span class="chip"><b>20</b> экранов прототипа</span>
+    <span class="chip"><b>12</b> источников проекта (S001–S012)</span>
+    <span class="chip"><b>24</b> утверждения с силой A–D</span>
+    <span class="chip"><b>6</b> форматов стратегии (MD · PDF · DOCX · XLSX ×4)</span>
+  </div>
+</div></div>
+
+<section id="flow"><div class="wrap">
+  <h2 class="rv">Как материалы стали стратегией</h2>
+  <p class="lead rv d1">Каждый документ зарегистрирован источником (S###), из них извлечены утверждения с типом и силой доказательства (C###), на них построены варианты, стратегии и решение D001 — цепочка прослеживается от ссылки до решения.</p>
+  <div class="flow-wrap rv d2"><svg class="flow-svg" viewBox="0 0 1000 120" role="img" aria-label="Схема: материалы — источники — утверждения — варианты — стратегии — решение">
+    <defs><linearGradient id="fg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".5" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
+    <path class="path" d="M25 60 H975" fill="none" stroke="url(#fg)" stroke-width="2.5"/>
+    <g font-size="12" font-weight="700" text-anchor="middle">
+      <g><circle cx="60" cy="60" r="26" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="60" y="64" fill="#2dd4bf">S###</text><text x="60" y="22" fill="#9aa7bd" font-weight="400">материалы</text><text x="60" y="106" fill="#9aa7bd" font-weight="400">4 PDF · сайт</text></g>
+      <g><circle cx="240" cy="60" r="26" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="240" y="64" fill="#2dd4bf">C###</text><text x="240" y="22" fill="#9aa7bd" font-weight="400">утверждения</text><text x="240" y="106" fill="#9aa7bd" font-weight="400">24 · силы A–D</text></g>
+      <g><circle cx="420" cy="60" r="26" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="420" y="64" fill="#818cf8">A–E</text><text x="420" y="22" fill="#9aa7bd" font-weight="400">варианты</text><text x="420" y="106" fill="#9aa7bd" font-weight="400">+ red team ×20</text></g>
+      <g><circle cx="600" cy="60" r="26" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="600" y="64" fill="#818cf8">04·05</text><text x="600" y="22" fill="#9aa7bd" font-weight="400">стратегии</text><text x="600" y="106" fill="#9aa7bd" font-weight="400">обещания = продукт</text></g>
+      <g><circle cx="780" cy="60" r="26" fill="#05070f" stroke="#f472b6" stroke-width="2"/><text x="780" y="64" fill="#f472b6">D001</text><text x="780" y="22" fill="#9aa7bd" font-weight="400">решение</text><text x="780" y="106" fill="#9aa7bd" font-weight="400">пересмотр 2027-02-06</text></g>
+      <g><circle cx="945" cy="60" r="26" fill="#05070f" stroke="#f472b6" stroke-width="2"/><text x="945" y="64" fill="#f472b6">✓</text><text x="945" y="22" fill="#9aa7bd" font-weight="400">check 100/100</text><text x="945" y="106" fill="#9aa7bd" font-weight="400">0 ошибок</text></g>
+    </g>
+  </svg></div>
+</div></section>
+
+<section id="pdfs"><div class="wrap">
+  <h2 class="rv">Исходные материалы (PDF)</h2>
+  <p class="lead rv d1">Документы продукта, которые агент читал как источники [S009–S012]. Каждая ссылка открывает файл из репозитория.</p>
+  <div class="pdf-grid">
+    <div class="pdf-card rv d0">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg></div>
+      <h3>ROSE · Презентация проекта</h3>
+      <p>Проблема (−14,6% MAU Tabor; «фото решает раньше слов»), решение — два слоя выбора, бизнес-модель 18/60/600 тыс. ₽, NSM «взаимные розы», метрики и риски.</p>
+      <div class="pdf-meta">≈13 стр · 7,3 МБ</div>
+      <div class="pdf-btns"><a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0.pdf" target="_blank" rel="noopener" class="pbtn ghost2">GitHub</a></div>
+    </div>    <div class="pdf-card rv d1">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg></div>
+      <h3>ROSE · Руководство пользователя</h3>
+      <p>Путь участника: 8 шагов от заявки до «кофе вдвоём»; все 20 экранов; правила клуба (окно розы 24 ч, отмена за 48 ч, конфиденциальность); оплата; безопасность; FAQ и словарь.</p>
+      <div class="pdf-meta">15 стр · 2,2 МБ</div>
+      <div class="pdf-btns"><a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F.pdf" target="_blank" rel="noopener" class="pbtn ghost2">GitHub</a></div>
+    </div>    <div class="pdf-card rv d2">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg></div>
+      <h3>ROSE · Руководство администратора</h3>
+      <p>6 ролей и доступы; интервью и «красные флаги»; сборка стола — «алгоритм предлагает, матчмейкер утверждает»; афиши; калибровка; экономика VIP-стола (LTV 29 119 ₽ / CAC 21 111 ₽).</p>
+      <div class="pdf-meta">11 стр · 0,4 МБ</div>
+      <div class="pdf-btns"><a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%B0.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%B0.pdf" target="_blank" rel="noopener" class="pbtn ghost2">GitHub</a></div>
+    </div>    <div class="pdf-card rv d3">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg></div>
+      <h3>ROSE · Фирменный стиль и реклама</h3>
+      <p>Платформа бренда и слоган «Будь успешен не только в бизнесе, но и в любви»; знак «одна роза на чёрном»; 5 цветов, 2 шрифта; серия для деловой прессы и полоса в журнале РБК.</p>
+      <div class="pdf-meta">11 стр · 3,1 МБ</div>
+      <div class="pdf-btns"><a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%84%D0%B8%D1%80%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9%20%D1%81%D1%82%D0%B8%D0%BB%D1%8C%20%D0%B8%20%D1%80%D0%B5%D0%BA%D0%BB%D0%B0%D0%BC%D0%B0%20%D0%B2%20%D0%B6%D1%83%D1%80%D0%BD%D0%B0%D0%BB%D0%B5.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%84%D0%B8%D1%80%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9%20%D1%81%D1%82%D0%B8%D0%BB%D1%8C%20%D0%B8%20%D1%80%D0%B5%D0%BA%D0%BB%D0%B0%D0%BC%D0%B0%20%D0%B2%20%D0%B6%D1%83%D1%80%D0%BD%D0%B0%D0%BB%D0%B5.pdf" target="_blank" rel="noopener" class="pbtn ghost2">GitHub</a></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="strategy"><div class="wrap">
+  <h2 class="rv">Стратегия агента: six-pager</h2>
+  <p class="lead rv d1">Итоговый отчёт для комитета: состояние рынка и продукта, сегменты, 5 вариантов с red team, тактики, план и метрики. Один источник — три формата; числа прослеживаются до утверждений.</p>
+  <div class="split2 rv d2">
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>SIX_PAGER.pdf — страница 1</span></div>
+      <img src="assets/shot_sixpager.jpg" alt="Первая страница six-pager ROSE">
+      <div class="shot-cap">Собран командой <code>pfs export --six-pager</code> · Excel-модель: <code>outputs/attachments/</code> (4 книги, 180 живых формул)</div>
+    </div>
+    <div>
+      <div class="faq6" style="margin-bottom:14px">
+        <div class="f6"><b>1</b><span><b>Состояние:</b> рынок 6,2 млрд ₽ (+25%); кризис свайпов; подписки −11%</span></div>
+        <div class="f6"><b>2</b><span><b>Сегменты:</b> «интеллигенция 28–45» + контур возвращающихся гостей</span></div>
+        <div class="f6"><b>3</b><span><b>Инициативы:</b> 5 вариантов A–E; выбран B; 20 возражений red team</span></div>
+        <div class="f6"><b>4</b><span><b>Тактики:</b> тиры 15/25/60 тыс. ₽; партнёрства; Rose Circle фазой 2</span></div>
+        <div class="f6"><b>5</b><span><b>План:</b> 90 дней; Rose Circle после повторных ≥ 45%</span></div>
+        <div class="f6"><b>6</b><span><b>Метрики:</b> выручка 0,8–1,2 млн ₽/мес; NPS ≥ 60; CAC ≤ 25 тыс. ₽</span></div>
+      </div>
+      <div class="pdf-btns">
+        <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a>
+        <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER.docx" target="_blank" rel="noopener" class="pbtn ghost2">DOCX</a>
+        <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER.md" target="_blank" rel="noopener" class="pbtn ghost2">Markdown</a>
+      </div>
+      <div class="note" style="margin-top:14px">Вывод агента: <b>вариант B — «глубина Москвы»</b> (8–12 ужинов/мес, тиры 15/25/60 тыс. ₽, партнёрства, Rose Circle фазой 2). Стол: 99 000 ₽ → вклад 54 450 ₽; LTV ≈ 41 250 ₽; LTV/CAC ≈ 3,4.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="shots"><div class="wrap">
+  <h2 class="rv">Скриншоты приложения</h2>
+  <p class="lead rv d1">Кликабельный прототип rosedate.ru — 20 экранов, от лоадера с розой до «Клуба и тарифов». Источник механики и цен [S001].</p>
+  <div class="split2 rv d2">
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>rosedate.ru — мобильный вид</span></div>
+      <img src="assets/rose_screen_m.jpg" alt="Экран ROSE: роза и слоган «Сначала разговор. Потом взгляд.»">
+      <div class="shot-cap">Первый экран участника: живая роза на чёрном, «Подать заявку» / «Я уже в клубе». Только 21+, только подтверждённые через Госуслуги.</div>
+    </div>
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>rosedate.ru — концепт · карта экранов</span></div>
+      <img src="assets/rose_screen.jpg" alt="Прототип ROSE: карта 20 экранов">
+      <div class="shot-cap">Экраны: «Как это работает», «Госуслуги», «Анкета из 5 шагов», «Интервью с матчмейкером», «За столом · колоды», «Тайная роза», «Взаимная роза», «Клуб и тарифы».</div>
+    </div>
+  </div>
+  <div class="cta rv">
+    <a class="btn primary" href="demo.html">← Демо-разбор</a>
+    <a class="btn ghost" href="https://rosedate.ru/" target="_blank" rel="noopener">Прототип rosedate.ru</a>
+    <a class="btn ghost" href="help.html">Справка</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div>
+    <div class="logo"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g></svg><span class="logo-t">Стратег Фабрики продуктов</span></div>
+    <div>ИИ-агент для руководителя цифрового продукта</div>
+  </div>
+  <div>
+    <a href="index.html">← Лендинг</a> · <a href="demo.html">Демо</a> · <a href="help.html">Справка</a> ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/wiki">Wiki</a>
+  </div>
+</div></footer>
+
+<script>
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const bar = document.getElementById('bar');
+(function frame(){
+  const y = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
+  bar.style.width = (h > 0 ? (y/h*100) : 0) + '%';
+  requestAnimationFrame(frame);
+})();
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), {threshold:.12, rootMargin:'0px 0px -5% 0px'});
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

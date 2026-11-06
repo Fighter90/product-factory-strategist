@@ -90,3 +90,7 @@
 {"ts": "2026-11-06T12:46:22+03:00", "kind": "decision", "msg": "D001 принято: ROSE: вариант B — глубина Москвы (отв. Founder (демо))", "step": "decision"}
 {"ts": "2026-11-06T12:46:22+03:00", "kind": "step", "msg": "decision → done", "step": "decision"}
 {"ts": "2026-11-06T12:46:22+03:00", "kind": "step", "msg": "monitoring → in_progress", "step": "monitoring"}
+{"ts": "2026-11-06T13:19:26+03:00", "kind": "source", "msg": "S009 добавлен: ROSE — презентация проекта (исходный материал демо)", "tool": "pfs source add"}
+{"ts": "2026-11-06T13:19:26+03:00", "kind": "source", "msg": "S010 добавлен: ROSE — руководство пользователя (исходный материал демо)", "tool": "pfs source add"}
+{"ts": "2026-11-06T13:19:26+03:00", "kind": "source", "msg": "S011 добавлен: ROSE — руководство администратора (исходный материал демо)", "tool": "pfs source add"}
+{"ts": "2026-11-06T13:19:26+03:00", "kind": "source", "msg": "S012 добавлен: ROSE — фирменный стиль и реклама в журнале (исходный материал демо)", "tool": "pfs source add"}

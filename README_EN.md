@@ -35,6 +35,17 @@ chat — state is restored automatically.
 
 ---
 
+## Demo project: ROSE — full walkthrough
+
+A live end-to-end run on a real task: a closed six-seat dinner club in Moscow (rosedate.ru). 12 agent steps, 5 options attacked by a red-team subagent (15 objections + 5 hidden assumptions), both strategies, a six-pager with a 4-book Excel model — validated at **100/100** with numbers recomputed programmatically.
+
+- Task: growth strategy + premium-dating GTM for ROSE; axis: revenue/ARPU; constraints: margin + premium brand.
+- Result: **option B "Moscow depth"** — 8–12 dinners/month, 15/25/60k ₽ tiers, restaurant partnerships; Rose Circle subscription only in phase 2 (repeat rate ≥45%). Table economics: 99,000 ₽ revenue → 54,450 ₽ contribution; LTV ≈ 41,250 ₽; LTV/CAC ≈ 3.4; break-even ≈ 8 tables/month.
+- Evidence: 8 sources (site, Forbes/Smart Ranking 6.2B ₽ +25%, VTsIOM, Kommersant, 2 synthetic interviews honestly labeled, director's choice), 24 claims with types and grades A–D.
+- Mistakes fixed along the way (documented honestly): a JS-rendered Forbes page saved manually; a source-numbering shift fixed via 5 claim supersedes; an accidental supersede of a live fact caught by the checker and restored (C024).
+
+What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_PAGER.md/.pdf/.docx**, attachments/*.xlsx), `projects/демо/материалы/` (4 source PDFs), interactive walkthrough at [strategyproduct.ru/demo.html](https://strategyproduct.ru/demo.html). Full RU breakdown with a task-requirements mapping table — in [README.md](README.md#демонстрационный-проект-rose--полный-разбор).
+
 ## How the agent works: 12 steps
 
 At every step the agent **reads the mandatory knowledge cards** (printed by `pfs step`), passes a
@@ -261,5 +272,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/ (55) · demos: demo-antispam (done), kids-guard (live end-to-end run)
+tests/ (55) · demo: демо — ROSE (end-to-end run · six-pager + PDF · Excel · 100/100)
 ```
