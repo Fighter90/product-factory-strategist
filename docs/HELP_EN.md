@@ -82,7 +82,7 @@ CLI needs no API keys. Keys (e.g., Linear API) go into `.env` — it is git-igno
 | 11 | monitoring | Deadlines, new data, revision of affected conclusions | receive reminders |
 
 After step 9 (review) you can build the **six-pager with Excel attachments** (section 7) — a committee-ready report
-in the FAQ-1…FAQ-6 reference structure.
+in the FAQ-1…FAQ-6 growth-strategy reference structure (detailed format spec — knowledge/templates/SIX_PAGER_PROMPT.md).
 
 ---
 

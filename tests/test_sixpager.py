@@ -60,6 +60,15 @@ class CalcAndSixPagerTests(unittest.TestCase):
         (out / "06_validation_plan.md").write_text(
             "# План\n## Ожидаемое изменение\nудержание M1 +7 п.п.\n## Критерии решения\nпродолжаем, если +3 п.п.\n",
             encoding="utf-8")
+        (cls.pdir / "calcs.json").write_text(
+            '{"unit_econ": {"arpu": 29, "vc_share": 0.25, "cac": 60, "churn_month": 0.08}}',
+            encoding="utf-8")
+        (cls.pdir / "sources.jsonl").write_text(
+            '{"id": "S001", "title": "Рынок (агрегатор)", "url": "https://example.com/market", '
+            '"origin": "public", "retrieved": "2026-11-07T00:00:00", "path": ""}\n'
+            '{"id": "S002", "title": "Внутренний файл", "url": "", '
+            '"origin": "own", "retrieved": "2026-11-07T00:00:00", "path": "notes.md"}\n',
+            encoding="utf-8")
 
     def test_calc_builds_four_valid_books(self):
         paths = calc.run(self.pdir, "all")
@@ -89,8 +98,17 @@ class CalcAndSixPagerTests(unittest.TestCase):
         path = export.build_six_pager(self.pdir, with_calcs=True)
         text = path.read_text(encoding="utf-8")
         for head in ("FAQ-1", "FAQ-2", "FAQ-3", "FAQ-4", "FAQ-5", "FAQ-6",
-                     "Приложения (Excel)", "unit_economics.xlsx", "growth_model.xlsx"):
+                     "Приложения (Excel)", "unit_economics.xlsx", "growth_model.xlsx",
+                     "### 1.1 Обзор рынка", "### 1.2 Ключевые конкуренты",
+                     "### 2.1 Сегменты", "### 2.2 Барьеры на каждом этапе пути",
+                     "Первый драйвер", "Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики)",
+                     "KPI в двух плоскостях", "## Источники (сноски)",
+                     "**S001** — Рынок (агрегатор) — https://example.com/market",
+                     "**S002** — Внутренний файл"):
             self.assertIn(head, text)
+        # юнит-экономика посчитана из calcs.json: CM = 29 * 0.75 = 21.75
+        self.assertIn("21,75", text)
+        self.assertIn("271,88", text)
         # без пересчёта Excel — текст собирается повторно
         path2 = export.build_six_pager(self.pdir, with_calcs=False)
         self.assertEqual(path.read_text(encoding="utf-8"), path2.read_text(encoding="utf-8"))

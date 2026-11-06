@@ -80,7 +80,7 @@ python3 -m unittest discover -s tests   # самопроверка (103 тест
 | 10 | decision | Основания, ответственные, метрики, обязательства → `decisions.jsonl` | **утверждаете решение** |
 | 11 | monitoring | Сроки, новые данные, пересмотр затронутых выводов | получаете напоминания |
 
-После шага 9 (review) можно собрать **six-pager с Excel-приложениями** (раздел 7) — отчёт в структуре референса
+После шага 9 (review) можно собрать **six-pager с Excel-приложениями** (раздел 7) — отчёт в структуре референса стратегии роста (детальная спецификация формата — knowledge/templates/SIX_PAGER_PROMPT.md)
 FAQ-1…FAQ-6 для продуктового комитета.
 
 ---
@@ -199,7 +199,7 @@ pfs calc unit-econ | growth | cohort | market
 ### Отчёты
 ```bash
 pfs export                     # REPORT.md: все документы + приложения A–E
-pfs export --six-pager         # SIX_PAGER.md (FAQ-1…6) + пересборка Excel
+pfs export --six-pager         # SIX_PAGER.md в формате референса (подпункты, матрица тактик, KPI, сноски) + пересборка Excel
 pfs export --six-pager --no-calcs   # пересобрать текст без перегенерации книг
 pfs export --deck                   # HTML-дека 16:9 из SIX_PAGER.md
 pfs docx <файл.md> [--out]     # Markdown → Word без зависимостей
