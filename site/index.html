@@ -53,6 +53,12 @@ header.solid{background:rgba(4,6,12,.82);backdrop-filter:blur(14px);border-color
 .navbtn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(242,236,230,.15)}
 
 /* ── HERO: видео-подложка, формат aixle ── */
+.loadline{position:absolute;left:0;right:0;bottom:0;height:2px;z-index:4;overflow:hidden;background:rgba(242,236,230,.07)}
+.loadline i{position:absolute;inset:0;width:34%;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);animation:loadmove 1.15s linear infinite}
+@keyframes loadmove{from{transform:translateX(-110%)}to{transform:translateX(360%)}}
+.hero.vid-ready .loadline{opacity:0;transition:opacity .6s}
+.hero-media{opacity:0;transition:opacity 1s ease}
+.hero.vid-ready .hero-media{opacity:1}
 .hero{position:relative;min-height:92vh;display:flex;align-items:center;overflow:hidden;border-bottom:1px solid var(--line)}
 .hero-media{position:absolute;inset:0;z-index:0}
 .hero-media video{width:100%;height:100%;object-fit:cover;opacity:.55}
@@ -194,7 +200,7 @@ a.hcard p{color:var(--muted);font-size:13px}
 a.hcard .go{color:var(--accent);font-size:12.5px;font-weight:600;display:inline-block;margin-top:10px}
 
 /* reveal */
-.rv{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.6,.2,1),transform .55s cubic-bezier(.2,.6,.2,1)}
+html.js .rv{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.6,.2,1),transform .55s cubic-bezier(.2,.6,.2,1)}
 .rv.in{opacity:1;transform:none}
 .d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}.d4{transition-delay:.28s}
 
@@ -248,8 +254,9 @@ body[data-lang=ru] [lang=en]{display:none}
 </div></header>
 
 <div class="hero" id="top">
+  <div class="loadline" aria-hidden="true"><i></i></div>
   <div class="hero-media" aria-hidden="true">
-    <video autoplay muted loop playsinline preload="metadata" poster="assets/hero_aurora.jpg">
+    <video autoplay muted loop playsinline preload="auto" poster="assets/hero_aurora.jpg" disablepictureinpicture>
       <source src="assets/hero-swarm-2.mp4" type="video/mp4">
     </video>
   </div>
@@ -643,6 +650,7 @@ $ pfs export --six-pager    # report + attachments</pre>
 </div></footer>
 
 <script>
+document.documentElement.classList.add('js');
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const I18N = {
   ru: { title: "Стратег Фабрики продуктов — ИИ-агент для руководителя продукта", desc: "ИИ-агент: от размытого запроса до обоснованной стратегии — доказательства, варианты, red team, Excel и six-pager для комитета." },
@@ -680,6 +688,14 @@ const heroV = document.querySelector('.hero-media video');
 })();
 requestAnimationFrame(frame);
 if (REDUCED && heroV){ heroV.removeAttribute('autoplay'); heroV.pause(); }
+const heroEl = document.querySelector('.hero');
+const vidDone = () => heroEl.classList.add('vid-ready');
+if (heroV){
+  if (heroV.readyState >= 3) vidDone();
+  else { heroV.addEventListener('canplay', vidDone); heroV.addEventListener('error', vidDone); }
+  setTimeout(vidDone, 3500);
+}
+setTimeout(function(){ document.querySelectorAll('.rv:not(.in)').forEach(function(e){ e.classList.add('in'); }); }, 1400);
 
 const io = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
