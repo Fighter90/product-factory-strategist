@@ -3,7 +3,7 @@ id: M-van-westendorp-en
 title: Van Westendorp Price Sensitivity Meter — price perception research
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [research, options, strategy]
 tags: [en, summary]
 related: []
 ---

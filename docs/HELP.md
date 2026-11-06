@@ -80,8 +80,7 @@ python3 -m unittest discover -s tests   # самопроверка (103 тест
 | 10 | decision | Основания, ответственные, метрики, обязательства → `decisions.jsonl` | **утверждаете решение** |
 | 11 | monitoring | Сроки, новые данные, пересмотр затронутых выводов | получаете напоминания |
 
-После шага 9 (review) можно собрать **six-pager с Excel-приложениями** (раздел 7) — отчёт в структуре референса стратегии роста (детальная спецификация формата — knowledge/templates/SIX_PAGER_PROMPT.md)
-FAQ-1…FAQ-6 для продуктового комитета.
+После шага 9 (review) можно собрать **six-pager с Excel-приложениями** (раздел 7) — отчёт в структуре референса стратегии роста (детальная спецификация формата — knowledge/templates/SIX_PAGER_PROMPT.md): FAQ-1…FAQ-6 для продуктового комитета.
 
 ---
 
@@ -126,9 +125,9 @@ pfs source refresh S003                  # обновить web-источник
 
 ### Утверждения (C###) — сердце агента
 ```bash
-pfs claim add "Рынок 40 млрд ₽ [данные]" fact --source S002 --grade B
-pfs claim add "Люди готовы платить за защиту близких" hypothesis --source S005
-pfs claim add "Поэтому фокус на семье" inference --from C003,C010
+pfs claim add "Рынок 40 млрд ₽ [данные]" --kind fact --source S002 --grade B
+pfs claim add "Люди готовы платить за защиту близких" --kind hypothesis --source S005
+pfs claim add "Поэтому фокус на семье" --kind inference --from C003,C010
 pfs claim list [--kind fact] [--all]
 pfs claim retract --id C005 --reason "ошибка в методике"
 pfs claim supersede --id C005 "Рынок 45 млрд" --reason "новый отчёт" [--source S009]
@@ -251,20 +250,20 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
 
 ## Навыки: структура и вызов
 
-У агента 120 навыков (skills): базовые 13 по шагам процесса · 27 product-skills · ~59 из личной библиотеки · интеграции.
+У агента 120 навыков (skills): базовые 13 по шагам процесса · 27 product-skills · 74 из личной библиотеки · 6 интеграций.
 Навыки не заменяют процесс и `pfs` — это библиотека техник, которые подключаются там, где нужны.
 
 **Группы:**
 
 - **Базовые (13)** — по шагам процесса: intake, research, situation, options, strategy, validation-plan, decision-support и др.
 - **Product-skills (27)** — продуктовые методики (маркет-сайзинг, юнит-экономика, трекшн-модели, роадмапы…).
-- **Личная библиотека (~59):**
+- **Личная библиотека (74):**
   - *дизайн*: `design-ui`, `refero-design`, `frontend-design`, `make-interfaces-feel-better`, `emil-design-eng`, `web-design-guidelines`
   - *маркетинг*: `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `cold-email`, `emails`, `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`, `directory-submissions`, `customer-research`, `marketing-psychology`, `prospecting` и др.
   - *наука*: `paper-lookup`, `research-lookup`, `literature-review`, `scientific-writing`, `scientific-critical-thinking`, `peer-review`, `statistical-analysis`, `statsmodels`, `scikit-learn`, `hypothesis-generation`, `pydeseq2`, `biopython`, `rdkit`
   - *документы/медиа*: `pdf`, `docx`, `pptx`, `xlsx`, `markitdown`, `officecli`, `generate-image`, `video`, `infographics`, `scientific-slides` / `scientific-schematics` / `scientific-visualization`, `latex-posters`, `matplotlib`, `seaborn`
-  - *режимы мышления*: `board-of-directors`, `consciousness-council`, `balanced`, `what-if-oracle`, `dhdna-profiler`
-  - *мета*: `skill-creator`, `find-skills`, `shap`, `watch`, `transcribe`
+  - *режимы мышления*: `consciousness-council`, `balanced`, `what-if-oracle`, `dhdna-profiler`
+  - *мета*: `find-skills`, `shap`, `watch`, `transcribe`
 - **Интеграции:** `hallmark` — anti-slop гейты для страниц; `board-of-directors` — совет из 5 перспектив + Red Team;
   `premortem` — предразбор провала; `rea` — reverse-engineering страниц и форматов; `sdd`; `deck`.
 
@@ -363,7 +362,7 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
 ```bash
 pfs new "…" "…" / pfs use slug / pfs status          # проекты
 pfs source add <url|файл>                            # источники
-pfs claim add "…" fact --source S001 --grade B       # утверждения
+pfs claim add "…" --kind fact --source S001 --grade B       # утверждения
 pfs check --strict                                   # контроль качества
 pfs calc all                                         # Excel
 pfs export --six-pager                               # отчёт для комитета

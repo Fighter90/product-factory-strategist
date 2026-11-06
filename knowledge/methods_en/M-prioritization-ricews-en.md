@@ -3,7 +3,7 @@ id: M-prioritization-ricews-en
 title: Backlog prioritization — RICE, ICE, WSJF, and Kano: formulas and when to use which
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [options, validation]
 tags: [en, summary]
 related: []
 ---

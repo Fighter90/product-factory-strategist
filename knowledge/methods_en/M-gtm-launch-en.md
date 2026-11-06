@@ -3,7 +3,7 @@ id: M-gtm-launch-en
 title: Go-to-Market — launch tiers (T1/T2/T3), launch audience segmentation, channels, launch metrics and checklist
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [strategy]
 tags: [en, summary]
 related: []
 ---

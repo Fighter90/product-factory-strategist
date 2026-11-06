@@ -29,11 +29,11 @@ def build(pdir: Path) -> Path:
     decs = decisions.load(pdir)
     if decs:
         parts += ["", "# Приложение C. Решения и обязательства", "", decisions.table(decs)]
+    qc = check.run(pdir)
+    parts += ["", "# Приложение D. Прозрачность", "", "```", cost.summary_text(pdir), check.report_text(qc), "```"]
     att = attachments_table(pdir)
     if att:
         parts += ["", "# Приложение E. Excel-расчёты", "", att]
-    qc = check.run(pdir)
-    parts += ["", "# Приложение D. Прозрачность", "", "```", cost.summary_text(pdir), check.report_text(qc), "```"]
     path = outs / "REPORT.md"
     core.atomic_write(path, "\n".join(parts) + "\n")
     core.log(pdir, "action", "Собран outputs/REPORT.md", tool="pfs export")
@@ -60,8 +60,10 @@ def attachments_table(pdir: Path) -> str | None:
     return "| Файл | Листы | Что редактировать |\n|---|---|---|\n" + "\n".join(rows)
 
 
-def _grab(pdir: Path, fname: str, sections: tuple[str, ...], cap: int = 6000) -> str | None:
-    """Секции документа по заголовкам; без совпадений — весь документ; нет файла — None."""
+def _grab(pdir: Path, fname: str, sections: tuple[str, ...], cap: int = 6000,
+          require_section: bool = False) -> str | None:
+    """Секции документа по заголовкам; без совпадений — весь документ (или None при
+    require_section=True); нет файла — None."""
     path = pdir / "outputs" / fname
     if not path.exists():
         return None
@@ -72,6 +74,8 @@ def _grab(pdir: Path, fname: str, sections: tuple[str, ...], cap: int = 6000) ->
             body = check._section_body(text, nm).strip()
             if body:
                 parts.append(f"### {nm}\n\n{body}")
+    if require_section and not parts:
+        return None
     body = "\n\n".join(parts) if parts else text.strip()
     if len(body) > cap:
         body = body[:cap] + f"\n\n… обрезано, полностью — `{fname}`"
@@ -147,12 +151,18 @@ def _decision_block(pdir: Path) -> str | None:
     did = d.get("id", "D###")
     title = _flat(d.get("title"))
     commit = _flat(d.get("commitment"))
-    review = _flat(d.get("review"))
+    rv = d.get("review")
+    if isinstance(rv, dict):
+        date = _flat(rv.get("date"))
+        trig = _flat(rv.get("triggers") or rv.get("trigger"))
+        review = f"промежуточный пересмотр {date}" + (f"; триггер: {trig}" if trig else "")
+    else:
+        review = _flat(rv)
     out = f"**Решение {did}** — {title}."
     if commit:
         out += f" Обязательство: {commit}."
     if review:
-        out += f" Пересмотр: {review}."
+        out += f" {review[0].upper() + review[1:]}."
     return out
 
 
@@ -177,7 +187,8 @@ def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
               faq1 or "> Раздел появится после шага «situation» (02_situation.md): объём и динамика "
                       "рынка диапазонами, ключевые тренды буллетами с жирными заголовками.", "",
               "### 1.2 Ключевые конкуренты и анализ их стратегий роста и промо-механик", "",
-              _grab(pdir, "02_situation.md", ("Конкуренты", "Конкурентный анализ"), 3000)
+              _grab(pdir, "02_situation.md", ("Конкуренты", "Конкурентный анализ"), 3000,
+                    require_section=True)
               or "Сравнительная таблица групп конкурентов (заполните после конкурентного анализа):", "",
               "| | Группа 1 | Группа 2 | Группа 3 |",
               "|---|---|---|---|",
@@ -205,8 +216,12 @@ def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
               "| Выбор / использование | … | … |",
               "| Оплата | … | … |",
               "| Постоплатный опыт | … | … |", "",
+              "Что сдерживает от старта или продления? (заполните по сегментам):", "",
+              "| Сегмент | Сдерживающий фактор | Чем снимается |",
+              "|---|---|---|",
+              "| Сегмент 1 | … | … |", "",
               "> **Вывод (умозаключение):** сегментация по барьеру входа; лестница тиров "
-              "обслуживает все барьеры.", ""]
+              "обслуживает все барьеры; приоритизация — по ёмкости/CAC/конкуренции (расчёт — выше).", ""]
     faq3 = _grab(pdir, "03_options.md", (), 7000)
     parts += ["## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.", "",
               faq3 or "> Раздел появится после шага «options» (03_options.md).", "",
@@ -235,7 +250,8 @@ def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
               "- __% — Инициатива 1;",
               "- __% — Инициатива 2;",
               "- __% — Инициатива 3.", "",
-              "Порядок тактик: высокий → средний → базовый приоритет. Тайминг — к сезонам рынка.", ""]
+              "Порядок тактик: высокий → средний → базовый приоритет. Тайминг — к сезонам рынка. "
+              "Параллельные треки: комьюнити/партнёрства — вне основной линии.", ""]
     dec = _decision_block(pdir)
     if dec:
         parts += [dec, ""]
@@ -341,15 +357,6 @@ def _points(body: str) -> list[str]:
             break
     return pts
 
-
-def _slide(title: str, points: list[str], cls: str = "") -> str:
-    """Секция-слайд: заголовок + один тезис — один пункт."""
-    body = ""
-    if points:
-        items = "".join(f"<li>{html_mod.escape(p)}</li>" for p in points)
-        body = f"<ul>{items}</ul>"
-    k = f' class="{cls}"' if cls else ""
-    return f'<section class="slide"{k}>\n<h2>{html_mod.escape(title)}</h2>\n{body}\n</section>'
 
 
 def build_deck(pdir: Path) -> Path:

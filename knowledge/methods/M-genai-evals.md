@@ -1,7 +1,7 @@
 ---
 id: M-genai-evals
 title: Оценка качества LLM-фич (LLM evals) — золотой набор, LLM-as-judge, guardrails и мониторинг деградации
-course: gen-ai
+course: ai
 sources: ["Hamel Husain — Your AI Product Needs Evals (https://hamel.dev/blog/posts/eval/)", "Zheng et al. — Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena (https://arxiv.org/abs/2306.05685)", "Shankar et al. — Who Validates the Validators? (https://arxiv.org/abs/2404.12272)", "Eugene Yan — Patterns for Building LLM-based Systems & Products, раздел Evals (https://eugeneyan.com/writing/llm-patterns/)"]
 stages: [options, validation]
 tags: [ai, llm, evals, золотой-набор, llm-as-judge, guardrails, деградация]

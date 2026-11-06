@@ -3,7 +3,7 @@ id: M-positioning-dunford-en
 title: April Dunford positioning ("Obviously Awesome") — six components and market category choice
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [options, strategy]
 tags: [en, summary]
 related: []
 ---

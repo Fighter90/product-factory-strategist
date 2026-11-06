@@ -3,7 +3,7 @@ id: M-genai-evals-en
 title: LLM Evals — golden sets, LLM-as-judge, guardrails, degradation monitoring
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [options, validation]
 tags: [en, summary]
 related: []
 ---

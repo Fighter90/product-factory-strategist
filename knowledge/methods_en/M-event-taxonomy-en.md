@@ -3,7 +3,7 @@ id: M-event-taxonomy-en
 title: Event taxonomy for product analytics — naming conventions (object-action), tracking plan, properties and anti-patterns
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [validation]
 tags: [en, summary]
 related: []
 ---
