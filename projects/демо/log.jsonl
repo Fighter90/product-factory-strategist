@@ -71,3 +71,5 @@
 {"ts": "2026-11-06T16:20:38+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
 {"ts": "2026-11-06T16:20:38+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
 {"ts": "2026-11-06T16:20:38+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-06T16:47:00+03:00", "kind": "route", "msg": "Сценарий: retention (high); доп.: —"}
+{"ts": "2026-11-06T16:56:10+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}

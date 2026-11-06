@@ -54,16 +54,25 @@ header.solid{background:rgba(4,6,12,.82);backdrop-filter:blur(14px);border-color
 
 /* ── HERO: видео-подложка, формат aixle ── */
 .loadline{position:absolute;left:0;right:0;bottom:0;height:2px;z-index:4;overflow:hidden;background:rgba(242,236,230,.07)}
-.loadline i{position:absolute;inset:0;width:34%;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);animation:loadmove 1.15s linear infinite,loadhide .5s 3.5s forwards}
+.loadline i{position:absolute;inset:0;width:34%;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);animation:loadmove 1.15s linear infinite}
 @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes appear{from{opacity:0}to{opacity:1}}
 @keyframes loadmove{from{transform:translateX(-110%)}to{transform:translateX(360%)}}
 @keyframes loadhide{to{opacity:0}}
+.hero.vid-ready .loadline{opacity:0;transition:opacity .6s}
+.hero-load{position:absolute;left:50%;bottom:92px;transform:translateX(-50%);z-index:3;width:min(340px,72%);text-align:center;transition:opacity .5s}
+.hero.vid-ready .hero-load{opacity:0;pointer-events:none}
+.hero-load .lbl{font-size:10.5px;font-weight:700;letter-spacing:.22em;color:rgba(242,236,230,.62);margin-bottom:8px;font-family:"SF Mono",ui-monospace,Menlo,monospace}
+.hero-load .track{height:3px;border-radius:3px;background:rgba(242,236,230,.14);overflow:hidden;position:relative}
+.hero-load .fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
+.hero-load .fill.indet{width:34%;animation:ride 1.1s linear infinite}
+@keyframes ride{from{transform:translateX(-110%)}to{transform:translateX(330%)}}
 
 .hero-media{opacity:1}
 .hero{position:relative;min-height:92vh;display:flex;align-items:center;overflow:hidden;border-bottom:1px solid var(--line)}
 .hero-media{position:absolute;inset:0;z-index:0}
-.hero-media video{width:100%;height:100%;object-fit:cover;opacity:.55}
+.hero-media video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s ease}
+.hero.vid-ready .hero-media video{opacity:.55}
 .hero-media::before{content:"";position:absolute;inset:0;background:rgba(4,6,12,.5)}
 .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(4,6,12,.25) 0%,rgba(4,6,12,.15) 45%,var(--bg) 100%)}
 .hero .wrap{position:relative;z-index:2;text-align:center;padding-top:110px;padding-bottom:90px}
@@ -149,6 +158,8 @@ td{padding:9px 12px;border:1px solid var(--line);color:var(--muted);vertical-ali
 .shot-bar i:nth-child(1){background:#f472b6}.shot-bar i:nth-child(2){background:#f6ad55}.shot-bar i:nth-child(3){background:#48bb78}
 .shot-bar span{margin-left:10px;font-size:12px;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,monospace}
 .shot-card img{width:100%;display:block}
+.shot-crop{aspect-ratio:16/10;overflow:hidden}
+.shot-crop img{width:100%;height:100%;object-fit:cover;object-position:top center}
 .shot-cap{padding:10px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
 .tl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tl-svg{min-width:980px;width:100%;height:auto;display:block}
@@ -214,11 +225,12 @@ body[data-lang=ru] [lang=en]{display:none}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .rv{opacity:1;transform:none}
-  .hero-media video{opacity:.4}
+  .hero.vid-ready .hero-media video{opacity:.4}
   .rv{animation:none}
   .tl-svg .path{animation:none;stroke-dashoffset:0}
   .wf-svg rect.b{animation:none;transform:scaleY(1)}
   .wf-svg text{animation:none;opacity:1}
+  .hero-load{display:none}
   .tl-svg .path{stroke-dashoffset:0}
   .wf-svg rect.b{transform:scaleY(1)}
   .wf-svg text{opacity:1}
@@ -253,6 +265,7 @@ body[data-lang=ru] [lang=en]{display:none}
       <source src="assets/hero-swarm-2.mp4?v=8" type="video/mp4">
     </video>
   </div>
+  <div class="hero-load" aria-hidden="true"><div class="lbl">LOADING</div><div class="track"><div class="fill indet"></div></div></div>
   <div class="wrap">
     <div class="kicker"><span class="dot"></span><span lang="ru">ИИ-агент · доказательная стратегия · человек в контуре</span><span lang="en">AI agent · evidence-based strategy · human in the loop</span></div>
     <h1 lang="ru">От размытого запроса — до <span class="grad">обоснованной стратегии</span>, которой можно доверять</h1>
@@ -329,22 +342,42 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="sec-head">
     <span class="overline" lang="ru">03 · Демо</span><span class="overline" lang="en">03 · Demo</span>
     <h2 class="rv" lang="ru">Демо: CVStart — от задачи руководителя до six-pager</h2><h2 class="rv" lang="en">Demo: CVStart — from the director's task to a six-pager</h2>
-    <p class="lead rv d1" lang="ru">Сквозной прогон агента на живом open-source продукте — cvstart.org: AI-конструктор резюме и поиск вакансий, скан 129 джоб-бордов, 19 языков. Ниже: скриншот продукта, задание, алгоритм работы, вывод агента и фрагменты six-pager (RU и EN). Полный разбор — на отдельной странице.</p>
-    <p class="lead rv d1" lang="en">An end-to-end run on a live open-source product — cvstart.org: an AI resume builder + job search, 129 job boards scanned, 19 languages. Below: the product screenshot, the brief, the agent's algorithm, its conclusion and six-pager excerpts (RU &amp; EN). Full walkthrough on a separate page.</p>
+    <p class="lead rv d1" lang="ru">Сквозной прогон агента на живом open-source продукте — cvstart.org: AI-конструктор резюме и поиск вакансий, скан 129 джоб-бордов, 19 языков. Ниже: скриншот продукта, детальное задание и план задачи, алгоритм работы, вывод агента и пороги проверки. Полный разбор — на отдельной странице.</p>
+    <p class="lead rv d1" lang="en">An end-to-end run on a live open-source product — cvstart.org: an AI resume builder + job search, 129 job boards scanned, 19 languages. Below: the product screenshot, the detailed brief and task plan, the agent's algorithm, its conclusion and validation thresholds. Full walkthrough on a separate page.</p>
   </div>
   <div class="split2 rv d2">
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — лендинг (RU-версия)</span></div>
-      <img src="assets/cv_landing_ru.jpg?v=8" alt="Лендинг cvstart.org: AI-конструктор резюме, скан 129 джоб-бордов, AI-скоринг 0.0–5.0, 19 языков">
-      <div class="shot-cap" lang="ru">Продукт демо: cvstart.org — открытый (MIT) AI-конструктор резюме и дашборд поиска работы: скоринг вакансий, CV Studio, cover letters, трекер. 100% локально, 18 LLM-провайдеров BYOK.</div>
-      <div class="shot-cap" lang="en">The demo's product: cvstart.org — an open-source (MIT) AI resume builder and job-search dashboard: vacancy scoring, CV Studio, cover letters, tracker. 100% local, 18 BYOK LLM providers.</div>
+      <div class="shot-crop"><img src="assets/cv_landing_ru.jpg?v=9" alt="Лендинг cvstart.org: AI-конструктор резюме, скан 129 джоб-бордов, AI-скоринг 0.0–5.0, 19 языков"></div>
+      <div class="shot-cap" lang="ru">Продукт демо: cvstart.org — открытый (MIT) AI-конструктор резюме и дашборд поиска работы. 100% локально, 18 LLM-провайдеров BYOK.</div>
+      <div class="shot-cap" lang="en">The demo's product: cvstart.org — an open-source (MIT) AI resume builder and job-search dashboard. 100% local, 18 BYOK LLM providers.</div>
     </div>
     <div class="acard">
       <h4 lang="ru">Описание и задание</h4><h4 lang="en">Description &amp; the task</h4>
-      <p lang="ru">CVStart (career-ops UI): AI-скоринг вакансий 0.0–5.0 против резюме, тюминг резюме под JD, PDF/DOCX-экспорт, трекер с follow-up, карта вакансий, ~7 602 автотеста. Монетизации нет — «$0 forever», публичного хостинга нет.</p>
-      <p lang="en">CVStart (career-ops UI): AI fit-scoring 0.0–5.0 against your resume, JD-targeted resume tuning, PDF/DOCX export, a follow-up tracker, a job map, ~7,602 automated tests. No monetization — "$0 forever", no public hosting.</p>
-      <p lang="ru"><b>Задание агенту:</b> «Разработать коммерческую версию cvstart.org и стратегию вывода на рынок на весь мир». Ось сравнения — рост платящих подписчиков и ARR; ограничения — open-source core остаётся MIT, соло-разработчик, не сломать доверие локального режима (ответы руководителя, intake).</p>
-      <p lang="en"><b>The task:</b> "Design the commercial version of cvstart.org and a go-to-market strategy for the whole world." Comparison axis — paying-subscriber and ARR growth; constraints — the open-source core stays MIT, a solo developer, and preserving the trust of the local-first mode (director's intake answers).</p>
+      <p lang="ru"><b>Продукт:</b> CVStart (career-ops UI) — открытый (MIT) AI-конструктор резюме и дашборд поиска работы: скан ~129 джоб-бордов (124 EN + 5 RU: hh.ru, Habr Career и др.), AI-скоринг вакансий 0.0–5.0 против резюме пользователя, CV Studio (тюминг под JD, humanize, ATS-буллеты), PDF/DOCX-экспорт, cover letters, авто-пайплайн, трекер заявок с follow-up, карта вакансий, mock-интервью. 100% локально — данные у пользователя; 18 LLM-провайдеров BYOK + keyless; 19 языков интерфейса; ~7 602 автотеста. Монетизации нет: «$0 forever», публичного хостинга нет [S001][S002].</p>
+      <p lang="en"><b>Product:</b> CVStart (career-ops UI) — an open-source (MIT) AI resume builder and job-search dashboard: ~129 job boards scanned (124 EN + 5 RU: hh.ru, Habr Career, etc.), AI fit-scoring 0.0–5.0 against the user's resume, CV Studio (JD tuning, humanize, ATS bullets), PDF/DOCX export, cover letters, an auto pipeline, an application tracker with follow-up, a job map, mock interviews. 100% local — data stays with the user; 18 BYOK LLM providers + keyless; 19 UI languages; ~7,602 automated tests. No monetization: "$0 forever", no public hosting [S001][S002].</p>
+      <p lang="ru"><b>Задание агенту (дословно):</b> «Разработать коммерческую версию проекта cvstart.org — формирование резюме, поиск вакансий — и стратегию вывода на рынок на весь мир». <b>Ось сравнения:</b> рост платящих подписчиков и ARR. <b>Ограничения (ответы руководителя, intake):</b> open-source core остаётся MIT · соло-разработчик · сохранить доверие локального режима.</p>
+      <p lang="en"><b>The task (verbatim):</b> "Design the commercial version of cvstart.org — resume building, job search — and a go-to-market strategy for the whole world." <b>Comparison axis:</b> paying-subscriber and ARR growth. <b>Constraints (director's intake answers):</b> the open-source core stays MIT · a solo developer · preserving the trust of the local-first mode.</p>
+      <p lang="ru"><b>План задачи — 12 шагов агента:</b><br>
+      0 · бриф: решение, ось сравнения, ограничения → 00_brief.md — <i>пауза: подтверждение руководителем</i><br>
+      1–2 · источники и исследование: сайт и README продукта, 4 рыночных дайджеста с URL, синтетическая воронка → S001–S011, C001–C020, 01_research_plan.md<br>
+      3–4 · дискавери и ситуация: 2 ИИ-персоны (гипотезы, не факты), что известно / чего не знаем / противоречия → 02_situation.md<br>
+      5 · пять вариантов A–E + атака red team: 15 возражений + 5 скрытых допущений → 03_options.md<br>
+      6 · выбор руководителя: вариант B — hosted freemium SaaS — <i>пауза</i><br>
+      7–8 · стратегии и план проверки: 04/05 + 06 (пороги на 90 дней)<br>
+      9 · контроль качества: check --strict 100/100<br>
+      10 · решение D001: обязательство и пересмотр — <i>пауза</i><br>
+      11 · мониторинг: обязательства и пересмотры, pfs decision due</p>
+      <p lang="en"><b>Task plan — the agent's 12 steps:</b><br>
+      0 · brief: decision, comparison axis, constraints → 00_brief.md — <i>pause: the director approves</i><br>
+      1–2 · sources &amp; research: the product's site and README, 4 market digests with URLs, a synthetic funnel → S001–S011, C001–C020, 01_research_plan.md<br>
+      3–4 · discovery &amp; situation: 2 AI personas (hypotheses, not facts), knowns / unknowns / tensions → 02_situation.md<br>
+      5 · five options A–E + a red-team attack: 15 objections + 5 hidden assumptions → 03_options.md<br>
+      6 · the director's choice: option B — hosted freemium SaaS — <i>pause</i><br>
+      7–8 · strategies &amp; validation plan: 04/05 + 06 (90-day thresholds)<br>
+      9 · quality review: check --strict 100/100<br>
+      10 · decision D001: commitment and review — <i>pause</i><br>
+      11 · monitoring: commitments and re-examinations, pfs decision due</p>
     </div>
   </div>
   <div class="dchips rv d3">
@@ -372,89 +405,94 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="split2 rv d2" style="margin-top:26px">
     <div class="acard">
       <h4 lang="ru">Вывод агента</h4><h4 lang="en">The agent's conclusion</h4>
-      <p lang="ru"><b>Вариант B — hosted freemium SaaS, глобально:</b> тиры Free (BYOK — нулевые затраты) / Pro $12 / Unlimited $29; opt-in облако при локальном MIT-core; честный прайсинг без автопродлений как позиционирование; волны локалей EN → DE/ES/PT-BR → JA/ZH из 19 готовых.</p>
-      <p lang="en"><b>Option B — hosted freemium SaaS, global:</b> Free (BYOK — zero cost) / Pro $12 / Unlimited $29 tiers; opt-in cloud on top of the local MIT core; honest no-auto-renewal pricing as positioning; language waves EN → DE/ES/PT-BR → JA/ZH from 19 ready locales.</p>
+      <p lang="ru"><b>Вариант B — hosted freemium SaaS, глобально:</b> тиры Free (BYOK — нулевые затраты) / Pro $12 / Unlimited $29; opt-in облако при локальном MIT-core; честный прайсинг без автопродлений как позиционирование; волны локалей EN → DE/ES/PT-BR → JA/ZH из 19 готовых. Каналы запуска: Product Hunt, Hacker News, SEO «open-source Jobscan alternative».</p>
+      <p lang="en"><b>Option B — hosted freemium SaaS, global:</b> Free (BYOK — zero cost) / Pro $12 / Unlimited $29 tiers; opt-in cloud on top of the local MIT core; honest no-auto-renewal pricing as positioning; language waves EN → DE/ES/PT-BR → JA/ZH from 19 ready locales. Launch channels: Product Hunt, Hacker News, "open-source Jobscan alternative" SEO.</p>
       <p lang="ru"><b>Осознанные отказы:</b> B2B white-label (C) — нет продаж-компетенции соло; dual-license (D) — юридически не работает поверх MIT; закрытие коммерции (E) — отказ от актива на растущем рынке ($1,2–2,4 млрд, AI CAGR 13%).</p>
       <p lang="en"><b>Conscious trade-offs:</b> no B2B white-label (C) — a solo founder lacks the sales motion; no dual-license (D) — legally impossible on top of MIT; no shutdown (E) — abandoning an asset in a growing market ($1.2–2.4B, AI CAGR 13%).</p>
-      <p><b>Решение D001:</b> основания C019/C013/C014/C016/C005/C006 · бета в 3 EN-гео к 2026-12-15 · пересмотр 2027-02-10 · триггер стопа: paid &lt; 20 при activation &lt; 35% → вариант E.</p>
     </div>
     <div class="acard">
-      <h4 lang="ru">Пример отчёта — six-pager (FAQ-1…6, RU и EN)</h4><h4 lang="en">Report excerpt — the six-pager (FAQ-1…6, RU &amp; EN)</h4>
-      <div class="faq6">
-        <div class="f6"><b>1</b><span><b>Состояние:</b> resume builders $1,2–2,4 млрд, AI-сегмент CAGR 13%; 7 конкурентов $8–40/мес с автопродлениями; 98% F500 — ATS · <i>S004–S007</i></span></div>
-        <div class="f6"><b>2</b><span><b>Сегменты:</b> tech-соискатели 25–40 (EN-first) + волна не-EN локалей; JTBD — «резюме под каждую вакансию, проходящее ATS, без подписных ловушек» · <i>C017/C018</i></span></div>
-        <div class="f6"><b>3</b><span><b>Инициативы:</b> 5 вариантов A–E; выбран B — hosted freemium; 20 возражений red team закрыты митигациями (BYOK-free, opt-in)</span></div>
-        <div class="f6"><b>4</b><span><b>Тактики:</b> тиры Free / Pro $12 / Unlimited $29; opt-in облако; честный прайсинг; волны локалей</span></div>
-        <div class="f6"><b>5</b><span><b>План:</b> hosted-бета 90 дней в 3 EN-гео; пороги продолжить / изменить / остановить (D001)</span></div>
-        <div class="f6"><b>6</b><span><b>Метрики:</b> ≥ 40 платящих к нед. 12; MRR ≥ $1 500; LTV/CAC ≥ 3; контр-метрики: звёзды GitHub, GDPR-жалобы, NPS</span></div>
-      </div>
+      <h4 lang="ru">Решение и пороги проверки</h4><h4 lang="en">Decision &amp; validation thresholds</h4>
+      <p lang="ru"><b>Решение D001:</b> основания C019/C013/C014/C016/C005/C006 · обязательство «hosted beta в 3 EN-гео к 2026-12-15» · пересмотр 2027-02-10 · триггер стопа: paid &lt; 20 при activation &lt; 35% → вариант E.</p>
+      <p lang="en"><b>Decision D001:</b> grounds C019/C013/C014/C016/C005/C006 · commitment "hosted beta in 3 EN geos by 2026-12-15" · review 2027-02-10 · stop trigger: paid &lt; 20 with activation &lt; 35% → option E.</p>
+      <p lang="ru"><b>Пороги (90 дней беты):</b> продолжить — paid ≥ 40, activation ≥ 50%, churn ≤ 10% → волна DE/ES/PT-BR · изменить — paid 20–40 → пересбор тира/цены · остановить — paid &lt; 20 при activation &lt; 35% → проект остаётся OSS.</p>
+      <p lang="en"><b>Thresholds (90-day beta):</b> continue — paid ≥ 40, activation ≥ 50%, churn ≤ 10% → DE/ES/PT-BR wave · change — paid 20–40 → rebuild tiers/pricing · stop — paid &lt; 20 with activation &lt; 35% → the project stays OSS.</p>
+      <p lang="ru"><b>Контр-метрики:</b> звёзды GitHub (падение &lt; 30%), GDPR-жалобы, инференс free ≤ $200/мес, NPS ≥ 30.</p>
+      <p lang="en"><b>Counter-metrics:</b> GitHub stars (drop &lt; 30%), GDPR complaints, free-tier inference ≤ $200/mo, NPS ≥ 30.</p>
     </div>
   </div>
-  <div class="wf-wrap rv d3" style="margin-top:26px"><svg class="wf-svg" viewBox="0 0 860 250" role="img" aria-label="Экономика платящего CVStart">
+  <div class="wf-wrap rv d3" style="margin-top:26px"><svg class="wf-svg" viewBox="0 0 860 300" role="img" aria-label="Экономика платящего CVStart">
     <defs><linearGradient id="wfg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
     <g font-size="13">
-      <rect class="b" x="40"  y="150" width="120" height="70"  rx="8" fill="url(#wfg)" opacity=".9" style="--d:.15s"/>
-      <text x="100" y="140" text-anchor="middle" fill="#eef2ff" font-weight="700">$29</text><text x="100" y="245" text-anchor="middle" fill="#9aa7bd">ARPU платящего / мес</text>
-      <rect class="b" x="230" y="185" width="120" height="35" rx="8" fill="#f472b6" opacity=".75" style="--d:.35s"/>
-      <text x="290" y="175" text-anchor="middle" fill="#f472b6" font-weight="700">−$7,25</text><text x="290" y="245" text-anchor="middle" fill="#9aa7bd">инференс + инфра ~25%</text>
-      <rect class="b" x="420" y="150" width="120" height="70" rx="8" fill="url(#wfg)" opacity=".9" style="--d:.55s"/>
-      <text x="480" y="140" text-anchor="middle" fill="#eef2ff" font-weight="700">$21,75</text><text x="480" y="245" text-anchor="middle" fill="#9aa7bd">вклад (CM) платящего</text>
-      <rect class="b" x="610" y="60" width="120" height="160" rx="8" fill="#818cf8" opacity=".6" style="--d:.75s"/>
-      <text x="670" y="50" text-anchor="middle" fill="#eef2ff" font-weight="700">$271,88</text><text x="670" y="245" text-anchor="middle" fill="#9aa7bd">LTV платящего (модель)</text>
+      <rect class="b" x="40"  y="170" width="120" height="60"  rx="8" fill="url(#wfg)" opacity=".9" style="--d:.15s"/>
+      <text x="100" y="160" text-anchor="middle" fill="#eef2ff" font-weight="700">$29</text>
+      <rect class="b" x="230" y="200" width="120" height="30" rx="8" fill="#f472b6" opacity=".75" style="--d:.35s"/>
+      <text x="290" y="190" text-anchor="middle" fill="#f472b6" font-weight="700">−$7,25</text>
+      <rect class="b" x="420" y="170" width="120" height="60" rx="8" fill="url(#wfg)" opacity=".9" style="--d:.55s"/>
+      <text x="480" y="160" text-anchor="middle" fill="#eef2ff" font-weight="700">$21,75</text>
+      <rect class="b" x="610" y="80" width="120" height="150" rx="8" fill="#818cf8" opacity=".6" style="--d:.75s"/>
+      <text x="670" y="70" text-anchor="middle" fill="#eef2ff" font-weight="700">$271,88</text>
+      <text x="100" y="252" text-anchor="middle" fill="#9aa7bd">ARPU платящего / мес</text>
+      <text x="290" y="252" text-anchor="middle" fill="#9aa7bd">инференс + инфра ~25%</text>
+      <text x="480" y="252" text-anchor="middle" fill="#9aa7bd">вклад (CM) платящего</text>
+      <text x="670" y="252" text-anchor="middle" fill="#9aa7bd">LTV платящего (модель)</text>
     </g>
     <g font-size="12.5">
-      <rect x="40" y="195" width="160" height="24" rx="7" fill="rgba(45,212,191,.1)" stroke="rgba(45,212,191,.35)"/><text x="120" y="211" text-anchor="middle" fill="#2dd4bf">LTV / CAC ≈ 4,5</text>
-      <rect x="212" y="195" width="185" height="24" rx="7" fill="rgba(129,140,248,.1)" stroke="rgba(129,140,248,.35)"/><text x="304" y="211" text-anchor="middle" fill="#818cf8">окупаемость CAC ≈ 2,8 мес</text>
-      <rect x="409" y="195" width="200" height="24" rx="7" fill="rgba(244,114,182,.1)" stroke="rgba(244,114,182,.35)"/><text x="509" y="211" text-anchor="middle" fill="#f472b6">брейк-евен ≈ 69 платящих</text>
-      <rect x="621" y="195" width="199" height="24" rx="7" fill="rgba(154,167,189,.08)" stroke="rgba(154,167,189,.3)"/><text x="720" y="211" text-anchor="middle" fill="#9aa7bd">допущения помечены [C016]</text>
+      <rect x="40" y="270" width="160" height="24" rx="7" fill="rgba(45,212,191,.1)" stroke="rgba(45,212,191,.35)"/><text x="120" y="286" text-anchor="middle" fill="#2dd4bf">LTV / CAC ≈ 4,5</text>
+      <rect x="212" y="270" width="185" height="24" rx="7" fill="rgba(129,140,248,.1)" stroke="rgba(129,140,248,.35)"/><text x="304" y="286" text-anchor="middle" fill="#818cf8">окупаемость CAC ≈ 2,8 мес</text>
+      <rect x="409" y="270" width="200" height="24" rx="7" fill="rgba(244,114,182,.1)" stroke="rgba(244,114,182,.35)"/><text x="509" y="286" text-anchor="middle" fill="#f472b6">брейк-евен ≈ 69 платящих</text>
+      <rect x="621" y="270" width="199" height="24" rx="7" fill="rgba(154,167,189,.08)" stroke="rgba(154,167,189,.3)"/><text x="720" y="286" text-anchor="middle" fill="#9aa7bd">допущения помечены [C016]</text>
     </g>
   </svg></div>
   <div class="cta rv" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:26px">
-    <a class="btn light" href="demo.html?v=8" lang="ru">Полный разбор: схемы, red team, метрики →</a><a class="btn light" href="demo.html?v=8" lang="en">Full walkthrough →</a>
-    <a class="btn ghost" href="materials.html?v=8" lang="ru">Six-pager RU/EN · PDF · материалы</a><a class="btn ghost" href="materials.html?v=8" lang="en">Six-pager RU/EN · materials</a>
+    <a class="btn light" href="demo.html?v=9" lang="ru">Полный разбор: схемы, red team, метрики →</a><a class="btn light" href="demo.html?v=9" lang="en">Full walkthrough →</a>
+    <a class="btn ghost" href="materials.html?v=9" lang="ru">Six-pager RU/EN · PDF · материалы</a><a class="btn ghost" href="materials.html?v=9" lang="en">Six-pager RU/EN · materials</a>
   </div>
 </div></section>
 
 <section id="sixpager"><div class="wrap">
   <div class="sec-head">
     <span class="overline" lang="ru">04 · Артефакты</span><span class="overline" lang="en">04 · Artifacts</span>
-    <h2 class="rv" lang="ru">Six-pager для комитета + Excel-модели</h2><h2 class="rv" lang="en">Committee six-pager + Excel models</h2>
-    <p class="lead rv d1" lang="ru">Одна команда собирает отчёт в структуре стратегического референса, а расчёты идут фоном и прикрепляются книгами Excel на формулах.</p>
-    <p class="lead rv d1" lang="en">One command assembles the report in the reference structure while calculations run in the background and attach as formula-driven Excel workbooks.</p>
+    <h2 class="rv" lang="ru">Six-pager для комитета: что именно собирает агент</h2><h2 class="rv" lang="en">The committee six-pager: what exactly the agent collects</h2>
+    <p class="lead rv d1" lang="ru">Six-pager — шесть вопросов комитета, шесть ответов с доказательствами. Ниже — детальная анатомия: какие данные агент собирает в каждый раздел, из каких шагов цикла, и как каждый раздел проверяется на качество.</p>
+    <p class="lead rv d1" lang="en">A six-pager is six committee questions, six evidence-backed answers. Below is the detailed anatomy: what data the agent collects into each section, from which workflow steps, and how each section is quality-checked.</p>
   </div>
-  <div class="two">
-    <pre class="rv">FAQ-1  Анализ текущего состояния · рынок, конкуренты
-FAQ-2  Сегменты и персоны · боли по этапам пути
-FAQ-3  Инициативы · варианты + возражения red team
-FAQ-4  Тактики · потребность → механика → эффект
-FAQ-5  План реализации и проверки
-FAQ-6  Метрики успеха · формулы и цели
-─────  Приложения: 4 книги Excel (лист «Ввод» + формулы)</pre>
-    <pre class="rv d1" lang="ru">unit_economics.xlsx    CM · LTV/CAC · пейбек · чувствительность
-growth_model.xlsx      MAU → заказы → GMV → маржа, 12 мес
-cohort_retention.xlsx  когорты · кривая удержания · M1/M3/M6
-market_sizing.xlsx     PAM→TAM→SAM→SOM · PESTEL
-
-$ pfs calc all              # собрать книги
-$ pfs export --six-pager    # отчёт + приложения</pre>
-    <pre class="rv d1" lang="en">unit_economics.xlsx    CM · LTV/CAC · payback · sensitivity
-growth_model.xlsx      MAU → orders → GMV → margin, 12 mo
-cohort_retention.xlsx  cohorts · retention curve · M1/M3/M6
-market_sizing.xlsx     PAM→TAM→SAM→SOM · PESTEL
-
-$ pfs calc all              # build workbooks
-$ pfs export --six-pager    # report + attachments</pre>
+  <div class="acard rv">
+    <h4 lang="ru">Анатомия FAQ-1…6: данные → шаг цикла → ворота качества</h4><h4 lang="en">The anatomy of FAQ-1…6: data → workflow step → quality gate</h4>
+    <div class="split2" style="margin-top:14px">
+      <div>
+        <p><b>FAQ-1 · Анализ текущего состояния</b><br><span>Собирает: объём рынка и динамику (оценки — диапазонами, с URL и пометкой надёжности), прямых конкурентов и их тарифы, тренды с датами, возможности и ограничения продукта, что уже построено. Откуда: шаги 1–2 — сайт и документы продукта, открытые источники, выписки утверждений с цитатами. Ворота: каждое число несёт тег C###/S### и силу доказательства A–D; расходящиеся оценки фиксируются диапазоном, синтетика не проходит как факт.</span></p>
+        <p><b>FAQ-2 · Пользователи: сегменты и персоны</b><br><span>Собирает: сегменты с задачей JTBD («когда я… — помогите мне…»), альтернативы, которыми люди решают проблему сегодня, персоны-гипотезы с мотивами и барьерами. Откуда: шаг 3 — дискавери, интервью-гайды, ИИ-респонденты (помечены origin=synthetic — дают гипотезы, не доказательства спроса). Ворота: у каждого сегмента — задача, размер и основание; вопросный блок дискавери не пропустит шаг без зафиксированного сегмента.</span></p>
+        <p><b>FAQ-3 · Стратегические инициативы: варианты и возражения</b><br><span>Собирает: не меньше трёх содержательно разных вариантов — обязательно «оставить как есть» и «закрыть направление»; по каждому — экономику на явных допущениях, сильные возражения red team (субагент атакует без смягчения), скрытые допущения, условия верности. Откуда: шаг 5 — options, субагент red-team. Ворота: quality gate требует min_options ≥ 3, наличие статус-кво и раздела «возражения» у каждого варианта.</span></p>
+      </div>
+      <div>
+        <p><b>FAQ-4 · Тактики</b><br><span>Собирает: выбранное направление — тиры и механики, позиционирование и ключевое сообщение, каналы, осознанные отказы («что не делаем и почему»), связь пользы с затратами. Откуда: шаг 7 — продуктовая и коммуникационная стратегии, таблица «обещание → чем подтверждено в продукте». Ворота: каждая строка таблицы обещаний обязана ссылаться на механику продукта (C###/S###) — пустая таблица ловится как ошибка.</span></p>
+        <p><b>FAQ-5 · План реализации и проверки</b><br><span>Собирает: ожидаемое изменение с числом и сроком, базу сравнения («с чем сравниваем»), нежелательные последствия — контр-метрики, пороги решения «продолжить / изменить / остановить». Откуда: шаг 8 — validation, связка с решением D### (обязательство, дата пересмотра, триггер пересмотра). Ворота: все пять разделов плана обязательны — check не пропустит документ без них.</span></p>
+        <p><b>FAQ-6 · Метрики успеха</b><br><span>Собирает: метрика → база → цель к сроку → тип (NSM / выручка / продукт / удержание / юнит-экономика), плюс контр-метрики с порогами тревоги. Формулы живут в Excel-приложениях: меняете допущение на листе «Ввод» — вся книга пересчитывается при открытии; каждое значение «Ввода» прослеживается до утверждения C###.</span></p>
+      </div>
+    </div>
   </div>
-  <p class="lead rv" lang="ru">Каждое значение на листе «Ввод» прослеживается до утверждения C###; формулы пересчитываются при открытии — допущения меняются на лету.</p>
-  <p class="lead rv" lang="en">Every Input-sheet value traces to a claim C###; formulas recalculate on open — assumptions change on the fly.</p>
+  <div class="split2 rv d1" style="margin-top:16px">
+    <div class="acard">
+      <h4 lang="ru">Форматы: комитету на любом языке</h4><h4 lang="en">Formats: for the committee in any language</h4>
+      <p lang="ru">Six-pager собирается в <b>двух языковых версиях</b> — RU и EN — и в <b>трёх форматах</b> для каждого: Markdown (реестр доказательств с тегами), PDF (печатная вёрстка A4: типографика, таблицы, скриншоты) и DOCX (Word с вшитыми изображениями — без сторонних пакетов). Скриншоты продукта подставляются своей локали: русская версия — русские экраны, английская — английские.</p>
+      <p lang="en">The six-pager is assembled in <b>two language versions</b> — RU and EN — and <b>three formats</b> each: Markdown (the tagged evidence registry), PDF (print A4 layout: typography, tables, screenshots) and DOCX (Word with embedded images — no third-party packages). Product screenshots match the locale: the Russian version gets Russian screens, the English one — English screens.</p>
+      <p><code>$ pfs export --six-pager</code> · <code>$ pfs docx outputs/SIX_PAGER_RU.md</code> · <code>$ pfs export --deck</code></p>
+    </div>
+    <div class="acard">
+      <h4 lang="ru">Excel-приложения: 4 книги на формулах</h4><h4 lang="en">Excel attachments: 4 formula-driven workbooks</h4>
+      <p lang="ru"><b>unit_economics</b> — вклад, LTV/CAC, окупаемость, чувствительность к ARPU / переменным / CAC / оттоку · <b>growth_model</b> — 12 месяцев: вход → заказы → выручка → маржа · <b>cohort_retention</b> — когорты, кривая удержания, M1/M3/M6 · <b>market_sizing</b> — PAM→TAM→SAM→SOM и факторы среды. Книги строятся командой из проекта; пересчёт — при открытии в Excel / Numbers / LibreOffice.</p>
+      <p lang="en"><b>unit_economics</b> — contribution, LTV/CAC, payback, sensitivity to ARPU / variable costs / CAC / churn · <b>growth_model</b> — 12 months: input → orders → revenue → margin · <b>cohort_retention</b> — cohorts, retention curve, M1/M3/M6 · <b>market_sizing</b> — PAM→TAM→SAM→SOM and environment factors. Workbooks are built from the project by one command; recalculation happens on open in Excel / Numbers / LibreOffice.</p>
+      <p><code>$ pfs calc all</code> → <code>outputs/attachments/</code></p>
+    </div>
+  </div>
 </div></section>
 
 <section id="architecture"><div class="wrap">
   <div class="sec-head">
     <span class="overline" lang="ru">05 · Архитектура</span><span class="overline" lang="en">05 · Architecture</span>
     <h2 class="rv" lang="ru">Архитектура: как устроен агент</h2><h2 class="rv" lang="en">Architecture: how the agent works</h2>
-    <p class="lead rv d1" lang="ru">Слои агента: среда (AGENTS.md, 120 skills, 8 субагентов, 4 хука) → CLI+MCP-ядро <code>tools/pfs</code> → база из 80 карт методик (RU + EN-индекс) и интеграции. Гарантии — не в промптах, а в коде pfs; состояние — в файлах проекта, поэтому работа переживает перерывы и переезды между средами.</p>
-    <p class="lead rv d1" lang="en">The agent's layers: environment (AGENTS.md, 120 skills, 8 subagents, 4 hooks) → the <code>tools/pfs</code> CLI+MCP core → a knowledge base of 72 method cards and integrations. Guarantees live in pfs code, not in prompts; state lives in project files, so work survives breaks and moves between environments.</p>
+    <p class="lead rv d1" lang="ru">Слои агента: среда (AGENTS.md, 120 skills, 8 субагентов, 5 хуков) → CLI+MCP-ядро <code>tools/pfs</code> → база из 88 карт методик (RU + EN-индекс) и интеграции. Гарантии — не в промптах, а в коде pfs; состояние — в файлах проекта, поэтому работа переживает перерывы и переезды между средами.</p>
+    <p class="lead rv d1" lang="en">The agent's layers: environment (AGENTS.md, 120 skills, 8 subagents, 5 hooks) → the <code>tools/pfs</code> CLI+MCP core → a knowledge base of 88 method cards and integrations. Guarantees live in pfs code, not in prompts; state lives in project files, so work survives breaks and moves between environments.</p>
   </div>
   <div class="arch-scroll rv d2"><svg viewBox="0 0 1200 640" width="100%" role="img">
       <title>Архитектура агента / Agent architecture</title>
@@ -504,7 +542,7 @@ $ pfs export --six-pager    # report + attachments</pre>
       <path d="M620 525V532" fill="none" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#ar-s)"/>
       <path d="M620 565V572" fill="none" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#ar-s)"/>
       <rect x="870" y="180" width="300" height="170" rx="12" fill="rgba(9,14,24,.6)" stroke="#f472b6" stroke-opacity=".8"/>
-      <text x="886" y="204" font-size="13" font-weight="700" fill="#f472b6">knowledge/ — 80 карт / cards</text>
+      <text x="886" y="204" font-size="13" font-weight="700" fill="#f472b6">knowledge/ — 88 карт / cards</text>
       <text x="886" y="230" font-size="11.5" fill="#9aa7bd">стратегия / strategy · экономика / economics</text>
       <text x="886" y="252" font-size="11.5" fill="#9aa7bd">продукт / product · UX · данные / data</text>
       <text x="886" y="274" font-size="11.5" fill="#9aa7bd">платформы / platforms · Gen AI</text>
@@ -561,7 +599,7 @@ $ pfs export --six-pager    # report + attachments</pre>
     <tr><td>Решения</td><td><code>decision add/due/done/rebase</code></td><td>основания, ответственные, обязательства, пересмотр</td></tr>
     <tr><td>Данные</td><td><code>data profile/cohort/funnel/stats</code></td><td>профиль таблицы, когорты, воронка, статистика с ДИ 95%</td></tr>
     <tr><td>Excel и отчёты</td><td><code>calc · export [--six-pager|--deck] · docx</code></td><td>книги на формулах; REPORT; six-pager; HTML-дека; Word</td></tr>
-    <tr><td>Знания и модели</td><td><code>kb search/show/index · models</code></td><td>поиск по 80 картам; модели под задачи</td></tr>
+    <tr><td>Знания и модели</td><td><code>kb search/show/index · models</code></td><td>поиск по 88 картам; модели под задачи</td></tr>
     <tr><td>Стоимость</td><td><code>cost · log --usd</code></td><td>токены и деньги за задачу</td></tr>
   </table>
   <table lang="en">
@@ -590,7 +628,7 @@ $ pfs export --six-pager    # report + attachments</pre>
   <details class="qa rv" lang="ru"><summary>Мои данные и источники в безопасности?</summary><p>Только открытые источники и ваши материалы. Секреты — в <code>.env</code>, не в репозитории. Команды, найденные внутри источников, не исполняются — помечаются как попытка инъекции. Разрешённые домены проверяются до запроса.</p></details>
   <details class="qa rv" lang="ru"><summary>Можно ли перенести проект в другую среду?</summary><p>Да. Проект — обычная папка (<code>projects/&lt;slug&gt;/</code>): скопируйте или git push/pull и откройте в Claude Code, Cursor, Codex, OpenCode, Windsurf или Copilot. <code>pfs status</code> восстановит контекст.</p></details>
   <details class="qa rv" lang="ru"><summary>Что происходит после решения?</summary><p>Решение фиксируется как D###: основания (C###), ответственный, метрика, дата пересмотра, обязательства. <code>pfs decision due</code> подсказывает, что решать сейчас; <code>pfs impact</code> показывает, какие выводы затронут новые данные; <code>pfs claim supersede</code> обновляет устаревшее без потери истории.</p></details>
-  <details class="qa rv" lang="en"><summary>What is "Product Factory Strategist"?</summary><p>An AI agent — a folder of instructions, a knowledge base of 72 method cards and CLI/MCP tools (<code>pfs</code>). It walks a product director from a vague request to an evidence-based product &amp; communication strategy with a validation plan — and keeps working after the decision.</p></details>
+  <details class="qa rv" lang="en"><summary>What is "Product Factory Strategist"?</summary><p>An AI agent — a folder of instructions, a knowledge base of 88 method cards and CLI/MCP tools (<code>pfs</code>). It walks a product director from a vague request to an evidence-based product &amp; communication strategy with a validation plan — and keeps working after the decision.</p></details>
   <details class="qa rv" lang="en"><summary>How is it different from a plain AI chat?</summary><p>Every material statement carries a source (S###), a type (fact/hypothesis/forecast/assumption/inference) and a grade A–D. In the demo run 100% of numbers trace to sources; a plain chat scores 0%. Plus: options attacked by red team, a validation plan, and a decision with grounds and an audit log.</p></details>
   <details class="qa rv" lang="en"><summary>Are my data and sources safe?</summary><p>Public sources and your own materials only. Secrets live in <code>.env</code>, never in the repo. Commands found inside sources are never executed — flagged as injection attempts. Allowed domains are checked before any fetch.</p></details>
   <details class="qa rv" lang="en"><summary>Can I move a project to another environment?</summary><p>Yes. A project is a plain folder (<code>projects/&lt;slug&gt;/</code>): copy it or git push/pull and open in Claude Code, Cursor, Codex, OpenCode, Windsurf or Copilot. <code>pfs status</code> restores the context.</p></details>
@@ -679,12 +717,26 @@ const heroV = document.querySelector('.hero-media video');
 })();
 requestAnimationFrame(frame);
 if (REDUCED && heroV){ heroV.removeAttribute('autoplay'); heroV.pause(); }
+if (REDUCED){ var hx = document.querySelector('.hero'); if (hx) hx.classList.add('vid-ready'); }
 const heroEl = document.querySelector('.hero');
 const vidDone = () => heroEl.classList.add('vid-ready');
 if (heroV){
   if (heroV.readyState >= 3) vidDone();
   else { heroV.addEventListener('canplay', vidDone); heroV.addEventListener('error', vidDone); }
   setTimeout(vidDone, 3500);
+  var hl = document.querySelector('.hero-load');
+  if (hl){
+    var hf = hl.querySelector('.fill'), hlbl = hl.querySelector('.lbl'), hmeta = false;
+    heroV.addEventListener('loadedmetadata', function(){ hmeta = true; if (hf){ hf.classList.remove('indet'); hf.style.width = '12%'; } });
+    heroV.addEventListener('progress', function(){
+      if (!hmeta || !heroV.duration || !hf) return;
+      try { var hb = heroV.buffered; if (hb.length){
+        var hp = Math.max(12, Math.min(99, Math.round(hb.end(hb.length-1)/heroV.duration*100)));
+        hf.style.width = hp + '%'; if (hlbl) hlbl.textContent = 'LOADING · ' + hp + '%';
+      } } catch(e){}
+    });
+    heroV.addEventListener('error', function(){ if (hl) hl.style.display = 'none'; });
+  }
 }
 setTimeout(function(){document.querySelectorAll('.cnt').forEach(function(e){ if (e.textContent === '0' && e.dataset.target) e.textContent = e.dataset.target; });}, 1200);
 
@@ -731,7 +783,7 @@ const LINES = [
   '$ python3 -m tools.pfs doctor',
   '✓ Python 3.12: ok · pdftotext: есть · карт в базе знаний: 72',
   '$ python3 -m unittest discover -s tests',
-  '✓ Ran 55 tests — OK'
+  '✓ Ran 103 tests — OK'
 ];
 (function type(){
   const el = document.getElementById('typed');
