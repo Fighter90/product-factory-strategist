@@ -94,3 +94,9 @@
 {"ts": "2026-11-06T13:19:26+03:00", "kind": "source", "msg": "S010 добавлен: ROSE — руководство пользователя (исходный материал демо)", "tool": "pfs source add"}
 {"ts": "2026-11-06T13:19:26+03:00", "kind": "source", "msg": "S011 добавлен: ROSE — руководство администратора (исходный материал демо)", "tool": "pfs source add"}
 {"ts": "2026-11-06T13:19:26+03:00", "kind": "source", "msg": "S012 добавлен: ROSE — фирменный стиль и реклама в журнале (исходный материал демо)", "tool": "pfs source add"}
+{"ts": "2026-11-06T14:22:38+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-06T14:22:39+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T14:22:39+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T14:22:39+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T14:22:39+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T14:22:39+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
