@@ -59,3 +59,4 @@
 {"ts": "2026-11-05T22:30:15+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
 {"ts": "2026-11-05T22:30:43+03:00", "kind": "claim", "msg": "C015: основания перенаправлены C010→C019"}
 {"ts": "2026-11-05T22:50:11+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-06T10:24:05+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
