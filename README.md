@@ -101,6 +101,10 @@ python3 -m unittest discover -s tests          # 55 тестов
 | Исходные материалы (4 PDF) | `projects/демо/материалы/` |
 | Синтетические интервью | `projects/демо/interviews/synthetic/` |
 | Реестр и журнал | `projects/демо/claims.jsonl`, `decisions.jsonl`, `log.jsonl` (96 записей) |
+| Deck-презентация | `projects/демо/outputs/presentations/deck.html` |
+| Синтетика + анализ данных | `projects/демо/analysis/` (генератор, CSV, S013) |
+| UX-материалы прототипа | `projects/демо/материалы/` (руководства, брендбук) |
+| Подборка рыночных источников | `projects/демо/материалы/` и источники S002–S005 |
 | Интерактивный разбор | [strategyproduct.ru/demo.html](https://strategyproduct.ru/demo.html) · раздел «Демо» на [главной](https://strategyproduct.ru/#demo) |
 
 ![Six-pager, страница 1](site/assets/shot_sixpager.jpg)

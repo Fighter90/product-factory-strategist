@@ -54,11 +54,13 @@ header.solid{background:rgba(4,6,12,.82);backdrop-filter:blur(14px);border-color
 
 /* ── HERO: видео-подложка, формат aixle ── */
 .loadline{position:absolute;left:0;right:0;bottom:0;height:2px;z-index:4;overflow:hidden;background:rgba(242,236,230,.07)}
-.loadline i{position:absolute;inset:0;width:34%;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);animation:loadmove 1.15s linear infinite}
+.loadline i{position:absolute;inset:0;width:34%;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);animation:loadmove 1.15s linear infinite,loadhide .5s 3.5s forwards}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes appear{from{opacity:0}to{opacity:1}}
 @keyframes loadmove{from{transform:translateX(-110%)}to{transform:translateX(360%)}}
-.hero.vid-ready .loadline{opacity:0;transition:opacity .6s}
-.hero-media{opacity:0;transition:opacity 1s ease}
-.hero.vid-ready .hero-media{opacity:1}
+@keyframes loadhide{to{opacity:0}}
+
+.hero-media{opacity:1}
 .hero{position:relative;min-height:92vh;display:flex;align-items:center;overflow:hidden;border-bottom:1px solid var(--line)}
 .hero-media{position:absolute;inset:0;z-index:0}
 .hero-media video{width:100%;height:100%;object-fit:cover;opacity:.55}
@@ -161,15 +163,12 @@ td{padding:9px 12px;border:1px solid var(--line);color:var(--muted);vertical-ali
 .shot-cap{padding:10px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
 .tl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tl-svg{min-width:980px;width:100%;height:auto;display:block}
-.tl-svg .path{stroke-dasharray:1600;stroke-dashoffset:1600}
-.rv.in .tl-svg .path{animation:draw 2.4s cubic-bezier(.4,0,.2,1) .2s forwards}
-@keyframes draw{to{stroke-dashoffset:0}}
+.tl-svg .path{stroke-dasharray:1600;stroke-dashoffset:0;animation:draw linear both;animation-timeline:view();animation-range:entry 10% exit 70%}
+@keyframes draw{from{stroke-dashoffset:1600}to{stroke-dashoffset:0}}
 .wf-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .wf-svg{min-width:760px;width:100%;height:auto;display:block}
-.wf-svg rect.b{transform:scaleY(0);transform-origin:bottom;transform-box:fill-box;transition:transform .9s cubic-bezier(.2,.6,.2,1) var(--d,0s)}
-.rv.in .wf-svg rect.b{transform:scaleY(1)}
-.wf-svg text{opacity:0;transition:opacity .6s ease 1s}
-.rv.in .wf-svg text{opacity:1}
+.wf-svg rect.b{transform-origin:bottom;transform-box:fill-box;animation:grow linear both;animation-timeline:view();animation-range:entry 30% exit 75%}
+.wf-svg text{animation:appear linear both;animation-timeline:view();animation-range:entry 40% exit 85%}
 .faq6{display:grid;gap:8px}
 .f6{display:flex;gap:10px;align-items:baseline;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 13px}
 .f6 b{font-size:12px;color:var(--accent);flex:none;font-variant-numeric:tabular-nums}
@@ -200,8 +199,9 @@ a.hcard p{color:var(--muted);font-size:13px}
 a.hcard .go{color:var(--accent);font-size:12.5px;font-weight:600;display:inline-block;margin-top:10px}
 
 /* reveal */
-html.js .rv{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.6,.2,1),transform .55s cubic-bezier(.2,.6,.2,1)}
-html.js .rv.in{opacity:1;transform:none}
+.rv{animation:rvIn linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+@keyframes rvIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@supports not (animation-timeline: view()){ .rv{animation:none} }
 .d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}.d4{transition-delay:.28s}
 
 footer{border-top:1px solid var(--line);padding:44px 0;color:var(--muted);font-size:14px}
@@ -226,6 +226,10 @@ body[data-lang=ru] [lang=en]{display:none}
   *,*::before,*::after{animation:none!important;transition:none!important}
   .rv{opacity:1;transform:none}
   .hero-media video{opacity:.4}
+  .rv{animation:none}
+  .tl-svg .path{animation:none;stroke-dashoffset:0}
+  .wf-svg rect.b{animation:none;transform:scaleY(1)}
+  .wf-svg text{animation:none;opacity:1}
   .tl-svg .path{stroke-dashoffset:0}
   .wf-svg rect.b{transform:scaleY(1)}
   .wf-svg text{opacity:1}
@@ -242,8 +246,8 @@ body[data-lang=ru] [lang=en]{display:none}
   <a class="nl" href="#process" lang="ru">Процесс</a><a class="nl" href="#process" lang="en">Process</a>
   <a class="nl" href="#demo" lang="ru">Демо</a><a class="nl" href="#demo" lang="en">Demo</a>
   <a class="nl" href="#architecture" lang="ru">Архитектура</a><a class="nl" href="#architecture" lang="en">Architecture</a>
-  <a class="nl" href="help.html" lang="ru">Справка</a><a class="nl" href="help.html" lang="en">Help</a>
-  <a class="nl" href="materials.html" lang="ru">Материалы</a><a class="nl" href="materials.html" lang="en">Materials</a>
+  <a class="nl" href="help.html?v=7" lang="ru">Справка</a><a class="nl" href="help.html?v=7" lang="en">Help</a>
+  <a class="nl" href="materials.html?v=7" lang="ru">Материалы</a><a class="nl" href="materials.html?v=7" lang="en">Materials</a>
   <div class="push">
     <div class="lang" role="group" aria-label="Language / Язык">
       <button id="btn-ru" onclick="setLang('ru')" aria-pressed="true">RU</button>
@@ -256,8 +260,8 @@ body[data-lang=ru] [lang=en]{display:none}
 <div class="hero" id="top">
   <div class="loadline" aria-hidden="true"><i></i></div>
   <div class="hero-media" aria-hidden="true">
-    <video autoplay muted loop playsinline preload="auto" poster="assets/hero_aurora.jpg" disablepictureinpicture>
-      <source src="assets/hero-swarm-2.mp4" type="video/mp4">
+    <video autoplay muted loop playsinline preload="auto" poster="assets/hero_aurora.jpg?v=7" disablepictureinpicture>
+      <source src="assets/hero-swarm-2.mp4?v=7" type="video/mp4">
     </video>
   </div>
   <div class="wrap">
@@ -342,7 +346,7 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="split2 rv d2">
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>rosedate.ru — концепт · кликабельный прототип</span></div>
-      <img src="assets/rose_screen.jpg" alt="Скриншот ROSE: телефон с розой и слоганом «Сначала разговор. Потом взгляд.» рядом — карта 20 экранов приложения">
+      <img src="assets/rose_screen.jpg?v=7" alt="Скриншот ROSE: телефон с розой и слоганом «Сначала разговор. Потом взгляд.» рядом — карта 20 экранов приложения">
       <div class="shot-cap" lang="ru">Скриншот приложения: лоадер с розой, слоган «Сначала разговор. Потом взгляд.» и 20 экранов прототипа — от «Госуслуг» и «Анкеты из 5 шагов» до «Тайной розы», «Взаимной розы» и «Клуба и тарифов».</div>
       <div class="shot-cap" lang="en">App screenshot: the rose loader, the tagline "Conversation first. Looks later." and 20 prototype screens — from ID verification to secret roses and club tiers.</div>
     </div>
@@ -356,7 +360,7 @@ body[data-lang=ru] [lang=en]{display:none}
     </div>
   </div>
   <div class="dchips rv d3">
-    <span class="dchip"><b>18 мин</b> прогон</span><span class="dchip"><b>8</b> источников</span><span class="dchip"><b>24</b> утверждения</span><span class="dchip"><b>5</b> вариантов + red team</span><span class="dchip"><b>4</b> книги Excel</span><span class="dchip"><b>100/100</b> check --strict</span>
+    <span class="dchip"><b>18 мин</b> прогон</span><span class="dchip"><b>13</b> источников</span><span class="dchip"><b>24</b> утверждения</span><span class="dchip"><b>5</b> вариантов + red team</span><span class="dchip"><b>4</b> книги Excel</span><span class="dchip"><b>100/100</b> check --strict</span>
   </div>
   <div class="tl-wrap rv d3"><svg class="tl-svg" viewBox="0 0 1080 140" role="img" aria-label="Алгоритм агента: 12 шагов">
     <defs><linearGradient id="tlg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".5" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
@@ -418,8 +422,8 @@ body[data-lang=ru] [lang=en]{display:none}
     </g>
   </svg></div>
   <div class="cta rv" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:26px">
-    <a class="btn light" href="demo.html" lang="ru">Полный разбор: схемы, red team, метрики →</a><a class="btn light" href="demo.html" lang="en">Full walkthrough →</a>
-    <a class="btn ghost" href="materials.html" lang="ru">Материалы ROSE (PDF)</a><a class="btn ghost" href="materials.html" lang="en">ROSE materials</a>
+    <a class="btn light" href="demo.html?v=7" lang="ru">Полный разбор: схемы, red team, метрики →</a><a class="btn light" href="demo.html?v=7" lang="en">Full walkthrough →</a>
+    <a class="btn ghost" href="materials.html?v=7" lang="ru">Материалы ROSE (PDF)</a><a class="btn ghost" href="materials.html?v=7" lang="en">ROSE materials</a>
   </div>
 </div></section>
 
@@ -619,7 +623,7 @@ $ pfs export --six-pager    # report + attachments</pre>
     <a class="hcard" href="help.html#h-trouble"><h3 lang="ru">Частые проблемы</h3><h3 lang="en">Troubleshooting</h3><p lang="ru">Симптом → решение: источники, домены, Excel, среды.</p><p lang="en">Symptom → fix: sources, domains, Excel, environments.</p><span class="go" lang="ru">Открыть →</span><span class="go" lang="en">Open →</span></a>
   </div>
   <div class="cta rv d3" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:24px">
-    <a class="btn light" href="help.html" lang="ru">Открыть полную справку</a><a class="btn light" href="help.html" lang="en">Open the full help</a>
+    <a class="btn light" href="help.html?v=7" lang="ru">Открыть полную справку</a><a class="btn light" href="help.html?v=7" lang="en">Open the full help</a>
   </div>
 </div></section>
 
@@ -630,7 +634,7 @@ $ pfs export --six-pager    # report + attachments</pre>
   <p class="lead rv d1" style="margin:0 auto 30px" lang="en">Clone the repository, describe your task in plain words — the agent builds the plan, gathers sources and comes back with options and a recommendation you can trust.</p>
   <div class="cta rv d2" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
     <a class="btn light" href="https://github.com/Fighter90/product-factory-strategist" lang="ru">Открыть репозиторий</a><a class="btn light" href="https://github.com/Fighter90/product-factory-strategist" lang="en">Open the repository</a>
-    <a class="btn ghost" href="demo.html" lang="ru">Смотреть демо-разбор</a><a class="btn ghost" href="demo.html" lang="en">See the demo walkthrough</a>
+    <a class="btn ghost" href="demo.html?v=7" lang="ru">Смотреть демо-разбор</a><a class="btn ghost" href="demo.html?v=7" lang="en">See the demo walkthrough</a>
   </div>
 </div></section>
 
@@ -641,16 +645,15 @@ $ pfs export --six-pager    # report + attachments</pre>
     <div lang="en">An AI agent for digital product directors</div>
   </div>
   <div style="display:flex;gap:18px;flex-wrap:wrap">
-    <a href="demo.html" lang="ru">Демо</a><a href="demo.html" lang="en">Demo</a>
-    <a href="materials.html" lang="ru">Материалы</a><a href="materials.html" lang="en">Materials</a>
-    <a href="help.html" lang="ru">Справка</a><a href="help.html" lang="en">Help</a>
+    <a href="demo.html?v=7" lang="ru">Демо</a><a href="demo.html?v=7" lang="en">Demo</a>
+    <a href="materials.html?v=7" lang="ru">Материалы</a><a href="materials.html?v=7" lang="en">Materials</a>
+    <a href="help.html?v=7" lang="ru">Справка</a><a href="help.html?v=7" lang="en">Help</a>
     <a href="https://github.com/Fighter90/product-factory-strategist/wiki">Wiki</a>
     <a href="https://strategyproduct.ru/demo.html">strategyproduct.ru</a>
   </div>
 </div></footer>
 
 <script>
-document.documentElement.classList.add('js');
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const I18N = {
   ru: { title: "Стратег Фабрики продуктов — ИИ-агент для руководителя продукта", desc: "ИИ-агент: от размытого запроса до обоснованной стратегии — доказательства, варианты, red team, Excel и six-pager для комитета." },
@@ -695,7 +698,7 @@ if (heroV){
   else { heroV.addEventListener('canplay', vidDone); heroV.addEventListener('error', vidDone); }
   setTimeout(vidDone, 3500);
 }
-setTimeout(function(){document.querySelectorAll('.rv:not(.in)').forEach(function(e){ e.classList.add('in'); });document.querySelectorAll('.cnt').forEach(function(e){ if (e.textContent === '0' && e.dataset.target) e.textContent = e.dataset.target; });}, 1400);
+setTimeout(function(){document.querySelectorAll('.cnt').forEach(function(e){ if (e.textContent === '0' && e.dataset.target) e.textContent = e.dataset.target; });}, 1200);
 
 const io = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }

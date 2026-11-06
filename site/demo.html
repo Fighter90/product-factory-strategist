@@ -100,9 +100,8 @@ h2::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;bor
 
 .tl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tl-svg{min-width:980px;width:100%;height:auto;display:block}
-.tl-svg .path{stroke-dasharray:1600;stroke-dashoffset:1600}
-.rv.in .tl-svg .path{animation:draw 2.4s cubic-bezier(.4,0,.2,1) .2s forwards}
-@keyframes draw{to{stroke-dashoffset:0}}
+.tl-svg .path{stroke-dasharray:1600;stroke-dashoffset:0;animation:draw linear both;animation-timeline:view();animation-range:entry 10% exit 70%}
+@keyframes draw{from{stroke-dashoffset:1600}to{stroke-dashoffset:0}}
 .tl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
 .tl-cell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
 .tl-cell b{font-size:12px;color:var(--accent);display:block;margin-bottom:3px}
@@ -131,8 +130,6 @@ p code,td code,.kp code{background:var(--code);border:1px solid var(--line);bord
 .btn.ghost{border:1px solid var(--line);color:var(--text);background:var(--card)}
 .btn.ghost:hover{border-color:var(--accent)}
 
-html.js .rv{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.6,.2,1),transform .55s cubic-bezier(.2,.6,.2,1)}
-html.js .rv.in{opacity:1;transform:none}
 .d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
 
 footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
@@ -183,7 +180,7 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
   <a class="nl" href="index.html#process">Процесс</a>
   <a class="nl on" href="demo.html">Демо</a>
   <a class="nl" href="index.html#commands">Команды</a>
-  <a class="nl" href="materials.html">Материалы</a>
+  <a class="nl" href="materials.html?v=7">Материалы</a>
   <a class="nl" href="help.html">Справка</a>
   <div class="lang" aria-hidden="true"><button class="active">RU</button><button disabled style="opacity:.4;cursor:default">EN</button></div>
 </div></header>
@@ -194,7 +191,7 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
   <div class="chips">
     <span class="chip"><b>18 мин</b> полный прогон</span>
     <span class="chip"><b>12</b> шагов процесса</span>
-    <span class="chip"><b>8</b> источников</span>
+    <span class="chip"><b>13</b> источников</span>
     <span class="chip"><b>24</b> утверждения</span>
     <span class="chip"><b>5</b> вариантов + red team</span>
     <span class="chip"><b>100/100</b> check --strict</span>
@@ -222,12 +219,12 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
   <div class="split rv d3" style="margin-top:20px">
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>rosedate.ru — приложение (мобильный вид)</span></div>
-      <div class="phone"><img src="assets/rose_screen_m.jpg" alt="Экран ROSE: роза и слоган «Сначала разговор. Потом взгляд.»"></div>
+      <div class="phone"><img src="assets/rose_screen_m.jpg?v=7" alt="Экран ROSE: роза и слоган «Сначала разговор. Потом взгляд.»"></div>
       <div class="shot-cap">Первый экран участника: живая роза на чёрном, слоган и два действия — «Подать заявку» / «Я уже в клубе». Только 21+, только подтверждённые.</div>
     </div>
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>rosedate.ru — концепт · 20 экранов</span></div>
-      <img src="assets/rose_screen.jpg" alt="Прототип ROSE: телефон с розой и карта 20 экранов — от лоадера до «Клуба и тарифов»">
+      <img src="assets/rose_screen.jpg?v=7" alt="Прототип ROSE: телефон с розой и карта 20 экранов — от лоадера до «Клуба и тарифов»">
       <div class="shot-cap">Карта прототипа: «Госуслуги», «Анкета из 5 шагов», «Интервью с матчмейкером», «За столом», «Тайная роза», «Взаимная роза», «Клуб и тарифы». Источник механики и цен для исследования [S001].</div>
     </div>
   </div>
@@ -293,7 +290,7 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
   <div class="split2 rv d1" style="margin-top:6px">
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>SIX_PAGER.pdf — страница 1</span></div>
-      <img src="assets/shot_sixpager.jpg" alt="Первая страница six-pager ROSE">
+      <img src="assets/shot_sixpager.jpg?v=7" alt="Первая страница six-pager ROSE">
       <div class="shot-cap">Собран командой <code>pfs export --six-pager</code> из документов 02–06; числа прослеживаются до утверждений C###.</div>
     </div>
     <div>
@@ -355,7 +352,7 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
   <div class="note rv">Валидация чисел: LTV 41 250 ₽ и LTV/CAC 3,44 пересчитаны программно из calcs.json — совпадают с текстом отчёта; в Excel подтверждено 180 формул (не «нарисованные» таблицы). Числа с тегами источников: 100% (у обычного чата — 0%).</div>
   <div class="cta rv">
     <a class="btn primary" href="https://github.com/Fighter90/product-factory-strategist">Запустить на своей задаче</a>
-    <a class="btn ghost" href="materials.html">Материалы ROSE (PDF)</a>
+    <a class="btn ghost" href="materials.html?v=7">Материалы ROSE (PDF)</a>
     <a class="btn ghost" href="help.html">Как это работает</a>
     <a class="btn ghost" href="index.html">← Лендинг</a>
   </div>
@@ -374,7 +371,6 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 </div></footer>
 
 <script>
-document.documentElement.classList.add('js');
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const bar = document.getElementById('bar');
 (function frame(){
