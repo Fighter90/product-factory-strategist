@@ -1,7 +1,7 @@
 ---
 id: M-genai-feature-patterns
 title: Паттерны ИИ-фич в продуктах — таксономия (автокоррекция → генерация → классификация → чат → copilot → агент), цена ошибки и UX-митигации
-course: gen-ai
+course: ai
 sources: ["Eugene Yan — Patterns for Building LLM-based Systems & Products (https://eugeneyan.com/writing/llm-patterns/)", "Anthropic — Building Effective Agents (https://www.anthropic.com/engineering/building-effective-agents)", "Claire Vo на Lenny's Newsletter — How to Build LLM Features Users Love (https://www.lennysnewsletter.com/p/how-to-build-llm-features-users-love)", "OpenAI Cookbook — примеры продуктовых паттернов (https://cookbook.openai.com)"]
 stages: [options, validation]
 tags: [ai, llm, паттерны-фич, copilot, агент, ux-паттерны, цена-ошибки]

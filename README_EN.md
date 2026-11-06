@@ -8,7 +8,7 @@ distinct options, and aligned product and communication strategies. After the de
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
 This is a repository folder: instructions, knowledge sets organized by category (strategy · economics · product ·
-UX · data · platforms · Gen AI), 120 skills, 8 subagents, 5 hooks, and a dependency-free Python CLI/MCP toolset.
+UX · data · platforms · Gen AI), 120 skills, 8 subagents, 4 hooks, and a dependency-free Python CLI/MCP toolset.
 Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
@@ -79,7 +79,7 @@ python3 -m tools.pfs new "Title" "Request verbatim"  # your own task
 At every step the agent **reads the mandatory knowledge cards** (printed by `pfs step`), passes a
 **question block** (`pfs questions <step>` — at least 1–3 questions to you; skipping requires a log note),
 and hits **quality gates**. Double Diamond phases: Discover (0–3) → Define (4–6) → Develop (7–9) →
-Deliver (10–12).
+Deliver (10–11).
 
 ```mermaid
 flowchart TD
@@ -113,7 +113,7 @@ flowchart TD
 flowchart TB
   U["Product director"] -->|"request · answers to question blocks"| ENV
   subgraph ENV["LLM environment (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 120<br/>(base + product-skills 27 + integrations: sdd · deck · deep-research · premortem · board-of-directors · hallmark)"]
+    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 120<br/>(base + product-skills 27 + integrations: sdd · deck · premortem · board-of-directors · hallmark)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 5<br/>SessionStart · PreWeb-domains · PostTool-log · Stop-cost (+ shared module)"]
   end
@@ -145,7 +145,7 @@ every place referencing it.
 flowchart TB
   SK["120 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: method procedures<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
-  SK --> L["Personal library ~60<br/>design · marketing · science · docs/media · thinking modes · meta"]
+  SK --> L["Personal library 74<br/>design · marketing · science · docs/media · thinking modes · meta"]
   SK --> INT["Integrations 6<br/>hallmark · board-of-directors · premortem · rea · sdd · deck"]
   B & P & L & INT --> INV["Invocation: automatic by triggers · explicit 'use skill X' · via process steps"]
 ```
@@ -155,7 +155,7 @@ flowchart TB
 - **base 13** — process steps (one per workflow stage: intake → sources → research → … → monitoring).
 - **product-skills 27** — method procedures (problem and solution design, traction modeling, unit economics,
   market sizing, interviews, UX review, …).
-- **personal library ~59** — domain expertise:
+- **personal library 74** — domain expertise:
   - Design: design-ui, refero-design, frontend-design, make-interfaces-feel-better, emil-design-eng,
     web-design-guidelines.
   - Marketing: ads, ad-creative, seo-audit, ai-seo, cro, pricing, offers, cold-email, emails, launch,
@@ -168,7 +168,7 @@ flowchart TB
   - Docs/media: pdf, docx, pptx, xlsx, markitdown, officecli, generate-image, video, infographics,
     scientific-slides, scientific-schematics, scientific-visualization, latex-posters, matplotlib, seaborn.
   - Thinking modes: consciousness-council, balanced, what-if-oracle, dhdna-profiler.
-  - Meta: skill-creator, find-skills, shap, watch, transcribe.
+  - Meta: find-skills, shap, watch, transcribe.
 - **integrations** — hallmark, board-of-directors, premortem, rea, sdd, deck.
 
 **How to invoke — three ways:**
@@ -290,7 +290,7 @@ AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
   skills/ (120: base 13 · product-skills 27 · personal library · integrations)
   agents/ (8) · hooks/ (5) · settings.json
-.cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable)
+.cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
 knowledge/  methods/ (88 RU cards) · methods_en/ (16 EN mirrors) · INDEX.md · INDEX_EN.md
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions

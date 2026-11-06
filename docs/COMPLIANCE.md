@@ -26,7 +26,7 @@
 | Провести исследование (план от вопросов, меняющих решение) | ✓ | `projects/демо/outputs/01_research_plan.md`; реестр `projects/демо/claims.jsonl` — 20 утверждений C001–C020 с типами (fact/hypothesis/forecast/assumption/inference) и силой A–D (`tools/pfs/claims.py`) |
 | ≥3 содержательно разных варианта, вкл. «оставить как есть» и «закрыть» | ✓ | `projects/демо/outputs/03_options.md` — варианты A–E; `config/quality_gate.json` → `min_options: 3`, `status_quo_keywords`, `exit_keywords` |
 | Возражения по каждому варианту | ✓ | субагент `.claude/agents/red-team.md`; демо: 20 ударов (15 возражений + 5 скрытых допущений), встроены порогами в `06_validation_plan.md` |
-| Факты ≠ гипотезы (и ≠ синтетика) | ✓ | `tools/pfs/claims.py` — факт без источника не записывается, синтетика фактами не считается; тест: `python3 -m unittest tests.test_claims` |
+| Факты ≠ гипотезы (и ≠ синтетика) | ✓ | `tools/pfs/claims.py` — факт без источника не записывается, синтетика фактами не считается; тест: `python3 -m unittest tests.test_pfs` |
 | Продуктовая стратегия | ✓ | `projects/демо/outputs/04_product_strategy.md`; обязательные разделы в `config/quality_gate.json` |
 | Коммуникационная стратегия | ✓ | `projects/демо/outputs/05_comms_strategy.md`; таблица «обещание → подтверждение» (`promise_table_section` в quality_gate.json) |
 | План проверки | ✓ | `projects/демо/outputs/06_validation_plan.md` — 5 обязательных разделов, проверяются `pfs check` |
@@ -46,7 +46,7 @@
 | Поддержка решений | `pfs decision add/due/done/status/rebase`: основания C###, ответственный, метрика «X→Y @дата», обязательства | демо: D001 — `projects/демо/decisions.jsonl` (1 запись), `pfs decision due` |
 | Пересмотр при новых данных | `pfs claim supersede/retract/rebase` + `pfs impact` (источник → утверждение → вывод → строка → решение); `check` ловит ссылки на отозванное | `python3 -m tools.pfs --project демо impact C016` |
 | Маршрутизация сценариев и моделей | `pfs route` (сценарий → карты → план моделей), `config/models.json` (fast/balanced/deep, эскалация, `--economy`) | `python3 -m tools.pfs route "запрос"` |
-| Навыки / хуки / субагенты | `.claude/skills/` (120), `.claude/hooks/` (5), `.claude/agents/` (8) | `ls`-команды из шапки файла |
+| Навыки / хуки / субагенты | `.claude/skills/` (120), `.claude/hooks/` (4 события + `_common.py`), `.claude/agents/` (8) | `ls`-команды из шапки файла |
 | MCP + CLI | CLI `python3 -m tools.pfs` (25+ подкоманд); MCP `tools/pfs/mcp_server.py` — 18 инструментов (stdio JSON-RPC) | `python3 -m tools.pfs --help`; `.mcp.json` → pfs-strategist |
 | База знаний с поиском | 88 карт RU + 16 EN-зеркал + `INDEX_EN.md`; BM25 с русским стеммингом (`pfs kb search`), связи `related` проверяет `pfs kb index` | `python3 -m tools.pfs doctor` — число карт |
 | Excel-приложения на формулах | `pfs calc all` → 4 книги (лист «Ввод» + формулы, пересчёт при открытии) | `projects/демо/outputs/attachments/` — 4 файла xlsx |

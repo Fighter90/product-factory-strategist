@@ -3,7 +3,7 @@ id: M-genai-feature-patterns-en
 title: AI Feature Patterns — taxonomy, error cost, and UX mitigations
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [options, validation]
 tags: [en, summary]
 related: []
 ---

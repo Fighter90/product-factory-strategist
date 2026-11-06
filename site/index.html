@@ -262,8 +262,8 @@ body[data-lang=ru] [lang=en]{display:none}
   <a class="nl" href="#process" lang="ru">Процесс</a><a class="nl" href="#process" lang="en">Process</a>
   <a class="nl" href="#demo" lang="ru">Демо</a><a class="nl" href="#demo" lang="en">Demo</a>
   <a class="nl" href="#architecture" lang="ru">Архитектура</a><a class="nl" href="#architecture" lang="en">Architecture</a>
-  <a class="nl" href="help.html?v=8" lang="ru">Справка</a><a class="nl" href="help.html?v=8" lang="en">Help</a>
-  <a class="nl" href="materials.html?v=8" lang="ru">Материалы</a><a class="nl" href="materials.html?v=8" lang="en">Materials</a>
+  <a class="nl" href="help.html?v=9" lang="ru">Справка</a><a class="nl" href="help.html?v=9" lang="en">Help</a>
+  <a class="nl" href="materials.html?v=9" lang="ru">Материалы</a><a class="nl" href="materials.html?v=9" lang="en">Materials</a>
   <div class="push">
     <div class="lang" role="group" aria-label="Language / Язык">
       <button id="btn-ru" onclick="setLang('ru')" aria-pressed="true">RU</button>
@@ -278,7 +278,7 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="hero-media" aria-hidden="true">
     <img class="hero-poster" src="assets/hero_aurora.jpg?v=9" alt="">
     <video autoplay muted loop playsinline preload="auto" disablepictureinpicture>
-      <source src="assets/hero-swarm-2.mp4?v=8" type="video/mp4">
+      <source src="assets/hero-swarm-2.mp4?v=9" type="video/mp4">
     </video>
   </div>
   <div class="wrap">
@@ -299,7 +299,7 @@ body[data-lang=ru] [lang=en]{display:none}
 <div class="strip"><div class="wrap">
   <div class="stat"><b><span class="cnt" data-target="12">0</span></b><span lang="ru">шагов процесса, 3 паузы для человека</span><span lang="en">process steps, 3 human checkpoints</span></div>
   <div class="stat"><b><span class="cnt" data-target="88">0</span></b><span lang="ru">карт методик (RU + 16 EN-зеркал)</span><span lang="en">method cards across categories</span></div>
-  <div class="stat"><b><span class="cnt" data-target="120">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="5">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
+  <div class="stat"><b><span class="cnt" data-target="120">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
   <div class="stat"><b>0</b><span lang="ru">зависимостей — только stdlib Python</span><span lang="en">dependencies — Python stdlib only</span></div>
   <div class="stat"><b><span class="cnt" data-target="100">0</span>%</b><span lang="ru">чисел подтверждены источниками · у обычного чата 0%</span><span lang="en">of numbers verifiable — plain chat: 0%</span></div>
 </div></div>
@@ -332,22 +332,22 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="sec-head">
     <span class="overline" lang="ru">02 · Процесс</span><span class="overline" lang="en">02 · Process</span>
     <h2 class="rv" lang="ru">Процесс: 12 шагов</h2><h2 class="rv" lang="en">Process: 12 steps</h2>
-    <p class="lead rv d1" lang="ru">Агент ведёт работу сам и зовёт человека только на существенный выбор. Прогресс — строкой: <code>Шаг N/12 · research · источники S001–S009 · дальше: ситуация</code>. Фазы двойного романа: Discover (0–3) → Define (4–6) → Develop (7–9) → Deliver (10–12).</p>
+    <p class="lead rv d1" lang="ru">Агент ведёт работу сам и зовёт человека только на существенный выбор. Прогресс — строкой: <code>Шаг N/12 · research · источники S001–S009 · дальше: ситуация</code>. Фазы двойного алмаза (Double Diamond): Discover (0–3) → Define (4–6) → Develop (7–9) → Deliver (10–12).</p>
     <p class="lead rv d1" lang="en">The agent drives the work and calls the human only for a consequential choice. Progress shows as: <code>Step N/12 · research · sources S001–S009 · next: situation</code>. Double Diamond phases: Discover (0–3) → Define (4–6) → Develop (7–9) → Deliver (10–12).</p>
   </div>
   <div class="steps">
     <div class="stepp rv"><b lang="ru">Бриф</b><b lang="en">Brief</b><span lang="ru">вопрос, цель, ограничения — <span class="pause">человек подтверждает</span></span><span lang="en">question, goal, constraints — <span class="pause">human approves</span></span></div>
-    <div class="stepp rv d1"><b lang="ru">Источники</b><b lang="en">Sources</b><span>materials → S###</span></div>
+    <div class="stepp rv d1"><b lang="ru">Источники</b><b lang="en">Sources</b><span lang="ru">материалы → S###</span><span lang="en">materials → S###</span></div>
     <div class="stepp rv d2"><b lang="ru">Исследование</b><b lang="en">Research</b><span lang="ru">план, расчёты, интервью → C###</span><span lang="en">plan, calculations, interviews → C###</span></div>
     <div class="stepp rv d3"><b lang="ru">Дискавери</b><b lang="en">Discovery</b><span lang="ru">персоны, JTBD, альтернативы</span><span lang="en">personas, JTBD, alternatives</span></div>
     <div class="stepp rv d3"><b lang="ru">Ситуация</b><b lang="en">Situation</b><span lang="ru">известно / не знаем / противоречия</span><span lang="en">known / unknown / contradictions</span></div>
     <div class="stepp rv"><b lang="ru">Варианты</b><b lang="en">Options</b><span lang="ru">≥3 + red team</span><span lang="en">≥3 + red team</span></div>
     <div class="stepp rv d1"><b lang="ru">Выбор</b><b lang="en">Choice</b><span class="pause" lang="ru">человек выбирает</span><span class="pause" lang="en">human decides</span></div>
-    <div class="stepp rv d2"><b>Strategy</b><span lang="ru">продукт + коммуникация</span><span lang="en">product + comms</span></div>
+    <div class="stepp rv d2"><b><span lang="ru">Стратегия</span><span lang="en">Strategy</span></b><span lang="ru">продукт + коммуникация</span><span lang="en">product + comms</span></div>
     <div class="stepp rv d3"><b lang="ru">Проверка</b><b lang="en">Validation</b><span lang="ru">метрики, срок, контрметрики</span><span lang="en">metrics, duration, counter-metrics</span></div>
-    <div class="stepp rv"><b>Review</b><span lang="ru">автопроверка + рубрика + six-pager</span><span lang="en">auto-check + rubric + six-pager</span></div>
+    <div class="stepp rv"><b><span lang="ru">Проверка</span><span lang="en">Review</span></b><span lang="ru">автопроверка + рубрика + six-pager</span><span lang="en">auto-check + rubric + six-pager</span></div>
     <div class="stepp rv d1"><b lang="ru">Решение</b><b lang="en">Decision</b><span class="pause" lang="ru">человек утверждает</span><span class="pause" lang="en">human approves</span></div>
-    <div class="stepp rv d2"><b>Monitoring</b><span lang="ru">обязательства, пересмотр</span><span lang="en">commitments, revisions</span></div>
+    <div class="stepp rv d2"><b><span lang="ru">Мониторинг</span><span lang="en">Monitoring</span></b><span lang="ru">обязательства, пересмотр</span><span lang="en">commitments, revisions</span></div>
   </div>
   <div class="note rv" lang="ru">Работа прерывается и продолжается в новом чате или другой среде: всё состояние — в файлах проекта. Выполненные шаги не повторяются.</div>
   <div class="note rv" lang="en">Work can be interrupted and resumed in a new chat or another environment: all state lives in project files. Finished steps are never repeated.</div>
@@ -357,13 +357,13 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="sec-head">
     <span class="overline" lang="ru">03 · Демо</span><span class="overline" lang="en">03 · Demo</span>
     <h2 class="rv" lang="ru">Демо: CVStart — от задачи руководителя до six-pager</h2><h2 class="rv" lang="en">Demo: CVStart — from the director's task to a six-pager</h2>
-    <p class="lead rv d1" lang="ru">Сквозной прогон агента на живом open-source продукте — cvstart.org: AI-конструктор резюме и поиск вакансий, скан 129 джоб-бордов, 19 языков. Ниже: скриншот продукта, детальное задание и план задачи, алгоритм работы, вывод агента и пороги проверки. Полный разбор — на отдельной странице.</p>
+    <p class="lead rv d1" lang="ru">Сквозной прогон агента на живом open-source продукте — cvstart.org: AI-конструктор резюме и поиск вакансий, скан ~129 джоб-бордов, 19 языков. Ниже: скриншот продукта, детальное задание и план задачи, алгоритм работы, вывод агента и пороги проверки. Полный разбор — на отдельной странице.</p>
     <p class="lead rv d1" lang="en">An end-to-end run on a live open-source product — cvstart.org: an AI resume builder + job search, 129 job boards scanned, 19 languages. Below: the product screenshot, the detailed brief and task plan, the agent's algorithm, its conclusion and validation thresholds. Full walkthrough on a separate page.</p>
   </div>
   <div class="split2 rv d2">
     <div class="shot-card">
       <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — лендинг (RU-версия)</span></div>
-      <div class="shot-crop"><img src="assets/cv_landing_ru.jpg?v=9" alt="Лендинг cvstart.org: AI-конструктор резюме, скан 129 джоб-бордов, AI-скоринг 0.0–5.0, 19 языков"></div>
+      <div class="shot-crop"><img src="assets/cv_landing_ru.jpg?v=9" alt="Лендинг cvstart.org: AI-конструктор резюме, скан ~129 джоб-бордов, AI-скоринг 0.0–5.0, 19 языков"></div>
       <div class="shot-cap" lang="ru">Продукт демо: cvstart.org — открытый (MIT) AI-конструктор резюме и дашборд поиска работы. 100% локально, 18 LLM-провайдеров BYOK.</div>
       <div class="shot-cap" lang="en">The demo's product: cvstart.org — an open-source (MIT) AI resume builder and job-search dashboard. 100% local, 18 BYOK LLM providers.</div>
     </div>
@@ -371,7 +371,7 @@ body[data-lang=ru] [lang=en]{display:none}
       <h4 lang="ru">Описание и задание</h4><h4 lang="en">Description &amp; the task</h4>
       <p lang="ru"><b>Продукт:</b> CVStart (career-ops UI) — открытый (MIT) AI-конструктор резюме и дашборд поиска работы: скан ~129 джоб-бордов (124 EN + 5 RU: hh.ru, Habr Career и др.), AI-скоринг вакансий 0.0–5.0 против резюме пользователя, CV Studio (тюминг под JD, humanize, ATS-буллеты), PDF/DOCX-экспорт, cover letters, авто-пайплайн, трекер заявок с follow-up, карта вакансий, mock-интервью. 100% локально — данные у пользователя; 18 LLM-провайдеров BYOK + keyless; 19 языков интерфейса; ~7 602 автотеста. Монетизации нет: «$0 forever», публичного хостинга нет [S001][S002].</p>
       <p lang="en"><b>Product:</b> CVStart (career-ops UI) — an open-source (MIT) AI resume builder and job-search dashboard: ~129 job boards scanned (124 EN + 5 RU: hh.ru, Habr Career, etc.), AI fit-scoring 0.0–5.0 against the user's resume, CV Studio (JD tuning, humanize, ATS bullets), PDF/DOCX export, cover letters, an auto pipeline, an application tracker with follow-up, a job map, mock interviews. 100% local — data stays with the user; 18 BYOK LLM providers + keyless; 19 UI languages; ~7,602 automated tests. No monetization: "$0 forever", no public hosting [S001][S002].</p>
-      <p lang="ru"><b>Задание агенту (дословно):</b> «Разработать коммерческую версию проекта cvstart.org — формирование резюме, поиск вакансий — и стратегию вывода на рынок на весь мир». <b>Ось сравнения:</b> рост платящих подписчиков и ARR. <b>Ограничения (ответы руководителя, intake):</b> open-source core остаётся MIT · соло-разработчик · сохранить доверие локального режима.</p>
+      <p lang="ru"><b>Задание агенту (дословно):</b> «Разработать коммерческую версию проекта cvstart.org (open-source AI-конструктор резюме и поиск вакансий: скан ~129 джоб-бордов, AI-скоринг, CV Studio, локальный пайплайн, 19 языков) — формирование резюме, поиск вакансий — и стратегию вывода на рынок на весь мир». <b>Ось сравнения:</b> рост платящих подписчиков и ARR. <b>Ограничения (ответы руководителя, intake):</b> open-source core остаётся MIT · соло-разработчик · сохранить доверие локального режима.</p>
       <p lang="en"><b>The task (verbatim):</b> "Design the commercial version of cvstart.org — resume building, job search — and a go-to-market strategy for the whole world." <b>Comparison axis:</b> paying-subscriber and ARR growth. <b>Constraints (director's intake answers):</b> the open-source core stays MIT · a solo developer · preserving the trust of the local-first mode.</p>
       <p lang="ru"><b>План задачи — 12 шагов агента:</b><br>
       0 · бриф: решение, ось сравнения, ограничения → 00_brief.md — <i>пауза: подтверждение руководителем</i><br>
@@ -396,7 +396,7 @@ body[data-lang=ru] [lang=en]{display:none}
     </div>
   </div>
   <div class="dchips rv d3">
-    <span class="dchip"><b>12</b> шагов цикла</span><span class="dchip"><b>10</b> источников</span><span class="dchip"><b>20</b> утверждений</span><span class="dchip"><b>5</b> вариантов + red team</span><span class="dchip"><b>6</b> форматов six-pager</span><span class="dchip"><b>100/100</b> check --strict</span>
+    <span class="dchip"><b>12</b><span lang="ru"> шагов цикла</span><span lang="en"> process steps</span></span><span class="dchip"><b>10</b><span lang="ru"> источников</span><span lang="en"> sources</span></span><span class="dchip"><b>20</b><span lang="ru"> утверждений</span><span lang="en"> claims</span></span><span class="dchip"><b>5</b><span lang="ru"> вариантов + red team</span><span lang="en"> options + red team</span></span><span class="dchip"><b>6</b><span lang="ru"> форматов six-pager</span><span lang="en"> six-pager formats</span></span><span class="dchip"><b>100/100</b><span lang="ru"> контроль качества</span><span lang="en"> quality gate</span></span>
   </div>
   <div class="tl-wrap rv d3"><svg class="tl-svg" viewBox="0 0 1080 140" role="img" aria-label="Алгоритм агента: 12 шагов">
     <defs><linearGradient id="tlg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".5" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
@@ -422,12 +422,12 @@ body[data-lang=ru] [lang=en]{display:none}
       <h4 lang="ru">Вывод агента</h4><h4 lang="en">The agent's conclusion</h4>
       <p lang="ru"><b>Вариант B — hosted freemium SaaS, глобально:</b> тиры Free (BYOK — нулевые затраты) / Pro $12 / Unlimited $29; opt-in облако при локальном MIT-core; честный прайсинг без автопродлений как позиционирование; волны локалей EN → DE/ES/PT-BR → JA/ZH из 19 готовых. Каналы запуска: Product Hunt, Hacker News, SEO «open-source Jobscan alternative».</p>
       <p lang="en"><b>Option B — hosted freemium SaaS, global:</b> Free (BYOK — zero cost) / Pro $12 / Unlimited $29 tiers; opt-in cloud on top of the local MIT core; honest no-auto-renewal pricing as positioning; language waves EN → DE/ES/PT-BR → JA/ZH from 19 ready locales. Launch channels: Product Hunt, Hacker News, "open-source Jobscan alternative" SEO.</p>
-      <p lang="ru"><b>Осознанные отказы:</b> B2B white-label (C) — нет продаж-компетенции соло; dual-license (D) — юридически не работает поверх MIT; закрытие коммерции (E) — отказ от актива на растущем рынке ($1,2–2,4 млрд, AI CAGR 13%).</p>
-      <p lang="en"><b>Conscious trade-offs:</b> no B2B white-label (C) — a solo founder lacks the sales motion; no dual-license (D) — legally impossible on top of MIT; no shutdown (E) — abandoning an asset in a growing market ($1.2–2.4B, AI CAGR 13%).</p>
+      <p lang="ru"><b>Осознанные отказы:</b> B2B white-label (C) — нет продаж-компетенции соло; dual-license (D) — юридически не работает поверх MIT; закрытие коммерции (E) — отказ от актива на растущем рынке ($1,2–2,4 млрд, AI CAGR 13,1%).</p>
+      <p lang="en"><b>Conscious trade-offs:</b> no B2B white-label (C) — a solo founder lacks the sales motion; no dual-license (D) — legally impossible on top of MIT; no shutdown (E) — abandoning an asset in a growing market ($1.2–2.4B, AI CAGR 13,1%).</p>
     </div>
     <div class="acard">
       <h4 lang="ru">Решение и пороги проверки</h4><h4 lang="en">Decision &amp; validation thresholds</h4>
-      <p lang="ru"><b>Решение D001:</b> основания C019/C013/C014/C016/C005/C006 · обязательство «hosted beta в 3 EN-гео к 2026-12-15» · пересмотр 2027-02-10 · триггер стопа: paid &lt; 20 при activation &lt; 35% → вариант E.</p>
+      <p lang="ru"><b>Решение D001:</b> основания C019/C013/C014/C016/C005/C006 · обязательство «hosted-бета в 3 EN-гео к 2026-12-15» · пересмотр 2027-02-10 · триггер стопа: paid &lt; 20 при activation &lt; 35% → вариант E.</p>
       <p lang="en"><b>Decision D001:</b> grounds C019/C013/C014/C016/C005/C006 · commitment "hosted beta in 3 EN geos by 2026-12-15" · review 2027-02-10 · stop trigger: paid &lt; 20 with activation &lt; 35% → option E.</p>
       <p lang="ru"><b>Пороги (90 дней беты):</b> продолжить — paid ≥ 40, activation ≥ 50%, churn ≤ 10% → волна DE/ES/PT-BR · изменить — paid 20–40 → пересбор тира/цены · остановить — paid &lt; 20 при activation &lt; 35% → проект остаётся OSS.</p>
       <p lang="en"><b>Thresholds (90-day beta):</b> continue — paid ≥ 40, activation ≥ 50%, churn ≤ 10% → DE/ES/PT-BR wave · change — paid 20–40 → rebuild tiers/pricing · stop — paid &lt; 20 with activation &lt; 35% → the project stays OSS.</p>
@@ -471,14 +471,14 @@ body[data-lang=ru] [lang=en]{display:none}
     <h4 lang="ru">Анатомия FAQ-1…6: данные → шаг цикла → ворота качества</h4><h4 lang="en">The anatomy of FAQ-1…6: data → workflow step → quality gate</h4>
     <div class="split2" style="margin-top:14px">
       <div>
-        <p><b>FAQ-1 · Анализ текущего состояния</b><br><span><b>1.1 Обзор рынка</b> — объём и динамика диапазонами, прогноз буллетами по годам, ключевые тренды с жирными заголовками и следствием для продукта. <b>1.2 Конкуренты</b> — таблица «преимущества / стратегии роста и промо-механики / риски для нас» с оценкой Высокий–Средний–Низкий. Ворота: каждое число — тег C###/S###; расходящиеся оценки — диапазоном; внизу — сноски-источники с URL.</span></p>
-        <p><b>FAQ-2 · User Persona: кто целевая аудитория</b><br><span><b>2.1 Сегменты</b> — таблица с фиксированными строками «Кто они / Что используют сегодня и почему / С какими трудностями сталкиваются / Общие трудности» + обоснование приоритизации с расчётом. <b>2.2 Барьеры по этапам пути</b> — таблица «этап → барьер → что делает продукт» и «что сдерживает от старта/продления» по сегментам. Синтетика — помечена гипотезами.</span></p>
-        <p><b>FAQ-3 · Стратегические инициативы-драйверы</b><br><span>Вводная — из какого варианта выбрано направление (отсылка к анализу вариантов и red team). Затем 3–4 инициативы с нумерованными подпунктами и конструкцией «<b>Первый драйвер</b> — … / <b>Второй драйвер</b> — …», буллеты «Ключевые направления» и пошаговый расчёт юнит-экономики (формула → подстановка → результат). Закрыто выводом-умозаключением.</span></p>
+        <p lang="en"><b>FAQ-1 · Current state analysis</b><br><span><b>1.1 Market overview</b> — volume and dynamics as ranges, a year-by-year forecast in bullets, key trends with bold headlines and product implications. <b>1.2 Competitors</b> — a table of "advantages / growth strategies and promo mechanics / risks for us" rated High–Medium–Low. Gate: every number is a C###/S### tag; diverging estimates become ranges; source footnotes with URLs at the bottom.</span></p>
+        <p lang="en"><b>FAQ-2 · User Persona: who is the target audience</b><br><span><b>2.1 Segments</b> — a table with fixed rows "Who they are / What they use today and why / What difficulties they face / Common difficulties" plus prioritization reasoning with math. <b>2.2 Journey barriers</b> — a "stage → barrier → what the product does" table and per-segment "what blocks start/renewal". Synthetic data — flagged as hypotheses.</span></p>
+        <p lang="en"><b>FAQ-3 · Strategic initiative-drivers</b><br><span>An intro — which option the direction was chosen from (a reference to the options analysis and the red team). Then 3–4 initiatives with numbered subsections, the "<b>First driver</b> — … / <b>Second driver</b> — …" construction, "Key directions" bullets and a step-by-step unit-economics calculation (formula → substitution → result). Closed with an inference conclusion.</span></p>
       </div>
       <div>
-        <p><b>FAQ-4 · Тактики</b><br><span>Матрица «<b>Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики)</b>»: на каждую инициативу 2–4 строки; тактики — исполняемые (что именно строится), не лозунги; потребности — и пользователя, и исполнителя, если релевантно. Каждая тактика обоснована выводом из FAQ-1–3.</span></p>
-        <p><b>FAQ-5 · Высокоуровневый план реализации</b><br><span>Распределение вклада инициатив в результат — <b>процентами</b> (сумма 100%) с обоснованием весов; порядок тактик «высокий → средний → базовый» приоритет; тайминг к сезонам рынка (запуск встречает январский пик найма); параллельные треки; решение D001 с обязательством, пересмотром и триггером стопа.</span></p>
-        <p><b>FAQ-6 · Метрики успеха</b><br><span>KPI в <b>двух плоскостях</b>: 1) Бизнес — выручка/платящие/конверсия/доля тарифов/фактический LTV-CAC; 2) Продукт — активация, время до первой ценности, сокращение действий, churn, NPS. У каждого — база, цель к сроку и порог действия; внизу — <b>сноски-источники</b> S### с URL, как в референсе.</span></p>
+        <p lang="en"><b>FAQ-4 · Tactics</b><br><span>The matrix "<b>Strategic initiative | Focus | User needs &amp; desires | Solutions (tactics)</b>": 2–4 rows per initiative; tactics are executable (what exactly gets built), not slogans; needs cover both the user and the operator where relevant. Every tactic is backed by a FAQ-1–3 conclusion.</span></p>
+        <p lang="en"><b>FAQ-5 · High-level implementation plan</b><br><span>The expected initiative contribution split — as <b>percentages</b> (summing to 100%) with weight reasoning; tactic order "high → medium → basic" priority; timing tied to market seasons (the launch meets the January hiring peak); parallel tracks; decision D001 with a commitment, a review and a stop trigger.</span></p>
+        <p lang="en"><b>FAQ-6 · Success metrics</b><br><span>KPIs in <b>two planes</b>: 1) Business — revenue/paying users/conversion/tier share/actual LTV-CAC; 2) Product — activation, time-to-first-value, fewer actions, churn, NPS. Each has a baseline, a deadline target and an action threshold; at the bottom — <b>source footnotes</b> S### with URLs, as in the reference.</span></p>
       </div>
     </div>
   </div>
@@ -502,8 +502,8 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="sec-head">
     <span class="overline" lang="ru">05 · Архитектура</span><span class="overline" lang="en">05 · Architecture</span>
     <h2 class="rv" lang="ru">Архитектура: как устроен агент</h2><h2 class="rv" lang="en">Architecture: how the agent works</h2>
-    <p class="lead rv d1" lang="ru">Слои агента: среда (AGENTS.md, 120 skills, 8 субагентов, 5 хуков) → CLI+MCP-ядро <code>tools/pfs</code> → база из 88 карт методик (RU + EN-индекс) и интеграции. Гарантии — не в промптах, а в коде pfs; состояние — в файлах проекта, поэтому работа переживает перерывы и переезды между средами.</p>
-    <p class="lead rv d1" lang="en">The agent's layers: environment (AGENTS.md, 120 skills, 8 subagents, 5 hooks) → the <code>tools/pfs</code> CLI+MCP core → a knowledge base of 88 method cards and integrations. Guarantees live in pfs code, not in prompts; state lives in project files, so work survives breaks and moves between environments.</p>
+    <p class="lead rv d1" lang="ru">Слои агента: среда (AGENTS.md, 120 skills, 8 субагентов, 4 хука) → CLI+MCP-ядро <code>tools/pfs</code> → база из 88 карт методик (RU + EN-индекс) и интеграции. Гарантии — не в промптах, а в коде pfs; состояние — в файлах проекта, поэтому работа переживает перерывы и переезды между средами.</p>
+    <p class="lead rv d1" lang="en">The agent's layers: environment (AGENTS.md, 120 skills, 8 subagents, 4 hooks) → the <code>tools/pfs</code> CLI+MCP core → a knowledge base of 88 method cards and integrations. Guarantees live in pfs code, not in prompts; state lives in project files, so work survives breaks and moves between environments.</p>
   </div>
   <div class="arch-scroll rv d2"><svg viewBox="0 0 1200 640" width="100%" role="img">
       <title>Архитектура агента / Agent architecture</title>
@@ -588,7 +588,7 @@ body[data-lang=ru] [lang=en]{display:none}
     <p class="lead rv d1" lang="en">You need Python 3.9+ and any environment: Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot. No packages to install.</p>
   </div>
   <pre class="term rv d2"><span id="typed"></span><span class="caret" style="display:inline-block;width:9px;height:16px;background:var(--accent);vertical-align:-2px;animation:blink 1s steps(1) infinite;border-radius:1px"></span></pre>
-  <p class="rv d3" lang="ru">Агент сам создаст проект, задаст 1–3 вопроса, проведёт исследование и покажет прогресс. «Стоп» — пауза, «уточни: …» — корректировка, «собери six-pager» — отчёт для комитета. После перерыва откройте новый чат — состояние подастся автоматически.</p>
+  <p class="rv d3" lang="ru">Агент сам создаст проект, задаст 1–3 вопроса, проведёт исследование и покажет прогресс. «Стоп» — пауза, «уточни: …» — корректировка, «собери six-pager» — отчёт для комитета. После перерыва откройте новый чат — состояние восстановится автоматически.</p>
   <p class="rv d3" lang="en">The agent creates the project, asks 1–3 questions, runs the research and shows progress. Say "stop" to pause, "clarify: …" to adjust, "build the six-pager" for the committee report. After a break, open a new chat — state is restored automatically.</p>
 </div></section>
 
@@ -623,7 +623,7 @@ body[data-lang=ru] [lang=en]{display:none}
     <tr><td>Decisions</td><td><code>decision add/due/done/rebase</code></td><td>grounds, owners, commitments, revisions</td></tr>
     <tr><td>Data</td><td><code>data profile/cohort/funnel/stats</code></td><td>table profile, cohorts, funnel, stats with 95% CI</td></tr>
     <tr><td>Excel &amp; reports</td><td><code>calc · export [--six-pager|--deck] · docx</code></td><td>formula workbooks; REPORT; six-pager; HTML deck; Word</td></tr>
-    <tr><td>Knowledge &amp; models</td><td><code>kb search/show/index · models</code></td><td>search across 72 cards; models per task</td></tr>
+    <tr><td>Knowledge &amp; models</td><td><code>kb search/show/index · models</code></td><td>search across 88 cards; models per task</td></tr>
     <tr><td>Cost</td><td><code>cost · log --usd</code></td><td>tokens and money per task</td></tr>
   </table>
   </div>
@@ -634,7 +634,7 @@ body[data-lang=ru] [lang=en]{display:none}
     <span class="overline" lang="ru">08 · FAQ</span><span class="overline" lang="en">08 · FAQ</span>
     <h2 class="rv" lang="ru">Частые вопросы</h2><h2 class="rv" lang="en">Frequently asked questions</h2>
   </div>
-  <details class="qa rv" lang="ru"><summary>Что такое «Стратег Фабрики продуктов»?</summary><p>ИИ-агент — папка с инструкциями, базой знаний из 80 методических карт (RU + EN-индекс) и CLI/MCP-инструментами (<code>pfs</code>). Он ведёт руководителя продукта от размытого запроса до обоснованной продуктовой и коммуникационной стратегии с планом проверки — и не бросает после решения.</p></details>
+  <details class="qa rv" lang="ru"><summary>Что такое «Стратег Фабрики продуктов»?</summary><p>ИИ-агент — папка с инструкциями, базой знаний из 88 методических карт (RU + 16 EN-зеркал) (RU + EN-индекс) и CLI/MCP-инструментами (<code>pfs</code>). Он ведёт руководителя продукта от размытого запроса до обоснованной продуктовой и коммуникационной стратегии с планом проверки — и не бросает после решения.</p></details>
   <details class="qa rv" lang="ru"><summary>Чем он отличается от обычного чата с ИИ?</summary><p>Каждое существенное сведение — с источником (S###) и типом (факт/гипотеза/прогноз/допущение/вывод) и силой A–D. В демо-прогоне 100% чисел прослеживаются до источников; у обычного чата — 0%. Плюс: варианты с red team, план проверки, решение с основаниями и журналом.</p></details>
   <details class="qa rv" lang="ru"><summary>Мои данные и источники в безопасности?</summary><p>Только открытые источники и ваши материалы. Секреты — в <code>.env</code>, не в репозитории. Команды, найденные внутри источников, не исполняются — помечаются как попытка инъекции. Разрешённые домены проверяются до запроса.</p></details>
   <details class="qa rv" lang="ru"><summary>Можно ли перенести проект в другую среду?</summary><p>Да. Проект — обычная папка (<code>projects/&lt;slug&gt;/</code>): скопируйте или git push/pull и откройте в Claude Code, Cursor, Codex, OpenCode, Windsurf или Copilot. <code>pfs status</code> восстановит контекст.</p></details>
@@ -660,7 +660,7 @@ body[data-lang=ru] [lang=en]{display:none}
     <a class="hcard" href="help.html#h-trouble"><h3 lang="ru">Частые проблемы</h3><h3 lang="en">Troubleshooting</h3><p lang="ru">Симптом → решение: источники, домены, Excel, среды.</p><p lang="en">Symptom → fix: sources, domains, Excel, environments.</p><span class="go" lang="ru">Открыть →</span><span class="go" lang="en">Open →</span></a>
   </div>
   <div class="cta rv d3" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:24px">
-    <a class="btn light" href="help.html?v=8" lang="ru">Открыть полную справку</a><a class="btn light" href="help.html?v=8" lang="en">Open the full help</a>
+    <a class="btn light" href="help.html?v=9" lang="ru">Открыть полную справку</a><a class="btn light" href="help.html?v=9" lang="en">Open the full help</a>
   </div>
 </div></section>
 
@@ -671,7 +671,7 @@ body[data-lang=ru] [lang=en]{display:none}
   <p class="lead rv d1" style="margin:0 auto 30px" lang="en">Clone the repository, describe your task in plain words — the agent builds the plan, gathers sources and comes back with options and a recommendation you can trust.</p>
   <div class="cta rv d2" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
     <a class="btn light" href="https://github.com/Fighter90/product-factory-strategist" lang="ru">Открыть репозиторий</a><a class="btn light" href="https://github.com/Fighter90/product-factory-strategist" lang="en">Open the repository</a>
-    <a class="btn ghost" href="demo.html?v=8" lang="ru">Смотреть демо-разбор</a><a class="btn ghost" href="demo.html?v=8" lang="en">See the demo walkthrough</a>
+    <a class="btn ghost" href="demo.html?v=9" lang="ru">Смотреть демо-разбор</a><a class="btn ghost" href="demo.html?v=9" lang="en">See the demo walkthrough</a>
   </div>
 </div></section>
 
@@ -682,9 +682,9 @@ body[data-lang=ru] [lang=en]{display:none}
     <div lang="en">An AI agent for digital product directors</div>
   </div>
   <div style="display:flex;gap:18px;flex-wrap:wrap">
-    <a href="demo.html?v=8" lang="ru">Демо</a><a href="demo.html?v=8" lang="en">Demo</a>
-    <a href="materials.html?v=8" lang="ru">Материалы</a><a href="materials.html?v=8" lang="en">Materials</a>
-    <a href="help.html?v=8" lang="ru">Справка</a><a href="help.html?v=8" lang="en">Help</a>
+    <a href="demo.html?v=9" lang="ru">Демо</a><a href="demo.html?v=9" lang="en">Demo</a>
+    <a href="materials.html?v=9" lang="ru">Материалы</a><a href="materials.html?v=9" lang="en">Materials</a>
+    <a href="help.html?v=9" lang="ru">Справка</a><a href="help.html?v=9" lang="en">Help</a>
     <a href="https://github.com/Fighter90/product-factory-strategist/wiki">Wiki</a>
     <a href="https://strategyproduct.ru/demo.html">strategyproduct.ru</a>
   </div>
@@ -778,7 +778,7 @@ const LINES = [
   '$ git clone https://github.com/Fighter90/product-factory-strategist.git',
   '$ cd product-factory-strategist',
   '$ python3 -m tools.pfs doctor',
-  '✓ Python 3.12: ok · pdftotext: есть · карт в базе знаний: 72',
+  '✓ Python 3.12: ok · pdftotext: есть · карт в базе знаний: 88',
   '$ python3 -m unittest discover -s tests',
   '✓ Ran 103 tests — OK'
 ];

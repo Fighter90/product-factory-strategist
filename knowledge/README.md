@@ -25,9 +25,9 @@
 ---
 id: M-<тема>                # уникальный, латиница, kebab-case, например M-jtbd
 title: Название метода
-course: strategy | pm | ux | data | ai | skills | synthesis
+course: strategy | pm | product | ux | data | ai | skills | synthesis
 sources: ["происхождение материала", "..."]   # без названий компаний
-stages: [intake, research, situation, options, strategy, validation, review, after-decision]
+stages: [intake, research, discovery, situation, options, choice, strategy, validation, review, delivery, monitoring, after-decision]
 tags: [конкуренты, jtbd]
 related: [M-competitors, M-market-sizing]
 ---
@@ -59,4 +59,4 @@ related: [M-competitors, M-market-sizing]
 Правила: одна карта — 60–250 строк; язык — русский; англоязычные термины — в скобках при первом упоминании;
 формулы метрик — с единицами и периодом; без общих слов.
 
-**EN mirror:** `knowledge/methods_en/` — английские версии ключевых карт и набор PM approaches; `knowledge/INDEX_EN.md` — английский индекс всей базы. Канонический поиск (`pfs kb search`) работает по RU и EN совместно.
+**EN mirror:** `knowledge/methods_en/` — английские версии ключевых карт и набор PM approaches; `knowledge/INDEX_EN.md` — EN-индекс: PM-подходы (16 карт EN) + полный перечень RU-канона. Канонический поиск (`pfs kb search`) работает по RU и EN совместно.

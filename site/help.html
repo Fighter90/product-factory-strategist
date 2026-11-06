@@ -150,9 +150,9 @@ body[data-lang=ru] [lang=en]{display:none}
   <h1 lang="ru">Справка <span class="grad">·</span> агент</h1><h1 lang="en">Agent <span class="grad">help</span></h1>
   <p class="sub" lang="ru">Полная документация: как общаться с агентом, все 12 шагов процесса, доказательства S### → C### → D###, Excel-модели и six-pager, инструменты (CLI, MCP, навыки, субагенты, хуки), среды и интеграции, безопасность, глоссарий и частые проблемы.</p>
   <p class="sub" lang="en">Full documentation: talking to the agent, all 12 process steps, evidence S### → C### → D###, Excel models and the six-pager, tooling (CLI, MCP, skills, subagents, hooks), environments and integrations, security, glossary and troubleshooting.</p>
-  <div class="meta" lang="ru">12 шагов · 88 карт знаний (RU + EN-индекс) · 120 навыков · 8 субагентов · 5 хуков · 18 MCP-инструментов · 0 зависимостей</div>
-  <div class="meta" lang="en">12 steps · 72 knowledge cards · 120 skills · 8 subagents · 5 hooks · 18 MCP tools · 0 dependencies</div>
-  <div class="search"><input id="q" type="search" placeholder="Поиск по справке… / Search the help…" aria-label="Поиск по справке"></div>
+  <div class="meta" lang="ru">12 шагов · 88 карт знаний (RU + EN-индекс) · 120 навыков · 8 субагентов · 4 хука · 18 MCP-инструментов · 0 зависимостей</div>
+  <div class="meta" lang="en">12 steps · 88 knowledge cards · 120 skills · 8 subagents · 4 hooks · 18 MCP tools · 0 dependencies</div>
+  <div class="search"><input id="q" type="search" placeholder="Поиск по справке… / Search the help…" aria-label="Поиск по справке / Search the help"></div>
 </div></div>
 
 <div class="wrap"><div class="layout">
@@ -306,15 +306,15 @@ $ python3 -m tools.pfs new "Название" "Запрос дословно"</p
     </div>
 
 <div class="faq rv" id="h-workflow"><h3 lang="ru">Устройство цикла: 12 шагов и фазы</h3><h3 lang="en">The cycle: 12 steps and phases</h3>
-      <p lang="ru">Цикл = 12 шагов в четырёх фазах двойного романа: <b>Discover</b> (0–3) → <b>Define</b> (4–6) → <b>Develop</b> (7–9) → <b>Deliver</b> (10–11). У каждого шага: обязательные карты знаний (<code>pfs step</code> печатает какие), вопросный блок (<code>pfs questions &lt;шаг&gt;</code>), ворота качества и артефакт на выходе. Прогресс виден одной строкой: <code>Шаг N/12 · research · источники S001–S009 · дальше: ситуация</code>. Шаги 0, 6 и 10 — паузы человека: бриф, выбор варианта, утверждение решения.</p>
+      <p lang="ru">Цикл = 12 шагов в четырёх фазах двойного алмаза: <b>Discover</b> (0–3) → <b>Define</b> (4–6) → <b>Develop</b> (7–9) → <b>Deliver</b> (10–11). У каждого шага: обязательные карты знаний (<code>pfs step</code> печатает какие), вопросный блок (<code>pfs questions &lt;шаг&gt;</code>), ворота качества и артефакт на выходе. Прогресс виден одной строкой: <code>Шаг N/12 · research · источники S001–S009 · дальше: ситуация</code>. Шаги 0, 6 и 10 — паузы человека: бриф, выбор варианта, утверждение решения.</p>
       <p lang="en">The cycle is 12 steps in four double-diamond phases: <b>Discover</b> (0–3) → <b>Define</b> (4–6) → <b>Develop</b> (7–9) → <b>Deliver</b> (10–11). Each step has mandatory knowledge cards (<code>pfs step</code> prints them), a question block (<code>pfs questions &lt;step&gt;</code>), quality gates and an artifact. Progress shows in one line: <code>Step N/12 · research · sources S001–S009 · next: situation</code>. Steps 0, 6, 10 are human pauses: brief, option choice, decision approval.</p></div>
 
     <div class="faq rv" id="h-step0"><h3><span class="lbl">шаг 0</span><span lang="ru">Бриф</span><span lang="en">Brief</span></h3>
-      <p lang="ru"><b>Вход:</b> ваш запрос дословно. <b>Агент:</b> уточняет целевое решение, цель, получателя и формат результата, ограничения, доступные данные — вопросным блоком intake (≤3 вопроса с вариантами и рекомендацией). <b>Выход:</b> <code>outputs/00_brief.md</code>. <b>Человек:</b> <span class="pause">подтверждает бриф</span> — после этого он фиксируется и служит основанием допущений (как источник S020 в демо). <b>Команды:</b> <code>pfs new</code>, <code>pfs questions intake</code>, <code>pfs answer "…"</code>.</p>
+      <p lang="ru"><b>Вход:</b> ваш запрос дословно. <b>Агент:</b> уточняет целевое решение, цель, получателя и формат результата, ограничения, доступные данные — вопросным блоком intake (≤3 вопроса с вариантами и рекомендацией). <b>Выход:</b> <code>outputs/00_brief.md</code>. <b>Человек:</b> <span class="pause">подтверждает бриф</span> — после этого он фиксируется и служит основанием допущений (как источник S011 в демо). <b>Команды:</b> <code>pfs new</code>, <code>pfs questions intake</code>, <code>pfs answer "…"</code>.</p>
       <p lang="en"><b>Input:</b> your request verbatim. <b>Agent:</b> clarifies the target decision, goal, audience and format, constraints, available data — the intake question block (≤3 questions with options and a recommendation). <b>Output:</b> <code>outputs/00_brief.md</code>. <b>Human:</b> <span class="pause">approves the brief</span> — it is then fixed and can ground assumptions (like source S020 in the demo). <b>Commands:</b> <code>pfs new</code>, <code>pfs questions intake</code>, <code>pfs answer "…"</code>.</p></div>
 
     <div class="faq rv" id="h-step1"><h3><span class="lbl">шаг 1</span><span lang="ru">Источники</span><span lang="en">Sources</span></h3>
-      <p lang="ru"><b>Вход:</b> ваши файлы и список открытых сайтов. <b>Агент:</b> регистрирует материалы — <code>pfs source add &lt;url|файл&gt;</code> — с дедупликацией по URL и SHA-256 (повтор не создаёт дубль), извлекает текст из PDF/DOCX/XLSX/CSV/страниц, проверяет домен по <code>allowed_sources</code> проекта, помечает найденные фразы-инструкции (это данные, не команды). <b>Выход:</b> <code>sources/S###.md</code> + копии в <code>sources/raw/</code>. <b>Команды:</b> <code>add/list/show/refresh</code>; обновление web-источника сравнивает хеш и предупреждает о изменениях.</p>
+      <p lang="ru"><b>Вход:</b> ваши файлы и список открытых сайтов. <b>Агент:</b> регистрирует материалы — <code>pfs source add &lt;url|файл&gt;</code> — с дедупликацией по URL и SHA-256 (повтор не создаёт дубль), извлекает текст из PDF/DOCX/XLSX/CSV/страниц, проверяет домен по <code>allowed_sources</code> проекта, помечает найденные фразы-инструкции (это данные, не команды). <b>Выход:</b> <code>sources/S###.md</code> + копии в <code>sources/raw/</code>. <b>Команды:</b> <code>add/list/show/refresh</code>; обновление web-источника сравнивает хеш и предупреждает об изменениях.</p>
       <p lang="en"><b>Input:</b> your files and a list of public pages. <b>Agent:</b> registers materials — <code>pfs source add &lt;url|file&gt;</code> — dedup by URL and SHA-256 (a repeat adds nothing), extracts text from PDF/DOCX/XLSX/CSV/pages, checks the domain against the project's <code>allowed_sources</code>, flags embedded instruction-like phrases (data, not commands). <b>Output:</b> <code>sources/S###.md</code> + copies in <code>sources/raw/</code>. <b>Commands:</b> <code>add/list/show/refresh</code>; refreshing a web source compares hashes and warns on changes.</p></div>
 
     <div class="faq rv" id="h-step2"><h3><span class="lbl">шаг 2</span><span lang="ru">Исследование</span><span lang="en">Research</span></h3>
@@ -334,8 +334,8 @@ $ python3 -m tools.pfs new "Название" "Запрос дословно"</p
       <p lang="en"><b>Agent:</b> prepares <b>at least three substantively distinct options</b>, including "do nothing" and "shut it down" — check verifies their presence by keywords. Each with: strong objections (attacked by the <code>red-team</code> subagent), formula-based economics with ranges, and the conditions under which the option is right. <b>Output:</b> <code>outputs/03_options.md</code>. <b>Gate:</b> red team has responded, check passes.</p></div>
 
     <div class="faq rv" id="h-step6"><h3><span class="lbl">шаг 6</span><span lang="ru">Выбор — пауза человека</span><span lang="en">Choice — human pause</span></h3>
-      <p lang="ru"><b>Агент:</b> показывает сравнение вариантов (критерии, экономика, риски) и одну рекомендацию, затем спрашивает — <code>pfs ask "Какой вариант принимаем?" --options "A,B,C"</code>. <b>Человек:</b> <span class="pause">выбирает вариант</span> — ответ сохраняется в state.json и становится основанием стратегий и решения D### (как S021 в демо-antispam). Никакие стратегии не пишутся до выбора.</p>
-      <p lang="en"><b>Agent:</b> shows the option comparison (criteria, economics, risks) and a single recommendation, then asks — <code>pfs ask "Which option do we take?" --options "A,B,C"</code>. <b>Human:</b> <span class="pause">picks the option</span> — the answer is stored in state.json and grounds the strategies and the D### decision (like S021 in the antispam demo). No strategies are written before the choice.</p></div>
+      <p lang="ru"><b>Агент:</b> показывает сравнение вариантов (критерии, экономика, риски) и одну рекомендацию, затем спрашивает — <code>pfs ask "Какой вариант принимаем?" --options "A,B,C"</code>. <b>Человек:</b> <span class="pause">выбирает вариант</span> — ответ сохраняется в state.json и становится основанием стратегий и решения D### (как S009 в демо CVStart). Никакие стратегии не пишутся до выбора.</p>
+      <p lang="en"><b>Agent:</b> shows the option comparison (criteria, economics, risks) and a single recommendation, then asks — <code>pfs ask "Which option do we take?" --options "A,B,C"</code>. <b>Human:</b> <span class="pause">picks the option</span> — the answer is stored in state.json and grounds the strategies and the D### decision (like S011 in the CVStart demo). No strategies are written before the choice.</p></div>
 
     <div class="faq rv" id="h-step7"><h3><span class="lbl">шаг 7</span><span lang="ru">Стратегии</span><span lang="en">Strategies</span></h3>
       <p lang="ru"><b>Агент:</b> пишет <b>продуктовую</b> стратегию — аудитория и её задача, альтернативы, выбранное направление и <i>осознанные отказы</i>, связь пользы с затратами и доходами — и <b>коммуникационную</b> — аудитория и ситуация, барьер понимания, ключевое сообщение, его подтверждение, роль каналов. Согласованность проверяется таблицей «обещание → подтверждение в продукте»: каждый промис ссылается на C###. Субагент <code>comms-strategist</code> готовит черновик коммуникационной части. <b>Выход:</b> <code>04_product_strategy.md</code>, <code>05_comms_strategy.md</code>.</p>
@@ -369,7 +369,7 @@ $ python3 -m tools.pfs new "Название" "Запрос дословно"</p
         <tr><td><code>public/web</code></td><td>Открытые сайты и публикации (по умолчанию)</td><td>Разрешённые домены проекта</td></tr>
         <tr><td><code>own</code></td><td>Ваши материалы: брифы, выгрузки, внутренние документы</td><td>Без закрытых данных и персональных данных</td></tr>
         <tr><td><code>interview</code></td><td>Реальные интервью — с согласия участников</td><td>Без персональных данных в репозитории</td></tr>
-        <tr><td><code>synthetic</code></td><td>ИИ-респонденты, модельные данные</td><td><span class="pause">Только гипотезы</span>: факт на синтетике запретён чекером</td></tr>
+        <tr><td><code>synthetic</code></td><td>ИИ-респонденты, модельные данные</td><td><span class="pause">Только гипотезы</span>: факт на синтетике запрещён чекером</td></tr>
       </table>
       <table lang="en">
         <tr><th>Origin</th><th>What it is</th><th>Constraint</th></tr>
@@ -436,7 +436,7 @@ pfs decision rebase --id D001 --note "основания обновлены"</pr
   --owner "PM" --grounds C012,C047,C059 \
   --metric "конверсия в пакет: 2% -> 4% @2027-03-01" \
   --review 2027-01-15 --trigger "конверсия < 2.5% к декабрю" \
-  --commitment "лендинг пакета | дизайн | до 15.12"</pre>
+  --commit "лендинг пакета | дизайн | до 15.12"</pre>
       <p lang="ru"><b>Следить:</b> <code>pfs decision due</code> — просрочки, наступившие пересмотры, решения с устаревшими основаниями; <code>pfs decision done --id D001 --commitment K1</code> — закрыть обязательство; <code>pfs decision list</code> — реестр. Новый источник изменил основания? — <code>pfs impact</code>, supersede, затем <code>pfs decision rebase --id D001 --note "…"</code>.</p>
       <p lang="en"><b>Track:</b> <code>pfs decision due</code> — overdue items, due reviews, decisions with stale grounds; <code>pfs decision done --id D001 --commitment K1</code> — close a commitment; <code>pfs decision list</code> — registry. New data changed the grounds? — run impact, supersede, then <code>pfs decision rebase --id D001 --note "…"</code>.</p></div>
 
@@ -525,7 +525,7 @@ pfs decision rebase --id D001 --note "основания обновлены"</pr
         <tr><td>Журнал и цена</td><td><code>log --kind … --human-minutes · cost</code></td><td>действия; ручное время; токены и деньги по моделям</td></tr>
         <tr><td>Сервис</td><td><code>doctor</code></td><td>проверка окружения: Python, pdftotext, pypdf, БЗ, профиль моделей</td></tr>
       </table>
-      <p lang="en">Same groups in English: projects (new/list/use/status) · steps (step/next/questions) · ask/answer · sources (S###, dedup, domains, refresh) · claims (C###, 5 types, grades, history) · quality (check/impact) · decisions (D###) · data (profile/cohort/funnel/stats) · interviews · media &amp; UX · knowledge (BM25 over 72 cards) · models (profiles, escalation) · calc (4 formula workbooks) · export (REPORT/six-pager/deck/docx) · log &amp; cost · doctor.</p></div>
+      <p lang="en">Same groups in English: projects (new/list/use/status) · steps (step/next/questions) · ask/answer · sources (S###, dedup, domains, refresh) · claims (C###, 5 types, grades, history) · quality (check/impact) · decisions (D###) · data (profile/cohort/funnel/stats) · interviews · media &amp; UX · knowledge (BM25 over 88 cards) · models (profiles, escalation) · calc (4 formula workbooks) · export (REPORT/six-pager/deck/docx) · log &amp; cost · doctor.</p></div>
 
     <div class="faq rv" id="h-mcp"><h3 lang="ru">MCP-сервер: 18 инструментов</h3><h3 lang="en">MCP server: 18 tools</h3>
       <p lang="ru">Сервер <code>pfs-strategist</code> (stdio, только stdlib) подключается в <code>.mcp.json</code> любой среды — агент может вызывать те же операции, что и CLI. Инструменты:</p>
@@ -608,8 +608,8 @@ pfs data stats file.csv --col revenue --group seg              # статист�
       <p lang="en"><code>pfs media add shot.png --desc "what is visible" --title "…"</code> copies the media to <code>sources/raw/</code> and turns the description into a text source: the agent analyzes exactly what is described. <code>pfs ux scaffold S003 --focus "onboarding"</code> builds a heuristics + journey scaffold bound to the material; the <code>ux-analyst</code> subagent fills it without inventing beyond the screenshots.</p></div>
 
     <div class="faq rv" id="h-env-claude"><h3 lang="ru">Среда: Claude Code — полный опыт</h3><h3 lang="en">Environment: Claude Code — the full experience</h3>
-      <p lang="ru">Откройте папку репозитория в Claude Code — всё подхватится автоматически: 120 навыков, 8 субагентов, 5 хуков (контекст при старте, домены, инъекции, стоимость), команды <code>/pfs-status</code>, <code>/sixpager</code>, <code>/new</code>. Просто напишите задачу — дальше агент ведёт сам.</p>
-      <p lang="en">Open the repo folder in Claude Code — everything auto-loads: 120 skills, 8 subagents, 5 hooks, slash commands (<code>/pfs-status</code>, <code>/sixpager</code>, <code>/new</code>). Just state the task — the agent takes it from there.</p></div>
+      <p lang="ru">Откройте папку репозитория в Claude Code — всё подхватится автоматически: 120 навыков, 8 субагентов, 4 хука (контекст при старте, домены, инъекции, стоимость), команды <code>CLI <code>pfs …</code> и MCP-инструменты. Просто напишите задачу — дальше агент ведёт сам.</p>
+      <p lang="en">Open the repo folder in Claude Code — everything auto-loads: 120 skills, 8 subagents, 4 hooks, the CLI (<code>pfs …</code>) and MCP tools. Just state the task — the agent takes it from there.</p></div>
 
     <div class="faq rv" id="h-env-others"><h3 lang="ru">Среды: Cursor, Codex, OpenCode, Windsurf, Copilot</h3><h3 lang="en">Environments: Cursor, Codex, OpenCode, Windsurf, Copilot</h3>
       <p lang="ru">Все среды читают <code>AGENTS.md</code>. <b>Cursor</b> — правило <code>.cursor/rules</code> + MCP из <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — без хуков: начните с «прочитай AGENTS.md и выполни <code>pfs status</code>» — агент восстановит контекст и продолжит. MCP <code>pfs-strategist</code> работает во всех (launcher с sys.path не зависит от папки запуска).</p>
@@ -679,11 +679,11 @@ pfs data stats file.csv --col revenue --group seg              # статист�
         <tr><td><b>S###</b></td><td>источник: файл, сайт, интервью, синтетика — минимальная единица доверия</td></tr>
         <tr><td><b>C###</b></td><td>утверждение: факт / гипотеза / прогноз / допущение / вывод с силой A–D</td></tr>
         <tr><td><b>D###</b></td><td>решение: основания, ответственный, метрика, дата пересмотра, обязательства</td></tr>
-        <tr><td><b>Шесть-pager</b></td><td>отчёт FAQ-1…6 для комитета + Excel-приложения</td></tr>
+        <tr><td><b>Six-pager</b></td><td>отчёт FAQ-1…6 для комитета + Excel-приложения</td></tr>
         <tr><td><b>Red team</b></td><td>субагент, атакующий каждый вариант сильными возражениями</td></tr>
         <tr><td><b>JTBD</b></td><td>работа, на которую «нанимают» продукт; основа сегментов</td></tr>
         <tr><td><b>Трекшн-модель</b></td><td>модель роста: baseline + драйверы + монетизация</td></tr>
-        <tr><td><b>Двойной роман</b></td><td>фазы Discover → Define → Develop → Deliver (шаги 0–11)</td></tr>
+        <tr><td><b>Двойной алмаз (Double Diamond)</b></td><td>фазы Discover → Define → Develop → Deliver (шаги 0–11)</td></tr>
         <tr><td><b>Синтетика</b></td><td>ответы ИИ-респондентов; только гипотезы, помечена origin=synthetic</td></tr>
         <tr><td><b>Инъекция</b></td><td>команда, спрятанная в тексте источника; помечается и не исполняется</td></tr>
         <tr><td><b>Ворота шага</b></td><td>условие перехода дальше (обычно check без ошибок + ответ человека)</td></tr>

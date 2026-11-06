@@ -3,7 +3,7 @@ id: M-retention-curves-en
 title: Retention curves — smile curve, plateau, decay; how to read them, cohort curves and industry benchmarks
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [validation]
 tags: [en, summary]
 related: []
 ---

@@ -8,7 +8,7 @@
 за обязательствами и пересматривает выводы при новых данных.
 
 Это папка-репозиторий: инструкции, наборы знаний по категориям (стратегия · экономика · продукт · UX ·
-данные · платформы · Gen AI), 120 навыка, 8 субагентов, 5 хуков
+данные · платформы · Gen AI), 120 навыков, 8 субагентов, 4 хука
 и CLI/MCP-инструменты на чистом Python (ноль зависимостей). Работает в Claude Code, Cursor, Codex, OpenCode,
 Windsurf, Copilot.
 
@@ -141,9 +141,9 @@ python3 -m tools.pfs new "Название" "Запрос дословно"
 ## Как агент работает: 12 шагов
 
 На каждом шаге агент **читает обязательные карты базы знаний** (печатаются в `pfs step`), проходит
-**вопросный блок** (`pfs questions <шаг>` — минимум 1–3 вопроса руководителю, пропуск — только через журнал)
+**вопросный блок** (`pfs questions <шаг>` — 1–3 вопроса руководителю, пропуск — только через журнал)
 и упирается в **ворота качества**. Фазы двойного романа: Discover (0–3) → Define (4–6) → Develop (7–9) →
-Deliver (10–12).
+Deliver (10–11).
 
 ```mermaid
 flowchart TD
@@ -177,7 +177,7 @@ flowchart TD
 flowchart TB
   U["Руководитель продукта"] -->|"запрос · ответы на блоки вопросов"| ENV
   subgraph ENV["LLM-среда (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 120<br/>(базовые 13 + product-skills 27 + личная 60 + интеграции 6: sdd · deck · premortem · board-of-directors · hallmark · rea)"]
+    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 120<br/>(базовые 13 + product-skills 27 + личная 74 + интеграции 6: sdd · deck · premortem · board-of-directors · hallmark · rea)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 5<br/>SessionStart · PreWeb-домены · PostTool-журнал · Stop-стоимость (+ общий модуль)"]
   end
@@ -210,7 +210,7 @@ flowchart TB
 flowchart TB
   SK["120 навыка"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: процедуры методов<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
-  SK --> L["Личная библиотека ~60<br/>дизайн · маркетинг · наука · документы/медиа · режимы мышления · мета"]
+  SK --> L["Личная библиотека 74<br/>дизайн · маркетинг · наука · документы/медиа · режимы мышления · мета"]
   SK --> INT["Интеграции 6<br/>hallmark · board-of-directors · premortem · rea · sdd · deck"]
   B & P & L & INT --> INV["Вызов: авто по триггерам · явно «используй skill X» · по шагам процесса"]
 ```
@@ -220,15 +220,15 @@ flowchart TB
   decision-support, data-analysis, interviews, ux-review, six-pager, deep-research, strategist.
 - **Product-skills 27** — процедуры методов: market-sizing, unit-economics, traction-modeling,
   solution-design, mvp-pilot-launch, problem-design…
-- **Личная библиотека 60** — дизайн: design-ui, refero-design, frontend-design, make-interfaces-feel-better,
+- **Личная библиотека 74** — дизайн: design-ui, refero-design, frontend-design, make-interfaces-feel-better,
   emil-design-eng, web-design-guidelines; маркетинг: ads, ad-creative, seo-audit, ai-seo, cro, pricing,
   offers, cold-email, emails, launch, content-strategy, competitors, analytics, programmatic-seo,
-  directory-submissions, customer-research, marketing-psychology, prospecting; наука: paper-lookup,
+  directory-submissions, customer-research, marketing-psychology, prospecting, sales-enablement, signup, onboarding, paywalls, revops; наука: paper-lookup,
   research-lookup, literature-review, scientific-writing, scientific-critical-thinking, peer-review,
   statistical-analysis, statsmodels, scikit-learn, hypothesis-generation, pydeseq2, biopython, rdkit;
   документы/медиа: pdf, docx, pptx, xlsx, markitdown, officecli, generate-image, video, infographics,
   scientific-slides, scientific-schematics, scientific-visualization, latex-posters, matplotlib, seaborn;
-  режимы мышления: consciousness-council, balanced, what-if-oracle, dhdna-profiler; мета: skill-creator,
+  режимы мышления: consciousness-council, balanced, what-if-oracle, dhdna-profiler; мета:
   find-skills, shap, watch, transcribe.
 - **Интеграции 6** — hallmark, board-of-directors, premortem, rea, sdd, deck.
 
@@ -349,13 +349,13 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 
 ```
 AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject.toml
-.claude/skills/      (120)  базовые 13 · product-skills 27 · личная 60 · интеграции 6
+.claude/skills/      (120)  базовые 13 · product-skills 27 · личная 74 · интеграции 6
 .claude/agents/      (8)    researcher · red-team · evidence-auditor · synthetic-respondent ·
                             data-analyst · ux-analyst · comms-strategist · router
 .claude/hooks/       (5)    session_start (SessionStart-контекст) · pre_web (домены до запроса) ·
                             post_tool (журнал и автопроверка) · stop (стоимость) · _common
 .claude/settings.json
-.cursor/rules/       .github/ (Pages workflow) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable)
+.cursor/rules/       .github/ (Pages workflow) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable · rea)
 config/              models.json · pricing.json · quality_gate.json · question_blocks.json
 knowledge/           methods/ (88 карт RU) · methods_en/ (16 EN-зеркал) · INDEX.md · INDEX_EN.md
 tools/pfs/           core · project · route · sources · claims · check · impact · decisions ·
@@ -364,7 +364,7 @@ projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl �
                      outputs/ (00…07 · REPORT · SIX_PAGER · attachments/*.xlsx · presentations/)
                      демо-проект: демо — CVStart (сквозной прогон · six-pager RU/EN (MD/PDF/DOCX) ·
                      Excel · 100/100)
-site/                index.html (RU/EN)
+site/                index.html · demo.html · materials.html · help.html (RU/EN)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
 tests/               (103)

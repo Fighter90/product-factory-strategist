@@ -126,9 +126,9 @@ Rules: project domains (`project.json → allowed_sources`) are checked before t
 
 ### Claims (C###) — the heart of the agent
 ```bash
-pfs claim add "Market is 40 B RUB" fact --source S002 --grade B
-pfs claim add "People will pay for family protection" hypothesis --source S005
-pfs claim add "Therefore focus on families" inference --from C003,C010
+pfs claim add "Market is 40 B RUB" --kind fact --source S002 --grade B
+pfs claim add "People will pay for family protection" --kind hypothesis --source S005
+pfs claim add "Therefore focus on families" --kind inference --from C003,C010
 pfs claim list [--kind fact] [--all]
 pfs claim retract --id C005 --reason "methodology error"
 pfs claim supersede --id C005 "Market is 45 B RUB" --reason "new report" [--source S009]
@@ -256,7 +256,7 @@ groups plus integrations):
 - **Base (13)** — one per process step: `intake`, `research`, `situation`, `options`, `strategy`,
   `validation-plan`, `decision-support`, `six-pager`, `deck`, etc.
 - **Product-skills (27)** — domain packs around the process: segments, JTBD, unit economics, growth, risks.
-- **Personal library (~59)** — imported packs by category:
+- **Personal library (74)** — imported packs by category:
   - **Design** — `design-ui`, `refero-design`, `frontend-design`, `make-interfaces-feel-better`,
     `emil-design-eng`, `web-design-guidelines`;
   - **Marketing** — `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `cold-email`,
@@ -268,9 +268,9 @@ groups plus integrations):
   - **Docs/media** — `pdf`, `docx`, `pptx`, `xlsx`, `markitdown`, `officecli`, `generate-image`, `video`,
     `infographics`, `scientific-slides`/`scientific-schematics`/`scientific-visualization`, `latex-posters`,
     `matplotlib`, `seaborn`;
-  - **Thinking modes** — `board-of-directors`, `consciousness-council`, `balanced`, `what-if-oracle`,
+  - **Thinking modes** — `consciousness-council`, `balanced`, `what-if-oracle`,
     `dhdna-profiler`;
-  - **Meta** — `skill-creator`, `find-skills`, `shap`, `watch`, `transcribe`.
+  - **Meta** — `find-skills`, `shap`, `watch`, `transcribe`.
 - **Integrations** — cross-process behaviors: `hallmark` (anti-slop gates for pages), `board-of-directors`
   (5-perspective council + Red Team), `premortem` (failure pre-mortem), `rea` (reverse engineering of pages
   and closed formats), `sdd`, `deck`.
@@ -371,7 +371,7 @@ Linear integration: key in `.env` (`LINEAR_API_KEY`), server — `npx mcp-server
 ```bash
 pfs new "…" "…" / pfs use slug / pfs status          # projects
 pfs source add <url|file>                            # sources
-pfs claim add "…" fact --source S001 --grade B       # claims
+pfs claim add "…" --kind fact --source S001 --grade B       # claims
 pfs check --strict                                   # quality gate
 pfs calc all                                         # Excel
 pfs export --six-pager                               # committee report
