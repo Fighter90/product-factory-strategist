@@ -1,8 +1,10 @@
 """Минимальный DOCX-писатель на стандартной библиотеке: Markdown → Word.
 
 Поддерживает: заголовки H1–H4, абзацы, **жирный**, `код`, маркированные и
-нумерованные списки, таблицы, блоки кода, цитаты. Картинки и диаграммы не
-переносятся. Зачем: docx-версии документации (HELP, README) без сторонних пакетов.
+нумерованные списки, таблицы, блоки кода, цитаты, изображения `![alt](путь)`
+(PNG/JPEG/GIF вшиваются в word/media, ширина отображения до ~600 px; путь
+относительно исходного .md). Зачем: docx-версии документации и six-pager
+без сторонних пакетов.
 Запуск: pfs docx <файл.md> [--out файл.docx]
 """
 from __future__ import annotations
@@ -15,6 +17,13 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 
 _W = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
+_R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+_A = "http://schemas.openxmlformats.org/drawingml/2006/main"
+_WP = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+_PIC = "http://schemas.openxmlformats.org/drawingml/2006/picture"
+
+_IMG_RE = re.compile(r"^!\[([^\]]*)\]\(([^)\s]+)\)\s*$")
+_IMG_CT = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "gif": "image/gif"}
 
 _STYLES = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles %s>
@@ -51,6 +60,51 @@ def _p(text: str, style: str | None = None) -> str:
     return f"<w:p>{ppr}{_runs(text)}</w:p>"
 
 
+def _dims(data: bytes, ext: str) -> tuple[int, int]:
+    """(ширина, высота) изображения в пикселях из байтов PNG/JPEG/GIF."""
+    if ext == "png" and data[:8] == b"\x89PNG\r\n\x1a\n" and len(data) >= 24:
+        return int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big")
+    if ext == "gif" and data[:6] in (b"GIF87a", b"GIF89a") and len(data) >= 10:
+        return int.from_bytes(data[6:8], "little"), int.from_bytes(data[8:10], "little")
+    if ext in ("jpg", "jpeg") and data[:2] == b"\xff\xd8":
+        i = 2
+        while i + 9 < len(data):
+            if data[i] != 0xFF:
+                i += 1
+                continue
+            marker = data[i + 1]
+            if marker in (0xD8, 0x01) or 0xD0 <= marker <= 0xD7:
+                i += 2
+                continue
+            seg = int.from_bytes(data[i + 2:i + 4], "big")
+            if seg < 2:
+                break
+            if 0xC0 <= marker <= 0xCF and marker not in (0xC4, 0xC8, 0xCC):
+                h = int.from_bytes(data[i + 5:i + 7], "big")
+                w = int.from_bytes(data[i + 7:i + 9], "big")
+                return w, h
+            i += 2 + seg
+    return 0, 0
+
+
+def _drawing(rid: str, doc_id: int, cx: int, cy: int) -> str:
+    """Абзац с инлайн-изображением (EMU = px × 9525 при 96 dpi)."""
+    return (f'<w:p><w:pPr><w:keepNext/><w:jc w:val="center"/></w:pPr><w:r><w:drawing>'
+            f'<wp:inline distT="0" distB="0" distL="0" distR="0" xmlns:wp="{_WP}">'
+            f'<wp:extent cx="{cx}" cy="{cy}"/><wp:effectExtent l="0" t="0" r="0" b="0"/>'
+            f'<wp:docPr id="{doc_id}" name="Picture {doc_id}"/>'
+            f'<wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="{_A}" noChangeAspect="1"/>'
+            f"</wp:cNvGraphicFramePr>"
+            f'<a:graphic xmlns:a="{_A}"><a:graphicData uri="{_PIC}">'
+            f'<pic:pic xmlns:pic="{_PIC}"><pic:nvPicPr>'
+            f'<pic:cNvPr id="{doc_id}" name="Picture {doc_id}"/><pic:cNvPicPr/></pic:nvPicPr>'
+            f'<pic:blipFill><a:blip xmlns:r="{_R}" r:embed="{rid}"/>'
+            f"<a:stretch><a:fillRect/></a:stretch></pic:blipFill>"
+            f'<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="{cx}" cy="{cy}"/></a:xfrm>'
+            f'<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>'
+            f"</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>")
+
+
 def _tbl(rows: list[list[str]]) -> str:
     cols = max(len(r) for r in rows)
     grid = "<w:gridCol/>" * cols
@@ -71,9 +125,15 @@ def _tbl(rows: list[list[str]]) -> str:
             f"<w:tblGrid>{grid}</w:tblGrid>{''.join(trs)}</w:tbl>")
 
 
-def md_to_docx_xml(md_text: str) -> str:
-    """Markdown → XML тела документа (word/document.xml)."""
+def md_to_docx_xml(md_text: str, base_dir: Path | None = None,
+                   media: list[tuple[str, bytes]] | None = None) -> str:
+    """Markdown → XML тела документа (word/document.xml).
+
+    media — список, куда складываются (имя_файла, байты) найденных изображений;
+    save() вшивает их в word/media и прописывает связи.
+    """
     body: list[str] = []
+    media = media if media is not None else []
     lines = md_text.splitlines()
     i, n = 0, len(lines)
     while i < n:
@@ -84,6 +144,25 @@ def md_to_docx_xml(md_text: str) -> str:
                 body.append(f'<w:p><w:pPr><w:pStyle w:val="CodeBlock"/></w:pPr>'
                             f'<w:r><w:t xml:space="preserve">{escape(lines[i])}</w:t></w:r></w:p>')
                 i += 1
+            i += 1
+            continue
+        m_img = _IMG_RE.match(s)
+        if m_img:
+            src = Path(m_img.group(2))
+            if base_dir is not None and not src.is_absolute():
+                src = base_dir / src
+            data = src.read_bytes() if src.is_file() else b""
+            if data:
+                ext = src.suffix.lstrip(".").lower()
+                media.append((f"image_{len(media) + 1}.{ext or 'png'}", data))
+                w_px, h_px = _dims(data, ext)
+                w_px = w_px or 600
+                h_px = h_px or max(1, round(w_px * 0.6))
+                scale = min(1.0, 600 / w_px)
+                cx, cy = int(w_px * scale * 9525), int(h_px * scale * 9525)
+                body.append(_drawing(f"rId{len(media) + 10}", len(media), cx, cy))
+            else:
+                body.append(_p(m_img.group(1) or m_img.group(2)))
             i += 1
             continue
         m = re.match(r"^(#{1,4})\s+(.*)", s)
@@ -119,9 +198,15 @@ def md_to_docx_xml(md_text: str) -> str:
             "</w:sectPr></w:body></w:document>")
 
 
-def save(path: Path, md_text: str) -> Path:
-    """Собрать .docx из markdown-текста (атомарно, без зависимостей)."""
+def save(path: Path, md_text: str, base_dir: Path | None = None) -> Path:
+    """Собрать .docx из markdown-текста (атомарно, без зависимостей).
+
+    base_dir — каталог для разрешения относительных путей изображений.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
+    media: list[tuple[str, bytes]] = []
+    doc_xml = md_to_docx_xml(md_text, base_dir=base_dir, media=media)
+    exts = sorted({n.rsplit(".", 1)[1] for n, _ in media})
     parts = {
         "[Content_Types].xml":
             '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -131,18 +216,24 @@ def save(path: Path, md_text: str) -> Path:
             '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.'
             'wordprocessingml.document.main+xml"/>'
             '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.'
-            'wordprocessingml.styles+xml"/></Types>',
+            'wordprocessingml.styles+xml"/>'
+            + "".join(f'<Default Extension="{e}" ContentType="{_IMG_CT[e]}"/>' for e in exts) + "</Types>",
         "_rels/.rels":
             '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
-            '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/'
+            f'<Relationship Id="rId1" Type="{_R}/'
             'officeDocument" Target="word/document.xml"/></Relationships>',
-        "word/document.xml": md_to_docx_xml(md_text),
+        "word/document.xml": doc_xml,
         "word/styles.xml": _STYLES,
         "word/_rels/document.xml.rels":
             '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-            '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"/></Relationships>',
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            + "".join(f'<Relationship Id="rId{idx + 10}" Type="{_R}/image" Target="media/{name}"/>'
+                      for idx, (name, _) in enumerate(media, 1))
+            + "</Relationships>",
     }
+    for name, data in media:
+        parts[f"word/media/{name}"] = data
     fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".tmp-", suffix=".docx")
     with os.fdopen(fd, "wb") as fh:
         with zipfile.ZipFile(fh, "w", zipfile.ZIP_DEFLATED) as z:
@@ -156,4 +247,4 @@ def save(path: Path, md_text: str) -> Path:
 def convert(md_path: Path, out: Path | None = None) -> Path:
     """Конвертировать .md файл в .docx (по умолчанию рядом, с суффиксом .docx)."""
     out = out or md_path.with_suffix(".docx")
-    return save(out, md_path.read_text(encoding="utf-8"))
+    return save(out, md_path.read_text(encoding="utf-8"), base_dir=md_path.parent)

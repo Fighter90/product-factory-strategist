@@ -8,7 +8,7 @@ distinct options, and aligned product and communication strategies. After the de
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
 This is a repository folder: instructions, knowledge sets organized by category (strategy · economics · product ·
-UX · data · platforms · Gen AI), 120 skills, 8 subagents, 4 hooks, and a dependency-free Python CLI/MCP toolset.
+UX · data · platforms · Gen AI), 120 skills, 8 subagents, 5 hooks, and a dependency-free Python CLI/MCP toolset.
 Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
@@ -23,7 +23,7 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 55 tests
+python3 -m unittest discover -s tests          # 103 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -35,16 +35,45 @@ chat — state is restored automatically.
 
 ---
 
-## Demo project: ROSE — full walkthrough
+## Demo project: CVStart — full walkthrough
 
-A live end-to-end run on a real task: a closed six-seat dinner club in Moscow (rosedate.ru). 12 agent steps, 5 options attacked by a red-team subagent (15 objections + 5 hidden assumptions), both strategies, a six-pager with a 4-book Excel model — validated at **100/100** with numbers recomputed programmatically.
+A live end-to-end run on a real task: **CVStart** — [cvstart.org](https://cvstart.org/)
+([github.com/Fighter90/career-ops-ui](https://github.com/Fighter90/career-ops-ui)), an open (MIT) AI resume
+builder and job-search tool: a scan of ~129 job boards, AI scoring 0.0–5.0, CV Studio, PDF/DOCX, cover letters,
+a tracker, a job map; 100% local; 18 BYOK LLM providers; 19 languages; ~7,602 automated tests; no monetization yet.
 
-- Task: growth strategy + premium-dating GTM for ROSE; axis: revenue/ARPU; constraints: margin + premium brand.
-- Result: **option B "Moscow depth"** — 8–12 dinners/month, 15/25/60k ₽ tiers, restaurant partnerships; Rose Circle subscription only in phase 2 (repeat rate ≥45%). Table economics: 99,000 ₽ revenue → 54,450 ₽ contribution; LTV ≈ 41,250 ₽; LTV/CAC ≈ 3.4; break-even ≈ 8 tables/month.
-- Evidence: 8 sources (site, Forbes/Smart Ranking 6.2B ₽ +25%, VTsIOM, Kommersant, 2 synthetic interviews honestly labeled, director's choice), 24 claims with types and grades A–D.
-- Mistakes fixed along the way (documented honestly): a JS-rendered Forbes page saved manually; a source-numbering shift fixed via 5 claim supersedes; an accidental supersede of a live fact caught by the checker and restored (C024).
+- Task: "Build the commercial version of cvstart.org and a go-to-market strategy for the whole world."
+  Comparison axis: paying subscribers and ARR; constraints: the MIT core stays free and open, a solo developer,
+  keep the trust of the local/private mode.
+- How the agent ran: 12 steps — brief → 10 sources (S001–S011) → research plan → discovery with 2 synthetic
+  personas (honestly labeled, hypotheses only) → situation → 5 options + red team (15 objections + 5 hidden
+  assumptions = 20 hits) → the director picked **B: hosted freemium SaaS** (Free BYOK / Pro $12 / Unlimited $29,
+  opt-in cloud on top of the local MIT core, honest pricing without auto-renewals, locale waves
+  EN → DE/ES/PT-BR → JA/ZH) → both strategies → 90-day validation plan (continue ≥40 paying / change 20–40 /
+  stop <20 at activation <35%; counter-metrics: GitHub stars, GDPR complaints, NPS ≥30, free-tier inference
+  ≤$200/mo) → review `check --strict` **100/100** → decision D001 (beta in 3 EN geos by 2026-12-15,
+  review 2027-02-10) → monitoring.
+- Evidence: 10 sources, 20 claims with types and grades A–D (12 facts, 4 hypotheses, 4 assumptions); market
+  facts: resume builders $1.2–2.4B (aggregators disagree 2×), AI segment CAGR 13.1%, online recruiting $37.97B
+  (2025), ATS at 98% of F500, 7 competitors at $8–40/mo with auto-renewals; unit economics [C016]: ARPU $29,
+  CM $21.75, LTV ≈ $271.88, LTV/CAC ≈ 4.5, break-even ≈ 69 paying; synthetic funnel [S008] is a method,
+  not a forecast. Synthetic material is registered with `origin=synthetic` — the tool refuses to record facts on it.
 
-What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_PAGER.md/.pdf/.docx**, attachments/*.xlsx), `projects/демо/материалы/` (4 source PDFs), interactive walkthrough at [strategyproduct.ru/demo.html](https://strategyproduct.ru/demo.html). Full RU breakdown with a task-requirements mapping table — in [README.md](README.md#демонстрационный-проект-rose--полный-разбор).
+What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_PAGER_RU and SIX_PAGER_EN — each as
+.md/.pdf/.docx**, attachments/*.xlsx — 4 workbooks, img/ screenshots), `projects/демо/interviews/synthetic/`
+(2 AI personas), `projects/демо/analysis/` (generators + funnel CSV). Product screenshots: `site/assets/`.
+Full RU breakdown with a task-requirements mapping table — in
+[README.md](README.md#демонстрационный-проект-cvstart--полный-разбор).
+
+How to repeat:
+
+```bash
+python3 -m tools.pfs use демо                        # switch to the demo
+python3 -m tools.pfs status                          # where we stopped (step: monitoring)
+python3 -m tools.pfs next                            # what to decide now
+python3 -m tools.pfs --project демо check --strict   # quality gate: 100/100
+python3 -m tools.pfs new "Title" "Request verbatim"  # your own task
+```
 
 ## How the agent works: 12 steps
 
@@ -87,7 +116,7 @@ flowchart TB
   subgraph ENV["LLM environment (Claude Code / Cursor / OpenCode / Codex…)"]
     AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 120<br/>(base + product-skills 27 + integrations: sdd · deck · deep-research · premortem · board-of-directors · hallmark)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
-    AG --> HK["hooks: 4<br/>SessionStart · PreWeb-domains · PostTool-log · Stop-cost"]
+    AG --> HK["hooks: 5<br/>SessionStart · PreWeb-domains · PostTool-log · Stop-cost (+ shared module)"]
   end
   ENV -->|"CLI: pfs … · MCP: pfs-strategist"| TOOLS
   subgraph TOOLS["tools/pfs — deterministic guarantees (stdlib only)"]
@@ -98,7 +127,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>grounds · commitments"] --> MON["decision due<br/>what to decide now"]
   end
-  KB["knowledge/ — 80 cards across categories (RU) + EN index<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
+  KB["knowledge/ — 88 cards across categories (RU) + 16 EN mirrors (methods_en/) + INDEX_EN.md<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → primary sources → S###"| S
   EX --> ATT["outputs/attachments/*.xlsx<br/>recalculated on open"]
@@ -180,7 +209,7 @@ flowchart LR
   IMP --> REV["revision: supersede · rebase"]
 ```
 
-### 2. Knowledge base (80 cards across categories + EN index)
+### 2. Knowledge base (88 cards across categories (RU) + 16 EN mirrors + EN index)
 Knowledge sets by category: growth strategy · unit economics & monetization · product management · UX & customer
 metrics · data analysis & A/B · platform solutions · Gen AI in products. Framework layer: Double Diamond, Lean
 Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Kano. Techniques only — no brands. Search: `pfs kb search` (BM25,
@@ -260,11 +289,11 @@ consent and no personal data · the validator refuses a fact based on synthetic/
 ```
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
-  skills/ (106: base 13 · product-skills 27 · personal library ~59 · integrations)
-  agents/ (8) · hooks/ (4) · settings.json
+  skills/ (120: base 13 · product-skills 27 · personal library · integrations)
+  agents/ (8) · hooks/ (5) · settings.json
 .cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/  methods/ (80 RU cards) · methods_en/ (EN mirrors) · INDEX.md · INDEX_EN.md
+knowledge/  methods/ (88 RU cards) · methods_en/ (16 EN mirrors) · INDEX.md · INDEX_EN.md
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions
             data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/
@@ -272,5 +301,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/ (55) · demo: демо — ROSE (end-to-end run · six-pager + PDF · Excel · 100/100)
+tests/ (103) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```

@@ -3,14 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Материалы демо ROSE — Стратег Фабрики продуктов</title>
-<meta name="description" content="Исходные материалы демонстрационного проекта ROSE: презентация, руководство пользователя и администратора, фирменный стиль — и стратегия агента (six-pager в MD/PDF/DOCX).">
+<title>Материалы демо CVStart — Стратег Фабрики продуктов</title>
+<meta name="description" content="Материалы демонстрационного проекта CVStart: six-pager комитета RU/EN (MD · PDF · DOCX), четыре Excel-модели, скриншоты cvstart.org и доказательная база — источники S001–S011, утверждения C001–C020, решение D001.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='.55' stop-color='%23818cf8'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='11' fill='%2305070f'/%3E%3Cg fill='none' stroke='url(%23g)' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M14 10H34L42 19L24 42L6 19Z'/%3E%3Cpath d='M6 19H42' opacity='.7'/%3E%3Cpath d='M14 10L20 19L24 42' opacity='.55'/%3E%3Cpath d='M34 10L28 19L24 42' opacity='.55'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Материалы демо CVStart — Стратег Фабрики продуктов">
+<meta property="og:url" content="https://strategyproduct.ru/materials.html">
 <style>
 :root{
   --bg:#05070f; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06);
   --text:#eef2ff; --muted:#9aa7bd; --line:rgba(148,163,184,.16);
-  --accent:#2dd4bf; --accent2:#818cf8; --accent3:#f472b6; --rose:#e3122f; --bone:#f2ece6; --velvet:#151313;
+  --accent:#2dd4bf; --accent2:#818cf8; --accent3:#f472b6;
   --code:rgba(8,12,24,.75);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -19,14 +22,14 @@ html{scroll-behavior:smooth}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(1200px 800px at 78% -12%,rgba(129,140,248,.10),transparent 62%),radial-gradient(1000px 760px at -12% 32%,rgba(45,212,191,.08),transparent 62%),radial-gradient(1100px 820px at 108% 92%,rgba(227,18,47,.07),transparent 62%)}
+  background:radial-gradient(1200px 800px at 78% -12%,rgba(129,140,248,.10),transparent 62%),radial-gradient(1000px 760px at -12% 32%,rgba(45,212,191,.08),transparent 62%),radial-gradient(1100px 820px at 108% 92%,rgba(244,114,182,.07),transparent 62%)}
 ::selection{background:rgba(45,212,191,.3)}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
 .wrap{max-width:1160px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;opacity:.24;filter:blur(110px);
-  background:conic-gradient(from 0deg at 32% 28%,rgba(45,212,191,.15),transparent 28%,rgba(129,140,248,.15) 52%,transparent 76%,rgba(227,18,47,.12));
+  background:conic-gradient(from 0deg at 32% 28%,rgba(45,212,191,.15),transparent 28%,rgba(129,140,248,.15) 52%,transparent 76%,rgba(244,114,182,.12));
   animation:auroraSpin 44s linear infinite}
 .noise{position:absolute;inset:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
 #bar{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));box-shadow:0 0 12px rgba(129,140,248,.7)}
@@ -80,8 +83,15 @@ h2::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;bor
 .shot-bar span{margin-left:10px;font-size:12px;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,monospace}
 .shot-card img{width:100%;display:block}
 .shot-cap{padding:10px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+.shot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:14px}
+@media(max-width:980px){.shot-grid{grid-template-columns:1fr}}
 .split2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media(max-width:860px){.split2{grid-template-columns:1fr}}
+.faq6{display:grid;gap:8px;margin-top:6px}
+.f6{display:flex;gap:10px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 13px}
+.f6 b{font-size:12px;color:var(--accent);flex:none;font-variant-numeric:tabular-nums}
+.f6 span{font-size:13px;color:var(--muted)}
+.f6 span b{color:var(--text)}
 .note{border-left:3px solid var(--accent);background:var(--card);padding:13px 17px;border-radius:0 12px 12px 0;color:var(--muted);font-size:14px;margin:16px 0}
 .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}
 .btn{display:inline-block;padding:12px 26px;border-radius:12px;font-weight:700;font-size:15px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
@@ -100,7 +110,7 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .aurora{display:none}
-  .rv{opacity:1;transform:none}
+  .rv{opacity:1;transform:none;animation:none}
   .flow-svg .path{stroke-dashoffset:0}
 }
 </style>
@@ -111,120 +121,194 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
 <header><div class="wrap nav">
   <a class="logo" href="index.html"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t">Стратег Фабрики продуктов</span></a>
   <a class="nl" href="index.html#features">Возможности</a>
-  <a class="nl" href="demo.html?v=7">Демо</a>
+  <a class="nl" href="demo.html?v=8">Демо</a>
   <a class="nl on" href="materials.html">Материалы</a>
-  <a class="nl" href="help.html?v=7">Справка</a>
+  <a class="nl" href="help.html?v=8">Справка</a>
   <div class="lang" aria-hidden="true"><button class="active">RU</button><button disabled style="opacity:.4;cursor:default">EN</button></div>
 </div></header>
 
 <div class="hero"><div class="wrap">
-  <h1>Материалы демо <span class="grad">ROSE</span></h1>
-  <p class="sub">Исходные материалы демонстрационного проекта — четыре документа продукта и кликабельный прототип — и то, что агент из них собрал: стратегия six-pager в трёх форматах и Excel-модель. Всё лежит в репозитории: <code>projects/демо/</code>.</p>
+  <h1>Материалы демо <span class="grad">CVStart</span></h1>
+  <p class="sub">Материалы демонстрационного проекта: six-pager комитета в двух языках и трёх форматах, четыре Excel-модели с живыми формулами, скриншоты продукта и полная доказательная база. Всё лежит в репозитории: <code>projects/демо/</code>.</p>
   <div class="chips">
-    <span class="chip"><b>4</b> PDF исходных материалов</span>
-    <span class="chip"><b>20</b> экранов прототипа</span>
-    <span class="chip"><b>13</b> источников проекта (S001–S013)</span>
-    <span class="chip"><b>24</b> утверждения с силой A–D</span>
-    <span class="chip"><b>6</b> форматов стратегии (MD · PDF · DOCX · XLSX ×4)</span>
+    <span class="chip"><b>6</b> файлов six-pager (RU · EN × MD/PDF/DOCX)</span>
+    <span class="chip"><b>4</b> книги Excel</span>
+    <span class="chip"><b>6</b> скриншотов cvstart.org</span>
+    <span class="chip"><b>10</b> источников S001–S011</span>
+    <span class="chip"><b>20</b> утверждений C001–C020</span>
+    <span class="chip"><b>D001</b> решение с обязательствами</span>
   </div>
 </div></div>
 
-<section id="flow"><div class="wrap">
-  <h2 class="rv">Как материалы стали стратегией</h2>
-  <p class="lead rv d1">Каждый документ зарегистрирован источником (S###), из них извлечены утверждения с типом и силой доказательства (C###), на них построены варианты, стратегии и решение D001 — цепочка прослеживается от ссылки до решения.</p>
-  <div class="flow-wrap rv d2"><svg class="flow-svg" viewBox="0 0 1000 120" role="img" aria-label="Схема: материалы — источники — утверждения — варианты — стратегии — решение">
-    <defs><linearGradient id="fg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".5" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
-    <path class="path" d="M25 60 H975" fill="none" stroke="url(#fg)" stroke-width="2.5"/>
-    <g font-size="12" font-weight="700" text-anchor="middle">
-      <g><circle cx="60" cy="60" r="26" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="60" y="64" fill="#2dd4bf">S###</text><text x="60" y="22" fill="#9aa7bd" font-weight="400">материалы</text><text x="60" y="106" fill="#9aa7bd" font-weight="400">4 PDF · сайт</text></g>
-      <g><circle cx="240" cy="60" r="26" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="240" y="64" fill="#2dd4bf">C###</text><text x="240" y="22" fill="#9aa7bd" font-weight="400">утверждения</text><text x="240" y="106" fill="#9aa7bd" font-weight="400">24 · силы A–D</text></g>
-      <g><circle cx="420" cy="60" r="26" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="420" y="64" fill="#818cf8">A–E</text><text x="420" y="22" fill="#9aa7bd" font-weight="400">варианты</text><text x="420" y="106" fill="#9aa7bd" font-weight="400">+ red team ×20</text></g>
-      <g><circle cx="600" cy="60" r="26" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="600" y="64" fill="#818cf8">04·05</text><text x="600" y="22" fill="#9aa7bd" font-weight="400">стратегии</text><text x="600" y="106" fill="#9aa7bd" font-weight="400">обещания = продукт</text></g>
-      <g><circle cx="780" cy="60" r="26" fill="#05070f" stroke="#f472b6" stroke-width="2"/><text x="780" y="64" fill="#f472b6">D001</text><text x="780" y="22" fill="#9aa7bd" font-weight="400">решение</text><text x="780" y="106" fill="#9aa7bd" font-weight="400">пересмотр 2027-02-06</text></g>
-      <g><circle cx="945" cy="60" r="26" fill="#05070f" stroke="#f472b6" stroke-width="2"/><text x="945" y="64" fill="#f472b6">✓</text><text x="945" y="22" fill="#9aa7bd" font-weight="400">check 100/100</text><text x="945" y="106" fill="#9aa7bd" font-weight="400">0 ошибок</text></g>
-    </g>
-  </svg></div>
-</div></section>
-
-<section id="pdfs"><div class="wrap">
-  <h2 class="rv">Исходные материалы (PDF)</h2>
-  <p class="lead rv d1">Документы продукта, которые агент читал как источники [S009–S012]. Каждая ссылка открывает файл из репозитория.</p>
-  <div class="pdf-grid">
-    <div class="pdf-card rv d0">
-      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg></div>
-      <h3>ROSE · Презентация проекта</h3>
-      <p>Проблема (−14,6% MAU Tabor; «фото решает раньше слов»), решение — два слоя выбора, бизнес-модель 18/60/600 тыс. ₽, NSM «взаимные розы», метрики и риски.</p>
-      <div class="pdf-meta">≈13 стр · 7,3 МБ</div>
-      <div class="pdf-btns"><a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0.pdf" target="_blank" rel="noopener" class="pbtn ghost2">GitHub</a></div>
-    </div>    <div class="pdf-card rv d1">
-      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg></div>
-      <h3>ROSE · Руководство пользователя</h3>
-      <p>Путь участника: 8 шагов от заявки до «кофе вдвоём»; все 20 экранов; правила клуба (окно розы 24 ч, отмена за 48 ч, конфиденциальность); оплата; безопасность; FAQ и словарь.</p>
-      <div class="pdf-meta">15 стр · 2,2 МБ</div>
-      <div class="pdf-btns"><a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F.pdf" target="_blank" rel="noopener" class="pbtn ghost2">GitHub</a></div>
-    </div>    <div class="pdf-card rv d2">
-      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg></div>
-      <h3>ROSE · Руководство администратора</h3>
-      <p>6 ролей и доступы; интервью и «красные флаги»; сборка стола — «алгоритм предлагает, матчмейкер утверждает»; афиши; калибровка; экономика VIP-стола (LTV 29 119 ₽ / CAC 21 111 ₽).</p>
-      <div class="pdf-meta">11 стр · 0,4 МБ</div>
-      <div class="pdf-btns"><a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%B0.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE%20%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%B0.pdf" target="_blank" rel="noopener" class="pbtn ghost2">GitHub</a></div>
-    </div>    <div class="pdf-card rv d3">
-      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg></div>
-      <h3>ROSE · Фирменный стиль и реклама</h3>
-      <p>Платформа бренда и слоган «Будь успешен не только в бизнесе, но и в любви»; знак «одна роза на чёрном»; 5 цветов, 2 шрифта; серия для деловой прессы и полоса в журнале РБК.</p>
-      <div class="pdf-meta">11 стр · 3,1 МБ</div>
-      <div class="pdf-btns"><a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%84%D0%B8%D1%80%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9%20%D1%81%D1%82%D0%B8%D0%BB%D1%8C%20%D0%B8%20%D1%80%D0%B5%D0%BA%D0%BB%D0%B0%D0%BC%D0%B0%20%D0%B2%20%D0%B6%D1%83%D1%80%D0%BD%D0%B0%D0%BB%D0%B5.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/%D0%BC%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%B0%D0%BB%D1%8B/ROSE%20%E2%80%94%20%D1%84%D0%B8%D1%80%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9%20%D1%81%D1%82%D0%B8%D0%BB%D1%8C%20%D0%B8%20%D1%80%D0%B5%D0%BA%D0%BB%D0%B0%D0%BC%D0%B0%20%D0%B2%20%D0%B6%D1%83%D1%80%D0%BD%D0%B0%D0%BB%D0%B5.pdf" target="_blank" rel="noopener" class="pbtn ghost2">GitHub</a></div>
+<section id="sixpager"><div class="wrap">
+  <h2 class="rv">Six-pager комитета</h2>
+  <p class="lead rv d1">Итоговый отчёт прогона в структуре стратегического референса FAQ-1…6: состояние рынка и продукта, сегменты и персоны, 5 вариантов с red team, тактики hosted freemium, план беты и метрики. Собран командой <code>pfs export --six-pager</code>; каждый язык — в трёх форматах.</p>
+  <div class="split2 rv d2">
+    <div class="pdf-card">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 13l2 2 4-4"/></svg></div>
+      <h3>SIX_PAGER_RU — six-pager комитета (рус)</h3>
+      <p>Состояние рынка resume builders, сегменты и персоны-гипотезы, 5 вариантов A–E с 20 ударами red team, тактики Free / Pro $12 / Unlimited $29, план hosted-беты в 3 EN-гео и пороги решения.</p>
+      <div class="pdf-meta">RU · MD · PDF · DOCX · числа прослеживаются до C001–C020</div>
+      <div class="pdf-btns">
+        <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a>
+        <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.docx" target="_blank" rel="noopener" class="pbtn ghost2">DOCX</a>
+        <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.md" target="_blank" rel="noopener" class="pbtn ghost2">Markdown</a>
+      </div>
+    </div>
+    <div class="pdf-card rv d1">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 13l2 2 4-4"/></svg></div>
+      <h3>SIX_PAGER_EN — the committee six-pager (EN)</h3>
+      <p>The state of the resume-builder market, segments and persona hypotheses, 5 options A–E with 20 red-team hits, Free / Pro $12 / Unlimited $29 tactics, the 90-day hosted-beta plan and decision thresholds.</p>
+      <div class="pdf-meta">EN · MD · PDF · DOCX · every number traces to C001–C020</div>
+      <div class="pdf-btns">
+        <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a>
+        <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.docx" target="_blank" rel="noopener" class="pbtn ghost2">DOCX</a>
+        <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.md" target="_blank" rel="noopener" class="pbtn ghost2">Markdown</a>
+      </div>
     </div>
   </div>
+  <div class="note rv">Один источник — три формата: MD для чтения и правок, PDF для комитета, DOCX для правок руководителя. Содержание совпадает посимвольно в рамках чисел реестра.</div>
 </div></section>
 
-<section id="strategy"><div class="wrap">
-  <h2 class="rv">Стратегия агента: six-pager</h2>
-  <p class="lead rv d1">Итоговый отчёт для комитета: состояние рынка и продукта, сегменты, 5 вариантов с red team, тактики, план и метрики. Один источник — три формата; числа прослеживаются до утверждений.</p>
-  <div class="split2 rv d2">
-    <div class="shot-card">
-      <div class="shot-bar"><i></i><i></i><i></i><span>SIX_PAGER.pdf — страница 1</span></div>
-      <img src="assets/shot_sixpager.jpg?v=7" alt="Первая страница six-pager ROSE">
-      <div class="shot-cap">Собран командой <code>pfs export --six-pager</code> · Excel-модель: <code>outputs/attachments/</code> (4 книги, 180 живых формул)</div>
+<section id="excel"><div class="wrap">
+  <h2 class="rv">Excel-модели</h2>
+  <p class="lead rv d1">Четыре книги в <code>outputs/attachments/</code>: редактируемые вводные на листе «Ввод» — формулы пересчитываются при открытии, допущения меняются на лету. Каждое значение «Ввода» прослеживается до утверждения C###; юнит-допущения демо — [C016].</p>
+  <div class="pdf-grid">
+    <div class="pdf-card rv">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M4 9h16M4 14h16M9 4v16M15 4v16"/></svg></div>
+      <h3>unit_economics.xlsx</h3>
+      <p>Вклад платящего (CM $21,75), LTV ≈ $271,88, LTV/CAC ≈ 4,5, окупаемость CAC ≈ 2,8 мес, чувствительность к цене и churn.</p>
+      <div class="pdf-meta">outputs/attachments/ · живые формулы</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/attachments/unit_economics.xlsx" target="_blank" rel="noopener" class="pbtn">Открыть книгу</a></div>
     </div>
-    <div>
-      <div class="faq6" style="margin-bottom:14px">
-        <div class="f6"><b>1</b><span><b>Состояние:</b> рынок 6,2 млрд ₽ (+25%); кризис свайпов; подписки −11%</span></div>
-        <div class="f6"><b>2</b><span><b>Сегменты:</b> «интеллигенция 28–45» + контур возвращающихся гостей</span></div>
-        <div class="f6"><b>3</b><span><b>Инициативы:</b> 5 вариантов A–E; выбран B; 20 возражений red team</span></div>
-        <div class="f6"><b>4</b><span><b>Тактики:</b> тиры 15/25/60 тыс. ₽; партнёрства; Rose Circle фазой 2</span></div>
-        <div class="f6"><b>5</b><span><b>План:</b> 90 дней; Rose Circle после повторных ≥ 45%</span></div>
-        <div class="f6"><b>6</b><span><b>Метрики:</b> выручка 0,8–1,2 млн ₽/мес; NPS ≥ 60; CAC ≤ 25 тыс. ₽</span></div>
-      </div>
-      <div class="pdf-btns">
-        <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER.pdf" target="_blank" rel="noopener" class="pbtn">Открыть PDF</a>
-        <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER.docx" target="_blank" rel="noopener" class="pbtn ghost2">DOCX</a>
-        <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER.md" target="_blank" rel="noopener" class="pbtn ghost2">Markdown</a>
-      </div>
-      <div class="note" style="margin-top:14px">Вывод агента: <b>вариант B — «глубина Москвы»</b> (8–12 ужинов/мес, тиры 15/25/60 тыс. ₽, партнёрства, Rose Circle фазой 2). Стол: 99 000 ₽ → вклад 54 450 ₽; LTV ≈ 41 250 ₽; LTV/CAC ≈ 3,4.</div>
+    <div class="pdf-card rv d1">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div>
+      <h3>growth_model.xlsx</h3>
+      <p>Модель роста на 12 месяцев: воронка визиты → регистрации → активации → платящие → MRR; сверка с ожиданием беты (модель: 53 платящих к нед. 12 [S008]).</p>
+      <div class="pdf-meta">outputs/attachments/ · живые формулы</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/attachments/growth_model.xlsx" target="_blank" rel="noopener" class="pbtn">Открыть книгу</a></div>
+    </div>
+    <div class="pdf-card rv d2">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><circle cx="8" cy="8" r="4"/><circle cx="16" cy="16" r="4"/></svg></div>
+      <h3>cohort_retention.xlsx</h3>
+      <p>Когорты регистраций беты, кривые удержания и активации по неделям; churn ≤ 10% — порог «продолжить».</p>
+      <div class="pdf-meta">outputs/attachments/ · живые формулы</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/attachments/cohort_retention.xlsx" target="_blank" rel="noopener" class="pbtn">Открыть книгу</a></div>
+    </div>
+    <div class="pdf-card rv d3">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2"/></svg></div>
+      <h3>market_sizing.xlsx</h3>
+      <p>PAM→TAM→SAM→SOM рынка resume builders ($1,2–2,4 млрд [C005]) и PESTEL-факторы вывода на рынок.</p>
+      <div class="pdf-meta">outputs/attachments/ · живые формулы</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/attachments/market_sizing.xlsx" target="_blank" rel="noopener" class="pbtn">Открыть книгу</a></div>
     </div>
   </div>
 </div></section>
 
 <section id="shots"><div class="wrap">
-  <h2 class="rv">Скриншоты приложения</h2>
-  <p class="lead rv d1">Кликабельный прототип rosedate.ru — 20 экранов, от лоадера с розой до «Клуба и тарифов». Источник механики и цен [S001].</p>
-  <div class="split2 rv d2">
+  <h2 class="rv">Скриншоты продукта</h2>
+  <p class="lead rv d1">Живой продукт демо — cvstart.org: лендинг в двух локалях, дашборд поиска работы с AI-скорингом, карта вакансий и трекер заявок.</p>
+  <div class="shot-grid rv d2">
     <div class="shot-card">
-      <div class="shot-bar"><i></i><i></i><i></i><span>rosedate.ru — мобильный вид</span></div>
-      <img src="assets/rose_screen_m.jpg?v=7" alt="Экран ROSE: роза и слоган «Сначала разговор. Потом взгляд.»">
-      <div class="shot-cap">Первый экран участника: живая роза на чёрном, «Подать заявку» / «Я уже в клубе». Только 21+, только подтверждённые через Госуслуги.</div>
+      <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — лендинг · RU</span></div>
+      <img src="assets/cv_landing_ru.jpg?v=8" alt="Лендинг cvstart.org (русский): AI-конструктор резюме, скан ~129 джоб-бордов, 19 языков">
+      <div class="shot-cap">Лендинг в русской локали: «$0 forever», скан ~129 джоб-бордов (124 EN + 5 RU), 19 языков [S001].</div>
     </div>
     <div class="shot-card">
-      <div class="shot-bar"><i></i><i></i><i></i><span>rosedate.ru — концепт · карта экранов</span></div>
-      <img src="assets/rose_screen.jpg?v=7" alt="Прототип ROSE: карта 20 экранов">
-      <div class="shot-cap">Экраны: «Как это работает», «Госуслуги», «Анкета из 5 шагов», «Интервью с матчмейкером», «За столом · колоды», «Тайная роза», «Взаимная роза», «Клуб и тарифы».</div>
+      <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — landing · EN</span></div>
+      <img src="assets/cv_landing_en.jpg?v=8" alt="Лендинг cvstart.org (English): open-source AI resume builder">
+      <div class="shot-cap">Английская локаль лендинга — из неё начинается волна EN в стратегии вывода на рынок.</div>
+    </div>
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — дашборд · RU</span></div>
+      <img src="assets/cv_dash_ru.jpg?v=8" alt="Дашборд поиска работы CVStart (русский): AI-скоринг вакансий 0.0–5.0">
+      <div class="shot-cap">Дашборд поиска работы: AI-скоринг вакансий 0.0–5.0 против резюме — ядро продукта.</div>
+    </div>
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — dashboard · EN</span></div>
+      <img src="assets/cv_dash_en.jpg?v=8" alt="Job-search dashboard CVStart (English): vacancy fit scoring">
+      <div class="shot-cap">Английский дашборд: fit-скоринг против резюме — то, что сравнивают с Jobscan и Teal.</div>
+    </div>
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — карта вакансий · EN</span></div>
+      <img src="assets/cv_map_en.jpg?v=8" alt="Карта вакансий CVStart (English): job map">
+      <div class="shot-cap">Карта вакансий поверх скана ~129 джоб-бордов — география предложений.</div>
+    </div>
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — трекер заявок · EN</span></div>
+      <img src="assets/cv_tracker_en.jpg?v=8" alt="Трекер заявок CVStart (English): application tracker with follow-up">
+      <div class="shot-cap">Трекер заявок с follow-up — воронка откликов между сессиями поиска, база retention hosted-версии.</div>
+    </div>
+  </div>
+  <div class="note rv">Полные версии интерфейса существуют во всех 19 локалях — скриншоты лежат в репозитории <a href="https://github.com/Fighter90/career-ops-ui" target="_blank" rel="noopener">career-ops-ui → images/</a>.</div>
+</div></section>
+
+<section id="evidence"><div class="wrap">
+  <h2 class="rv">Доказательная база</h2>
+  <p class="lead rv d1">Каждый материал зарегистрирован источником (S###), из них извлечены утверждения с типом и силой доказательства (C###), на них построены варианты, стратегии и решение D001 — цепочка прослеживается от ссылки до решения.</p>
+  <div class="flow-wrap rv d2"><svg class="flow-svg" viewBox="0 0 1000 120" role="img" aria-label="Схема: материалы — источники — утверждения — варианты — стратегии — решение">
+    <defs><linearGradient id="fg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".5" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
+    <path class="path" d="M25 60 H975" fill="none" stroke="url(#fg)" stroke-width="2.5"/>
+    <g font-size="12" font-weight="700" text-anchor="middle">
+      <g><circle cx="60" cy="60" r="26" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="60" y="64" fill="#2dd4bf">S###</text><text x="60" y="22" fill="#9aa7bd" font-weight="400">источники</text><text x="60" y="106" fill="#9aa7bd" font-weight="400">10 · сайт + дайджесты</text></g>
+      <g><circle cx="240" cy="60" r="26" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="240" y="64" fill="#2dd4bf">C###</text><text x="240" y="22" fill="#9aa7bd" font-weight="400">утверждения</text><text x="240" y="106" fill="#9aa7bd" font-weight="400">20 · силы A–D</text></g>
+      <g><circle cx="420" cy="60" r="26" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="420" y="64" fill="#818cf8">A–E</text><text x="420" y="22" fill="#9aa7bd" font-weight="400">варианты</text><text x="420" y="106" fill="#9aa7bd" font-weight="400">+ red team ×20</text></g>
+      <g><circle cx="600" cy="60" r="26" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="600" y="64" fill="#818cf8">04·05</text><text x="600" y="22" fill="#9aa7bd" font-weight="400">стратегии</text><text x="600" y="106" fill="#9aa7bd" font-weight="400">обещания = продукт</text></g>
+      <g><circle cx="780" cy="60" r="26" fill="#05070f" stroke="#f472b6" stroke-width="2"/><text x="780" y="64" fill="#f472b6">D001</text><text x="780" y="22" fill="#9aa7bd" font-weight="400">решение</text><text x="780" y="106" fill="#9aa7bd" font-weight="400">пересмотр 2027-02-10</text></g>
+      <g><circle cx="945" cy="60" r="26" fill="#05070f" stroke="#f472b6" stroke-width="2"/><text x="945" y="64" fill="#f472b6">✓</text><text x="945" y="22" fill="#9aa7bd" font-weight="400">check 100/100</text><text x="945" y="106" fill="#9aa7bd" font-weight="400">0 ошибок</text></g>
+    </g>
+  </svg></div>
+  <div class="pdf-grid" style="margin-top:18px">
+    <div class="pdf-card rv">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 14h6M9 17h4"/></svg></div>
+      <h3>REPORT.md — полный реестр прогона</h3>
+      <p>Итоговый отчёт: источники S001–S011, утверждения C001–C020 с типом и силой A–D, решение D001 с основаниями и обязательствами, метрики и история замен.</p>
+      <div class="pdf-meta">projects/демо/outputs/REPORT.md</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/REPORT.md" target="_blank" rel="noopener" class="pbtn">Открыть REPORT.md</a></div>
+    </div>
+    <div class="pdf-card rv d1">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+      <h3>sources/ — рыночные дайджесты с URL</h3>
+      <p>10 источников с сохранённым текстом: Wiseguy Reports (объём resume builders), Rezi Pricing (цены конкурентов), Kickresume Press (AI-тренды), SkyQuest (онлайн-рекрутинг, ATS) — и сайт продукта cvstart.org.</p>
+      <div class="pdf-meta">projects/демо/sources/ · S001–S011</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/tree/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/sources" target="_blank" rel="noopener" class="pbtn">Папка sources/</a></div>
+    </div>
+    <div class="pdf-card rv d2">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+      <h3>Синтетика — гипотезы, не факты</h3>
+      <p>2 ИИ-интервью (персоны-гипотезы Sarah и Markus) и синтетическая воронка беты synthetic_funnel.csv (seed=7, 12 недель). Помечено origin=synthetic: годится для гипотез и метод-иллюстрации — не доказывает спрос.</p>
+      <div class="pdf-meta">interviews/synthetic/ · analysis/synthetic_funnel.csv</div>
+      <div class="pdf-btns">
+        <a href="https://github.com/Fighter90/product-factory-strategist/tree/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/interviews/synthetic" target="_blank" rel="noopener" class="pbtn">interviews/synthetic/</a>
+        <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/analysis/synthetic_funnel.csv" target="_blank" rel="noopener" class="pbtn ghost2">synthetic_funnel.csv</a>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section id="product"><div class="wrap">
+  <h2 class="rv">Продукт демо</h2>
+  <p class="lead rv d1">CVStart — открытый (MIT) AI-конструктор резюме и дашборд поиска работы, на котором агент вёл сквозной прогон.</p>
+  <div class="split2 rv d2">
+    <div class="pdf-card">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></div>
+      <h3>cvstart.org — сайт продукта</h3>
+      <p>Живой лендинг в 19 локалях: AI-скоринг вакансий 0.0–5.0, CV Studio, cover letters, трекер с follow-up. 100% локально, «$0 forever», монетизации нет.</p>
+      <div class="pdf-meta">статик-сайт · GitHub Pages · hreflang ×19</div>
+      <div class="pdf-btns"><a href="https://cvstart.org/" target="_blank" rel="noopener" class="pbtn">Открыть cvstart.org</a></div>
+    </div>
+    <div class="pdf-card rv d1">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13 5l-2 14"/></svg></div>
+      <h3>github.com/Fighter90/career-ops-ui — репозиторий</h3>
+      <p>Открытый код под MIT: ~7 602 автотеста, 18 LLM-провайдеров BYOK + keyless, скан ~129 джоб-бордов, скриншоты всех 19 локалей в images/.</p>
+      <div class="pdf-meta">MIT · локальный режим · $0 forever</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/career-ops-ui" target="_blank" rel="noopener" class="pbtn">Открыть GitHub</a></div>
     </div>
   </div>
   <div class="cta rv">
-    <a class="btn primary" href="demo.html?v=7">← Демо-разбор</a>
-    <a class="btn ghost" href="https://rosedate.ru/" target="_blank" rel="noopener">Прототип rosedate.ru</a>
-    <a class="btn ghost" href="help.html?v=7">Справка</a>
+    <a class="btn primary" href="demo.html?v=8">Демо-разбор →</a>
+    <a class="btn ghost" href="help.html?v=8">Справка →</a>
+    <a class="btn ghost" href="index.html">← Лендинг</a>
   </div>
 </div></section>
 
@@ -234,8 +318,8 @@ footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
     <div>ИИ-агент для руководителя цифрового продукта</div>
   </div>
   <div>
-    <a href="index.html">← Лендинг</a> · <a href="demo.html?v=7">Демо</a> · <a href="help.html?v=7">Справка</a> ·
-    <a href="https://github.com/Fighter90/product-factory-strategist/wiki">Wiki</a>
+    <a href="index.html">← Лендинг</a> · <a href="demo.html?v=8">Демо</a> · <a href="help.html?v=8">Справка</a> ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/wiki" target="_blank" rel="noopener">Wiki</a>
   </div>
 </div></footer>
 
@@ -247,6 +331,10 @@ const bar = document.getElementById('bar');
   bar.style.width = (h > 0 ? (y/h*100) : 0) + '%';
   requestAnimationFrame(frame);
 })();
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), {threshold:.12, rootMargin:'0px 0px -5% 0px'});
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
 setTimeout(function(){ document.querySelectorAll('.rv:not(.in)').forEach(function(e){ e.classList.add('in'); }); }, 1400);
 </script>
 </body>
