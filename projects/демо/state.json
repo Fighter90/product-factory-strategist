@@ -1,0 +1,73 @@
+{
+  "stage": "monitoring",
+  "steps": {
+    "intake": {
+      "status": "pending"
+    },
+    "sources": {
+      "status": "done",
+      "ts": "2026-11-06T12:37:35+03:00"
+    },
+    "research": {
+      "status": "done",
+      "ts": "2026-11-06T12:37:35+03:00"
+    },
+    "discovery": {
+      "status": "done",
+      "ts": "2026-11-06T12:41:25+03:00"
+    },
+    "situation": {
+      "status": "done",
+      "ts": "2026-11-06T12:41:25+03:00"
+    },
+    "options": {
+      "status": "done",
+      "ts": "2026-11-06T12:42:28+03:00"
+    },
+    "choice": {
+      "status": "done",
+      "ts": "2026-11-06T12:42:28+03:00"
+    },
+    "strategy": {
+      "status": "done",
+      "ts": "2026-11-06T12:43:31+03:00"
+    },
+    "validation": {
+      "status": "done",
+      "ts": "2026-11-06T12:43:32+03:00"
+    },
+    "review": {
+      "status": "done",
+      "ts": "2026-11-06T12:44:01+03:00"
+    },
+    "decision": {
+      "status": "done",
+      "ts": "2026-11-06T12:46:22+03:00"
+    },
+    "monitoring": {
+      "status": "in_progress",
+      "ts": "2026-11-06T12:46:22+03:00"
+    }
+  },
+  "next_action": "monitoring",
+  "open_questions": [],
+  "awaiting_human": null,
+  "updated": "2026-11-06T12:46:22+03:00",
+  "answers": [
+    {
+      "question": "",
+      "answer": "intake-decision: выбор направления развития ROSE (масштабирование / города / гибрид — сравнить содержательно разные варианты)",
+      "ts": "2026-11-06T12:30:36+03:00"
+    },
+    {
+      "question": "",
+      "answer": "intake-success: рост выручки/ARPU — ось сравнения вариантов",
+      "ts": "2026-11-06T12:30:36+03:00"
+    },
+    {
+      "question": "",
+      "answer": "intake-constraints: цена/маржа + бренд/тон — премиум-опыт не приносим в жертву росту",
+      "ts": "2026-11-06T12:30:37+03:00"
+    }
+  ]
+}
