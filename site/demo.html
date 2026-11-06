@@ -386,7 +386,7 @@ const io = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
 }), {threshold:.12, rootMargin:'0px 0px -5% 0px'});
 document.querySelectorAll('.rv').forEach(el => io.observe(el));
-setTimeout(function(){ document.querySelectorAll('.rv:not(.in)').forEach(function(e){ e.classList.add('in'); }); }, 1400);
+setTimeout(function(){document.querySelectorAll('.rv:not(.in)').forEach(function(e){ e.classList.add('in'); });document.querySelectorAll('.cnt').forEach(function(e){ if (e.textContent === '0' && e.dataset.target) e.textContent = e.dataset.target; });}, 1400);
 const cio = new IntersectionObserver(es => es.forEach(e => {
   if (!e.isIntersecting) return;
   const el = e.target, target = +el.dataset.target;
