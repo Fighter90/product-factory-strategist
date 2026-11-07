@@ -126,7 +126,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>grounds · commitments"] --> MON["decision due<br/>what to decide now"]
   end
-  KB["knowledge/ — 88 cards across categories (RU) + 16 EN mirrors (methods_en/) + INDEX_EN.md<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
+  KB["knowledge/ — 88 cards across categories (RU) + 88 EN mirrors (full bilingual base) (methods_en/) + INDEX_EN.md<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → primary sources → S###"| S
   EX --> ATT["outputs/attachments/*.xlsx<br/>recalculated on open"]
@@ -208,7 +208,7 @@ flowchart LR
   IMP --> REV["revision: supersede · rebase"]
 ```
 
-### 2. Knowledge base (88 cards across categories (RU) + 16 EN mirrors + EN index)
+### 2. Knowledge base (88 cards across categories (RU) + 88 EN mirrors (full bilingual base) + EN index)
 Knowledge sets by category: growth strategy · unit economics & monetization · product management · UX & customer
 metrics · data analysis & A/B · platform solutions · Gen AI in products. Framework layer: Double Diamond, Lean
 Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Kano. Techniques only — no brands. Search: `pfs kb search` (BM25,
@@ -292,7 +292,7 @@ AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
   agents/ (8) · hooks/ (5) · settings.json
 .cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/  methods/ (88 RU cards) · methods_en/ (16 EN mirrors) · INDEX.md · INDEX_EN.md
+knowledge/  methods/ (88 RU cards) · methods_en/ (88 EN mirrors (full bilingual base)) · INDEX.md · INDEX_EN.md
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions
             data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/

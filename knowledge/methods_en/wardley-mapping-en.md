@@ -3,7 +3,7 @@ id: M-wardley-mapping-en
 title: Wardley Mapping — component evolution and build/buy/rent
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [situation, options, strategy]
 tags: [en, summary]
 related: []
 ---

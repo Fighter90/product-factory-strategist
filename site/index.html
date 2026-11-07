@@ -298,7 +298,7 @@ body[data-lang=ru] [lang=en]{display:none}
 
 <div class="strip"><div class="wrap">
   <div class="stat"><b><span class="cnt" data-target="12">0</span></b><span lang="ru">шагов процесса, 3 паузы для человека</span><span lang="en">process steps, 3 human checkpoints</span></div>
-  <div class="stat"><b><span class="cnt" data-target="88">0</span></b><span lang="ru">карт методик (RU + 16 EN-зеркал)</span><span lang="en">method cards across categories</span></div>
+  <div class="stat"><b><span class="cnt" data-target="88">0</span></b><span lang="ru">карт методик (RU + 88 EN)</span><span lang="en">method cards across categories</span></div>
   <div class="stat"><b><span class="cnt" data-target="120">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
   <div class="stat"><b>0</b><span lang="ru">зависимостей — только stdlib Python</span><span lang="en">dependencies — Python stdlib only</span></div>
   <div class="stat"><b><span class="cnt" data-target="100">0</span>%</b><span lang="ru">чисел подтверждены источниками · у обычного чата 0%</span><span lang="en">of numbers verifiable — plain chat: 0%</span></div>
@@ -362,8 +362,9 @@ body[data-lang=ru] [lang=en]{display:none}
   </div>
   <div class="split2 rv d2">
     <div class="shot-card">
-      <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — лендинг (RU-версия)</span></div>
-      <div class="shot-crop"><img src="assets/cv_landing_ru.jpg?v=9" alt="Лендинг cvstart.org: AI-конструктор резюме, скан ~129 джоб-бордов, AI-скоринг 0.0–5.0, 19 языков"></div>
+      <div class="shot-bar"><i></i><i></i><i></i><span lang="ru">cvstart.org — лендинг (RU-версия)</span><span lang="en">cvstart.org — landing page (EN version)</span></div>
+      <img lang="ru" src="assets/cv_landing_ru.jpg?v=9" alt="Лендинг cvstart.org: AI-конструктор резюме, скан ~129 джоб-бордов, AI-скоринг 0.0–5.0, 19 языков">
+        <img lang="en" src="assets/cv_landing_en.jpg?v=9" alt="cvstart.org landing page: open-source AI resume builder, ~129 job boards scanned, AI fit-scoring 0.0–5.0, 19 languages">
       <div class="shot-cap" lang="ru">Продукт демо: cvstart.org — открытый (MIT) AI-конструктор резюме и дашборд поиска работы. 100% локально, 18 LLM-провайдеров BYOK.</div>
       <div class="shot-cap" lang="en">The demo's product: cvstart.org — an open-source (MIT) AI resume builder and job-search dashboard. 100% local, 18 BYOK LLM providers.</div>
     </div>
@@ -634,7 +635,7 @@ body[data-lang=ru] [lang=en]{display:none}
     <span class="overline" lang="ru">08 · FAQ</span><span class="overline" lang="en">08 · FAQ</span>
     <h2 class="rv" lang="ru">Частые вопросы</h2><h2 class="rv" lang="en">Frequently asked questions</h2>
   </div>
-  <details class="qa rv" lang="ru"><summary>Что такое «Стратег Фабрики продуктов»?</summary><p>ИИ-агент — папка с инструкциями, базой знаний из 88 методических карт (RU + 16 EN-зеркал) (RU + EN-индекс) и CLI/MCP-инструментами (<code>pfs</code>). Он ведёт руководителя продукта от размытого запроса до обоснованной продуктовой и коммуникационной стратегии с планом проверки — и не бросает после решения.</p></details>
+  <details class="qa rv" lang="ru"><summary>Что такое «Стратег Фабрики продуктов»?</summary><p>ИИ-агент — папка с инструкциями, базой знаний из 88 методических карт (RU + 88 EN-зеркал — полная двуязычная база) (RU + EN-индекс) и CLI/MCP-инструментами (<code>pfs</code>). Он ведёт руководителя продукта от размытого запроса до обоснованной продуктовой и коммуникационной стратегии с планом проверки — и не бросает после решения.</p></details>
   <details class="qa rv" lang="ru"><summary>Чем он отличается от обычного чата с ИИ?</summary><p>Каждое существенное сведение — с источником (S###) и типом (факт/гипотеза/прогноз/допущение/вывод) и силой A–D. В демо-прогоне 100% чисел прослеживаются до источников; у обычного чата — 0%. Плюс: варианты с red team, план проверки, решение с основаниями и журналом.</p></details>
   <details class="qa rv" lang="ru"><summary>Мои данные и источники в безопасности?</summary><p>Только открытые источники и ваши материалы. Секреты — в <code>.env</code>, не в репозитории. Команды, найденные внутри источников, не исполняются — помечаются как попытка инъекции. Разрешённые домены проверяются до запроса.</p></details>
   <details class="qa rv" lang="ru"><summary>Можно ли перенести проект в другую среду?</summary><p>Да. Проект — обычная папка (<code>projects/&lt;slug&gt;/</code>): скопируйте или git push/pull и откройте в Claude Code, Cursor, Codex, OpenCode, Windsurf или Copilot. <code>pfs status</code> восстановит контекст.</p></details>

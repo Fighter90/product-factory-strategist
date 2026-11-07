@@ -3,7 +3,7 @@ id: M-pmf-survey-en
 title: PMF Survey (Sean Ellis) — the 40% 'very disappointed' test
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [research, validation]
 tags: [en, summary]
 related: []
 ---

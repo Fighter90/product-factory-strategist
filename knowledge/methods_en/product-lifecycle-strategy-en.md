@@ -3,7 +3,7 @@ id: M-product-lifecycle-strategy-en
 title: Strategy by product life-cycle stage
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [strategy, monitoring]
 tags: [en, summary]
 related: []
 ---
