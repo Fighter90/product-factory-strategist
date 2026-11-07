@@ -126,6 +126,17 @@ Unit economics calculation (assumptions [C016]): CM = $29 × 0.75 = **$21.75**; 
 break-even = $1,500 / $21.75 ≈ **69 paying users** — reachable on organic traffic (0.21% of
 week-12 visitors in the funnel model).
 
+**Beta funnel calculation — step by step** (model [S008], seed=7; starting base 3,000 visitors, 22%/wk growth):
+
+| Step | Calculation | Week-12 result |
+|---|---|---|
+| Visitors | 3,000 × 1.22¹² | **32,603** |
+| Signups | 32,603 × 5.5% | **1,793** |
+| Activation (first resume) | 1,793 × 62% | **1,111** |
+| Payment | 1,111 × 4.8% (2.8% × 1.72 uplift) | **53 paying** |
+| MRR | 53 × $29 | **$1,537** |
+| Run-rate | $1,537 × 12 | **$18,444 ARR/yr** |
+
 ### 3.2 Accelerating the "vacancy → ATS-ready resume" path
 
 **The first driver** — compress the path from "found a vacancy" to "sent a tailored resume" from
@@ -215,6 +226,8 @@ specific red-team hit and has a pre-written action (06_validation_plan.md).
 ---
 
 **Sources**
+
+(The registry holds 10 sources S001–S011 — S003 was merged into S006 during deduplication.)
 
 1. WiseGuy Reports — Resume Builder Market; MarketSizeAndTrends — Resume Builder Market ($1.2–2.4B range) — [S006]
 2. SkyQuest — Online Recruitment Market $37.97B (2025) — [S007]

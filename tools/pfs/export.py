@@ -20,7 +20,9 @@ def build(pdir: Path) -> Path:
         p = outs / name
         if p.exists():
             body = p.read_text(encoding="utf-8")
-            parts += [body.replace("\n# ", "\n## ") if not body.startswith("# ") else "#" + body, "", "---", ""]
+            note = ("> Авто-черновик: собран командой `pfs export --six-pager`; детализируйте по "
+                    "spec — knowledge/templates/SIX_PAGER_PROMPT.md.\n\n") if p.name == "SIX_PAGER.md" else ""
+            parts += [note + body.replace("\n# ", "\n## ") if not body.startswith("# ") else "#" + body, "", "---", ""]
     active = [c for c in claims_mod.load(pdir)]
     parts += ["# Приложение A. Реестр утверждений", "", claims_mod.table(active), ""]
     parts += ["# Приложение B. Источники", "", "| ID | Название | Ссылка / файл | Происхождение | Получено |", "|---|---|---|---|---|"]
@@ -281,25 +283,34 @@ def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
 _MAX_POINTS = 6   # тезисов на слайд
 _POINT_CAP = 160  # символов на тезис
 
-def _points(body: str) -> list[str]:
-    """Тезисы слайда: маркеры списков и первые предложения абзацев (≤6, ≤160 символов)."""
-    pts: list[str] = []
-    for raw in body.splitlines():
-        line = raw.strip()
-        if not line or line.startswith("#") or set(line) <= set("-|: "):
-            continue
-        if line.startswith("|"):  # строка таблицы — первый столбец
-            line = [c.strip() for c in line.strip("|").split("|")][0]
-        line = re.sub(r"^[-*+]\s+", "", line)
-        line = re.sub(r"^>\s?", "", line)
-        sentence = re.split(r"(?<=[.!?…])\s+", line)[0]
-        if len(sentence) > _POINT_CAP:
-            sentence = sentence[:_POINT_CAP - 1].rstrip() + "…"
-        if sentence and (not pts or sentence != pts[-1]):
-            pts.append(sentence)
-        if len(pts) >= _MAX_POINTS:
-            break
-    return pts
+
+
+_DECK_CSS = """
+  :root { --bg: #070b13; --fg: #e8eef8; --a1: #4fd1c5; --a2: #8b7bff; --dim: #9aa7bd; }
+  * { box-sizing: border-box; }
+  html { scroll-snap-type: y mandatory; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  section.slide { width: 100vw; height: auto; aspect-ratio: 16/9; min-height: 100vh;
+                  max-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+                  display: flex; flex-direction: column; justify-content: center; gap: .6em;
+                  padding: clamp(24px, 6vw, 80px); overflow: hidden;
+                  border-bottom: 1px solid rgba(139, 123, 255, .18); }
+  h1, h2 { margin: 0; line-height: 1.15; font-weight: 700;
+           background: linear-gradient(90deg, var(--a1), var(--a2));
+           -webkit-background-clip: text; background-clip: text; color: transparent; }
+  h1 { font-size: clamp(28px, 5vw, 56px); }
+  h2 { font-size: clamp(22px, 3.6vw, 40px); }
+  ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: .45em;
+       font-size: clamp(15px, 2vw, 24px); }
+  li::marker { color: var(--a1); }
+  p { margin: 0; font-size: clamp(15px, 2vw, 24px); color: var(--fg); }
+  .query { color: var(--dim); font-size: clamp(16px, 2.2vw, 26px); }
+  .query b { color: var(--a1); }
+"""
+
+
+
 
 
 def _slide(title: str, points: list[str], cls: str = "") -> str:

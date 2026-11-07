@@ -14,7 +14,7 @@ from . import core, models
 SCENARIOS = {
     "retention": {
         "title": "Падает удержание / растёт отток",
-        "keywords": ["удержан", "отток", "churn", "retention", "уходят", "отписыва", "возвращаемост", "когорт", "продлен", "подписчик", "не продлева"],
+        "keywords": ["удержан", "отток", "churn", "retention", "уходят", "отписыва", "возвращаемост", "когорт", "продлен", "подписчик", "не продлева", "cancel", "retain", "churned", "loyalty"],
         "cards": ["M-product-metrics", "M-success-metrics", "M-problem-design", "M-jtbd", "M-cjm", "M-in-depth-interviews",
                   "M-quant-methods", "M-unit-economics", "M-goals-drivers-bets"],
         "decision_questions": ["Где в пути пользователя теряется ценность (когорты, шаги воронки)?",
@@ -24,7 +24,7 @@ SCENARIOS = {
     "go_to_market": {
         "title": "Кому и как продавать новый сервис",
         "keywords": ["кому продавать", "запуск", "вывод на рынок", "go-to-market", "gtm", "сегмент", "целев", "новый сервис",
-                     "аудитори", "канал продаж", "пилот", "продавать"],
+                     "аудитори", "канал продаж", "пилот", "продавать", "launch", "to market", "introduce", "вывод на рынок", "вывод продукта", "запуск продукта"],
         "cards": ["M-customers", "M-audience-research", "M-market-sizing", "M-competitors", "M-jtbd", "M-business-models",
                   "M-mvp-pilots", "M-monetization", "M-growth-frameworks"],
         "decision_questions": ["Какой сегмент имеет самую острую задачу и доступен через наши каналы?",
@@ -32,7 +32,7 @@ SCENARIOS = {
     },
     "messaging": {
         "title": "Что сказать аудитории, чтобы она поняла ценность",
-        "keywords": ["сообщени", "коммуникац", "позиционир", "ценност", "понял", "донести", "месседж", "usp", "утп", "бренд", "реклам", "что сказать", "объяснить", "не понимают"],
+        "keywords": ["сообщени", "коммуникац", "позиционир", "ценност", "понял", "донести", "месседж", "usp", "утп", "бренд", "реклам", "что сказать", "объяснить", "не понимают", "messaging", "positioning", "communication", "say to"],
         "cards": ["M-usp", "M-product-communication", "M-jtbd", "M-audience-research", "M-marketing-research",
                   "M-competitors", "M-cjm", "M-loyalty-metrics"],
         "decision_questions": ["Какой барьер мешает: непонимание, недоверие, цена, привычка?",
@@ -41,14 +41,14 @@ SCENARIOS = {
     },
     "monetization": {
         "title": "Цена, тарифы, модель монетизации",
-        "keywords": ["цена", "тариф", "монетиз", "подписк", "платн", "бесплатн", "arpu", "ltv", "выручк", "pricing"],
+        "keywords": ["цена", "тариф", "монетиз", "подписк", "платн", "бесплатн", "arpu", "ltv", "выручк", "pricing", "monetization", "monetize", "price", "revenue model"],
         "cards": ["M-monetization", "M-unit-economics", "M-traction-model", "M-benchmarking", "M-competitors", "M-quant-methods"],
         "decision_questions": ["Какая value metric связана с ценностью для клиента?", "Сойдётся ли юнит-экономика (LTV/CAC)?",
                                "Что произойдёт с каннибализацией и оттоком?"],
     },
     "growth": {
         "title": "Продукт не растёт / стратегия роста",
-        "keywords": ["не растёт", "не растет", "рост", "стратеги", "драйвер", "north star", "nsm", "масштаб", "okr", "роадмап"],
+        "keywords": ["не растёт", "не растет", "рост", "стратеги", "драйвер", "north star", "nsm", "масштаб", "okr", "роадмап", "growth", "scale"],
         "cards": ["M-strategy-growth", "M-success-metrics", "M-goals-drivers-bets", "M-growth-frameworks", "M-external-environment",
                   "M-competitors", "M-outcome-roadmap", "M-risks", "M-pmf-scaling"],
         "decision_questions": ["Какой драйвер роста даёт наибольший вклад в NSM?", "Есть ли PMF в ключевом сегменте?",
@@ -56,7 +56,7 @@ SCENARIOS = {
     },
     "keep_or_kill": {
         "title": "Развивать, оставить или закрыть направление",
-        "keywords": ["закрыть", "свернуть", "оставить", "продолжать ли", "окупает", "убыточ", "kill", "сократить"],
+        "keywords": ["закрыть", "свернуть", "оставить", "продолжать ли", "окупает", "убыточ", "kill", "сократить", "keep or kill", "shut down", "sunset", "kill the"],
         "cards": ["M-unit-economics", "M-traction-model", "M-pmf-scaling", "M-risks", "M-strategy-growth", "M-decision-daci"],
         "decision_questions": ["Какой вклад направления в выручку/удержание ядра (включая косвенный)?",
                                "Что потеряем при закрытии и как это измерить?", "Какие условия сделали бы продолжение оправданным?"],
