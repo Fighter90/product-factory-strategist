@@ -143,8 +143,13 @@ def build_index() -> tuple[str, list[str]]:
 
 
 def card_path(card_id: str) -> Path:
+    base = card_id[:-3] if card_id.endswith("-en") else card_id
     for c in cards():
-        if c.get("id") == card_id:
+        if c.get("id") == base:
+            if card_id.endswith("-en"):
+                f = core.KNOWLEDGE / "methods_en" / (base + "-en.md")
+                if f.exists():
+                    return f
             return core.KNOWLEDGE / "methods" / c["file"]
     raise core.PfsError(f"Карта {card_id} не найдена")
 
