@@ -19,7 +19,7 @@ Four layers to distinguish:
 | Layer | Where | What is inside |
 |---|---|---|
 | Rules and process | `AGENTS.md` | 12-step process, evidence rules, command cheat sheet |
-| Methods | `knowledge/methods/` | 88 method cards (RU) + 16 EN mirrors: unit economics, A/B testing, platforms, GenAI, etc. |
+| Methods | `knowledge/methods/` | 88 method cards (RU) + 88 EN mirrors (full bilingual base): unit economics, A/B testing, platforms, GenAI, etc. |
 | Task materials | `projects/<slug>/` | sources, claim registry, documents, Excel models, state |
 | Tools | `python3 -m tools.pfs …` | CLI and MCP server with guarantees: no fact without a source |
 

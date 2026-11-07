@@ -1,5 +1,7 @@
 @AGENTS.md
 
+> English version: [AGENTS_EN.md](AGENTS_EN.md) — agent instructions in English.
+
 ## Особенности Claude Code
 
 - Навыки (`.claude/skills/*`) вызываются через Skill tool или `/имя`: `/strategist` — полный процесс или продолжение.

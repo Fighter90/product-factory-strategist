@@ -3,7 +3,7 @@ id: M-lean-startup-en
 title: Lean Startup — Build-Measure-Learn, validated learning, pivots
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [research, options, validation]
 tags: [en, summary]
 related: []
 ---

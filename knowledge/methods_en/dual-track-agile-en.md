@@ -3,7 +3,7 @@ id: M-dual-track-agile-en
 title: Dual-Track Agile — discovery and delivery in parallel
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [research, options, delivery]
 tags: [en, summary]
 related: []
 ---

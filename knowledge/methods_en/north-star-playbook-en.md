@@ -3,7 +3,7 @@ id: M-north-star-playbook-en
 title: North Star Playbook — one value metric and an input-metric tree
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [strategy, validation]
 tags: [en, summary]
 related: []
 ---

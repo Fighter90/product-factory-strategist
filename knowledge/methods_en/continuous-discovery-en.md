@@ -3,7 +3,7 @@ id: M-continuous-discovery-en
 title: Continuous Discovery — opportunity solution tree and weekly touchpoints
 course: pm-approaches-en
 sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
-stages: []
+stages: [research, discovery, options]
 tags: [en, summary]
 related: []
 ---
