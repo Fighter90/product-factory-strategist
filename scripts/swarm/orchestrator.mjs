@@ -379,10 +379,9 @@ async function main() {
   }
 }
 
-const isMain = process.argv[1] && resolve(process.argv[1]) === decodeURIComponent(new URL(import.meta.url).pathname);
-if (isMain) {
-  main().then(
-    () => process.exit(0),
-    (e) => { console.error(`SWARM ERROR: ${String(e).slice(0, 500)}`); process.exit(1); },
-  );
-}
+// isMain-проверка через resolve/URL ломается на симлинках (/tmp → /private/tmp) — main молча не вызывался.
+// Скрипт используется только как CLI — вызываем main() безусловно.
+main().then(
+  () => process.exit(0),
+  (e) => { console.error(`SWARM ERROR: ${String(e).slice(0, 500)}`); process.exit(1); },
+);
