@@ -106,6 +106,19 @@ class GapTests(unittest.TestCase):
         (self.pdir / "outputs" / "02_situation.md").write_text(sit2, encoding="utf-8")
         self.assertFalse(any("Активные соискатели" in w for w in check.run(self.pdir)["warnings"]))
 
+    def test_check_catches_masculine_closed_marker(self):
+        """«пробел закрыт [C###]» (мужской род) — тоже закрытие, рассинхрон не должен проскочить."""
+        sit = (self.pdir / "outputs" / "02_situation.md").read_text(encoding="utf-8")
+        sit = sit.replace(
+            "| Активные соискатели по странам | Eurostat LFS не даёт по ИТ-профессии | прокси по вакансиям | 2 ч | да |",
+            f"| Активные соискатели по странам | закрыт [{self.c['id']}] | не требуется | 0 | нет |")
+        (self.pdir / "outputs" / "02_situation.md").write_text(sit, encoding="utf-8")
+        warns = check.run(self.pdir)["warnings"]
+        self.assertTrue(any("01_research_plan" in w and "открыт" in w and "02_situation.md" in w
+                            for w in warns), warns)
+        # «закрытые данные» в другом пробеле — не закрытие, ловушки быть не должно
+        self.assertFalse(any("WTP" in w for w in check.run(self.pdir)["warnings"]), warns)
+
     def test_close_validation(self):
         with self.assertRaises(PfsError):  # неизвестное утверждение
             gaps.close(self.pdir, 1, "C999")
@@ -115,6 +128,16 @@ class GapTests(unittest.TestCase):
         with self.assertRaises(PfsError):  # уже закрыт — повтор не дублирует пометку
             gaps.close(self.pdir, 1, self.c["id"])
         self.assertEqual(self._sit_row().count("закрыто"), 1)
+
+    def test_close_refuses_manually_marked_closed(self):
+        """Строка 02 уже помечена «закрыт [C###]» вручную — повторный close не дублирует пометку."""
+        sit = (self.pdir / "outputs" / "02_situation.md").read_text(encoding="utf-8")
+        sit = sit.replace("| Eurostat LFS не даёт по ИТ-профессии |",
+                          f"| закрыт [{self.c['id']}] |")
+        (self.pdir / "outputs" / "02_situation.md").write_text(sit, encoding="utf-8")
+        with self.assertRaises(PfsError):
+            gaps.close(self.pdir, 1, self.c["id"])
+        self.assertEqual(self._sit_row().count(f"[{self.c['id']}]"), 1)
 
     def test_list(self):
         text = gaps.list_text(self.pdir)
