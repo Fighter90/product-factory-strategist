@@ -41,7 +41,8 @@ const ROLES = {
 };
 
 let logFile = null;
-const ts = () => new Date().toISOString().replace('T', ' ').slice(0, 19);
+// локальное время (не UTC): лог читает человек, UTC-сдвиг порождал ложные «зависания»
+const ts = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().replace('T', ' ').slice(0, 19);
 function log(msg) {
   const line = `[${ts()}] ${msg}`;
   console.log(line);
