@@ -273,6 +273,10 @@ async function main() {
 
           log(`-- round ${round + 1}: review`);
           const diff = await sh(`git diff origin/main...HEAD`);
+          log(`  diff captured: ${diff.all.length} bytes`);
+          writeFileSync('/tmp/swarm-review-prompt.md', (() => { let pr = ROLES.reviewer;
+            for (const [k, v] of Object.entries({ IDENTIFIER: issue.identifier, TITLE: issue.title, DESCRIPTION: issue.description || '(judge the diff against the issue title)', DIFF: `<DIFF>\n(дифф может быть обрезан по лимиту символов — это ожидаемо, не дефект; судьте по видимой части)\n${diff.all.slice(0, 100_000)}\n</DIFF>` })) pr = pr.split(`{{${k}}}`).join(v ?? '');
+            return pr; })());
           const rev = await worker('reviewer', {
             IDENTIFIER: issue.identifier, TITLE: issue.title,
             DESCRIPTION: issue.description || '(judge the diff against the issue title)',
