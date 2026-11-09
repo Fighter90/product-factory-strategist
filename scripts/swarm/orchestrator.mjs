@@ -51,21 +51,39 @@ function log(msg) {
 const short = (s, n = 400) => String(s).replace(/\s+/g, ' ').trim().slice(0, n);
 
 function run(cmd, args_, { timeoutMs = 600_000, cwd = ROOT } = {}) {
-  // detached: true → убийство ГРУППЫ (kill(-pid)) — grandchildren (например, песочница воркера)
-  // не держат pipe'ы вечно; resolve на 'exit' (а не 'close') — воркер не может повесить конвейер.
+  // Три требования: (1) полный захват stdout/stderr — resolve на 'exit' гонится с доставкой
+  // данных (под нагрузкой данные могли прийти пустыми → ревьюер получал ПУСТОЙ дифф);
+  // (2) никакого вечного висения — grandchildren держат pipe'ы, 'close' может не наступить
+  // никогда → 3-секундный grace после exit; (3) таймаут убивает ГРУППУ (kill(-pid)).
   return new Promise((res) => {
     const p = spawn(cmd, args_, { cwd, env: process.env, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
     let out = '', err = '', done = false;
-    const finish = (code) => { if (done) return; done = true; clearTimeout(t); res({ code: code ?? -1, out, err, all: out + err }); };
+    let exited = false, soEnd = false, seEnd = false, exitCode = null;
+    const finish = (code) => {
+      if (done) return;
+      done = true;
+      clearTimeout(t);
+      clearTimeout(g);
+      res({ code: code ?? exitCode ?? -1, out, err, all: out + err });
+    };
+    const maybe = () => { if (exited && soEnd && seEnd) finish(exitCode); };
     const t = setTimeout(() => {
       try { process.kill(-p.pid, 'SIGKILL'); } catch { try { p.kill('SIGKILL'); } catch {} }
     }, timeoutMs);
+    let g = null;
     p.stdout.on('data', (d) => { out += d; });
     p.stderr.on('data', (d) => { err += d; });
-    p.on('exit', (code) => finish(code));
+    p.stdout.on('end', () => { soEnd = true; maybe(); });
+    p.stderr.on('end', () => { seEnd = true; maybe(); });
+    p.on('exit', (code) => {
+      exited = true; exitCode = code;
+      g = setTimeout(() => finish(code), 3000); // страховка: stream-end не пришёл — отдаём что есть
+      maybe();
+    });
     p.on('error', () => finish(-1));
   });
 }
+
 const sh = async (cmd, opts) => {
   const r = await run('bash', ['-lc', cmd], opts);
   log(`  $ ${cmd.slice(0, 120)} → ${r.code}`);
@@ -258,7 +276,7 @@ async function main() {
           const rev = await worker('reviewer', {
             IDENTIFIER: issue.identifier, TITLE: issue.title,
             DESCRIPTION: issue.description || '(judge the diff against the issue title)',
-            DIFF: `<DIFF>\n${diff.all.slice(0, 60_000)}\n</DIFF>`,
+            DIFF: `<DIFF>\n(дифф может быть обрезан по лимиту символов — это ожидаемо, не дефект; судьте по видимой части)\n${diff.all.slice(0, 100_000)}\n</DIFF>`,
           }, { timeoutMs: 12 * 60_000 });
           const v = extractVerdict(rev.all);
           if (v.verdict === 'ACCEPT') { accepted = true; log('  verdict: ACCEPT'); break; }

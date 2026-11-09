@@ -21,6 +21,9 @@ REVIEW CHECKLIST (judge only what the diff touches)
    the touched docs are bilingual, style consistent with the surrounding code.
 5. Honesty: does the summary claim things the diff does not do?
 
+TRUNCATION NOTE: the DIFF may be cut at a character limit — that is EXPECTED and is not a
+defect or a blocking problem; judge the visible portion. Do not spend your review on the cut.
+
 NO-TOOLS RULE (critical): do NOT run commands, do NOT read files, do NOT use the linear MCP —
 the diff inside <DIFF> is your COMPLETE context. Every past review failure happened because
 the session ended with tool output instead of a verdict. Work only from the diff text and
