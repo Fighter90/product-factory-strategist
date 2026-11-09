@@ -9,6 +9,8 @@ ISSUE: {{IDENTIFIER}} — {{TITLE}}
 The full diff vs the base branch is provided below between <DIFF> tags. The commit message
 is the first line inside the diff header.
 
+{{DIFF}}
+
 REVIEW CHECKLIST (judge only what the diff touches)
 1. Correctness: does the change actually implement the issue? Logic errors, broken paths,
    dead code, partial implementations masquerading as done.
