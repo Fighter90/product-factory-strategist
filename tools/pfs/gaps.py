@@ -3,7 +3,9 @@
 Пробел живёт в двух местах:
   02_situation.md — строка в таблице раздела «Чего мы не знаем»;
   01_research_plan.md — пункт в разделе «Пробелы…» и/или строка вопроса со столбцом «Статус».
-`pfs gap close <номер> --claim C###` помечает пробел закрытым в обоих файлах сразу,
+`pfs gap close <номер> --claim C###` помечает пробел закрытым в обоих файлах сразу;
+повтор с тем же --claim, когда 02 уже закрыта этим утверждением, идемпотентен и
+синхронизирует 01 (исправление рассинхрона),
 `pfs gap list` показывает пробелы с номерами, а `pfs check` предупреждает, если 02
 говорит «закрыто», но строка 01 всё ещё «открыт» (рассинхрон после ручных правок).
 
@@ -145,7 +147,12 @@ def _write(path: Path, old_text: str, lines: list[str]) -> None:
 
 
 def close(pdir: Path, num: int, claim_id: str, note: str = "") -> dict:
-    """Пометить пробел №num закрытым: строка 02 + пункт/статус в 01 — одним действием."""
+    """Пометить пробел №num закрытым: строка 02 + пункт/статус в 01 — одним действием.
+
+    Повтор с тем же --claim, когда строка 02 уже помечена закрытой этим утверждением,
+    идемпотентен: 02 не переписывается, но 01 синхронизируется (исправление рассинхрона
+    после ручных правок). Повтор с другим --claim или по строке без [C###] — отказ.
+    """
     claim_id = (claim_id or "").strip().upper()
     if claim_id not in {c["id"] for c in claims_mod.load(pdir)}:
         raise PfsError(f"Утверждение {claim_id or '—'} не найдено в реестре — "
@@ -158,15 +165,21 @@ def close(pdir: Path, num: int, claim_id: str, note: str = "") -> dict:
     g = next((x for x in gs if x["n"] == num), None)
     if g is None:
         raise PfsError(f"Пробел №{num} не найден в 02_situation.md (всего {len(gs)}) — см. pfs gap list")
-    if g["closed"]:
-        raise PfsError(f"Пробел №{num} «{g['title']}» уже помечен закрытым в 02_situation.md")
+    already_closed = g["closed"]
     marker = f"**закрыто {core.today()} [{claim_id}]**" + (f": {note}" if note else "")
-    lines = sit.splitlines()
-    cells = list(g["cells"])
-    reason = cells[1]
-    cells[1] = (reason + " " if reason not in PLACEHOLDERS else "") + marker
-    lines[g["line"] - 1] = "| " + " | ".join(cells) + " |"
-    _write(sit_path, sit, lines)
+    if already_closed:
+        row_ids = {m.upper() for m in re.findall(r"\[(C\d+)\]", " ".join(g["cells"]), re.IGNORECASE)}
+        if claim_id not in row_ids:
+            who = ", ".join(sorted(row_ids)) if row_ids else "без [C###] в строке"
+            raise PfsError(f"Пробел №{num} «{g['title']}» уже помечен закрытым в 02_situation.md "
+                           f"({who}) — повторное закрытие с {claim_id} не требуется")
+    else:
+        lines = sit.splitlines()
+        cells = list(g["cells"])
+        reason = cells[1]
+        cells[1] = (reason + " " if reason not in PLACEHOLDERS else "") + marker
+        lines[g["line"] - 1] = "| " + " | ".join(cells) + " |"
+        _write(sit_path, sit, lines)
 
     touched: list[str] = []
     plan_path = pdir / "outputs" / "01_research_plan.md"
@@ -191,7 +204,9 @@ def close(pdir: Path, num: int, claim_id: str, note: str = "") -> dict:
         if changed:
             _write(plan_path, plan, plines)
     core.log(pdir, "gap", f"Пробел №{num} «{g['title']}» закрыт ({claim_id}) в 01/02")
-    msg = f"Пробел №{num} «{g['title']}» закрыт в 02_situation.md [{claim_id}]"
+    msg = (f"Пробел №{num} «{g['title']}» уже был помечен закрытым в 02_situation.md [{claim_id}]"
+           if already_closed else
+           f"Пробел №{num} «{g['title']}» закрыт в 02_situation.md [{claim_id}]")
     if touched:
         msg += "; 01_research_plan.md — " + ", ".join(touched)
     else:
@@ -217,7 +232,12 @@ def list_text(pdir: Path) -> str:
 
 
 def sync_warnings(pdir: Path) -> list[str]:
-    """Рассинхрон 01/02: в 02 пробел закрыт, а строка 01 всё ещё «открыт»."""
+    """Рассинхрон 01/02: в 02 пробел закрыт, а строка 01 всё ещё «открыт».
+
+    Подсказка должна быть исполнимой: если в закрытой строке 02 есть [C###], рекомендуем
+    `pfs gap close <номер> --claim <этот C###>` (повтор с тем же claim идемпотентен и
+    синхронизирует 01); если claim в строке нет — советуем правку строки 01 вручную.
+    """
     sit, plan = pdir / "outputs" / "02_situation.md", pdir / "outputs" / "01_research_plan.md"
     if not (sit.exists() and plan.exists()):
         return []
@@ -227,14 +247,18 @@ def sync_warnings(pdir: Path) -> list[str]:
     for g in _gaps02(sit.read_text(encoding="utf-8")):
         if not g["closed"]:
             continue
+        ids = re.findall(r"\[(C\d+)\]", " ".join(g["cells"]), re.IGNORECASE)
+        remedy = (f"выполните pfs gap close {g['n']} --claim {ids[0].upper()}" if ids else
+                  "отметьте закрытие в строке 01_research_plan.md вручную — "
+                  "в строке 02 нет [C###], команде нечем сверить")
         for it in items:
             if _matches(g["title"], it["text"]) and "открыт" in it["text"].lower() \
                     and not _is_closed(it["text"]):
                 out.append(f"01_research_plan.md:{it['line']}: пробел «{g['title']}» закрыт в 02_situation.md, "
-                           f"но в плане числится «открыт» — выполните pfs gap close {g['n']} --claim C###")
+                           f"но в плане числится «открыт» — {remedy}")
         for r in rows:
             if _matches(g["title"], r["question"]) and "открыт" in r["status"].lower() \
                     and not _is_closed(r["status"]):
                 out.append(f"01_research_plan.md:{r['line']}: статус вопроса «{r['question'][:60]}» — «открыт», "
-                           f"хотя пробел закрыт в 02_situation.md — выполните pfs gap close {g['n']} --claim C###")
+                           f"хотя пробел закрыт в 02_situation.md — {remedy}")
     return out

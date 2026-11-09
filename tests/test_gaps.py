@@ -58,6 +58,7 @@ class GapTests(unittest.TestCase):
         self.pdir = fresh(f"gap{id(self)}")
         sources.add(self.pdir, text="публичные данные рынка", title="d")
         self.c = claims.add(self.pdir, "Рынок вакансий вырос", "fact", ["S001"], grade="B")
+        self.c2 = claims.add(self.pdir, "Другое утверждение для проверки", "fact", ["S001"], grade="B")
         (self.pdir / "outputs" / "01_research_plan.md").write_text(PLAN, encoding="utf-8")
         (self.pdir / "outputs" / "02_situation.md").write_text(SITUATION, encoding="utf-8")
 
@@ -125,19 +126,71 @@ class GapTests(unittest.TestCase):
         with self.assertRaises(PfsError):  # нет такого номера
             gaps.close(self.pdir, 7, self.c["id"])
         gaps.close(self.pdir, 1, self.c["id"])
-        with self.assertRaises(PfsError):  # уже закрыт — повтор не дублирует пометку
-            gaps.close(self.pdir, 1, self.c["id"])
+        res = gaps.close(self.pdir, 1, self.c["id"])  # повтор с тем же claim — идемпотентен
+        self.assertEqual(self._sit_row().count("закрыто"), 1)  # дубликата пометки нет
+        self.assertIn("уже", res["message"])
+        with self.assertRaises(PfsError):  # повтор с ДРУГИМ claim — отказ
+            gaps.close(self.pdir, 1, self.c2["id"])
         self.assertEqual(self._sit_row().count("закрыто"), 1)
 
-    def test_close_refuses_manually_marked_closed(self):
-        """Строка 02 уже помечена «закрыт [C###]» вручную — повторный close не дублирует пометку."""
+    def test_close_refuses_manually_marked_closed_other_claim(self):
+        """Строка 02 помечена «закрыт [C###]» вручную другим утверждением — close отказывает."""
+        sit = (self.pdir / "outputs" / "02_situation.md").read_text(encoding="utf-8")
+        sit = sit.replace("| Eurostat LFS не даёт по ИТ-профессии |",
+                          f"| закрыт [{self.c2['id']}] |")
+        (self.pdir / "outputs" / "02_situation.md").write_text(sit, encoding="utf-8")
+        with self.assertRaises(PfsError):
+            gaps.close(self.pdir, 1, self.c["id"])
+        self.assertEqual(self._sit_row().count(f"[{self.c2['id']}]"), 1)
+
+    def test_close_idempotent_remediation_syncs_01(self):
+        """02 уже помечена «закрыт [C###]» тем же утверждением — close не дублирует пометку,
+        но синхронизирует 01 (исправление рассинхрона после ручной правки 02)."""
         sit = (self.pdir / "outputs" / "02_situation.md").read_text(encoding="utf-8")
         sit = sit.replace("| Eurostat LFS не даёт по ИТ-профессии |",
                           f"| закрыт [{self.c['id']}] |")
         (self.pdir / "outputs" / "02_situation.md").write_text(sit, encoding="utf-8")
-        with self.assertRaises(PfsError):
-            gaps.close(self.pdir, 1, self.c["id"])
+        res = gaps.close(self.pdir, 1, self.c["id"])
+        # 02: дубликата пометки нет
         self.assertEqual(self._sit_row().count(f"[{self.c['id']}]"), 1)
+        # 01: пункт и статус вопроса синхронизированы
+        plan = (self.pdir / "outputs" / "01_research_plan.md").read_text(encoding="utf-8")
+        item = [l for l in plan.splitlines() if l.startswith("1. Активные соискатели")][0]
+        self.assertIn("закрыто", item)
+        qrow = [l for l in plan.splitlines() if l.startswith("| Q1 |")][0]
+        self.assertIn(f"отвечен [{self.c['id']}]", qrow)
+        self.assertIn("01_research_plan.md", res["message"])
+
+    def test_desync_remediation_end_to_end(self):
+        """Полный цикл исправления: рассинхрон → warning с рабочей командой → close → check тих."""
+        sit = (self.pdir / "outputs" / "02_situation.md").read_text(encoding="utf-8")
+        sit = sit.replace(
+            "| Активные соискатели по странам | Eurostat LFS не даёт по ИТ-профессии | прокси по вакансиям | 2 ч | да |",
+            f"| Активные соискатели по странам | закрыто вчера [{self.c['id']}] | не требуется | 0 | нет |")
+        (self.pdir / "outputs" / "02_situation.md").write_text(sit, encoding="utf-8")
+        warns = [w for w in check.run(self.pdir)["warnings"] if "01_research_plan" in w]
+        self.assertTrue(warns, "check должен поймать рассинхрон")
+        # warning рекомендует команду, которая реально работает (claim из строки 02)
+        self.assertTrue(any(f"pfs gap close 1 --claim {self.c['id']}" in w for w in warns), warns)
+        for w in warns:
+            self.assertNotIn("--claim C###", w, "плейсхолдер вместо реального claim в подсказке")
+        gaps.close(self.pdir, 1, self.c["id"])  # remediation по подсказке
+        rest = [w for w in check.run(self.pdir)["warnings"] if "01_research_plan" in w]
+        self.assertEqual(rest, [])
+
+    def test_desync_without_claim_advises_manual_edit(self):
+        """02 закрыта вручную без [C###] — warning советует правку 01, команду close не советует."""
+        sit = (self.pdir / "outputs" / "02_situation.md").read_text(encoding="utf-8")
+        sit = sit.replace(
+            "| Активные соискатели по странам | Eurostat LFS не даёт по ИТ-профессии | прокси по вакансиям | 2 ч | да |",
+            "| Активные соискатели по странам | закрыто вчера | не требуется | 0 | нет |")
+        (self.pdir / "outputs" / "02_situation.md").write_text(sit, encoding="utf-8")
+        warns = [w for w in check.run(self.pdir)["warnings"] if "01_research_plan" in w]
+        self.assertTrue(warns, "check должен поймать рассинхрон")
+        self.assertTrue(all("pfs gap close" not in w for w in warns), warns)
+        self.assertTrue(all("вручную" in w for w in warns), warns)
+        with self.assertRaises(PfsError):  # close без совпадающего claim из 02 невозможен
+            gaps.close(self.pdir, 1, self.c["id"])
 
     def test_list(self):
         text = gaps.list_text(self.pdir)
