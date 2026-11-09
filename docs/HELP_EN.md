@@ -19,7 +19,7 @@ Four layers to distinguish:
 | Layer | Where | What is inside |
 |---|---|---|
 | Rules and process | `AGENTS.md` | 12-step process, evidence rules, command cheat sheet |
-| Methods | `knowledge/methods/` | 88 method cards (RU) + 88 EN mirrors (full bilingual base): unit economics, A/B testing, platforms, GenAI, etc. |
+| Methods | `knowledge/methods/` | 89 method cards (RU) + 89 EN mirrors (full bilingual base): unit economics, A/B testing, platforms, GenAI, etc. |
 | Task materials | `projects/<slug>/` | sources, claim registry, documents, Excel models, state |
 | Tools | `python3 -m tools.pfs …` | CLI and MCP server with guarantees: no fact without a source |
 
@@ -37,7 +37,7 @@ You need: Python 3.9+ (no packages), git, any environment above. Optional: `pdft
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # self-check (103 tests)
+python3 -m unittest discover -s tests          # self-check (115 tests)
 ```
 
 `doctor` reports Python version, pdftotext/pypdf availability, number of knowledge cards, active project.
@@ -250,14 +250,14 @@ the report itself is origin agent — hypotheses only. Telemetry: `FEYNMAN_TELEM
 
 ## Skills: structure and invocation
 
-Alongside the process the environment loads **skills** — packaged instruction sets (120 in total, in three
+Alongside the process the environment loads **skills** — packaged instruction sets (121 in total, in three
 groups plus integrations):
 
 - **Base (13)** — one per process step: `intake`, `research`, `situation`, `options`, `strategy`,
   `validation-plan`, `decision-support`, `six-pager`, `deck`, etc.
 - **Product-skills (27)** — domain packs around the process: segments, JTBD, unit economics, growth, risks.
-- **Personal library (74)** — imported packs by category:
-  - **Design** — `design-ui`, `refero-design`, `frontend-design`, `make-interfaces-feel-better`,
+- **Personal library (75)** — imported packs by category:
+  - **Design** — `design-ui`, `refero-design`, `frontend-design`, `claudable-landing`, `make-interfaces-feel-better`,
     `emil-design-eng`, `web-design-guidelines`;
   - **Marketing** — `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `cold-email`,
     `emails`, `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`,

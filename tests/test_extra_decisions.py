@@ -95,7 +95,7 @@ class RebaseAndTextTests(unittest.TestCase):
         t = decisions.table(decisions.load(self.pdir))
         self.assertIn("| ID | Решение | Ответственный | Основания | Показатели | Пересмотр | Статус |", t)
         self.assertIn(f"| {d2['id']} | Фокус 2: Пилот шире | CPO |", t)
-        self.assertIn("Удержание M1: 38%→45% к 2027-03-01", t)
+        self.assertIn("Удержание M1: 38% → 45% к 2027-03-01", t)
         self.assertIn("2026-01-01; M1 < 40%", t)
 
 

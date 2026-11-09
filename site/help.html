@@ -150,8 +150,8 @@ body[data-lang=ru] [lang=en]{display:none}
   <h1 lang="ru">Справка <span class="grad">·</span> агент</h1><h1 lang="en">Agent <span class="grad">help</span></h1>
   <p class="sub" lang="ru">Полная документация: как общаться с агентом, все 12 шагов процесса, доказательства S### → C### → D###, Excel-модели и six-pager, инструменты (CLI, MCP, навыки, субагенты, хуки), среды и интеграции, безопасность, глоссарий и частые проблемы.</p>
   <p class="sub" lang="en">Full documentation: talking to the agent, all 12 process steps, evidence S### → C### → D###, Excel models and the six-pager, tooling (CLI, MCP, skills, subagents, hooks), environments and integrations, security, glossary and troubleshooting.</p>
-  <div class="meta" lang="ru">12 шагов · 88 карт знаний (RU + EN-индекс) · 120 навыков · 8 субагентов · 4 хука · 18 MCP-инструментов · 0 зависимостей</div>
-  <div class="meta" lang="en">12 steps · 88 knowledge cards · 120 skills · 8 subagents · 4 hooks · 18 MCP tools · 0 dependencies</div>
+  <div class="meta" lang="ru">12 шагов · 89 карт знаний (RU + EN-индекс) · 121 навык · 8 субагентов · 4 хука · 18 MCP-инструментов · 0 зависимостей</div>
+  <div class="meta" lang="en">12 steps · 89 knowledge cards · 121 skills · 8 subagents · 4 hooks · 18 MCP tools · 0 dependencies</div>
   <div class="search"><input id="q" type="search" placeholder="Поиск по справке… / Search the help…" aria-label="Поиск по справке / Search the help"></div>
 </div></div>
 
@@ -272,12 +272,12 @@ body[data-lang=ru] [lang=en]{display:none}
       <pre lang="ru">$ git clone https://github.com/Fighter90/product-factory-strategist.git
 $ cd product-factory-strategist
 $ python3 -m tools.pfs doctor      # проверка окружения
-$ python3 -m unittest discover -s tests   # 103 теста, опционально
+$ python3 -m unittest discover -s tests   # 115 тестов, опционально
 $ pfs new "Почему падает удержание" "запрос дословно"</pre>
       <pre lang="en">$ git clone https://github.com/Fighter90/product-factory-strategist.git
 $ cd product-factory-strategist
 $ python3 -m tools.pfs doctor      # environment check
-$ python3 -m unittest discover -s tests   # 103 tests, optional
+$ python3 -m unittest discover -s tests   # 115 tests, optional
 $ pfs new "Why is retention dropping" "the request verbatim"</pre>
       <p lang="ru">Требования: Python 3.9+ и любая поддерживаемая среда. Пакеты не устанавливаются — только стандартная библиотека. Секреты (ключи Linear и других MCP) кладутся в <code>.env</code> — он не коммитится и не обязателен для базового цикла.</p>
       <p lang="en">Requirements: Python 3.9+ and any supported environment. No packages to install — standard library only. Secrets (Linear and other MCP keys) go to <code>.env</code> — it is git-ignored and not required for the basic loop.</p></div>
@@ -518,14 +518,14 @@ pfs decision rebase --id D001 --note "основания обновлены"</pr
         <tr><td>Данные</td><td><code>data profile|cohort|funnel|stats [--save]</code></td><td>профиль таблицы; когортное удержание; воронка; статистика с ДИ 95%</td></tr>
         <tr><td>Интервью</td><td><code>interview guide|save</code></td><td>гайд по персоне; транскрипт → источник origin=synthetic</td></tr>
         <tr><td>Медиа и UX</td><td><code>media add · ux scaffold S###</code></td><td>медиа-источник с описанием; каркас UX-анализа по эвристикам</td></tr>
-        <tr><td>Знания</td><td><code>kb search/show/index</code></td><td>BM25-поиск по 88 картам; карта целиком; переиндексация</td></tr>
+        <tr><td>Знания</td><td><code>kb search/show/index</code></td><td>BM25-поиск по 89 картам; карта целиком; переиндексация</td></tr>
         <tr><td>Модели</td><td><code>models show/pick/use/escalate</code></td><td>профили по задачам; смена профиля; эскалация при ошибках</td></tr>
         <tr><td>Расчёты</td><td><code>calc all|unit-econ|growth|cohort|market</code></td><td>4 книги Excel на формулах → outputs/attachments</td></tr>
         <tr><td>Экспорт</td><td><code>export [--six-pager] [--deck] · docx</code></td><td>REPORT.md; six-pager + Excel; HTML-дека 16:9; Markdown → Word</td></tr>
         <tr><td>Журнал и цена</td><td><code>log --kind … --human-minutes · cost</code></td><td>действия; ручное время; токены и деньги по моделям</td></tr>
         <tr><td>Сервис</td><td><code>doctor</code></td><td>проверка окружения: Python, pdftotext, pypdf, БЗ, профиль моделей</td></tr>
       </table>
-      <p lang="en">Same groups in English: projects (new/list/use/status) · steps (step/next/questions) · ask/answer · sources (S###, dedup, domains, refresh) · claims (C###, 5 types, grades, history) · quality (check/impact) · decisions (D###) · data (profile/cohort/funnel/stats) · interviews · media &amp; UX · knowledge (BM25 over 88 cards) · models (profiles, escalation) · calc (4 formula workbooks) · export (REPORT/six-pager/deck/docx) · log &amp; cost · doctor.</p></div>
+      <p lang="en">Same groups in English: projects (new/list/use/status) · steps (step/next/questions) · ask/answer · sources (S###, dedup, domains, refresh) · claims (C###, 5 types, grades, history) · quality (check/impact) · decisions (D###) · data (profile/cohort/funnel/stats) · interviews · media &amp; UX · knowledge (BM25 over 89 cards) · models (profiles, escalation) · calc (4 formula workbooks) · export (REPORT/six-pager/deck/docx) · log &amp; cost · doctor.</p></div>
 
     <div class="faq rv" id="h-mcp"><h3 lang="ru">MCP-сервер: 18 инструментов</h3><h3 lang="en">MCP server: 18 tools</h3>
       <p lang="ru">Сервер <code>pfs-strategist</code> (stdio, только stdlib) подключается в <code>.mcp.json</code> любой среды — агент может вызывать те же операции, что и CLI. Инструменты:</p>
@@ -608,8 +608,8 @@ pfs data stats file.csv --col revenue --group seg              # статист�
       <p lang="en"><code>pfs media add shot.png --desc "what is visible" --title "…"</code> copies the media to <code>sources/raw/</code> and turns the description into a text source: the agent analyzes exactly what is described. <code>pfs ux scaffold S003 --focus "onboarding"</code> builds a heuristics + journey scaffold bound to the material; the <code>ux-analyst</code> subagent fills it without inventing beyond the screenshots.</p></div>
 
     <div class="faq rv" id="h-env-claude"><h3 lang="ru">Среда: Claude Code — полный опыт</h3><h3 lang="en">Environment: Claude Code — the full experience</h3>
-      <p lang="ru">Откройте папку репозитория в Claude Code — всё подхватится автоматически: 120 навыков, 8 субагентов, 4 хука (контекст при старте, домены, инъекции, стоимость), команды CLI (<code>pfs …</code>) и MCP-инструменты. Просто напишите задачу — дальше агент ведёт сам.</p>
-      <p lang="en">Open the repo folder in Claude Code — everything auto-loads: 120 skills, 8 subagents, 4 hooks, the CLI (<code>pfs …</code>) and MCP tools. Just state the task — the agent takes it from there.</p></div>
+      <p lang="ru">Откройте папку репозитория в Claude Code — всё подхватится автоматически: 121 навык, 8 субагентов, 4 хука (контекст при старте, домены, инъекции, стоимость), команды CLI (<code>pfs …</code>) и MCP-инструменты. Просто напишите задачу — дальше агент ведёт сам.</p>
+      <p lang="en">Open the repo folder in Claude Code — everything auto-loads: 121 skills, 8 subagents, 4 hooks, the CLI (<code>pfs …</code>) and MCP tools. Just state the task — the agent takes it from there.</p></div>
 
     <div class="faq rv" id="h-env-others"><h3 lang="ru">Среды: Cursor, Codex, OpenCode, Windsurf, Copilot</h3><h3 lang="en">Environments: Cursor, Codex, OpenCode, Windsurf, Copilot</h3>
       <p lang="ru">Все среды читают <code>AGENTS.md</code>. <b>Cursor</b> — правило <code>.cursor/rules</code> + MCP из <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — без хуков: начните с «прочитай AGENTS.md и выполни <code>pfs status</code>» — агент восстановит контекст и продолжит. MCP <code>pfs-strategist</code> работает во всех (launcher с sys.path не зависит от папки запуска).</p>

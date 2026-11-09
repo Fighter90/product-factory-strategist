@@ -18,7 +18,7 @@
 | Слой | Где | Что там |
 |---|---|---|
 | Правила и процесс | `AGENTS.md` | 12-шаговый процесс, правила доказательности, шпаргалка команд |
-| Методики | `knowledge/methods/` | 88 карт методов (RU) + 88 EN-зеркал — полная двуязычная база и EN-индекс: юнит-экономика, A/B-тесты, платформы, GenAI и др. |
+| Методики | `knowledge/methods/` | 89 карт методов (RU) + 89 EN-зеркал — полная двуязычная база и EN-индекс: юнит-экономика, A/B-тесты, платформы, GenAI и др. |
 | Материалы задачи | `projects/<slug>/` | источники, реестр утверждений, документы, Excel-расчёты, состояние |
 | Инструменты | `python3 -m tools.pfs …` | CLI и MCP-сервер с гарантиями: без источника факт не записать |
 
@@ -36,7 +36,7 @@
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor     # проверка окружения
-python3 -m unittest discover -s tests   # самопроверка (103 теста)
+python3 -m unittest discover -s tests   # самопроверка (115 тестов)
 ```
 
 `doctor` показывает: версию Python, наличие pdftotext/pypdf, число карт в базе знаний, активный проект.
@@ -250,15 +250,15 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
 
 ## Навыки: структура и вызов
 
-У агента 120 навыков (skills): базовые 13 по шагам процесса · 27 product-skills · 74 из личной библиотеки · 6 интеграций.
+У агента 121 навык (skills): базовые 13 по шагам процесса · 27 product-skills · 75 из личной библиотеки · 6 интеграций.
 Навыки не заменяют процесс и `pfs` — это библиотека техник, которые подключаются там, где нужны.
 
 **Группы:**
 
 - **Базовые (13)** — по шагам процесса: intake, research, situation, options, strategy, validation-plan, decision-support и др.
 - **Product-skills (27)** — продуктовые методики (маркет-сайзинг, юнит-экономика, трекшн-модели, роадмапы…).
-- **Личная библиотека (74):**
-  - *дизайн*: `design-ui`, `refero-design`, `frontend-design`, `make-interfaces-feel-better`, `emil-design-eng`, `web-design-guidelines`
+- **Личная библиотека (75):**
+  - *дизайн*: `design-ui`, `refero-design`, `frontend-design`, `claudable-landing`, `make-interfaces-feel-better`, `emil-design-eng`, `web-design-guidelines`
   - *маркетинг*: `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `cold-email`, `emails`, `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`, `directory-submissions`, `customer-research`, `marketing-psychology`, `prospecting` и др.
   - *наука*: `paper-lookup`, `research-lookup`, `literature-review`, `scientific-writing`, `scientific-critical-thinking`, `peer-review`, `statistical-analysis`, `statsmodels`, `scikit-learn`, `hypothesis-generation`, `pydeseq2`, `biopython`, `rdkit`
   - *документы/медиа*: `pdf`, `docx`, `pptx`, `xlsx`, `markitdown`, `officecli`, `generate-image`, `video`, `infographics`, `scientific-slides` / `scientific-schematics` / `scientific-visualization`, `latex-posters`, `matplotlib`, `seaborn`

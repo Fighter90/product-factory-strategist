@@ -1,0 +1,215 @@
+{"ts": "2026-11-08T22:42:01+03:00", "kind": "action", "msg": "Создан проект «Вывод проекта на европейский рынок cvstart.org»", "step": "intake"}
+{"ts": "2026-11-08T22:47:40+03:00", "kind": "human", "msg": "Вопрос руководителю: 1) Что значит «вывести на европейский рынок» — какая цель? A: рост OSS-аудитории в Европе (установки, звёзды, комьюнити); B: коммерциализация hosted-версии в Европе (продолжение варианта B из прошлого проекта); C: полная стратегия входа — рост аудитории, затем монетизация. По умолчанию считаю C.", "step": "intake"}
+{"ts": "2026-11-08T22:48:18+03:00", "kind": "human", "msg": "Ответ руководителя: C: полная стратегия (аудитория + монетизация, продолжение варианта B); Европа = приоритетные страны DE, NL, PL, FR, ES, SE; соло-разработчик без бюджета на рекламу, ~5–10 ч/нед, органические каналы", "step": "intake"}
+{"ts": "2026-11-08T22:48:32+03:00", "kind": "claim", "msg": "C001 [допущение] Решение — полная стратегия входа в Европу: рост аудитории, затем монетизация hosted-версии"}
+{"ts": "2026-11-08T22:48:32+03:00", "kind": "claim", "msg": "C002 [допущение] Европа = приоритетные страны DE, NL, PL, FR, ES, SE; остальная Европа — дальняя волна"}
+{"ts": "2026-11-08T22:48:32+03:00", "kind": "claim", "msg": "C003 [допущение] Ресурсы: соло-разработчик без бюджета на рекламу, ~5–10 ч/нед; только органические каналы"}
+{"ts": "2026-11-08T22:48:47+03:00", "kind": "step", "msg": "intake → done", "step": "intake"}
+{"ts": "2026-11-08T22:48:48+03:00", "kind": "step", "msg": "sources → in_progress", "step": "sources"}
+{"ts": "2026-11-08T22:49:06+03:00", "kind": "source", "msg": "S001 добавлен: CVStart — сайт продукта (лендинг career-ops-ui): бесплатный OSS, локальный режим", "tool": "pfs source add", "url": "https://cvstart.org"}
+{"ts": "2026-11-08T22:49:14+03:00", "kind": "source", "msg": "S002 добавлен: Конкуренты и цены: Kickresume/Rezi/Teal/Enhancv/Novoresume/Zety/resume.io", "tool": "pfs source add", "url": "https://www.rezi.ai/pricing"}
+{"ts": "2026-11-08T22:49:15+03:00", "kind": "source", "msg": "S003 добавлен: AI в поиске работы 2025–2026: 31–74% соискателей используют AI", "tool": "pfs source add", "url": "https://www.kickresume.com/en/press/ai-job-search-data/"}
+{"ts": "2026-11-08T22:49:17+03:00", "kind": "source", "msg": "S004 добавлен: Рынок resume builders: коридор $1,2–2,4 млрд; AI-сегмент CAGR 13%", "tool": "pfs source add", "url": "https://www.wiseguyreports.com/reports/resume-builder-market"}
+{"ts": "2026-11-08T22:49:18+03:00", "kind": "source", "msg": "S005 добавлен: Online recruitment $37,97 млрд (2025); ATS $2,5–3,3 млрд", "tool": "pfs source add", "url": "https://www.skyquestt.com/report/online-recruitment-market"}
+{"ts": "2026-11-08T22:49:30+03:00", "kind": "source", "msg": "S006 добавлен: career-ops-ui README: фичи, стек, автотесты, 17 локалей", "tool": "pfs source add"}
+{"ts": "2026-11-08T22:49:30+03:00", "kind": "source", "msg": "S007 добавлен: ИИ-респондент: Markus, 35, PM (Берлин) — гипотезы EU/DE сегмента", "tool": "pfs source add"}
+{"ts": "2026-11-08T22:49:30+03:00", "kind": "source", "msg": "S008 добавлен: ИИ-респондент: Sarah, 32, software engineer (US) — гипотезы EN-сегмента", "tool": "pfs source add"}
+{"ts": "2026-11-08T22:49:30+03:00", "kind": "source", "msg": "S009 добавлен: Синтетическая воронка hosted-беты (12 недель) — иллюстрация метода", "tool": "pfs source add"}
+{"ts": "2026-11-08T22:50:05+03:00", "kind": "step", "msg": "sources → done", "step": "sources"}
+{"ts": "2026-11-08T22:50:05+03:00", "kind": "step", "msg": "research → in_progress", "step": "research"}
+{"ts": "2026-11-08T22:50:54+03:00", "kind": "claim", "msg": "C004 [факт] Продукт CVStart (career-ops UI): скан ~129 джоб-бордов, AI-скоринг 0.0–5.0, CV Studio, 100", "sources": ["S001"]}
+{"ts": "2026-11-08T22:50:54+03:00", "kind": "claim", "msg": "C005 [факт] Монетизации нет: полностью бесплатный, «$0 forever (MIT)»", "sources": ["S001"]}
+{"ts": "2026-11-08T22:50:54+03:00", "kind": "claim", "msg": "C006 [факт] Нет публично хостимой версии (нужен родительский репо career-ops); Windows — только через ", "sources": ["S001"]}
+{"ts": "2026-11-08T22:50:54+03:00", "kind": "claim", "msg": "C007 [факт] Интерфейс продукта и сайта переведён на 19 языков (en, ru, uk, es, pt-BR, fr, pl, de, it, ", "sources": ["S006"]}
+{"ts": "2026-11-08T22:50:54+03:00", "kind": "claim", "msg": "C008 [факт] 7 прямых конкурентов (Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi) — free", "sources": ["S002"]}
+{"ts": "2026-11-08T22:50:54+03:00", "kind": "claim", "msg": "C009 [факт] Языковое покрытие прямых конкурентов узкое: Kickresume — 6 языков, Enhancv/Teal/Rezi — анг", "sources": ["S002"]}
+{"ts": "2026-11-08T22:57:17+03:00", "kind": "source", "msg": "S010 добавлен: Bitkom: 109 000 незакрытых IT-вакансий в Германии (2025)", "tool": "pfs source add", "url": "https://www.bitkom.org/sites/main/files/2026-01/bitkom-studienbericht-it-fachkraefte-2025.pdf"}
+{"ts": "2026-11-08T22:57:18+03:00", "kind": "source", "msg": "S011 добавлен: CBS (NL): 15,1 тыс. открытых ICT-вакансий конец 2025; 622 тыс. ICT-специалистов", "tool": "pfs source add", "url": "https://www.cbs.nl/nl-nl/longread/rapportages/2026/digitalisering-en-kenniseconomie-2025/2-ict-en-economie"}
+{"ts": "2026-11-08T22:57:20+03:00", "kind": "source", "msg": "S012 добавлен: Insee (FR): напряжение по ИТ-инженерам 1,1; 42 635 проектов найма", "tool": "pfs source add", "url": "https://www.insee.fr/fr/statistiques/8616805?sommaire=8616883"}
+{"ts": "2026-11-08T22:57:21+03:00", "kind": "source", "msg": "S013 добавлен: DigitalES×COIT (ES): ~120 000 незакрытых tech-вакансий", "tool": "pfs source add", "url": "https://www.coit.es/sites/default/files/digitales_anatomia_brecha_talento_tecnologico.pdf"}
+{"ts": "2026-11-08T22:57:24+03:00", "kind": "source", "msg": "S014 добавлен: TechSverige (SE): +18 000 tech-специалистов ежегодно до 2028", "tool": "pfs source add", "url": "https://techsverige.se/kompetensbehoven-inom-tech"}
+{"ts": "2026-11-08T22:57:25+03:00", "kind": "source", "msg": "S015 добавлен: No Fluff Jobs (PL): +44% tech-вакансий год к году", "tool": "pfs source add", "url": "https://nofluffjobs.com/insights/raport-rynek-pracy-it"}
+{"ts": "2026-11-08T22:57:28+03:00", "kind": "source", "msg": "S016 добавлен: EURES Германия: резюме и сопроводительные на немецком", "tool": "pfs source add", "url": "https://eures.europa.eu/living-and-working/living-and-working-conditions-europe/living-and-working-conditions-germany_en"}
+{"ts": "2026-11-08T22:57:30+03:00", "kind": "source", "msg": "S017 добавлен: EURES Франция: CV и lettre de motivation на французском", "tool": "pfs source add", "url": "https://eures.europa.eu/living-and-working/living-and-working-conditions-europe/living-and-working-conditions-france_en"}
+{"ts": "2026-11-08T22:57:32+03:00", "kind": "source", "msg": "S018 добавлен: EURES Испания: CV и письмо на испанском, A4", "tool": "pfs source add", "url": "https://eures.europa.eu/living-and-working/living-and-working-conditions-europe/living-and-working-conditions-spain_en"}
+{"ts": "2026-11-08T22:57:35+03:00", "kind": "source", "msg": "S019 добавлен: EURES Швеция: язык вакансии решает; IT — английский норма", "tool": "pfs source add", "url": "https://eures.europa.eu/living-and-working/living-and-working-conditions-europe/living-and-working-conditions-sweden_en"}
+{"ts": "2026-11-08T22:57:50+03:00", "kind": "source", "msg": "S020 добавлен: Eurostat: 10+ млн ICT-специалистов в ЕС (2024), 5,0% занятости; SE 8,6%", "tool": "pfs source add", "url": "https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20250708-2"}
+{"ts": "2026-11-08T22:57:52+03:00", "kind": "source", "msg": "S020 добавлен: XING Lebenslauf (DE): бесплатный конструктор Lebenslauf + AI-Anschreiben", "tool": "pfs source add", "url": "https://xing.com/lebenslauf"}
+{"ts": "2026-11-08T22:57:54+03:00", "kind": "source", "msg": "S021 добавлен: CVDesignR (FR): Premium €9,99/мес с ATS-анализом и AI", "tool": "pfs source add", "url": "https://cvdesignr.com/fr/premium"}
+{"ts": "2026-11-08T22:59:29+03:00", "kind": "source", "msg": "S022 добавлен: resume.io: биллинг в USD, локальная валюта — только отображение", "tool": "pfs source add", "url": "https://help.resume.io/en/articles/3785664"}
+{"ts": "2026-11-08T22:59:32+03:00", "kind": "source", "msg": "S023 добавлен: Teal: все цены в USD ($13 нед/$29 мес/$179 год)", "tool": "pfs source add", "url": "https://help.tealhq.com/en/articles/9530153"}
+{"ts": "2026-11-08T22:59:34+03:00", "kind": "source", "msg": "S024 добавлен: resume.io EU-цены: €2,95 за 7 дней → €24,95 каждые 4 недели", "tool": "pfs source add", "url": "https://aivario.com/tools/resume-io"}
+{"ts": "2026-11-08T22:59:37+03:00", "kind": "source", "msg": "S025 добавлен: Paddle: Nordics платят +28% к US-цене; локальные валюты +5–25% конверсия", "tool": "pfs source add", "url": "https://www.paddle.com/blog/saas-pricing-models-strategies-fltr"}
+{"ts": "2026-11-08T22:59:38+03:00", "kind": "source", "msg": "S026 добавлен: Paddle: в Германии 77% предпочитают PayPal картам", "tool": "pfs source add", "url": "https://www.paddle.com/blog/average-revenue-per-paying-user-arppu-fltr"}
+{"ts": "2026-11-08T22:59:39+03:00", "kind": "source", "msg": "S027 добавлен: Seopital: resume builder/cv maker ~673 000 запросов/мес глобально", "tool": "pfs source add", "url": "https://www.seopital.co/blog/the-best-resume-builder-seo-keywords"}
+{"ts": "2026-11-08T23:01:14+03:00", "kind": "source", "msg": "S028 добавлен: Reactive Resume (OSS MIT): 45 485 звёзд GitHub", "tool": "pfs source add", "url": "https://api.github.com/repos/reactive-resume/reactive-resume"}
+{"ts": "2026-11-08T23:01:40+03:00", "kind": "source", "msg": "S029 добавлен: Show HN: Open Resume — 656 пунктов, 198 комментариев (2023)", "tool": "pfs source add", "url": "https://hn.algolia.com/api/v1/items/36470297"}
+{"ts": "2026-11-08T23:01:58+03:00", "kind": "source", "msg": "S030 добавлен: Show HN: RxResume — 240 пунктов (2020)", "tool": "pfs source add", "url": "https://hn.algolia.com/api/v1/items/22709183"}
+{"ts": "2026-11-08T23:02:04+03:00", "kind": "source", "msg": "S031 добавлен: r/cscareerquestionsEU: ~175k подписчиков, +15,5%/год", "tool": "pfs source add", "url": "https://www.gummysearch.com/r/cscareerquestionsEU"}
+{"ts": "2026-11-08T23:02:07+03:00", "kind": "source", "msg": "S032 добавлен: EDPB: трансферы в не-ЕЭЗ требуют SCC 2021/914 (+TIA)", "tool": "pfs source add", "url": "https://edpb.europa.eu/sme/be-compliant/international-data-transfers_en"}
+{"ts": "2026-11-08T23:02:10+03:00", "kind": "source", "msg": "S033 добавлен: Stripe: не-ЕС продавец — Non-Union OSS с первой продажи; для ЕС порог €10k", "tool": "pfs source add", "url": "https://docs.stripe.com/tax/use-stripe-to-register/non-union-oss"}
+{"ts": "2026-11-08T23:02:12+03:00", "kind": "source", "msg": "S034 добавлен: Hetzner CX22 €3,79/мес (DE/FI, GDPR-compliant DC)", "tool": "pfs source add", "url": "https://hetzner.com/pressroom/new-cx-plans"}
+{"ts": "2026-11-08T23:02:40+03:00", "kind": "source", "msg": "S035 добавлен: Eurostat: 10+ млн ICT-специалистов в ЕС (2024), 5,0% занятости; SE 8,6%", "tool": "pfs source add", "url": "https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20250708-2"}
+{"ts": "2026-11-08T23:03:05+03:00", "kind": "source", "msg": "S036 добавлен: CVMaker DE: €21,99/мес после €1,99 за 14 дней (автопродление)", "tool": "pfs source add", "url": "https://cvmaker.de/preise"}
+{"ts": "2026-11-08T23:03:05+03:00", "kind": "source", "msg": "S037 добавлен: LiveCareer PL: 9,95 zł за 14 дней → 99 zł каждые 4 недели", "tool": "pfs source add", "url": "https://livecareer.pl/cennik"}
+{"ts": "2026-11-08T23:03:05+03:00", "kind": "source", "msg": "S038 добавлен: meinperfekterlebenslauf.de (DE): локальный клон, «1+ млн Lebensläufe»", "tool": "pfs source add", "url": "https://www.meinperfekterlebenslauf.de"}
+{"ts": "2026-11-08T23:03:05+03:00", "kind": "source", "msg": "S039 добавлен: heise.de: 5,68 млн Unique User (agma DNA, июнь–авг 2026)", "tool": "pfs source add"}
+{"ts": "2026-11-08T23:04:00+03:00", "kind": "claim", "msg": "C010 [факт] В ЕС занято 10+ млн ICT-специалистов (2024) — 5,0% всех работающих; Швеция — лидер по доле", "sources": ["S035"]}
+{"ts": "2026-11-08T23:04:00+03:00", "kind": "claim", "msg": "C011 [факт] Германия: 109 000 незакрытых IT-вакансий (2025), спад с пика 149 000 (2023), дефицит сохра", "sources": ["S010"]}
+{"ts": "2026-11-08T23:04:00+03:00", "kind": "claim", "msg": "C012 [факт] Нидерланды: 15,1 тыс. открытых ICT-вакансий в конце 2025 (пик 26,8 тыс. в 2022); 622 тыс. ", "sources": ["S011"]}
+{"ts": "2026-11-08T23:04:00+03:00", "kind": "claim", "msg": "C013 [факт] Франция: индикатор напряжения по ИТ-инженерам 1,1; 42 635 проектов найма только по одной п", "sources": ["S012"]}
+{"ts": "2026-11-08T23:04:01+03:00", "kind": "claim", "msg": "C014 [факт] Испания: ~120 000 незакрытых tech-вакансий; tech-занятость превысила 1 млн (2024)", "sources": ["S013"]}
+{"ts": "2026-11-08T23:04:01+03:00", "kind": "claim", "msg": "C015 [факт] Швеция: требуется +18 000 tech-специалистов ежегодно до 2028; 200 000+ занятых в tech-проф", "sources": ["S014"]}
+{"ts": "2026-11-08T23:04:01+03:00", "kind": "claim", "msg": "C016 [факт] Польша: +44% tech-вакансий год к году (отскок рынка 2025 после стагнации 2024)", "sources": ["S015"]}
+{"ts": "2026-11-08T23:04:01+03:00", "kind": "claim", "msg": "C017 [факт] Германия: резюме и сопроводительные оформляются на немецком языке", "sources": ["S016"]}
+{"ts": "2026-11-08T23:04:01+03:00", "kind": "claim", "msg": "C018 [факт] Франция: CV и сопроводительные письма переводятся на французский", "sources": ["S017"]}
+{"ts": "2026-11-08T23:04:01+03:00", "kind": "claim", "msg": "C019 [факт] Испания: CV и письмо должны быть на испанском языке (если не указано иное), формат A4", "sources": ["S018"]}
+{"ts": "2026-11-08T23:04:01+03:00", "kind": "claim", "msg": "C020 [факт] Швеция: рабочий язык определяет вакансия; в IT-секторе английский — норма", "sources": ["S019"]}
+{"ts": "2026-11-08T23:04:01+03:00", "kind": "claim", "msg": "C021 [факт] XING (DE) бесплатно предлагает конструктор Lebenslauf + AI-сопроводительные — прямая замен", "sources": ["S020"]}
+{"ts": "2026-11-08T23:04:01+03:00", "kind": "claim", "msg": "C022 [факт] CVMaker (DE/NL-семейство): €21,99/мес после пробных €1,99 за 14 дней с автопродлением", "sources": ["S036"]}
+{"ts": "2026-11-08T23:04:01+03:00", "kind": "claim", "msg": "C023 [факт] CVDesignR (FR): Premium €9,99/мес с детальным ATS-анализом и AI; 5 млн пользователей (само", "sources": ["S021"]}
+{"ts": "2026-11-08T23:04:02+03:00", "kind": "claim", "msg": "C024 [факт] LiveCareer (PL): 9,95 zł за 14 дней, далее автопродление 99 zł каждые 4 недели (~€23)", "sources": ["S037"]}
+{"ts": "2026-11-08T23:04:02+03:00", "kind": "claim", "msg": "C025 [факт] resume.io биллит в USD даже на локализованных сайтах — локальная валюта только отображаетс", "sources": ["S022"]}
+{"ts": "2026-11-08T23:04:02+03:00", "kind": "claim", "msg": "C026 [факт] resume.io в ЕС: €2,95 за 7 дней, далее €24,95 каждые 4 недели (~€324/год при невыходе)", "sources": ["S024"]}
+{"ts": "2026-11-08T23:04:02+03:00", "kind": "claim", "msg": "C027 [факт] Teal продаёт подписки только в USD — EUR-ценообразование в нише не универсально", "sources": ["S023"]}
+{"ts": "2026-11-08T23:04:02+03:00", "kind": "claim", "msg": "C028 [факт] Немецкие локальные клоны самодекларируют 1+ млн созданных резюме — индикатор платящего лок", "sources": ["S038"]}
+{"ts": "2026-11-08T23:04:02+03:00", "kind": "claim", "msg": "C029 [факт] Скандинавские пользователи платят в среднем +28% к US-цене; локальные валюты дают +5–25% к", "sources": ["S025"]}
+{"ts": "2026-11-08T23:04:02+03:00", "kind": "claim", "msg": "C030 [факт] Германия: 77% покупателей предпочитают PayPal картам — нужен локальный способ оплаты", "sources": ["S026"]}
+{"ts": "2026-11-08T23:04:02+03:00", "kind": "claim", "msg": "C031 [факт] Глобальный запрос «resume builder»/«cv maker» — ~673 000 поисков в месяц каждый", "sources": ["S027"]}
+{"ts": "2026-11-08T23:04:02+03:00", "kind": "claim", "msg": "C032 [факт] Потолок OSS-резюме-ниши: Reactive Resume (MIT) — 45 485 звёзд GitHub", "sources": ["S028"]}
+{"ts": "2026-11-08T23:04:02+03:00", "kind": "claim", "msg": "C033 [факт] Show HN запуски OSS-резюме-билдеров наблюдали 656 и 240 пунктов — стартовый источник роста", "sources": ["S029"]}
+{"ts": "2026-11-08T23:04:03+03:00", "kind": "claim", "msg": "C034 [факт] r/cscareerquestionsEU — ~175 000 подписчиков, +15,5% за год; в r/Germany_Jobs (54k) тема C", "sources": ["S031"]}
+{"ts": "2026-11-08T23:04:03+03:00", "kind": "claim", "msg": "C035 [факт] heise.de — 5,68 млн Unique User (аудит agma, июнь–авг 2026) — масштаб крупнейшего DE-tech-", "sources": ["S039"]}
+{"ts": "2026-11-08T23:04:03+03:00", "kind": "claim", "msg": "C036 [факт] Передача данных соискателей не-ЕЭЗ сервисам (US LLM API) требует SCC 2021/914 + TIA", "sources": ["S032"]}
+{"ts": "2026-11-08T23:04:03+03:00", "kind": "claim", "msg": "C037 [факт] Не-ЕС продавец digital goods в ЕС регистрируется в Non-Union OSS с первой продажи; для ЕС-", "sources": ["S033"]}
+{"ts": "2026-11-08T23:04:03+03:00", "kind": "claim", "msg": "C038 [факт] EU-хостинг доступен от €3,79–5,49/мес (Hetzner, ДЦ в Германии/Финляндии, GDPR-compliant)", "sources": ["S034"]}
+{"ts": "2026-11-08T23:04:03+03:00", "kind": "claim", "msg": "C039 [гипотеза] Гипотеза: в NL и SE EN-интерфейса и EN-резюме достаточно для конверсии; DE/FR/ES требуют л"}
+{"ts": "2026-11-08T23:04:03+03:00", "kind": "claim", "msg": "C040 [гипотеза] Гипотеза: готовность платить в PL и ES ниже DE/NL/SE — нужна региональная цена (проверка A"}
+{"ts": "2026-11-08T23:04:03+03:00", "kind": "claim", "msg": "C041 [гипотеза] Гипотеза: Reddit-каналы работают только через ответы по теме — прямой self-promo карается "}
+{"ts": "2026-11-08T23:04:03+03:00", "kind": "claim", "msg": "C042 [гипотеза] Гипотеза: DPO соло-разработчику hosted-версии не требуется (нет масштабного мониторинга); "}
+{"ts": "2026-11-08T23:04:56+03:00", "kind": "claim", "msg": "C043 [гипотеза] Гипотеза: в NL и SE EN-интерфейса и EN-резюме достаточно для конверсии; DE/FR/ES требуют л"}
+{"ts": "2026-11-08T23:04:56+03:00", "kind": "claim", "msg": "C039 замещено C043: Добавлены основания"}
+{"ts": "2026-11-08T23:04:56+03:00", "kind": "claim", "msg": "C044 [гипотеза] Гипотеза: готовность платить в PL и ES ниже DE/NL/SE — нужна региональная цена (проверка A"}
+{"ts": "2026-11-08T23:04:56+03:00", "kind": "claim", "msg": "C040 замещено C044: Добавлены основания"}
+{"ts": "2026-11-08T23:04:57+03:00", "kind": "claim", "msg": "C045 [гипотеза] Гипотеза: Reddit-каналы работают только через ответы по теме — прямой self-promo карается "}
+{"ts": "2026-11-08T23:04:57+03:00", "kind": "claim", "msg": "C041 замещено C045: Добавлены основания"}
+{"ts": "2026-11-08T23:04:57+03:00", "kind": "claim", "msg": "C046 [гипотеза] Гипотеза: DPO соло-разработчику hosted-версии не требуется (нет масштабного мониторинга); "}
+{"ts": "2026-11-08T23:04:57+03:00", "kind": "claim", "msg": "C042 замещено C046: Добавлены основания"}
+{"ts": "2026-11-08T23:05:15+03:00", "kind": "step", "msg": "research → done", "step": "research"}
+{"ts": "2026-11-08T23:05:21+03:00", "kind": "step", "msg": "discovery → in_progress", "step": "discovery"}
+{"ts": "2026-11-08T23:05:33+03:00", "kind": "questions-skip", "msg": "Вопросы discovery решены по данным: сегмент — по данным (Q1–Q5 отвечены), JTBD — функциональный (продукт-инструмент), альтернативы — все четыре типа (зафиксированы в 02 из фактов C021–C028)"}
+{"ts": "2026-11-08T23:06:33+03:00", "kind": "claim", "msg": "C047 [вывод] Вывод: волна 1 входа — DE+NL+SE (DE: крупнейший незакрытый спрос и платящий рынок; NL/SE: "}
+{"ts": "2026-11-08T23:06:33+03:00", "kind": "claim", "msg": "C048 [вывод] Вывод: главный дифференциатор входа — «бесплатно + честно» против trial-trap модели конкур"}
+{"ts": "2026-11-08T23:06:33+03:00", "kind": "claim", "msg": "C049 [вывод] Вывод: GDPR-минимум для hosted-версии реализуем соло за 1–2 недели работы: EU-хостинг €4–6"}
+{"ts": "2026-11-08T23:06:33+03:00", "kind": "claim", "msg": "C050 [вывод] Вывод: продуктовый gap — 19 локалей интерфейса есть, но локальные конвенции шаблонов (табл"}
+{"ts": "2026-11-08T23:06:33+03:00", "kind": "step", "msg": "discovery → done", "step": "discovery"}
+{"ts": "2026-11-08T23:06:34+03:00", "kind": "step", "msg": "situation → in_progress", "step": "situation"}
+{"ts": "2026-11-08T23:06:44+03:00", "kind": "claim", "msg": "C051 [гипотеза] Прогноз: позиционирование «бесплатно + честно» конвертирует лучше нишевого бенчмарка freem"}
+{"ts": "2026-11-08T23:06:49+03:00", "kind": "step", "msg": "situation → done", "step": "situation"}
+{"ts": "2026-11-08T23:06:49+03:00", "kind": "step", "msg": "options → in_progress", "step": "options"}
+{"ts": "2026-11-08T23:13:38+03:00", "kind": "claim", "msg": "C052 [вывод] Гейт волны 1: окно 180 дней; метрики — индексация и импрессии Search Console + экспортиров"}
+{"ts": "2026-11-08T23:13:38+03:00", "kind": "claim", "msg": "C053 [вывод] Модель монетизации должна быть совместима с «честным free»: без автосписаний (годовая подп"}
+{"ts": "2026-11-08T23:13:38+03:00", "kind": "claim", "msg": "C054 [гипотеза] Риск: смена «free forever» на платную hosted испытывает доверие текущего комьюнити — тест "}
+{"ts": "2026-11-08T23:13:47+03:00", "kind": "human", "msg": "Вопрос руководителю: Какой вариант берём в стратегию? Рекомендую C (трёхволновый вход: волна 1 DE+NL+SE, гейт 180 дней по импрессиям и экспортам CV, монетизация без автосписаний после гейта). A — оставить как есть; B — только OSS-комьюнити EN; D — сразу hosted в EUR; E — закрыть европейское направление, фокус на US.", "step": "options"}
+{"ts": "2026-11-08T23:15:01+03:00", "kind": "human", "msg": "Ответ руководителя: C: трёхволновый вход (волна 1 DE+NL+SE, гейт 180 дней по импрессиям и экспортам CV, монетизация без автосписаний; волна 2 PL, волна 3 FR/ES)", "step": "options"}
+{"ts": "2026-11-08T23:15:01+03:00", "kind": "step", "msg": "options → done", "step": "options"}
+{"ts": "2026-11-08T23:15:01+03:00", "kind": "step", "msg": "choice → done", "step": "choice"}
+{"ts": "2026-11-08T23:15:02+03:00", "kind": "step", "msg": "strategy → in_progress", "step": "strategy"}
+{"ts": "2026-11-08T23:18:48+03:00", "kind": "claim", "msg": "C055 [допущение] Юнит-допущения модели (перенос из глобального плана, для ЕС не подтверждены): ARPU €25, пе"}
+{"ts": "2026-11-08T23:18:48+03:00", "kind": "claim", "msg": "C056 [вывод] Оценка бюджета часов волны 1: 160+ ч работ против 130–260 ч доступных за 6 мес при 5–10 ч/"}
+{"ts": "2026-11-08T23:19:06+03:00", "kind": "step", "msg": "strategy → done", "step": "strategy"}
+{"ts": "2026-11-08T23:19:06+03:00", "kind": "step", "msg": "validation → in_progress", "step": "validation"}
+{"ts": "2026-11-08T23:19:36+03:00", "kind": "claim", "msg": "C057 [допущение] Юнит-допущения модели (выведены из ценового коридора ниши, для ЕС не подтверждены): ARPU €"}
+{"ts": "2026-11-08T23:19:36+03:00", "kind": "claim", "msg": "C055 замещено C057: Добавлено основание: ценовой коридор ниши"}
+{"ts": "2026-11-08T23:19:36+03:00", "kind": "claim", "msg": "C058 [допущение] Европа = приоритетные страны DE, NL, PL, FR, ES, SE (выбор руководителя из предложенного п"}
+{"ts": "2026-11-08T23:19:36+03:00", "kind": "claim", "msg": "C002 замещено C058: Добавлено основание"}
+{"ts": "2026-11-08T23:19:36+03:00", "kind": "claim", "msg": "C059 [допущение] Ресурсы: соло-разработчик без бюджета на рекламу (следует из бесплатного статуса проекта и"}
+{"ts": "2026-11-08T23:19:36+03:00", "kind": "claim", "msg": "C003 замещено C059: Добавлено основание"}
+{"ts": "2026-11-08T23:19:46+03:00", "kind": "claim", "msg": "C056: основания перенаправлены C003→C059"}
+{"ts": "2026-11-08T23:20:02+03:00", "kind": "claim", "msg": "C060 [допущение] Решение (выбор руководителя): полная стратегия входа в Европу — рост аудитории, затем моне"}
+{"ts": "2026-11-08T23:20:02+03:00", "kind": "claim", "msg": "C001 замещено C060: Добавлено основание: состояние продукта"}
+{"ts": "2026-11-08T23:21:08+03:00", "kind": "step", "msg": "validation → done", "step": "validation"}
+{"ts": "2026-11-08T23:21:08+03:00", "kind": "step", "msg": "review → in_progress", "step": "review"}
+{"ts": "2026-11-08T23:41:30+03:00", "kind": "source", "msg": "S040 добавлен: Jobscan: 97,8–98% Fortune 500 используют ATS (реверс-инжиниринг карьер-страниц)", "tool": "pfs source add", "url": "https://www.jobscan.co/blog/fortune-500-use-applicant-tracking-systems/"}
+{"ts": "2026-11-08T23:41:30+03:00", "kind": "claim", "msg": "C061 [факт] ATS используют ~98% компаний Fortune 500 (детектируемый ATS у 97,8% — 489 из 500 в исследо", "sources": ["S040"]}
+{"ts": "2026-11-08T23:41:30+03:00", "kind": "claim", "msg": "C062 [факт] EU-хостинг доступен от €3,79/мес (Hetzner CX22, ДЦ в Германии/Финляндии, GDPR-compliant); ", "sources": ["S034"]}
+{"ts": "2026-11-08T23:41:30+03:00", "kind": "claim", "msg": "C038 замещено C062: Аудит: верхняя граница 5,49 не верифицирована"}
+{"ts": "2026-11-08T23:41:50+03:00", "kind": "claim", "msg": "C049: основания перенаправлены C038→C062"}
+{"ts": "2026-11-08T23:42:05+03:00", "kind": "step", "msg": "review → done", "step": "review"}
+{"ts": "2026-11-08T23:42:05+03:00", "kind": "step", "msg": "decision → in_progress", "step": "decision"}
+{"ts": "2026-11-08T23:42:28+03:00", "kind": "decision", "msg": "D001 принято: Вывод cvstart.org на европейский рынок — вариант C (три волны) (отв. основатель (соло))", "step": "decision"}
+{"ts": "2026-11-08T23:42:28+03:00", "kind": "decision", "msg": "D002 принято: Предпроверки перед стартом волны 1 (0 €, 1 неделя) (отв. основатель)", "step": "decision"}
+{"ts": "2026-11-08T23:42:33+03:00", "kind": "step", "msg": "decision → done", "step": "decision"}
+{"ts": "2026-11-08T23:42:33+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-08T23:42:33+03:00", "kind": "step", "msg": "monitoring → in_progress", "step": "monitoring"}
+{"ts": "2026-11-08T23:42:43+03:00", "kind": "monitoring-note", "msg": "Monitoring: устаревшие основания D001 (S032 EDPB, S033 Stripe, S034 Hetzner старше 180 дн) — обновить pfs source refresh S032 S033 S034 перед стартом этапа 2 (hosted); цены Hetzner особенно: CX22 €3,79 (2024) мог изменить тариф 2026"}
+{"ts": "2026-11-08T23:43:54+03:00", "kind": "source", "msg": "S041 добавлен: Performance Suite keyword DB (обновлено 25.09.2026): объёмы DE-запросов Lebensla", "tool": "pfs source add", "url": "https://www.performance-suite.io/keyword-db/de-de/lebenslauf-erstellen/"}
+{"ts": "2026-11-08T23:44:29+03:00", "kind": "claim", "msg": "C063 [факт] Ключ «lebenslauf erstellen» — 49 500 запросов/мес в Google DE (сложность 57/100, CPC €4,97", "sources": ["S041"]}
+{"ts": "2026-11-08T23:44:29+03:00", "kind": "claim", "msg": "C064 [факт] «tabellarischer lebenslauf» — 27 100 запросов/мес при CPC €0,93 (в 5 раз ниже CPC «erstell", "sources": ["S041"]}
+{"ts": "2026-11-08T23:44:29+03:00", "kind": "claim", "msg": "C065 [факт] cvstart.org индексируется: в выдаче видны главная, /de, /de/methodology, /help, /changelog", "sources": ["S001"]}
+{"ts": "2026-11-08T23:44:30+03:00", "kind": "claim", "msg": "C066 [факт] Продукт запущен на Product Hunt (бейдж на сайте); текущий релиз v1.267.1, 7 395 автотестов", "sources": ["S001"]}
+{"ts": "2026-11-08T23:44:59+03:00", "kind": "action", "msg": "D002 прогресс: (1) SEO-объёмы DE подтверждены публичной базой Performance Suite: lebenslauf erstellen 49 500/мес, kostenlos-кластер ~60k/мес [C063][C064] — канал SEO не пустой; (2) индексация подтверждена proxy-выдачей: главная, /de, /methodology, /help в Google [C065]; (3) WBS волны 1 готов: outputs/wbs_wave1.md, 192–216 ч, порядок резания зафиксирован. Остаток D002: официальный аудит Search Console — 15 мин, задача основателя"}
+{"ts": "2026-11-08T23:46:40+03:00", "kind": "source", "msg": "S042 добавлен: Just Join IT отчёт 2026: 110 996 IT-вакансий на платформе за 2025 (+8,42% r/r)", "tool": "pfs source add", "url": "https://justjoin.it/raport-wynagrodzen/ogloszenia-o-prace-w-liczbach"}
+{"ts": "2026-11-08T23:46:42+03:00", "kind": "source", "msg": "S043 добавлен: Speednet обзор рынка IT PL 2025/2026: NFJ +44%, приложения на объявление −45% r/", "tool": "pfs source add", "url": "https://speednetsoftware.com/pl/przeglad-rynku-it-2025-2026"}
+{"ts": "2026-11-08T23:46:51+03:00", "kind": "claim", "msg": "C067 [факт] Польша: 110 996 IT-вакансий на justjoin.it за 2025 год (+8,42% r/r, рост после двух лет сп", "sources": ["S042"]}
+{"ts": "2026-11-08T23:46:51+03:00", "kind": "claim", "msg": "C068 [факт] Польша: среднее число приложений на одно объявление упало на 45% r/r (2025) — конкуренция ", "sources": ["S043"]}
+{"ts": "2026-11-08T23:46:51+03:00", "kind": "claim", "msg": "C069 [вывод] Вывод: пробел «активные соискатели» закрыт прокси без потери точности решения — ранжирован"}
+{"ts": "2026-11-08T23:46:51+03:00", "kind": "claim", "msg": "C070 [вывод] Вывод: PL-волна 2 подтверждается дважды — рост вакансий (+8,4% абсолют 111k/год) и падение"}
+{"ts": "2026-11-08T23:47:58+03:00", "kind": "action", "msg": "Мониторинг-итерация 2: (1) пробел PL закрыт — justjoin.it: 110 996 IT-вакансий 2025 (+8,42%), приложения на объявление −45% r/r [C067][C068]; (2) пробел «активные соискатели» закрыт прокси — ранжирование не меняется [C069]; (3) PL-волна 2 подтверждена дважды [C070]; (4) черновики артефактов запуска готовы: Show HN пост, H4 комьюнити-тест, структура DE-статьи №1 — outputs/drafts/. Осталось у основателя: Search Console аудит (до 22.11), Hetzner-цены — 2 мин перед этапом 2 (страница JS-рендерится, бот не читает)"}
+{"ts": "2026-11-08T23:49:55+03:00", "kind": "decision", "msg": "D002 → in_progress: 2/3 проверок выполнены агентом (SEO-объёмы [C063], индексация proxy [C065], WBS готов); остаток — Search Console аудит 15 мин, задача основателя, не блокирует экспорт стратегии"}
+{"ts": "2026-11-08T23:49:59+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-08T23:50:17+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-08T23:50:24+03:00", "kind": "step", "msg": "monitoring → done", "step": "monitoring"}
+{"ts": "2026-11-08T23:50:24+03:00", "kind": "action", "msg": "Проект завершён: все 12 шагов закрыты. Экспорт: REPORT.md + REPORT.docx (747+ строк, приложения A–D: источники S001–S043, решения D001–D002, прозрачность). Финальная база: 43 источника, 61 утверждение (42 факта, 9 выводов, 6 гипотез, 4 допущения), 2 решения, 100/100 чек, аудит 21/22. Реальное сопровождение продолжается по вехам WBS вне процесса"}
+{"ts": "2026-11-08T23:53:34+03:00", "kind": "claim", "msg": "C071 [факт] Рынок resume builders: коридор оценок $1,2–2,4 млрд (2024–2025); AI-подсегмент $1,3→1,47 м", "sources": ["S004"]}
+{"ts": "2026-11-08T23:53:34+03:00", "kind": "claim", "msg": "C072 [факт] Мировой рынок онлайн-рекрутинга $37,97 млрд (2025), CAGR 7,1% до 2033; ATS $2,5–3,3 млрд (", "sources": ["S005"]}
+{"ts": "2026-11-08T23:53:51+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-08T23:53:51+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-08T23:53:51+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-08T23:53:51+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-08T23:53:55+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-08T23:53:55+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-08T23:53:55+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-08T23:53:55+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-08T23:53:55+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-08T23:54:13+03:00", "kind": "action", "msg": "Собран six-pager: SIX_PAGER.md (FAQ-1…6, 193 C-тега, без заглушек) + 4 Excel-книги (unit_econ, growth, cohort, market) из calcs.json с прослеживаемостью к C###; C071–C072 (рынки) зарегистрированы; чек 100/100; docx-версия создана"}
+{"ts": "2026-11-09T21:53:38+03:00", "kind": "claim", "msg": "C073 [вывод] Вывод: GDPR-минимум для hosted-версии реализуем соло за 1–2 недели работы: EU-хостинг от €"}
+{"ts": "2026-11-09T21:53:38+03:00", "kind": "claim", "msg": "C049 замещено C073: текст содержал устаревший диапазон €4–6 после суперседы C038→C062"}
+{"ts": "2026-11-09T21:53:38+03:00", "kind": "claim", "msg": "C074 [факт] r/cscareerquestionsEU — ~179 000 подписчиков, +15,5% за год; в r/Germany_Jobs (54k) тема C", "sources": ["S031"]}
+{"ts": "2026-11-09T21:53:38+03:00", "kind": "claim", "msg": "C034 замещено C074: цитата 175k не совпадала с архивом источника S031 (179k)"}
+{"ts": "2026-11-09T21:53:38+03:00", "kind": "claim", "msg": "C075 [факт] Show HN запуски OSS-резюме-билдеров наблюдали 656 пунктов (open-resume) и 240 пунктов (RxR", "sources": ["S029"]}
+{"ts": "2026-11-09T21:53:38+03:00", "kind": "claim", "msg": "C033 замещено C075: второе число (240) без источника в утверждении"}
+{"ts": "2026-11-09T21:54:01+03:00", "kind": "claim", "msg": "C076 [факт] Ключ «lebenslauf erstellen» (head): KD 57/100, CPC €4,97; объём 49 500/мес зафиксирован у ", "sources": ["S041"]}
+{"ts": "2026-11-09T21:54:01+03:00", "kind": "claim", "msg": "C063 замещено C076: строки «kostenlos 27 100», «tabellarischer 27 100», «ausbildung 3 600», «kostenlose vorlagen 33 100» отсутствуют в free-выдаче S041 (за 🔒 free-account) — не верифицированы"}
+{"ts": "2026-11-09T21:54:01+03:00", "kind": "claim", "msg": "C077 [факт] Строки «tabellarischer lebenslauf» (27 100, CPC €0,93), «lebenslauf ausbildung» (3 600) и ", "sources": ["S041"]}
+{"ts": "2026-11-09T21:54:01+03:00", "kind": "claim", "msg": "C064 замещено C077: исходный текст содержал числа, отсутствующие в архиве источника"}
+{"ts": "2026-11-09T23:57:05+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-09T23:57:05+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-09T23:57:05+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-09T23:57:05+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-09T23:57:05+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-09T23:57:06+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-09T23:58:43+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-09T23:58:43+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-09T23:58:43+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-09T23:58:43+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-09T23:58:43+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-09T23:58:44+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-10T00:00:07+03:00", "kind": "claim", "msg": "C045: основания перенаправлены C034→C074"}
+{"ts": "2026-11-10T00:00:07+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T00:00:07+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T00:00:07+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T00:00:07+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T00:00:07+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T00:00:07+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T00:00:07+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T00:00:07+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T00:00:07+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-10T00:00:08+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-10T00:02:37+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-10T00:13:36+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-10T00:15:46+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-10T00:19:00+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-10T00:19:15+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-10T00:19:37+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-10T00:19:44+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}

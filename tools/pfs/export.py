@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 
 from . import calc, check, claims as claims_mod, core, cost, decisions, sources as src_mod
+from .xlsx import sheet_names
 
 ORDER = ["00_brief.md", "01_research_plan.md", "02_situation.md", "03_options.md", "04_product_strategy.md",
          "05_comms_strategy.md", "06_validation_plan.md", "07_quality_review.md"]
@@ -45,43 +46,143 @@ def build(pdir: Path) -> Path:
 # ---------- six-pager (FAQ-1…FAQ-6) с Excel-приложениями ----------
 
 ATTACHMENTS = [
-    ("unit_economics.xlsx", "Ввод · Юнит-экономика · Чувствительность", "ARPU, VC, CAC, отток"),
-    ("growth_model.xlsx", "Ввод · Модель 12 мес", "MAU, рост, конверсия, AOV, take rate"),
-    ("cohort_retention.xlsx", "Ввод · Когорты · Метрики удержания", "размеры когорт, кривая удержания"),
-    ("market_sizing.xlsx", "Ввод · Воронка · PESTEL", "PAM, доли воронки, факторы среды"),
+    ("unit_economics.xlsx", "ARPU, VC, CAC, отток"),
+    ("growth_model.xlsx", "MAU, рост, конверсия, AOV, take rate"),
+    ("cohort_retention.xlsx", "размеры когорт, кривая удержания"),
+    ("market_sizing.xlsx", "PAM, доли воронки, факторы среды"),
 ]
 
 
 def attachments_table(pdir: Path) -> str | None:
-    """Маркдаун-таблица приложений или None, если ничего не собрано."""
-    att = pdir / "outputs" / "attachments"
-    rows = [f"| {fname} | {sheets} | {edit} |" for fname, sheets, edit in ATTACHMENTS
-            if (att / fname).exists()]
-    if not rows:
+    """Маркдаун-таблица ВСЕХ книг из outputs/attachments/*.xlsx или None, если пусто.
+    Листы читаются из самих книг; для стандартных расчётов — подсказка, что править."""
+    books = sorted((pdir / "outputs" / "attachments").glob("*.xlsx"))
+    if not books:
         return None
+    hints = dict(ATTACHMENTS)
+    rows = []
+    for p in books:
+        try:
+            sheets = " · ".join(sheet_names(p)) or "—"
+        except Exception:
+            sheets = "—"
+        rows.append(f"| {p.name} | {sheets} | {hints.get(p.name, '—')} |")
     return "| Файл | Листы | Что редактировать |\n|---|---|---|\n" + "\n".join(rows)
 
 
+def _split_sections(text: str) -> list[dict]:
+    """Markdown → блоки по строкам-заголовкам ^#+ ({level, title, lines}); текст до первого
+    заголовка — блок уровня 0. Вложенные секции — отдельные блоки, поэтому дерево
+    собирается функцией _subtree, а не вложенностью lines."""
+    blocks: list[dict] = [{"level": 0, "title": "", "lines": []}]
+    for line in text.splitlines():
+        m = re.match(r"^(#{1,6})\s+(.*)$", line)
+        if m:
+            blocks.append({"level": len(m.group(1)), "title": m.group(2).strip(), "lines": []})
+        else:
+            blocks[-1]["lines"].append(line)
+    return blocks
+
+
+def _subtree(blocks: list[dict], i: int) -> list[int]:
+    """Блок i и вложенные в него секции (глубже по уровню, до такой же/выше)."""
+    out, lvl = [i], blocks[i]["level"]
+    for j in range(i + 1, len(blocks)):
+        if blocks[j]["level"] <= lvl:
+            break
+        out.append(j)
+    return out
+
+
+def _shift(level: int, delta: int) -> str:
+    """Маркер заголовка уровня level, сдвинутого на delta (в пределах #…######)."""
+    return "#" * max(1, min(level + delta, 6))
+
+
+def _render_subtree(blocks: list[dict], i: int, delta: int) -> str:
+    """Секция i вместе с вложенными; все заголовки поддерева сдвинуты на delta."""
+    chunks = []
+    for j in _subtree(blocks, i):
+        b = blocks[j]
+        body = "\n".join(b["lines"]).strip()
+        head = f"{_shift(b['level'], delta)} {b['title']}" if b["level"] else ""
+        chunks.append(f"{head}\n\n{body}" if head and body else (head or body))
+    return "\n\n".join(chunks)
+
+
+def _norm_title(s: str) -> str:
+    """Нормализация заголовка/колонки: без «(…)», регистра и знаков — только слова/числа."""
+    s = re.sub(r"\([^)]*\)", " ", s.lower())
+    return re.sub(r"[^a-zа-яё0-9+]+", " ", s).strip()
+
+
+def _title_matches(title: str, name: str) -> bool:
+    """Заголовок соответствует имени секции: точное совпадение нормализованных названий
+    или токены имени — подпоследовательность токенов заголовка («Сегменты» ⊂
+    «Сегменты (discovery)», «Чего не знаем» ⊂ «Чего мы не знаем»)."""
+    t, n = _norm_title(title).split(), _norm_title(name).split()
+    if not t or not n or len(n) > len(t):
+        return False
+    if t == n:
+        return True
+    it = iter(t)
+    return all(tok in it for tok in n)
+
+
 def _grab(pdir: Path, fname: str, sections: tuple[str, ...], cap: int = 6000,
-          require_section: bool = False) -> str | None:
-    """Секции документа по заголовкам; без совпадений — весь документ (или None при
-    require_section=True); нет файла — None."""
+          require_section: bool = False, reg: dict | None = None) -> str | None:
+    """Именованные секции документа: заголовки уровня ≥ 2 (H1 документа не матчится),
+    каждая секция атомарна и рендерится с «###» (вложенность сдвигается вместе с ней).
+    cap уменьшает ЧИСЛО секций, но не режет текст внутри — маркеров «обрезано» нет.
+    reg — реестр вставленного (fname → номера блоков) против дублей с _insert_doc.
+    Совпадений нет — None; целые документы собирает _insert_doc."""
     path = pdir / "outputs" / fname
     if not path.exists():
         return None
-    text = path.read_text(encoding="utf-8")
-    parts = []
+    blocks = _split_sections(path.read_text(encoding="utf-8"))
+    used = reg.setdefault(fname, set()) if reg is not None else set()
+    chunks: list[str] = []
     for nm in sections:
-        if check._has_section(text, nm):
-            body = check._section_body(text, nm).strip()
-            if body:
-                parts.append(f"### {nm}\n\n{body}")
-    if require_section and not parts:
+        for i, b in enumerate(blocks):
+            if i in used or b["level"] < 2 or not _title_matches(b["title"], nm):
+                continue
+            used.update(_subtree(blocks, i))
+            chunks.append(_render_subtree(blocks, i, 3 - b["level"]))
+            break
+    if require_section and not chunks:
         return None
-    body = "\n\n".join(parts) if parts else text.strip()
-    if len(body) > cap:
-        body = body[:cap] + f"\n\n… обрезано, полностью — `{fname}`"
-    return body
+    out: list[str] = []
+    total = 0
+    for k, ch in enumerate(chunks):
+        if k and cap and total + len(ch) + 2 > cap:
+            break  # резать только по границам секций
+        out.append(ch)
+        total += len(ch) + 2
+    return "\n\n".join(out) if out else None
+
+
+def _insert_doc(pdir: Path, fname: str, demote: int = 2, reg: dict | None = None) -> str | None:
+    """Целый документ для вставки в six-pager: заголовки понижены на demote уровней
+    (# → ###, ## → ####, ### → #####), секции, уже попавшие в вывод через _grab или
+    предыдущие вставки, не дублируются — вставляются только не вошедшие.
+    Нет файла или нечего вставлять — None."""
+    path = pdir / "outputs" / fname
+    if not path.exists():
+        return None
+    blocks = _split_sections(path.read_text(encoding="utf-8"))
+    used = reg.setdefault(fname, set()) if reg is not None else set()
+    chunks: list[str] = []
+    for i, b in enumerate(blocks):
+        if i in used:
+            continue
+        used.add(i)
+        body = "\n".join(b["lines"]).strip()
+        if b["level"] == 0:
+            if body:
+                chunks.append(body)
+        else:
+            chunks.append(f"{_shift(b['level'], demote)} {b['title']}" + (f"\n\n{body}" if body else ""))
+    return "\n\n".join(chunks) or None
 
 
 def _flat(v) -> str:
@@ -97,20 +198,22 @@ def _flat(v) -> str:
     return str(v)
 
 
-def _sources_footnotes(pdir: Path, cap: int = 14) -> str | None:
-    """Сноски-источники: нумерованный список S### — название — URL (как в референсе)."""
+def _sources_footnotes(pdir: Path) -> str | None:
+    """ПОЛНЫЙ нумерованный список источников: ID — название — URL/файл — дата публикации.
+    Без ограничений и отсылок «ещё N — sources.jsonl»."""
     rows = core.read_jsonl(pdir / "sources.jsonl")
     if not rows:
         return None
     lines = []
-    for i, r in enumerate(rows[:cap], 1):
-        rid = r.get("id", f"S{i:03d}")
-        title = _flat(r.get("title"))
-        url = _flat(r.get("url"))
-        tail = f" — {url}" if url else ""
-        lines.append(f"{i}. **{rid}** — {title}{tail}")
-    if len(rows) > cap:
-        lines.append(f"… ещё {len(rows) - cap} источников — sources.jsonl")
+    for i, r in enumerate(rows, 1):
+        link = _flat(r.get("url")) or _flat(r.get("path"))
+        pub = _flat(r.get("published"))[:10]
+        line = f"{i}. **{r.get('id', f'S{i:03d}')}** — {_flat(r.get('title'))}"
+        if link:
+            line += f" — {link}"
+        if pub:
+            line += f" — {pub}"
+        lines.append(line)
     return "\n".join(lines)
 
 
@@ -140,8 +243,18 @@ def _unit_econ_block(pdir: Path) -> str | None:
     ]
     table = "| Формула | Расчёт | Результат |\n|---|---|---|\n" + \
         "\n".join(f"| {f} | {c} | {r} |" for f, c, r in rows)
-    return ("Допущения [укажите теги]: ARPU, переменные, CAC, churn — лист «Ввод» unit_economics.xlsx.\n\n"
-            + table)
+    note = _flat(cfg.get("note"))
+    head = (f"Допущения: {note}" if note else
+            "Допущения [укажите теги]: ARPU, переменные, CAC, churn — лист «Ввод» unit_economics.xlsx.")
+    # Чувствительность к критерию LTV/CAC ≥ 3: порог по каждому допущению при прочих равных.
+    if cm > 0 and ltv > 0:
+        sens = (f"**Вывод (умозаключение):** LTV/CAC ≥ 3 держится до churn ≈ {n(cm / (3 * cac) * 100)} %/мес, "
+                f"до CAC ≈ €{n(ltv / 3)}, до доли переменных расходов ≈ {n((1 - 3 * cac / ltv) * 100)} % "
+                "(каждый порог — при прочих равных; сетка — лист «Чувствительность»).")
+    else:
+        sens = ("**Вывод (умозаключение):** запас прочности модели — какой допуск выдерживает "
+                "каждое допущение (см. лист «Чувствительность»).")
+    return f"{head}\n\n{table}\n\n{sens}"
 
 
 def _decision_block(pdir: Path) -> str | None:
@@ -168,11 +281,113 @@ def _decision_block(pdir: Path) -> str | None:
     return out
 
 
+def _table_rows(text: str, headers: tuple[str, ...]) -> list[list[str]]:
+    """Строки markdown-таблицы, чья шапка содержит колонки headers подряд и по порядку.
+    Разделитель |---| пропускается; строка с другим числом колонок заканчивает таблицу."""
+    want = [_norm_title(h) for h in headers]
+    rows: list[list[str]] = []
+    header_seen, width = False, 0
+    for ln in text.splitlines():
+        if not ln.strip().startswith("|"):
+            if header_seen and rows:
+                break
+            continue
+        cells = [c.strip() for c in ln.strip().strip("|").split("|")]
+        if all(set(c) <= set("-: ") for c in cells):
+            continue
+        if not header_seen:
+            norm = [_norm_title(c) for c in cells]
+            for k in range(len(norm) - len(want) + 1):
+                if norm[k:k + len(want)] == want:
+                    header_seen, width = True, len(cells)
+                    break
+            continue
+        if len(cells) != width:
+            break
+        rows.append(cells)
+    return rows
+
+
+_BUSINESS = ("выручк", "mrr", "платящ", "ltv", "cac", "оплат", "тариф", "arpu", "цен")
+
+
+def _kpi_table(pdir: Path) -> str | None:
+    """Таблица KPI двух плоскостей (Бизнес/Продукт) из сводных таблиц 06_validation_plan.md:
+    «Ожидаемое изменение» (гипотеза → метрика → цель), «С чем сравниваем» (база) и
+    «Критерии решения» (порог остановки). Сводных таблиц нет — None (заглушка-структура)."""
+    path = pdir / "outputs" / "06_validation_plan.md"
+    if not path.exists():
+        return None
+    text = path.read_text(encoding="utf-8")
+    rows = _table_rows(text, ("Гипотеза", "Метрика", "Ожидание к решению"))
+    if not rows:
+        return None
+    thresholds = {r[0]: (r[3] if len(r) > 3 else "—")
+                  for r in _table_rows(text, ("Проверка", "Продолжить", "Изменить", "Остановить"))}
+    bases = {m.group(1): m.group(2) for m in re.finditer(r"^-\s*(H\d+)\s*:\s*(.+)$", text, flags=re.M)}
+
+    def cell(s: str) -> str:
+        return s.replace("|", "/")
+
+    out = ["| Плоскость | Гипотеза | Метрика | База → цель к сроку | Порог действия (остановить) |",
+           "|---|---|---|---|---|"]
+    for r in rows:
+        if len(r) < 4:
+            continue
+        hid, hyp, metric, target = r[0], r[1], r[2], r[3]
+        base = bases.get(hid, "база — 06_validation_plan.md").split(";")[0].strip()
+        if re.fullmatch(r"H\d+", hid.strip()):
+            hyp = f"{hid.strip()} — {hyp}"
+        plane = "Бизнес" if any(w in f"{metric} {hyp}".lower() for w in _BUSINESS) else "Продукт"
+        out.append(f"| {plane} | {cell(hyp)} | {cell(metric)} | {cell(base)} → {cell(target)} | "
+                   f"{cell(thresholds.get(hid, '—'))} |")
+    return "\n".join(out)
+
+
+_INITIATIVE = re.compile(r"^-\s*\*\*(.+?):\*\*\s*(.+)$")
+
+
+def _tactics_matrix(pdir: Path) -> str | None:
+    """Матрица тактик из Outcome-роадмапа 04_product_strategy.md: буллеты вида
+    «- **Этап N (…):** тактики … **Результат …:** …» раскладываются в канонические
+    колонки «Инициатива | Фокус | Потребности | Решения (тактики)». Похоже на роадмап
+    меньше двух этапов — None (честная заглушка)."""
+    path = pdir / "outputs" / "04_product_strategy.md"
+    if not path.exists():
+        return None
+    rows = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        m = _INITIATIVE.match(line.strip())
+        if not m:
+            continue
+        label, body = m.group(1).strip(), m.group(2).strip()
+        if not _norm_title(label).startswith(("этап", "инициатив", "драйвер")):
+            continue
+        parts = re.split(r"\*\*Результат[^*]*\*\*:?\s*", body, maxsplit=1)
+        gate = parts[1].strip() if len(parts) > 1 else ""
+        rows.append((label, parts[0].strip(), gate))
+    if len(rows) < 2:
+        return None
+
+    def cell(s: str) -> str:
+        return s.replace("|", "/")
+
+    out = ["| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |",
+           "|---|---|---|---|"]
+    for label, tactics, gate in rows:
+        focus = re.split(r"[.;]", tactics)[0].strip() or "—"
+        solutions = tactics + (f" **Результат:** {gate}" if gate else "")
+        out.append(f"| {cell(label)} | {cell(focus)} | — | {cell(solutions)} |")
+    return "\n".join(out)
+
+
 def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
     """Six-pager в структуре референса стратегии роста: FAQ-1…FAQ-6 с нумерованными
     подпунктами (1.1/1.2 обзор рынка и конкуренты; 2.1/2.2 персоны и барьеры по этапам),
-    инициативами-драйверами, матрицей тактик, планом с распределением вклада и KPI в двух
-    плоскостях (бизнес/продукт). Сноски-источники — автоматически из sources.jsonl.
+    юнит-экономикой с чувствительностью, матрицей тактик и KPI в двух плоскостях
+    (бизнес/продукт). Документы 03/04/06 вставляются целиком с понижением заголовков
+    на 2 уровня; секции, уже попавшие в вывод через _grab, повторно не вставляются;
+    резка — только по границам секций. Сноски-источники — полный список sources.jsonl.
     Спецификация детализации: knowledge/templates/SIX_PAGER_PROMPT.md."""
     if with_calcs:
         calc.run(pdir, "all")
@@ -183,14 +398,19 @@ def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
              "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
              "Теги [C###]/[S###] — происхождение чисел; сноски-источники — в конце документа.", "",
              f"**Запрос:** {meta.get('question', '')}", ""]
-    faq1 = _grab(pdir, "02_situation.md", ("Короткий ответ", "Что известно", "Рынок", "Тренды", "Противоречия", "Чего не знаем"))
+    reg: dict[str, set[int]] = {}  # вставленные секции (fname → номера блоков) — против дублей
+
+    def grab(fname: str, sections: tuple[str, ...], cap: int = 6000, require_section: bool = False):
+        return _grab(pdir, fname, sections, cap, require_section, reg)
+
+    faq1 = grab("02_situation.md", ("Короткий ответ", "Что известно", "Рынок", "Тренды",
+                                    "Противоречия", "Чего не знаем"), 8000)
     parts += ["## FAQ-1. Анализ текущего состояния", "",
               "### 1.1 Обзор рынка: тренды, вызовы и возможности", "",
               faq1 or "> Раздел появится после шага «situation» (02_situation.md): объём и динамика "
                       "рынка диапазонами, ключевые тренды буллетами с жирными заголовками.", "",
               "### 1.2 Ключевые конкуренты и анализ их стратегий роста и промо-механик", "",
-              _grab(pdir, "02_situation.md", ("Конкуренты", "Конкурентный анализ"), 3000,
-                    require_section=True)
+              grab("02_situation.md", ("Конкуренты", "Конкурентный анализ"), 3000, True)
               or "Сравнительная таблица групп конкурентов (заполните после конкурентного анализа):", "",
               "| | Группа 1 | Группа 2 | Группа 3 |",
               "|---|---|---|---|",
@@ -198,9 +418,9 @@ def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
               "| **Стратегия роста и промо-механики** | … | … | … |",
               "| **Риски для компании** | … — Высокий/Средний/Низкий | … | … |", "",
               "> **Вывод (умозаключение):** окно возможностей и его срок — заполните по данным 1.1–1.2.", ""]
-    faq2 = _grab(pdir, "02_situation.md", ("Сегменты", "Персоны", "Аудитория"), 3000)
+    faq2 = grab("02_situation.md", ("Сегменты", "Персоны", "Аудитория"), 3000)
     if not faq2 or len(faq2) < 120:
-        faq2 = _grab(pdir, "04_product_strategy.md", ("Аудитория",), 3000)
+        faq2 = grab("04_product_strategy.md", ("Аудитория",), 3000)
     parts += ["## FAQ-2. User Persona. Кто является целевой аудиторией?", "",
               "### 2.1 Сегменты", "",
               faq2 or "> Добавьте сегменты/персоны в 02_situation.md.", "",
@@ -224,30 +444,31 @@ def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
               "| Сегмент 1 | … | … |", "",
               "> **Вывод (умозаключение):** сегментация по барьеру входа; лестница тиров "
               "обслуживает все барьеры; приоритизация — по ёмкости/CAC/конкуренции (расчёт — выше).", ""]
-    faq3 = _grab(pdir, "03_options.md", (), 7000)
+    doc03 = _insert_doc(pdir, "03_options.md", reg=reg)
     parts += ["## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.", "",
-              faq3 or "> Раздел появится после шага «options» (03_options.md).", "",
+              doc03 or "> Раздел появится после шага «options» (03_options.md).", "",
               "### Инициативы выбранного направления (драйверы)", "",
               "Сформулируйте 3–4 инициативы по схеме: «**Первый драйвер** — …», «**Второй драйвер** — …», "
               "далее «Ключевые направления» (буллеты) и пошаговый расчёт эффекта. Закройте "
               "выводом-умозаключением.", ""]
     ue = _unit_econ_block(pdir)
     if ue:
-        parts += ["Юнит-экономика — расчёт пошагово:", "", ue, "",
-                  "**Вывод (умозаключение):** запас прочности модели — какой допуск выдерживает "
-                  "каждое допущение (см. лист «Чувствительность»).", ""]
-    faq4 = _grab(pdir, "04_product_strategy.md", ("Тактики", "Инициативы"), 4000) \
-        or _grab(pdir, "03_options.md", ("Тактики",), 4000)
+        parts += ["Юнит-экономика — расчёт пошагово:", "", ue, ""]
+    doc04 = _insert_doc(pdir, "04_product_strategy.md", reg=reg)
+    matrix = _tactics_matrix(pdir)
     parts += ["## FAQ-4. Тактики. Детализируйте каждую инициативу до конкретных тактик.", "",
-              faq4 or "> Добавьте тактики по каждой инициативе в 04_product_strategy.md.", "",
-              "Матрица тактик (заполните):", "",
-              "| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |",
-              "|---|---|---|---|",
-              "| Инициатива 1 | … | … | … |",
-              "| Инициатива 2 | … | … | … |", ""]
-    faq5 = _grab(pdir, "06_validation_plan.md", (), 5000)
+              doc04 or "> Добавьте тактики по каждой инициативе в 04_product_strategy.md.", ""]
+    if matrix:
+        parts += ["Матрица тактик (из Outcome-роадмапа 04_product_strategy.md):", "", matrix, ""]
+    else:
+        parts += ["Матрица тактик (заполните):", "",
+                  "| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |",
+                  "|---|---|---|---|",
+                  "| Инициатива 1 | … | … | … |",
+                  "| Инициатива 2 | … | … | … |", ""]
+    doc06 = _insert_doc(pdir, "06_validation_plan.md", reg=reg)
     parts += ["## FAQ-5. Высокоуровневый план реализации", "",
-              faq5 or "> Раздел появится после шага «validation» (06_validation_plan.md).", "",
+              doc06 or "> Раздел появится после шага «validation» (06_validation_plan.md).", "",
               "Ожидаемое распределение вклада инициатив в общий результат (сумма 100%):", "",
               "- __% — Инициатива 1;",
               "- __% — Инициатива 2;",
@@ -257,12 +478,18 @@ def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
     dec = _decision_block(pdir)
     if dec:
         parts += [dec, ""]
-    faq6 = _grab(pdir, "04_product_strategy.md", ("Метрики", "Показатели"), 3000)
-    if not faq6 or len(faq6) < 80:
-        faq6 = _grab(pdir, "06_validation_plan.md", ("Ожидаемое изменение", "Критерии решения"), 3000)
-    parts += ["## FAQ-6. Метрики успеха. KPI в двух плоскостях", "",
-              faq6 or "> Добавьте метрики успеха в 04/06 документы.", "",
-              "KPI в двух направлениях: **1) Бизнес** — деньги и база (выручка/MRR, платящие, "
+    faq6 = grab("04_product_strategy.md", ("Метрики", "Показатели"), 3000) \
+        or grab("06_validation_plan.md", ("Ожидаемое изменение", "Критерии решения"), 3000)
+    kpi = _kpi_table(pdir)
+    parts += ["## FAQ-6. Метрики успеха. KPI в двух плоскостях", ""]
+    if faq6:
+        parts += [faq6, ""]
+    if kpi:
+        parts += [kpi, ""]
+    elif not faq6 and doc04 is None and doc06 is None:
+        parts += ["> Добавьте метрики успеха в 04/06 документы — таблица KPI соберётся "
+                  "автоматически из сводных таблиц 06_validation_plan.md.", ""]
+    parts += ["KPI в двух направлениях: **1) Бизнес** — деньги и база (выручка/MRR, платящие, "
               "конверсия в оплату, доля тарифов, фактический LTV/CAC); **2) Продукт** — активация, "
               "время до первой ценности, число действий до результата, churn, CSAT/NPS. "
               "У каждого KPI: база → цель к сроку → порог действия. Контр-метрики — по одной "

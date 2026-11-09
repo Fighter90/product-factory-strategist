@@ -109,6 +109,22 @@ class CalcAndSixPagerTests(unittest.TestCase):
         # юнит-экономика посчитана из calcs.json: CM = 29 * 0.75 = 21.75
         self.assertIn("21,75", text)
         self.assertIn("271,88", text)
+        # чувствительность к LTV/CAC ≥ 3: churn 21,75/(3·60) = 12,08 %; CAC 271,875/3 = 90,62;
+        # доля переменных 1 − 180/271,875 = 33,79 %
+        self.assertIn("держится до churn ≈ 12,08 %/мес", text)
+        self.assertIn("до CAC ≈ €90,62", text)
+        self.assertIn("до доли переменных расходов ≈ 33,79 %", text)
+        # note в calcs.json нет — плейсхолдер допущений сохранён
+        self.assertIn("Допущения [укажите теги]", text)
+        # без дублей секций и маркеров обрезки
+        self.assertNotIn("обрезано", text)
+        self.assertEqual(text.count("Отток растёт, рынок 40 млрд [C001]"), 1)
+        self.assertNotIn("## Короткий ответ", text.splitlines())  # чужих H2 нет
+        # 03 вставлен целиком с понижением заголовков: варианты и возражения полные
+        self.assertIn("### Варианты", text)
+        self.assertIn("#### Вариант A: оставить как есть", text)
+        self.assertIn("##### Возражения", text)
+        self.assertIn("- отток продолжится", text)
         # без пересчёта Excel — текст собирается повторно
         path2 = export.build_six_pager(self.pdir, with_calcs=False)
         self.assertEqual(path.read_text(encoding="utf-8"), path2.read_text(encoding="utf-8"))
