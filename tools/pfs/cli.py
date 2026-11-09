@@ -7,7 +7,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from . import (calc, check, claims, core, cost, data, decisions, docx, export, impact, kb, models,
+from . import (calc, check, claims, core, cost, data, decisions, docx, export, gaps, impact, kb, models,
                participate, project, route, sources)
 from .core import PfsError
 
@@ -97,6 +97,17 @@ def cmd_answer(a):
 def cmd_question(a):
     project.add_open_question(_p(a), a.text, close=a.close)
     print("Открытый вопрос " + ("закрыт" if a.close else "добавлен"))
+
+
+def cmd_gap(a):
+    pdir = _p(a)
+    if a.action == "list":
+        print(gaps.list_text(pdir))
+        return
+    if a.num is None or not (a.claim or "").strip():
+        raise core.PfsError("gap close: укажите номер пробела и --claim C### (список: pfs gap list)")
+    print(gaps.close(pdir, a.num, a.claim, a.note or "")["message"])
+    print("Сверка синхронности: pfs check")
 
 
 def cmd_source(a):
@@ -350,6 +361,11 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("ask", help="вопрос руководителю (пауза)"); s.add_argument("question"); s.add_argument("--options"); s.set_defaults(f=cmd_ask)
     s = sp.add_parser("answer", help="ответ руководителя"); s.add_argument("answer"); s.set_defaults(f=cmd_answer)
     s = sp.add_parser("question", help="открытый вопрос/пробел"); s.add_argument("text"); s.add_argument("--close", action="store_true"); s.set_defaults(f=cmd_question)
+    s = sp.add_parser("gap", help="пробелы исследования: list / close"); s.add_argument("action", choices=["list", "close"])
+    s.add_argument("num", nargs="?", type=int, help="номер пробела (pfs gap list)")
+    s.add_argument("--claim", help="утверждение C###, закрывающее пробел")
+    s.add_argument("--note", help="чем закрыт: короткое пояснение")
+    s.set_defaults(f=cmd_gap)
 
     s = sp.add_parser("source", help="источники (add/list/show/refresh)")
     s.add_argument("action", choices=["add", "list", "show", "refresh"],
