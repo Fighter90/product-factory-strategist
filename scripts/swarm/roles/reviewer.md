@@ -9,6 +9,8 @@ ISSUE: {{IDENTIFIER}} — {{TITLE}}
 The full diff vs the base branch is provided below between <DIFF> tags. The commit message
 is the first line inside the diff header.
 
+{{DIFF}}
+
 REVIEW CHECKLIST (judge only what the diff touches)
 1. Correctness: does the change actually implement the issue? Logic errors, broken paths,
    dead code, partial implementations masquerading as done.
@@ -20,9 +22,6 @@ REVIEW CHECKLIST (judge only what the diff touches)
 4. Repo conventions: stdlib only (no new dependencies), RU CLI messages, bilingual docs where
    the touched docs are bilingual, style consistent with the surrounding code.
 5. Honesty: does the summary claim things the diff does not do?
-
-TRUNCATION NOTE: the DIFF may be cut at a character limit — that is EXPECTED and is not a
-defect or a blocking problem; judge the visible portion. Do not spend your review on the cut.
 
 NO-TOOLS RULE (critical): do NOT run commands, do NOT read files, do NOT use the linear MCP —
 the diff inside <DIFF> is your COMPLETE context. Every past review failure happened because
