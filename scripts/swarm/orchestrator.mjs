@@ -41,7 +41,8 @@ const ROLES = {
 };
 
 let logFile = null;
-const ts = () => new Date().toISOString().replace('T', ' ').slice(0, 19);
+// локальное время (не UTC): лог читает человек, UTC-сдвиг порождал ложные «зависания»
+const ts = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().replace('T', ' ').slice(0, 19);
 function log(msg) {
   const line = `[${ts()}] ${msg}`;
   console.log(line);
@@ -50,13 +51,19 @@ function log(msg) {
 const short = (s, n = 400) => String(s).replace(/\s+/g, ' ').trim().slice(0, n);
 
 function run(cmd, args_, { timeoutMs = 600_000, cwd = ROOT } = {}) {
+  // detached: true → убийство ГРУППЫ (kill(-pid)) — grandchildren (например, песочница воркера)
+  // не держат pipe'ы вечно; resolve на 'exit' (а не 'close') — воркер не может повесить конвейер.
   return new Promise((res) => {
-    const p = spawn(cmd, args_, { cwd, env: process.env, stdio: ['ignore', 'pipe', 'pipe'] });
-    let out = '', err = '';
-    const t = setTimeout(() => { try { p.kill('SIGKILL'); } catch {} }, timeoutMs);
+    const p = spawn(cmd, args_, { cwd, env: process.env, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
+    let out = '', err = '', done = false;
+    const finish = (code) => { if (done) return; done = true; clearTimeout(t); res({ code: code ?? -1, out, err, all: out + err }); };
+    const t = setTimeout(() => {
+      try { process.kill(-p.pid, 'SIGKILL'); } catch { try { p.kill('SIGKILL'); } catch {} }
+    }, timeoutMs);
     p.stdout.on('data', (d) => { out += d; });
     p.stderr.on('data', (d) => { err += d; });
-    p.on('close', (code) => { clearTimeout(t); res({ code, out, err, all: out + err }); });
+    p.on('exit', (code) => finish(code));
+    p.on('error', () => finish(-1));
   });
 }
 const sh = async (cmd, opts) => {
@@ -118,14 +125,25 @@ const doneIssue = (i, evidence) => setState(i.id, 'Done').then(() => comment(i.i
 const cancelIssue = (i, why) => setState(i.id, 'Canceled').then(() => comment(i.id, `Swarm: ${why} — nothing to ship.`));
 const failIssue = async (i, step, msg) => { try { await comment(i.id, `⚠️ Swarm failed at step ${step}: ${short(String(msg), 300)}`); } catch (e) { log(`  (failure-report also failed: ${short(String(e))})`); } };
 
-const extractDev = (tail) => {
-  const status = (tail.match(/status:\s*(done|already-implemented|not-reproducible|blocked)/) || [])[1] || 'blocked';
-  return { status, summary: after(tail, 'DEV_SUMMARY:') || '' };
+// opencode run может закончить транскрипт выводом tool-команд — маркеры ищем по ПОЛНОМУ
+// выводу и берём ПОСЛЕДНЕЕ вхождение (агент печатает финальный блок в конце своего текста).
+const lastRe = (text, re) => { let m, last = null; const r = new RegExp(re.source, re.flags.replace('g', '') + 'g'); while ((m = r.exec(text))) last = m; return last; };
+const extractDev = (all) => {
+  const m = lastRe(all, /status:\s*(done|already-implemented|not-reproducible|blocked)/) || [];
+  const i = all.lastIndexOf('DEV_SUMMARY:');
+  return { status: m[1] || 'blocked', summary: i >= 0 ? all.slice(i + 'DEV_SUMMARY:'.length).trim().split('\n').slice(0, 8).join('\n') : '' };
 };
-const extractVerdict = (tail) => {
-  if (/VERDICT:\s*ACCEPT/.test(tail)) return { verdict: 'ACCEPT', notes: '' };
-  if (/VERDICT:\s*RETURN/.test(tail)) return { verdict: 'RETURN', notes: after(tail, 'VERDICT: RETURN', /\ntitle:|<\/DIFF>/) || short(tail, 600) };
-  return { verdict: 'RETURN', notes: 'reviewer produced no verdict — treat as RETURN' };
+const extractVerdict = (all) => {
+  // VERDICT только в начале строки (не в tool-выводе/цитатах), берём ПОСЛЕДНЕЕ вхождение;
+  // эхо плейсхолдеров шаблона («<numbered, …>») = вердикта нет (guard как у clerk в career-ops).
+  const re = /^VERDICT:\s*(ACCEPT|RETURN)\s*$/gm;
+  let m, last = null;
+  while ((m = re.exec(all))) last = m;
+  if (!last) return { verdict: 'RETURN', notes: 'reviewer produced no verdict — treat as RETURN' };
+  const seg = all.slice(last.index);
+  if (/[<>]/.test(seg.slice(0, 300))) return { verdict: 'RETURN', notes: 'reviewer echoed template placeholders — no real verdict' };
+  if (last[1] === 'ACCEPT') return { verdict: 'ACCEPT', notes: '' };
+  return { verdict: 'RETURN', notes: seg.split('\n').slice(1).join('\n').slice(0, 800).trim() || 'RETURN' };
 };
 
 async function main() {
@@ -141,6 +159,7 @@ async function main() {
   }
 
   try {
+    const attempts = new Map(); // identifier → проваленные попытки за прогон
     for (let n = 0; n < MAX_TASKS; n++) {
       logFile = resolve(LOGS, `cycle-${Date.now()}.log`);
       log(`=== task ${n + 1}/${MAX_TASKS} ===`);
@@ -151,7 +170,14 @@ async function main() {
       if (clean.out.trim()) throw new Error('working tree is not clean — aborting before pick');
       await sh('git fetch origin -q && git checkout -q --detach origin/main');
 
-      const issue = await pickIssue();
+      // задачи с 2 проваленными попытками за прогон уходят в Backlog — очередь не зацикливается
+      let issue = await pickIssue();
+      while (issue && (attempts.get(issue.identifier) || 0) >= 2) {
+        await setState(issue.id, 'Backlog');
+        await comment(issue.id, '🏁 Swarm: 2 attempts failed this run (review/gates) — parked in Backlog for human review. Branch kept.');
+        log(`parked ${issue.identifier} (2 failed attempts) — skipping`);
+        issue = await pickIssue();
+      }
       if (!issue) { log('queue empty — no Todo issues labeled `swarm`.'); break; }
       log(`picked ${issue.identifier}: ${issue.title}`);
       if (DRY) { log('dry-run: would claim → develop → gates → review → document → release → prod-QA → Done.'); break; }
@@ -176,7 +202,7 @@ async function main() {
             REVIEW_NOTES: reviewNotes ? `\nREVIEWER RETURNED THIS CHANGE WITH NOTES — address every point:\n${reviewNotes}` : '',
           });
           const commits = parseInt((await sh('git rev-list --count origin/main..HEAD')).out.trim() || '0', 10);
-          const dev1 = extractDev(dev.tail);
+          const dev1 = extractDev(dev.all);
           devStatus = commits > 0 ? 'done' : (dev1.status === 'done' ? 'blocked' : dev1.status);
           devSummary = dev1.summary;
           log(`  commits on branch: ${commits}; executor status: ${dev1.status} → using ${devStatus}`);
@@ -219,7 +245,11 @@ async function main() {
               log(`  gates FAILED — feeding output back to the executor`);
               continue;
             }
-            throw new Error(`gates failed after ${MAX_ROUNDS} rounds`);
+            await failIssue(issue, 'gates', `failed after ${MAX_ROUNDS} rounds`);
+            log(`finished: ${issue.identifier} — gates failed; moving on`);
+            try { await setState(issue.id, 'Todo'); } catch {}
+            devStatus = 'gates-failed';
+            break;
           }
           log(`  gates green (${passLine || '?'} tests OK)`);
 
@@ -230,7 +260,7 @@ async function main() {
             DESCRIPTION: issue.description || '(judge the diff against the issue title)',
             DIFF: `<DIFF>\n${diff.all.slice(0, 60_000)}\n</DIFF>`,
           }, { timeoutMs: 12 * 60_000 });
-          const v = extractVerdict(rev.tail);
+          const v = extractVerdict(rev.all);
           if (v.verdict === 'ACCEPT') { accepted = true; log('  verdict: ACCEPT'); break; }
           accepted = false;
           reviewNotes = v.notes;
@@ -240,14 +270,19 @@ async function main() {
         if (devStatus !== 'done') {
           if (devStatus === 'blocked') {
             await failIssue(issue, 'executor', 'reported blocked — the branch and the board are left for human review');
-            throw new Error('executor reported blocked');
+            log(`finished: ${issue.identifier} — executor blocked; moving on`);
+            try { await setState(issue.id, 'Todo'); } catch {}
+            continue;
           }
           await cancelIssue(issue, `executor reported "${devStatus}"`);
           log(`finished: ${devStatus} — issue canceled`); continue;
         }
         if (!accepted) {
           await failIssue(issue, 'review', `no ACCEPT in ${MAX_ROUNDS} rounds; branch ${branch} kept for human review`);
-          throw new Error(`review: no ACCEPT in ${MAX_ROUNDS} rounds`);
+          attempts.set(issue.identifier, (attempts.get(issue.identifier) || 0) + 1);
+          log(`finished: ${issue.identifier} — review failed (attempt ${attempts.get(issue.identifier)}/2); moving on`);
+          if ((attempts.get(issue.identifier) || 0) < 2) { try { await setState(issue.id, 'Todo'); } catch {} }
+          continue;
         }
 
         // ---- document
@@ -313,6 +348,7 @@ async function main() {
         log(`=== DONE: ${issue.identifier} shipped as v${ver} ===`);
       } catch (e) {
         await failIssue(issue, 'pipeline', String(e));
+        try { await setState(issue.id, 'Todo'); } catch {}
         throw e;
       }
     }

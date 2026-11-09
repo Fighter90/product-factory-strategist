@@ -21,6 +21,11 @@ REVIEW CHECKLIST (judge only what the diff touches)
    the touched docs are bilingual, style consistent with the surrounding code.
 5. Honesty: does the summary claim things the diff does not do?
 
+NO-TOOLS RULE (critical): do NOT run commands, do NOT read files, do NOT use the linear MCP —
+the diff inside <DIFF> is your COMPLETE context. Every past review failure happened because
+the session ended with tool output instead of a verdict. Work only from the diff text and
+print the verdict block as the very last thing you output.
+
 VERDICT RULES
 - ACCEPT only if you would merge this to main without further changes.
 - RETURN with concrete, actionable notes otherwise (file:line + what to change).
