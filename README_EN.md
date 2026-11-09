@@ -8,7 +8,7 @@ distinct options, and aligned product and communication strategies. After the de
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
 This is a repository folder: instructions, knowledge sets organized by category (strategy · economics · product ·
-UX · data · platforms · Gen AI), 120 skills, 8 subagents, 4 hooks, and a dependency-free Python CLI/MCP toolset.
+UX · data · platforms · Gen AI), 121 skills, 8 subagents, 4 hooks, and a dependency-free Python CLI/MCP toolset.
 Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
@@ -23,7 +23,7 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 103 tests
+python3 -m unittest discover -s tests          # 115 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -126,7 +126,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>grounds · commitments"] --> MON["decision due<br/>what to decide now"]
   end
-  KB["knowledge/ — 88 cards across categories (RU) + 88 EN mirrors (full bilingual base) (methods_en/) + INDEX_EN.md<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
+  KB["knowledge/ — 89 cards across categories (RU) + 89 EN mirrors (full bilingual base) (methods_en/) + INDEX_EN.md<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → primary sources → S###"| S
   EX --> ATT["outputs/attachments/*.xlsx<br/>recalculated on open"]
@@ -143,21 +143,21 @@ every place referencing it.
 
 ```mermaid
 flowchart TB
-  SK["120 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
+  SK["121 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: method procedures<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
-  SK --> L["Personal library 74<br/>design · marketing · science · docs/media · thinking modes · meta"]
+  SK --> L["Personal library 75<br/>design · marketing · science · docs/media · thinking modes · meta"]
   SK --> INT["Integrations 6<br/>hallmark · board-of-directors · premortem · rea · sdd · deck"]
   B & P & L & INT --> INV["Invocation: automatic by triggers · explicit 'use skill X' · via process steps"]
 ```
 
-120 skills in `.claude/skills/`, four groups:
+121 skills in `.claude/skills/`, four groups:
 
 - **base 13** — process steps (one per workflow stage: intake → sources → research → … → monitoring).
 - **product-skills 27** — method procedures (problem and solution design, traction modeling, unit economics,
   market sizing, interviews, UX review, …).
-- **personal library 74** — domain expertise:
-  - Design: design-ui, refero-design, frontend-design, make-interfaces-feel-better, emil-design-eng,
-    web-design-guidelines.
+- **personal library 75** — domain expertise:
+  - Design: design-ui, refero-design, frontend-design, claudable-landing, make-interfaces-feel-better,
+    emil-design-eng, web-design-guidelines.
   - Marketing: ads, ad-creative, seo-audit, ai-seo, cro, pricing, offers, cold-email, emails, launch,
     content-strategy, competitors, analytics, programmatic-seo, directory-submissions, customer-research,
     marketing-psychology, prospecting, copywriting, onboarding, signup, paywalls, churn-prevention,
@@ -208,7 +208,7 @@ flowchart LR
   IMP --> REV["revision: supersede · rebase"]
 ```
 
-### 2. Knowledge base (88 cards across categories (RU) + 88 EN mirrors (full bilingual base) + EN index)
+### 2. Knowledge base (89 cards across categories (RU) + 89 EN mirrors (full bilingual base) + EN index)
 Knowledge sets by category: growth strategy · unit economics & monetization · product management · UX & customer
 metrics · data analysis & A/B · platform solutions · Gen AI in products. Framework layer: Double Diamond, Lean
 Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Kano. Techniques only — no brands. Search: `pfs kb search` (BM25,
@@ -292,7 +292,7 @@ AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
   agents/ (8) · hooks/ (5) · settings.json
 .cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/  methods/ (88 RU cards) · methods_en/ (88 EN mirrors (full bilingual base)) · INDEX.md · INDEX_EN.md
+knowledge/  methods/ (89 RU cards) · methods_en/ (89 EN mirrors (full bilingual base)) · INDEX.md · INDEX_EN.md
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions
             data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/

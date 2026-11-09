@@ -155,7 +155,11 @@ def due_text(res: dict) -> str:
 def table(rows: list[dict]) -> str:
     out = ["| ID | Решение | Ответственный | Основания | Показатели | Пересмотр | Статус |", "|---|---|---|---|---|---|---|"]
     for d in rows:
-        mets = "; ".join(f"{m['name']}: {m['baseline']}→{m['target']}" + (f" к {m['by']}" if m.get("by") else "") for m in d["metrics"])
+        mets = "; ".join(
+            (f"{m['name']}: {m['baseline']}" + (f" → {m['target']}" if m.get("target") else ""))
+            + (f" к {m['by']}" if m.get("by") else "")
+            for m in d["metrics"]
+        )
         rev = (d["review"].get("date") or "") + ("; " + "; ".join(d["review"]["triggers"]) if d["review"]["triggers"] else "")
         out.append(f"| {d['id']} | {d['title']}: {d['decision']} | {d['owner']} | {', '.join(d['grounds'])} | {mets} | {rev} | {d['status']} |")
     return "\n".join(out)

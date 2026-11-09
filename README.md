@@ -8,7 +8,7 @@
 за обязательствами и пересматривает выводы при новых данных.
 
 Это папка-репозиторий: инструкции, наборы знаний по категориям (стратегия · экономика · продукт · UX ·
-данные · платформы · Gen AI), 120 навыков, 8 субагентов, 4 хука
+данные · платформы · Gen AI), 121 навык, 8 субагентов, 4 хука
 и CLI/MCP-инструменты на чистом Python (ноль зависимостей). Работает в Claude Code, Cursor, Codex, OpenCode,
 Windsurf, Copilot.
 
@@ -24,7 +24,7 @@ Windsurf, Copilot.
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 103 теста
+python3 -m unittest discover -s tests          # 115 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -190,7 +190,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>основания · обязательства"] --> MON["decision due<br/>что решать сейчас"]
   end
-  KB["knowledge/ — 88 карт по категориям (RU) + 88 EN-зеркал — полная двуязычная база (methods_en/) + INDEX_EN.md<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
+  KB["knowledge/ — 89 карт по категориям (RU) + 89 EN-зеркал — полная двуязычная база (methods_en/) + INDEX_EN.md<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → первоисточники → S###"| S
   SUB -->|"отчёты"| ENV
@@ -208,19 +208,19 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  SK["120 навыка"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
+  SK["121 навык"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: процедуры методов<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
-  SK --> L["Личная библиотека 74<br/>дизайн · маркетинг · наука · документы/медиа · режимы мышления · мета"]
+  SK --> L["Личная библиотека 75<br/>дизайн · маркетинг · наука · документы/медиа · режимы мышления · мета"]
   SK --> INT["Интеграции 6<br/>hallmark · board-of-directors · premortem · rea · sdd · deck"]
   B & P & L & INT --> INV["Вызов: авто по триггерам · явно «используй skill X» · по шагам процесса"]
 ```
 
-**Структура (120):** четыре группы.
+**Структура (121):** четыре группы.
 - **Базовые 13** — шаги процесса: intake, research, situation, options, strategy, validation-plan,
   decision-support, data-analysis, interviews, ux-review, six-pager, deep-research, strategist.
 - **Product-skills 27** — процедуры методов: market-sizing, unit-economics, traction-modeling,
   solution-design, mvp-pilot-launch, problem-design…
-- **Личная библиотека 74** — дизайн: design-ui, refero-design, frontend-design, make-interfaces-feel-better,
+- **Личная библиотека 75** — дизайн: design-ui, refero-design, frontend-design, claudable-landing, make-interfaces-feel-better,
   emil-design-eng, web-design-guidelines; маркетинг: ads, ad-creative, seo-audit, ai-seo, cro, pricing,
   offers, cold-email, emails, launch, content-strategy, competitors, analytics, programmatic-seo,
   directory-submissions, customer-research, marketing-psychology, prospecting, sales-enablement, signup, onboarding, paywalls, revops; наука: paper-lookup,
@@ -268,7 +268,7 @@ flowchart LR
   IMP --> REV["пересмотр: supersede · rebase"]
 ```
 
-### 2. База знаний (88 карт по категориям (RU) + 88 EN-зеркал — полная двуязычная база и EN-индекс)
+### 2. База знаний (89 карт по категориям (RU) + 89 EN-зеркал — полная двуязычная база и EN-индекс)
 Наборы знаний по категориям: стратегия и рост · юнит-экономика и монетизация · продуктовый менеджмент ·
 UX и клиентские метрики · анализ данных и A/B · платформенные решения · Gen AI в продукте. Поверх —
 фреймворки: Double Diamond, Lean Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Кано. Только методики —
@@ -357,7 +357,7 @@ AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject
 .claude/settings.json
 .cursor/rules/       .github/ (Pages workflow) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable · rea)
 config/              models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/           methods/ (88 карт RU) · methods_en/ (88 EN-зеркал — полная двуязычная база) · INDEX.md · INDEX_EN.md
+knowledge/           methods/ (89 карт RU) · methods_en/ (89 EN-зеркал — полная двуязычная база) · INDEX.md · INDEX_EN.md
 tools/pfs/           core · project · route · sources · claims · check · impact · decisions ·
                      data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl · log.jsonl · costs.json ·
