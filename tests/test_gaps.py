@@ -120,6 +120,26 @@ class GapTests(unittest.TestCase):
         # «закрытые данные» в другом пробеле — не закрытие, ловушки быть не должно
         self.assertFalse(any("WTP" in w for w in check.run(self.pdir)["warnings"]), warns)
 
+    def test_check_catches_status_gap_word_desync(self):
+        """Статус «пробел» в 01 — тоже открытый: close такой статус правит, значит check
+        обязан ловить рассинхрон и для него; сообщение называет фактический статус.
+        Открытый в 02 пробел со статусом «пробел» (WTP) ложной тревоги не даёт."""
+        sit = (self.pdir / "outputs" / "02_situation.md").read_text(encoding="utf-8")
+        sit = sit.replace(
+            "| Активные соискатели по странам | Eurostat LFS не даёт по ИТ-профессии | прокси по вакансиям | 2 ч | да |",
+            f"| Активные соискатели по странам | закрыто [{self.c['id']}] | не требуется | 0 | нет |")
+        (self.pdir / "outputs" / "02_situation.md").write_text(sit, encoding="utf-8")
+        plan = (self.pdir / "outputs" / "01_research_plan.md").read_text(encoding="utf-8")
+        plan = plan.replace("| 2 ч | открыт |", "| 2 ч | пробел |")
+        (self.pdir / "outputs" / "01_research_plan.md").write_text(plan, encoding="utf-8")
+        warns = check.run(self.pdir)["warnings"]
+        self.assertTrue(any("01_research_plan" in w and "02_situation.md" in w and "закрыт" in w
+                            for w in warns), warns)
+        self.assertTrue(any("«пробел»" in w for w in warns),
+                        "в предупреждении должен стоять фактический статус строки")
+        # WTP: пробел в 02 открыт, статус в 01 «пробел» — рассинхрона нет, тревоги нет
+        self.assertFalse(any("WTP" in w for w in warns), warns)
+
     def test_close_validation(self):
         with self.assertRaises(PfsError):  # неизвестное утверждение
             gaps.close(self.pdir, 1, "C999")

@@ -232,8 +232,9 @@ def list_text(pdir: Path) -> str:
 
 
 def sync_warnings(pdir: Path) -> list[str]:
-    """Рассинхрон 01/02: в 02 пробел закрыт, а строка 01 всё ещё «открыт».
+    """Рассинхрон 01/02: в 02 пробел закрыт, а строка 01 всё ещё открытая.
 
+    Открытые статусы строки вопроса — «открыт» и «пробел» (те же, что правит close).
     Подсказка должна быть исполнимой: если в закрытой строке 02 есть [C###], рекомендуем
     `pfs gap close <номер> --claim <этот C###>` (повтор с тем же claim идемпотентен и
     синхронизирует 01); если claim в строке нет — советуем правку строки 01 вручную.
@@ -257,8 +258,9 @@ def sync_warnings(pdir: Path) -> list[str]:
                 out.append(f"01_research_plan.md:{it['line']}: пробел «{g['title']}» закрыт в 02_situation.md, "
                            f"но в плане числится «открыт» — {remedy}")
         for r in rows:
-            if _matches(g["title"], r["question"]) and "открыт" in r["status"].lower() \
+            st = r["status"].lower()
+            if _matches(g["title"], r["question"]) and ("открыт" in st or "пробел" in st) \
                     and not _is_closed(r["status"]):
-                out.append(f"01_research_plan.md:{r['line']}: статус вопроса «{r['question'][:60]}» — «открыт», "
-                           f"хотя пробел закрыт в 02_situation.md — {remedy}")
+                out.append(f"01_research_plan.md:{r['line']}: статус вопроса «{r['question'][:60]}» — "
+                           f"«{r['status']}», хотя пробел закрыт в 02_situation.md — {remedy}")
     return out
