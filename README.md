@@ -20,6 +20,17 @@ Windsurf, Copilot.
 
 ## Быстрый старт (5 минут)
 
+## Установка
+
+```bash
+git clone https://github.com/Fighter90/product-factory-strategist.git
+cd product-factory-strategist
+./scripts/install.sh          # uv tool install -e . (или venv+symlink)
+pfs --help
+```
+
+Детали, PEP 668, обновление, удаление, тестирование и troubleshooting — [docs/INSTALL.md](docs/INSTALL.md).
+
 ```bash
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
