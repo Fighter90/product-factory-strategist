@@ -138,6 +138,9 @@ pfs source refresh S003                  # обновить web-источник
 pfs claim add "Рынок 40 млрд ₽ [данные]" --kind fact --source S002 --grade B
 pfs claim add "Люди готовы платить за защиту близких" --kind hypothesis --source S005
 pfs claim add "Поэтому фокус на семье" --kind inference --from C003,C010
+pfs claim add-batch claims.jsonl        # пачка из JSONL (text/kind/source/grade/quote/from):
+                                        # одна строка = одно утверждение; невалидная строка
+                                        # отменяет весь батч; дубликаты по тексту пропускаются
 pfs claim list [--kind fact] [--all]
 pfs claim retract --id C005 --reason "ошибка в методике"
 pfs claim supersede --id C005 "Рынок 45 млрд" --reason "новый отчёт" [--source S009]
@@ -389,6 +392,7 @@ pfs new "…" "…" / pfs use slug / pfs status          # проекты
 pfs source add <url|файл>                            # источники
 pfs source fetch <url>                               # недоступный URL: фолбэки reader/архив; refresh идёт той же цепочкой
 pfs claim add "…" --kind fact --source S001 --grade B       # утверждения
+pfs claim add-batch claims.jsonl                            # пачка утверждений из JSONL
 pfs check --strict                                   # контроль качества
 pfs calc all                                         # Excel
 pfs export --six-pager                               # отчёт для комитета
