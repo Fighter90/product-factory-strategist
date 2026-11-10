@@ -42,16 +42,22 @@ class NumericCrosscheckTests(unittest.TestCase):
         self.assertIn("19", w[0])
         self.assertIn("17", w[0])
 
-    def test_title_stale_body_confirms_is_flagged_as_stale(self):
+    def test_body_confirmed_mismatch_is_flagged_neutrally(self):
         """Числа утверждения подтверждены ТЕЛОМ источника, но не заголовком →
-        мягкое предупреждение «заголовок устарел» (не серьёзное расхождение)."""
+        мягкое предупреждение в нейтральной формулировке: заголовок может нести
+        другую метрику (кейс C004/S002: в заголовке 7602 звёзд, в утверждении 19
+        локалей) — формулировка «заголовок устарел» вводит в заблуждение."""
         sources.add(self.pdir, text=BODY_17, title="Продукт: 20 локалей")
-        # в теле источника есть 17 (BODY_17), в утверждении иная пара с 17 → stale-вариант
+        # в теле источника есть 17 (BODY_17), в утверждении иная пара с 17 → мягкий вариант
         c = claims.add(self.pdir, "Поддержка 17 локалей и 3 языка справки", "fact", ["S001"], grade="B")
         pair = f"{c['id']}/S001"
         w = [x for x in self._warns() if pair in x]
         self.assertTrue(w, self._warns())
-        self.assertIn("устарели", w[0])
+        self.assertNotIn("устарел", w[0])
+        self.assertIn("не совпадают", w[0])
+        self.assertIn("подтверждено текстом", w[0])
+        self.assertIn("20", w[0])
+        self.assertIn("17", w[0])
 
     def test_synthetic_source_skips_claim_vs_title(self):
         """Синтетические интервью-источники: заголовок несёт метаданные персоны
