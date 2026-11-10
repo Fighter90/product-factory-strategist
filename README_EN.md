@@ -267,7 +267,7 @@ Higgsfield visuals, Lovable web version).
 | `pfs docx <file.md> [--out]` | Markdown → Word |
 | `pfs kb search/show/index` | knowledge search |
 | `pfs models [show/pick/use/sync/escalate]` | model routing |
-| `pfs cost [--transcript --window] · pfs log --usd` | cost |
+| `pfs cost [--transcript --session --window] · pfs log --usd` | cost |
 | `pfs doctor` | diagnostics |
 
 ## Integrations

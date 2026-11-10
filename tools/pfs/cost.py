@@ -9,6 +9,10 @@ from . import core
 # Подписочные провайдеры: оплата планом, а не за токен — записываем токены с ценой $0 и пометкой «plan».
 PLAN_PROVIDERS = {"zai-coding-plan"}
 
+# Реестровые *.jsonl в корне проекта (PRO-30): транскриптами сессий не считаются.
+REGISTRY_JSONL = {"claims.jsonl", "sources.jsonl", "decisions.jsonl", "log.jsonl"}
+TRANSCRIPT_PATTERNS = ("*_session.json", "*.jsonl")  # OpenCode session.json и Claude Code jsonl
+
 
 def pricing() -> dict:
     return core.read_json(core.CONFIG / "pricing.json", {"models": {}, "usd_rub": 95.0})
@@ -136,6 +140,42 @@ def price(per_model: dict) -> float:
 def _utc(iso: str) -> str:
     from datetime import datetime, timezone
     return datetime.fromisoformat(iso).astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S") + "Z"
+
+
+def find_transcript(pdir: Path, hint: str | None = None) -> Path:
+    """Транскрипт сессии в корне проекта (PRO-30): формат детектится сам при разборе.
+
+    hint — путь (относительный резолвится от каталога проекта, см. core.resolve_input),
+    часть имени файла или None/пусто. Без hint — самый свежий кандидат из
+    *_session.json (OpenCode) и *.jsonl (Claude Code) в корне проекта; реестровые
+    *.jsonl (claims/sources/decisions/log) транскриптами не считаются — и при переборе,
+    и при явно указанном пути (ревью round 3). По hint двусмысленность — ошибка со
+    списком всех кандидатов (ревью round 3: без обрезки), не угадываем; равное mtime
+    разбирается по имени файла (детерминированный выбор).
+    """
+    if hint and hint.strip():
+        exact = core.resolve_input(hint.strip(), pdir)
+        if exact.is_file():
+            if exact.name not in REGISTRY_JSONL:
+                return exact
+            raise core.PfsError("«" + exact.name + "» — реестровый файл проекта "
+                                "(claims/sources/decisions/log.jsonl), транскриптом сессии не считается")
+    pats = (f"*{hint.strip()}*_session.json", f"*{hint.strip()}*.jsonl") if hint and hint.strip() else TRANSCRIPT_PATTERNS
+    found: dict[Path, float] = {}
+    for pat in pats:
+        for p in pdir.glob(pat):
+            if p.is_file() and p.name not in REGISTRY_JSONL:
+                found[p] = p.stat().st_mtime
+    cands = [p for p, _ in sorted(found.items(), key=lambda kv: (-kv[1], kv[0].name))]
+    if not cands:
+        raise core.PfsError("Транскрипт сессии в корне проекта не найден"
+                            + (f" по «{hint.strip()}»" if hint and hint.strip() else "")
+                            + " — ждём *_session.json (OpenCode) или *.jsonl (Claude Code). "
+                              "Укажите файл явно: pfs cost --session <файл>")
+    if len(cands) > 1 and hint and hint.strip():
+        raise core.PfsError("В корне проекта несколько транскриптов по «" + hint.strip() + "»: "
+                            + ", ".join(p.name for p in cands) + " — уточните: pfs cost --session <файл>")
+    return cands[0]
 
 
 def record_session(pdir: Path, session_id: str, transcript: Path, since: str | None = None,
