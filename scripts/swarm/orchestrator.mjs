@@ -299,6 +299,8 @@ async function main() {
         if (devStatus !== 'done') {
           if (devStatus === 'blocked') {
             await failIssue(issue, 'executor', 'reported blocked — the branch and the board are left for human review');
+            const stash = await sh('git stash push --include-untracked -q -m ' + JSON.stringify(`blocked executor leftovers ${issue.identifier}`), { timeoutMs: 60_000 });
+            log(`  tree cleaned: stash ${stash.code === 0 ? 'ok' : 'nothing to stash'}`);
             log(`finished: ${issue.identifier} — executor blocked; moving on`);
             try { await setState(issue.id, 'Todo'); } catch {}
             continue;
