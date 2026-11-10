@@ -205,6 +205,7 @@ pfs calc unit-econ | growth | cohort | market
 ### Отчёты
 ```bash
 pfs export                     # REPORT.md: все документы + приложения A–E
+                               # снимок реестра в outputs/.export_state.json; если claims/sources/Excel изменились после сборки — ⚠ при `pfs status` и при следующем экспорте
 pfs export --six-pager         # SIX_PAGER.md в формате референса (подпункты, матрица тактик, KPI, сноски) + пересборка Excel
 pfs export --six-pager --no-calcs   # пересобрать текст без перегенерации книг
 pfs export --deck                   # HTML-дека 16:9 из SIX_PAGER.md

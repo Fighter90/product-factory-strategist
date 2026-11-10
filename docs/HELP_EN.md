@@ -206,6 +206,7 @@ Trace every value to C###/S###: the source lives in the registry, the link goes 
 ### Reports
 ```bash
 pfs export                     # REPORT.md: all documents + appendices A–E
+                               # registry snapshot in outputs/.export_state.json; if claims/sources/Excel changed after the build — ⚠ on `pfs status` and on the next export
 pfs export --six-pager         # SIX_PAGER.md (FAQ-1…6) + Excel rebuild
 pfs export --six-pager --no-calcs   # rebuild text without regenerating workbooks
 pfs export --deck                   # 16:9 HTML deck from SIX_PAGER.md
