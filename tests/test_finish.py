@@ -3,12 +3,15 @@
 Порядок критичен: Excel ДО REPORT (Приложение E полно) и ДО SIX_PAGER (таблица
 приложений полна), снимок реестра — ПОСЛЕ сборки, дека — из готового SIX_PAGER.
 Повторный вызов идемпотентен. Флаги: no_deck, en (EN-черновик six-pager).
+PRO-41: предупреждения о несвежем реестре печатаются ровно один раз.
 
 Запуск: python3 -m unittest tests.test_finish -v
 """
+import io
 import os
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 
 TMP = tempfile.mkdtemp(prefix="pfs-test-finish-")
 os.environ["PFS_PROJECTS_DIR"] = TMP
@@ -173,6 +176,21 @@ class FinishTests(unittest.TestCase):
         rc = cli.main(["--project", self.pdir.name, "finish", "--no-deck"])
         self.assertEqual(rc, 0)
         self.assertTrue((self.pdir / "outputs" / "REPORT.md").exists())
+
+    def test_cli_finish_prints_stale_warning_once(self):
+        # PRO-41: cmd_finish печатал предупреждения о несвежем реестре дважды —
+        # сырой цикл по res["stale_warnings"] и повтор внутри summary_text.
+        export.build(self.pdir)
+        export.save_state(self.pdir)
+        claims.add(self.pdir, "Ещё гипотеза", "hypothesis", [], grade="D")
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            rc = cli.main(["--project", self.pdir.name, "finish", "--no-deck"])
+        self.assertEqual(rc, 0)
+        out = buf.getvalue()
+        self.assertIn("+1 claims", out)  # предупреждение присутствует в выводе
+        self.assertEqual(out.count("+1 claims"), 1)  # ровно один раз на вызов
+        self.assertEqual(out.count("Реестр изменился после последнего экспорта"), 1)
 
 
 if __name__ == "__main__":
