@@ -7,6 +7,12 @@ from pathlib import Path
 from . import claims as claims_mod, core, gaps, review, sources as src_mod
 from .impact import TAG
 
+# PRO-26: числовой кросс-чек. Число — целое или десятичное (в т.ч. русская запятая: «8,5»);
+# годы 1900–2099 — даты, а не показатели: без этого исключения любой заголовок
+# «Отчёт за 2025 год» давал бы ложную тревогу с каждым числовым утверждением.
+NUM_TOKEN = re.compile(r"\d+(?:[.,]\d+)?")
+YEAR_TOKEN = re.compile(r"^(?:19|20)\d{2}$")
+
 
 def _sections(text: str) -> list[str]:
     return [l.lstrip("#").strip().lower() for l in text.splitlines() if l.startswith("#")]
@@ -46,6 +52,61 @@ def en_sync_warnings(pdir: Path) -> list[str]:
         return []
     return [f"SIX_PAGER_EN.md отстал от RU: нет тегов {', '.join(missing)} — "
             "пересоберите пару: pfs export --six-pager --en"]
+
+
+def _numbers(text: str) -> dict[float, str]:
+    """Числа текста: {значение: как написано}. Годы исключаются (см. NUM_TOKEN)."""
+    out: dict[float, str] = {}
+    for m in NUM_TOKEN.finditer(text):
+        raw = m.group(0)
+        if not YEAR_TOKEN.match(raw):
+            out.setdefault(float(raw.replace(",", ".")), raw)
+    return out
+
+
+def _fmt(nums: dict[float, str]) -> str:
+    return ", ".join(nums[k] for k in sorted(nums))
+
+
+def _source_body(pdir: Path, sid: str) -> str:
+    """Тело источника sources/S###.md без служебной шапки (шапка кончается «---»):
+    числа цитат сверяются с текстом источника, а не с заголовком из шапки."""
+    text = (pdir / "sources" / f"{sid}.md").read_text(encoding="utf-8")
+    head = text.find("\n---\n")
+    return text[head:] if head != -1 else text
+
+
+def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict]) -> list[str]:
+    """PRO-26: числовой кросс-чек реестра — ловит расхождение «заголовок 17 vs утверждение 19»,
+    которое иначе доживает до финального аудита.
+    1) числа активного утверждения против чисел заголовка источника, на который оно ссылается:
+       оба набора непусты и не пересекаются → warning с парой C###/S### (пересечение хотя бы
+       по одному числу расхождением не считается — утверждение вправе содержать числа сверх заголовка);
+    2) числа цитаты (quote) против текста sources/S###.md: числа, которых в тексте нет → warning."""
+    out: list[str] = []
+    bodies: dict[str, set[float]] = {}
+    for c in claims.values():
+        if c["status"] != "active":
+            continue
+        cnums = _numbers(c["text"])
+        for sid in c["sources"]:
+            s = srcs.get(sid)
+            if not s:
+                continue
+            tnums = _numbers(s.get("title") or "")
+            if tnums and cnums and not (set(tnums) & set(cnums)):
+                out.append(f"{c['id']}/{sid}: числа утверждения ({_fmt(cnums)}) не совпадают с числами "
+                           f"заголовка источника ({_fmt(tnums)}) — сверьте утверждение с источником")
+            quote = c.get("quote")
+            if quote:
+                if sid not in bodies and (pdir / "sources" / f"{sid}.md").exists():
+                    bodies[sid] = set(_numbers(_source_body(pdir, sid)))
+                if sid in bodies:
+                    missing = {v: raw for v, raw in _numbers(quote).items() if v not in bodies[sid]}
+                    if missing:
+                        out.append(f"{c['id']}/{sid}: числа из цитаты ({_fmt(missing)}) отсутствуют "
+                                   f"в тексте источника — проверьте цитату против sources/{sid}.md")
+    return out
 
 
 def run(pdir: Path) -> dict:
@@ -136,6 +197,9 @@ def run(pdir: Path) -> dict:
     warnings.extend(en_sync_warnings(pdir))
     # 5. PRO-27: реестр изменился после lock вердикта review — вердикт устарел
     warnings.extend(review.stale_warnings(pdir))
+    # 6. PRO-26: числовой кросс-чек — числа активных утверждений против заголовков источников,
+    #    числа цитат против текста источников (sources/S###.md)
+    warnings.extend(numeric_warnings(pdir, claims, srcs))
     score = max(0, 100 - 10 * len(errors) - 2 * len(warnings))
     return {"errors": errors, "warnings": warnings, "passed": passed, "score": score}
 
