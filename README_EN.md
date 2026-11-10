@@ -19,6 +19,17 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 ## Quick start (5 minutes)
 
+## Installation
+
+```bash
+git clone https://github.com/Fighter90/product-factory-strategist.git
+cd product-factory-strategist
+./scripts/install.sh          # uv tool install -e . (or venv+symlink)
+pfs --help
+```
+
+Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INSTALL_EN.md](docs/INSTALL_EN.md).
+
 ```bash
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
