@@ -87,7 +87,9 @@ class ScaffoldTests(unittest.TestCase):
         self.assertEqual(ue["vc_share"], 0.3)
         self.assertEqual(ue["cac"], 700)
         self.assertEqual(ue["churn_month"], 0.06)  # 04 приоритетнее 06 (там 8%)
-        self.assertIn("[C003]", ue["_notes"]["arpu"])  # найденный C-тег в note
+        # приписанный тег — префикс note, а не «тег где-то в сыром тексте строки»
+        self.assertTrue(ue["_notes"]["arpu"].startswith("04_product_strategy.md [C003]:"),
+                        f"arpu приписан не тому тегу: {ue['_notes']['arpu']}")
 
     def test_growth_from_04(self):
         g = self.cfg["growth"]
@@ -105,7 +107,10 @@ class ScaffoldTests(unittest.TestCase):
         self.assertEqual(m["tam_share"], 0.6)
         self.assertEqual(m["sam_share"], 0.4)
         self.assertEqual(m["som_share"], 0.05)
-        self.assertIn("[C009]", m["_notes"]["pam"])
+        # на multi-tag строке числу приписывается ближайший тег C009, а не последний [C001];
+        # assertIn здесь проходил бы и на неверном теге — сырая строка целиком в note
+        self.assertTrue(m["_notes"]["pam"].startswith("02_situation.md [C009]:"),
+                        f"pam приписан не тому тегу: {m['_notes']['pam']}")
 
     def test_cohort_retention_slots_and_null_sizes(self):
         c = self.cfg["cohort"]
@@ -285,11 +290,76 @@ class MergeAndParseTests(unittest.TestCase):
         self.assertEqual(calc._num("2 603"), 2603)
 
     def test_grab_and_normalize(self):
-        raw, unit = calc._grab("рынок — коридор 1,2–2,4 млрд ₽/год", calc.PARAM_SPECS["market"][0]["re"][0])
-        self.assertEqual((raw, unit), (1.8, "млрд"))
-        self.assertEqual(calc._normalize(raw, unit, pct=False), 1.8e9)
+        line = "рынок — коридор 1,2–2,4 млрд ₽/год"
+        grabbed = calc._grab(line, calc.PARAM_SPECS["market"][0]["re"][0])
+        self.assertEqual((grabbed[0], grabbed[1]), (1.8, "млрд"))
+        self.assertEqual(grabbed[2], line.index("1,2"))  # позиция числа — для выбора ближайшего тега
+        self.assertEqual(calc._normalize(grabbed[0], grabbed[1], pct=False), 1.8e9)
         self.assertEqual(calc._normalize(60, "%", pct=True), 0.6)
         self.assertEqual(calc._normalize(60, "", pct=True), 0.6)  # «TAM 60» без % — тоже доля
+
+
+class CtagPositionTests(unittest.TestCase):
+    """_ctag берёт тег, ближайший к числу, а не последний в строке:
+    «Рынок — … [C009]; отток растёт [C001]» — число рынка это C009, не C001."""
+
+    LINE = "Рынок — коридор 1,2–2,4 млрд ₽/год [C009]; отток растёт [C001]."
+
+    def test_ctag_nearest_to_match_start(self):
+        _, _, pos = calc._grab(self.LINE, calc.PARAM_SPECS["market"][0]["re"][0])
+        self.assertEqual(calc._ctag(self.LINE, pos), "C009")
+
+    def test_ctag_default_position_is_line_start(self):
+        self.assertEqual(calc._ctag(self.LINE), "C009")  # без позиции — ближайший к началу
+        self.assertEqual(calc._ctag("отток растёт [C001], рынок — 1,8 млрд ₽/год [C009]", 40), "C009")
+
+    def test_trailing_tag_of_own_claim_wins_over_nearer_neighbor(self):
+        # «ARPU 350 ₽ [C001]; конверсия … 4%/мес [C002]»: числу конверсии — C002,
+        # хотя тег предыдущего утверждения ближе к ключевому слову «конверсия»
+        line = "ARPU 350 ₽/мес [C001]; конверсия активного в заказ 4%/мес [C002]."
+        _, _, pos = calc._grab(line, calc.PARAM_SPECS["growth"][2]["re"][0])
+        self.assertEqual(calc._ctag(line, pos), "C002")
+
+    def test_ctag_falls_back_to_s_tag(self):
+        self.assertEqual(calc._ctag("рынок 1,8 млрд ₽/год [S001]", 0), "S001")
+        self.assertIsNone(calc._ctag("чисел без тегов нет", 0))
+
+
+class ConvBaselineGuardTests(unittest.TestCase):
+    """Базлайн конверсии из «С чем сравниваем» 06 — не план-значение:
+    проект без конверсии в 04 не должен получить коридор базлайна."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pdir = project.create("Scaffold план и базлайн", "Вопрос?", slug="sc6")
+        make_docs(cls.pdir, {"06_validation_plan.md": """# 06 · План проверки
+
+## Ожидаемое изменение
+
+Цель: конверсия активного в заказ 4%/мес [C030].
+
+## С чем сравниваем
+
+База — публичные ориентиры freemium-конверсии 2–5% [C007].
+"""})
+        cls.cfg, _, _ = calc.scaffold(cls.pdir)
+
+    def test_plan_value_found_outside_comparison_section(self):
+        self.assertEqual(self.cfg["growth"]["conv_order"], 0.04)
+        self.assertTrue(self.cfg["growth"]["_notes"]["conv_order"].startswith("06_validation_plan.md [C030]:"))
+
+    def test_baseline_alone_means_null(self):
+        pdir = project.create("Scaffold только базлайн", "Вопрос?", slug="sc7")
+        make_docs(pdir, {"06_validation_plan.md": """# 06 · План проверки
+
+## С чем сравниваем
+
+База — публичные ориентиры freemium-конверсии 2–5% [C007].
+"""})
+        cfg, _, _ = calc.scaffold(pdir)
+        self.assertIsNone(cfg["growth"]["conv_order"])  # базлайн не подменяет план
+        self.assertIn("conv_order", cfg["growth"]["_hints"])
+        self.assertNotIn("conv_order", cfg["growth"].get("_notes") or {})  # и note у него нет
 
 
 if __name__ == "__main__":

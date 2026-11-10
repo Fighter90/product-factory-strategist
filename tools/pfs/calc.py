@@ -241,7 +241,8 @@ PARAM_SPECS: dict[str, list[dict]] = {
         dict(key="conv_order", pct=True,
              re=[rf"конверс\w*[^%\d\[]{{0,60}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,8}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="конверсия активного в заказ, %/мес — «конверсия 4%/мес [C001]»; коридор → середина"),
+             hint="конверсия активного в заказ, %/мес — «конверсия 4%/мес [C001]»; базлайны из "
+                  "«С чем сравниваем» 06 не план (пропускаются); коридор → середина"),
         dict(key="orders_per_active", pct=False,
              re=[rf"заказ\w*[^%\d\[]{{0,30}}активн\w*[^%\d\[]{{0,20}}(?P<n>{NUMTOK})(?!\s*%)"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
@@ -292,8 +293,10 @@ def _num(text: str) -> float:
     return float(t)
 
 
-def _grab(line: str, pattern: str) -> tuple[float, str] | None:
-    """Первое число по шаблону: (значение, единица). Коридор «2–5» → середина."""
+def _grab(line: str, pattern: str) -> tuple[float, str, int] | None:
+    """Первое число по шаблону: (значение, единица, позиция числа в строке).
+    Позиция (старт группы n) нужна, чтобы приписать числу ближайший C/S-тег:
+    у числа в этой строке свой тег стоит сразу после него. Коридор «2–5» → середина."""
     m = re.search(pattern, line, re.IGNORECASE)
     if not m:
         return None
@@ -301,7 +304,7 @@ def _grab(line: str, pattern: str) -> tuple[float, str] | None:
     if not nums:
         return None
     raw = round(nums[0] if len(nums) == 1 else (nums[0] + nums[-1]) / 2, 6)
-    return raw, (m.groupdict().get("u") or "")
+    return raw, (m.groupdict().get("u") or ""), m.start("n")
 
 
 def _normalize(raw: float, unit: str, pct: bool) -> float:
@@ -318,13 +321,17 @@ def _normalize(raw: float, unit: str, pct: bool) -> float:
     return round(raw, 6)
 
 
-def _ctag(line: str) -> str | None:
-    """C-тег строки (приоритет) или S-тег — источник числа."""
-    tags = TAG_RE.findall(line)
+def _ctag(line: str, pos: int = 0) -> str | None:
+    """Тег (C при наличии, иначе S), ближайший к числу — pos это позиция числа
+    из _grab. На multi-tag строке («…ARPU 350 ₽ [C001]; конверсия 4% [C002]»)
+    последний тег или соседний приписали бы числу чужой источник.
+    При равных дистанциях — тег раньше в строке."""
+    tags = [(abs(m.start() - pos), m.start(), m.group(1) + m.group(2))
+            for m in TAG_RE.finditer(line)]
     if not tags:
         return None
-    cs = [t for t in tags if t[0] == "C"]
-    return ("C" + cs[-1][1]) if cs else ("S" + tags[-1][1])
+    cs = [t for t in tags if t[2].startswith("C")]
+    return min(cs or tags)[2]
 
 
 def _econ_lines(lines: list[str]) -> list[str]:
@@ -335,6 +342,21 @@ def _econ_lines(lines: list[str]) -> list[str]:
             inside = bool(ECON_HEADING.match(ln))
             continue
         if inside:
+            out.append(ln)
+    return out
+
+
+COMPARE_HEADING = re.compile(r"^#{1,6}\s+.*сравнива", re.IGNORECASE)
+
+
+def _plan_lines(lines: list[str]) -> list[str]:
+    """Строки вне разделов «С чем сравниваем» (06): базлайн — не план-значение,
+    коридор freemium-конверсий из базлайна не должен стать conv_order."""
+    out, inside = [], False
+    for ln in lines:
+        if ln.startswith("#"):
+            inside = bool(COMPARE_HEADING.match(ln))
+        if not inside:
             out.append(ln)
     return out
 
@@ -370,7 +392,7 @@ def _retention(docs: dict[str, list[str]]) -> tuple[list, str] | None:
                 if val > 1:
                     val /= 100
                 slots[mi] = val
-                tag = _ctag(line)
+                tag = _ctag(line, m.start())  # ближайший к якорю тег
                 if tag:
                     notes.append(f"{name} [{tag}]: M{mi}={val:g}")
     if not slots:
@@ -418,13 +440,15 @@ def scaffold_stats(cfg: dict) -> tuple[int, int]:
 
 def scaffold(pdir: Path) -> tuple[dict, int, int]:
     """Каркас calcs.json из 02/04/06/07: найденные числа — с C/S-тегом в _notes,
-    ненайденные — null + подсказка в _hints. Заданные вручную значения не трогает,
-    их _notes/_hints сохраняет."""
+    ненайденные — null + подсказка в _hints. Числу приписывается ближайший к нему
+    тег, разделы «С чем сравниваем» (06) пропускаются — базлайн не план-значение.
+    Заданные вручную значения не трогает, их _notes/_hints сохраняет."""
     docs: dict[str, list[str]] = {}
     for name in DOCS:
         p = pdir / "outputs" / name
         docs[name] = p.read_text(encoding="utf-8").splitlines() if p.exists() else []
     econ = {name: _econ_lines(docs[name]) for name in DOCS}
+    docs = {name: _plan_lines(lines) for name, lines in docs.items()}  # базлайны «С чем сравниваем» — не план
     existing = core.read_json(pdir / "calcs.json", {}) or {}
 
     cfg: dict[str, dict] = {}
@@ -457,10 +481,10 @@ def scaffold(pdir: Path) -> tuple[dict, int, int]:
                             grabbed = _grab(line, pat)
                             if grabbed is None:
                                 continue
-                            tag = _ctag(line)
+                            raw, unit, pos = grabbed
+                            tag = _ctag(line, pos)  # ближайший к числу тег, не последний в строке
                             if not tag:
                                 continue  # число без источника не переносим
-                            raw, unit = grabbed
                             sec[key] = _normalize(raw, unit, spec["pct"])
                             snippet = line.strip()
                             notes[key] = (f"{doc} [{tag}]: {snippet[:77]}…" if len(snippet) > 80
