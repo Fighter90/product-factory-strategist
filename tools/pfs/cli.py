@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import json
+import os
 import re
 import shutil
 import sys
@@ -395,9 +397,73 @@ def cmd_finish(a):
     print(finish.summary_text(res))
 
 
+DIST_NAME = "product-factory-strategist"  # имя пакета в importlib.metadata (PRO-44)
+_DEFAULT = object()  # маркер «не передано» для параметров install_lines
+
+
+def _dist_info(name: str = DIST_NAME) -> tuple[str | None, Path | None]:
+    """Версия и путь до dist-info установленного пакета; (None, None), если пакет не установлен."""
+    try:
+        dist = importlib.metadata.distribution(name)
+    except importlib.metadata.PackageNotFoundError:
+        return None, None
+    path = getattr(dist, "_path", None)  # PathDistribution: каталог dist-info в site-packages
+    if path is None:  # нестандартный Distribution — ищем dist-info по sys.path
+        norm = re.sub(r"[^A-Za-z0-9.]+", "_", name)
+        for entry in sys.path:
+            if entry and os.path.isdir(entry):
+                hits = sorted(Path(entry).glob(f"{norm}-*.dist-info"))
+                if hits:
+                    path = hits[0]
+                    break
+    return dist.version, (Path(path) if path else None)
+
+
+def install_mode(dist_path: Path | None, mod_file: Path) -> str:
+    """Способ установки: editable (код вне site-packages), venv (код рядом с dist-info), source (без dist-info)."""
+    if dist_path is None:
+        return "source"
+    mod_root = Path(mod_file).resolve().parents[2]  # tools/pfs/cli.py → корень пакета или site-packages
+    return "venv" if mod_root == Path(dist_path).resolve().parent else "editable"
+
+
+def install_lines(mod_file=_DEFAULT, dist_path=_DEFAULT, version=_DEFAULT,
+                  pfs_path=_DEFAULT, projects_dir=_DEFAULT) -> list[str]:
+    """Строки блока «Установка» для pfs doctor (PRO-44): режим, which pfs, PATH, projects dir, версия."""
+    if mod_file is _DEFAULT:
+        mod_file = Path(__file__).resolve()
+    if dist_path is _DEFAULT or version is _DEFAULT:
+        version_, dist_path_ = _dist_info()
+        if dist_path is _DEFAULT:
+            dist_path = dist_path_
+        if version is _DEFAULT:
+            version = version_
+    if pfs_path is _DEFAULT:
+        pfs_path = shutil.which("pfs")
+    if projects_dir is _DEFAULT:
+        projects_dir = core.projects_dir()
+    mode = install_mode(dist_path, mod_file)
+    lines = [
+        f"Установка: {mode}; версия: {version or 'нет (пакет не установлен)'}",
+        f"  pfs: {pfs_path or 'нет в PATH'}",
+    ]
+    if pfs_path:
+        lines.append("  PATH: ok (каталог с pfs есть в PATH)")
+    else:
+        hint = Path(sys.executable).resolve().parent
+        lines.append(f"  PATH: pfs не найден — проверьте, что bin-каталог окружения есть в PATH ({hint})")
+        local = Path.home() / ".local" / "bin"
+        if (local / "pfs").exists():
+            lines.append(f"  PATH: pfs есть в {local}, но каталог не в PATH — добавьте его в PATH")
+    lines += [f"  Python: {sys.executable}", f"  Projects dir: {projects_dir}"]
+    return lines
+
+
 def cmd_doctor(a):
     ok = sys.version_info >= (3, 9)
     print(f"Python {sys.version.split()[0]}: {'ok' if ok else 'нужен 3.9+'}")
+    for line in install_lines():
+        print(line)
     print(f"pdftotext: {'есть' if shutil.which('pdftotext') else 'нет (PDF: pip install pypdf или brew install poppler)'}")
     try:
         import pypdf  # type: ignore  # noqa: F401
@@ -567,7 +633,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--no-deck", action="store_true", help="не собирать HTML-деку")
     s.add_argument("--en", action="store_true", help="дополнительно EN-черновик six-pager (SIX_PAGER_EN.md + DOCX)")
     s.set_defaults(f=cmd_finish)
-    sp.add_parser("doctor", help="проверка окружения и реестров источников").set_defaults(f=cmd_doctor)
+    sp.add_parser("doctor", help="проверка установки, окружения и реестров источников").set_defaults(f=cmd_doctor)
     return ap
 
 
