@@ -8,9 +8,9 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
-# защита: не наступать на работающую очередь (её воркеры пишут в эту же рабочую копию)
-if pgrep -f "orchestrator.mjs" >/dev/null 2>&1 || pgrep -f "opencode run.*$(basename '$PWD')" >/dev/null 2>&1; then
-  echo "Ошибка: очередь роя уже работает — дождитесь завершения или остановьте её." >&2
+# защита: лок этого репо = очередь уже работает (pgrep ловил чужие оркестраторы — убран)
+if [ -e .task-board/lock ]; then
+  echo "Ошибка: .task-board/lock существует — очередь этого репо работает (или залип после kill: удалите файл)." >&2
   exit 2
 fi
 
