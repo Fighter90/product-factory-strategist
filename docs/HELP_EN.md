@@ -156,6 +156,9 @@ Kinds: `fact` (needs a source; synthetic material never counts as one), `hypothe
 ### Checks and impact
 ```bash
 pfs check [--strict] [--json]   # quality gate: untagged numbers, dead links, document structure
+                                # numeric cross-check (PRO-26): numbers of active claims vs numbers in the
+                                # titles of their sources, and quote numbers vs sources/S###.md text —
+                                # a mismatch ("claim says 19, title says 17") adds a warning with the C###/S### pair
 pfs review lock                 # lock the review verdict: registry snapshot (sha256 of claims/sources and docs 00–07)
                                 # into outputs/.review_state.json; registry edits after the lock add a
                                 # "review verdict stale — the registry changed after the review; re-run evidence-auditor"
