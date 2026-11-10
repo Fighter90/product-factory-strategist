@@ -542,7 +542,7 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("docx", help="Markdown → DOCX (без зависимостей)")
     s.add_argument("file", help=".md файл (относительный путь: каталог проекта → cwd)"); s.add_argument("--out")
     s.set_defaults(f=cmd_docx)
-    s = sp.add_parser("next", help="что решать сейчас: шаг, обязательства, пересмотры, открытые вопросы")
+    s = sp.add_parser("next", help="что решать сейчас: шаг, обязательства, устаревшие источники (с командой refresh), пересмотры, открытые вопросы")
     s.set_defaults(f=cmd_next)
     s = sp.add_parser("questions", help="вопросные блоки шага (настраиваемость стратегии)")
     s.add_argument("block", nargs="?", default=None, help="шаг или id блока, напр. options-criteria; без аргумента — обзор всех шагов")

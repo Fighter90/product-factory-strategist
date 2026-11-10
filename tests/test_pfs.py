@@ -138,6 +138,10 @@ class DecisionTests(unittest.TestCase):
     def test_due_and_stale(self):
         pdir = fresh("dec")
         sources.add(pdir, text="старый отчёт", title="old", published="2020-01-01")
+        # PRO-28: возраст источника считается от последней проверки (retrieved) — сдвигаем её в прошлое
+        rows = core.read_jsonl(pdir / "sources.jsonl")
+        rows[0]["retrieved"] = "2020-01-01T00:00:00+03:00"
+        core.write_jsonl(pdir / "sources.jsonl", rows)
         c = claims.add(pdir, "Сегмент растёт", "fact", ["S001"])
         d = decisions.add(pdir, "Фокус на сегменте", "Запускаем пилот", "CPO", [c["id"]],
                           metrics=["Удержание M1: 38% -> 45% @2027-03-01"], review_date="2026-01-01",
@@ -146,7 +150,8 @@ class DecisionTests(unittest.TestCase):
         res = decisions.due(pdir, on="2026-06-01")
         self.assertEqual(len(res["overdue"]), 1)
         self.assertEqual(len(res["review_now"]), 1)
-        self.assertTrue(res["stale_grounds"])
+        self.assertEqual([s["sid"] for s in res["stale_sources"]], ["S001"])  # с готовым действием (PRO-28)
+        self.assertIn("обновите вручную", decisions.due_text(res))  # локальный текст — не web, refresh не подходит
         c2 = claims.supersede(pdir, c["id"], "Сегмент растёт на 5% в год", reason="уточнение")
         self.assertTrue(any("superseded" in s for s in decisions.due(pdir, on="2026-06-01")["stale_grounds"]))
         self.assertEqual(decisions.rebase(pdir, d["id"]), [f"{c['id']}→{c2['id']}"])
