@@ -23,7 +23,7 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 115 tests
+python3 -m unittest discover -s tests          # 260 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```

@@ -145,7 +145,7 @@ def report_text(res: dict) -> str:
     if res["passed"]:
         out.append("✔ Без ошибок: " + ", ".join(res["passed"]))
     out += [f"✖ {e}" for e in res["errors"]]
-    out += [w if w.startswith("⚠") else f"⚠ {w}" for w in res["warnings"][:40]]
+    out += [f"⚠ {w}" for w in res["warnings"][:40]]
     if len(res["warnings"]) > 40:
         out.append(f"… ещё {len(res['warnings']) - 40} предупреждений")
     return "\n".join(out)

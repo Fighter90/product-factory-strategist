@@ -36,7 +36,7 @@
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor     # проверка окружения
-python3 -m unittest discover -s tests   # самопроверка (115 тестов)
+python3 -m unittest discover -s tests   # самопроверка (260 тестов)
 ```
 
 `doctor` показывает: версию Python, наличие pdftotext/pypdf, число карт в базе знаний, активный проект.

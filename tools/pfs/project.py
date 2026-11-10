@@ -151,7 +151,8 @@ def status_text(pdir: Path, brief: bool = False) -> str:
     lines.append(f"Источники: {len(srcs)} | Утверждения: {len(active)} {by_kind} | Решения: {len(decs)}")
     from . import export as export_mod, review as review_mod
     lines += export_mod.freshness_warnings(pdir)
-    lines += review_mod.stale_warnings(pdir)  # PRO-27: вердикт review устарел после правок реестра
+    # PRO-27: вердикт review устарел после правок реестра; префикс — здесь, на месте вывода
+    lines += [f"⚠ {w}" for w in review_mod.stale_warnings(pdir)]
     total = cost_mod.summary(pdir)
     lines.append(f"Стоимость: ${total['usd']:.2f} (~{total['rub']:.0f} ₽), токенов {total['tokens']:,}".replace(",", " "))
     if not brief:

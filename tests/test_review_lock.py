@@ -1,6 +1,10 @@
 """PRO-27: pfs review lock — фиксация снимка реестра после ревизии и предупреждение
-«верedикт review устарел» при правках реестра после lock (pfs status / pfs check /
+«вердикт review устарел» при правках реестра после lock (pfs status / pfs check /
 Приложение D отчёта); повторный lock после ревизии снимает предупреждение.
+
+Пометка хранится в warnings сырой, без «⚠ » (однородный список для --json:
+хуки, MCP pfs_check); префикс добавляют места текстового вывода
+(report_text, status_text, cmd_export).
 
 Запуск: python3 -m unittest discover -s tests -v
 """
@@ -13,7 +17,8 @@ os.environ["PFS_PROJECTS_DIR"] = TMP
 
 from tools.pfs import check, claims, core, export, project, review, sources  # noqa: E402
 
-WARN = "⚠ вердикт review устарел — реестр изменился после ревизии; повторите evidence-auditor"
+RAW = "вердикт review устарел — реестр изменился после ревизии; повторите evidence-auditor"
+WARN = "⚠ " + RAW  # так пометка выглядит в текстовых выводах — префикс на месте вывода
 
 
 def make_project(slug):
@@ -54,7 +59,7 @@ class ReviewLockTests(unittest.TestCase):
         claims.add(pdir, "Гипотеза: рынок растёт", "hypothesis", [], grade="D")
         warns = review.stale_warnings(pdir)
         self.assertEqual(len(warns), 1)
-        self.assertIn(WARN, warns[0])
+        self.assertTrue(warns[0].startswith(RAW))  # ревью 2: сырое сообщение — без «⚠ »
         self.assertIn("claims.jsonl", warns[0])
         report = check.report_text(check.run(pdir))
         self.assertIn(WARN, report)
@@ -66,13 +71,25 @@ class ReviewLockTests(unittest.TestCase):
         d_block = report.split("# Приложение D. Прозрачность", 1)[1]
         self.assertIn(WARN, d_block)
 
+    def test_json_warnings_stay_homogeneous(self):
+        # Ревью 2: warnings в JSON (pfs check --json, MCP pfs_check) — без «⚠ »:
+        # префикс добавляют только места текстового вывода, список однороден.
+        pdir = self.pdir
+        review.lock(pdir)
+        claims.add(pdir, "Гипотеза: рынок растёт", "hypothesis", [], grade="D")
+        core.atomic_write(pdir / "outputs" / "02_situation.md", "# 02 · Картина ситуации — правка")
+        res = check.run(pdir)
+        self.assertIn(RAW, " ".join(res["warnings"]))
+        for w in res["warnings"]:
+            self.assertNotIn("⚠", w)  # ни одна пометка не несёт префикс сама
+
     def test_document_edit_after_lock_warns(self):
         pdir = self.pdir
         review.lock(pdir)
         core.atomic_write(pdir / "outputs" / "02_situation.md", "# 02 · Картина ситуации — правка")
         warns = review.stale_warnings(pdir)
         self.assertEqual(len(warns), 1)
-        self.assertIn(WARN, warns[0])
+        self.assertIn(RAW, warns[0])
         self.assertIn("02_situation.md", warns[0])
         self.assertIn(WARN, project.status_text(pdir))
 

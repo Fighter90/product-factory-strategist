@@ -37,7 +37,7 @@ You need: Python 3.9+ (no packages), git, any environment above. Optional: `pdft
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # self-check (115 tests)
+python3 -m unittest discover -s tests          # self-check (260 tests)
 ```
 
 `doctor` reports Python version, pdftotext/pypdf availability, number of knowledge cards, active project.

@@ -352,7 +352,8 @@ def cmd_models(a):
 
 def cmd_export(a):
     pdir = _p(a)
-    for w in export.freshness_warnings(pdir) + review.stale_warnings(pdir):  # снимки сравниваются ДО сборки
+    # снимки сравниваются ДО сборки; «⚠ » для review-пометки — на месте вывода
+    for w in export.freshness_warnings(pdir) + [f"⚠ {w}" for w in review.stale_warnings(pdir)]:
         print(w)
     if a.deck:
         print(f"Дека: {export.build_deck(_p(a))}")
