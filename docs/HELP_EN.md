@@ -37,7 +37,7 @@ You need: Python 3.9+ (no packages), git, any environment above. Optional: `pdft
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # self-check (115 tests)
+python3 -m unittest discover -s tests          # self-check (260 tests)
 ```
 
 `doctor` reports Python version, pdftotext/pypdf availability, number of knowledge cards, active project.
@@ -77,7 +77,7 @@ CLI needs no API keys. Keys (e.g., Linear API) go into `.env` — it is git-igno
 | 6 | choice | Comparison and recommendation | **you pick** |
 | 7 | strategy | Product + communication strategies → `04/05_*.md` | — |
 | 8 | validation | Test plan: metric, baseline, duration, counter-metrics → `06_validation_plan.md` | — |
-| 9 | review | `pfs check` + rubric review → `07_quality_review.md` | — |
+| 9 | review | `pfs check` + rubric review → `07_quality_review.md`; lock the verdict: `pfs review lock` | — |
 | 10 | decision | Grounds, owners, metrics, commitments → `decisions.jsonl` | **you approve** |
 | 11 | monitoring | Deadlines, new data, revision of affected conclusions | receive reminders |
 
@@ -156,6 +156,10 @@ Kinds: `fact` (needs a source; synthetic material never counts as one), `hypothe
 ### Checks and impact
 ```bash
 pfs check [--strict] [--json]   # quality gate: untagged numbers, dead links, document structure
+pfs review lock                 # lock the review verdict: registry snapshot (sha256 of claims/sources and docs 00–07)
+                                # into outputs/.review_state.json; registry edits after the lock add a
+                                # "review verdict stale — the registry changed after the review; re-run evidence-auditor"
+                                # warning to check/status/export; re-lock after the re-review
 pfs gap list                    # research gaps from 02 "What we don't know": numbers and status (open/partial/closed)
 pfs gap close 3 --claim C069 --note "how it was closed"
                                 # mark a gap closed SYNCHRONOUSLY: the 02 row + the 01 item / question status;
