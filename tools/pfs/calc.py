@@ -203,7 +203,7 @@ DOCS = ("02_situation.md", "04_product_strategy.md", "06_validation_plan.md", "0
 ECON_HEADING = re.compile(r"^#{1,6}\s+.*эконом", re.IGNORECASE)
 NUMTOK = r"\d[\d\u00a0\u202f ]*(?:[.,]\d+)?"
 TAG_RE = re.compile(r"\[(C|S)(\d{1,4})\]")
-RET_ANCHOR = re.compile(r"(?:удержание\w*|retention\w*)[^%\d\[]{0,12}M\s*(?P<m>\d{1,2})", re.IGNORECASE)
+RET_ANCHOR = re.compile(r"(?:удержани\w*|retention\w*)[^%\d\[]{0,12}M\s*(?P<m>\d{1,2})", re.IGNORECASE)
 RET_PCT = re.compile(rf"({NUMTOK})\s*%")
 MULT = {"млрд": 1e9, "млн": 1e6, "тысяч": 1e3, "тыс": 1e3}
 
@@ -217,17 +217,17 @@ PARAM_SPECS: dict[str, list[dict]] = {
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
              hint="ARPU с C-тегом из «Экономики» 04, напр.: «ARPU 350 ₽/мес [C001]»"),
         dict(key="vc_share", pct=True,
-             re=[rf"(?:переменн\w*|себестоимост\w*|\bVC\b)[^%\d\[]{{0,40}}(?P<n>{NUMTOK})\s*(?P<u>%)"],
+             re=[rf"(?:переменн\w*|себестоимост\w*|\bVC\b)[^%\d\[]{{0,40}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="доля переменных затрат, % — «переменные затраты 25% [C001]»"),
+             hint="доля переменных затрат, % — «переменные затраты 25% [C001]»; коридор → середина"),
         dict(key="cac", pct=False,
              re=[rf"\bCAC\b[^%\d\[]{{0,12}}(?P<n>{NUMTOK})\s*(?=₽|\$|руб)"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
              hint="CAC с валютой — «CAC 700 ₽ [C001]»; LTV/CAC и окупаемость CAC не подходят"),
         dict(key="churn_month", pct=True,
-             re=[rf"(?:churn|отток\w*)[^%\d\[]{{0,30}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"(?:churn|отток\w*)[^%\d\[]{{0,30}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="отток в месяц, % — «churn 8%/мес [C001]» или из критериев 06"),
+             hint="отток в месяц, % — «churn 8%/мес [C001]» или из критериев 06; коридор → середина"),
     ],
     "growth": [
         dict(key="mau_start", pct=False,
@@ -235,13 +235,14 @@ PARAM_SPECS: dict[str, list[dict]] = {
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
              hint="MAU на старте — «MAU на старте 50 000 [C001]»"),
         dict(key="mau_growth_month", pct=True,
-             re=[rf"(?:рост\w*[^%\d\[]{{0,20}}\bMAU\b|\bMAU\b[^%\d\[]{{0,20}}рост\w*)[^%\d\[]{{0,20}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"(?:рост\w*[^%\d\[]{{0,20}}\bMAU\b|\bMAU\b[^%\d\[]{{0,20}}рост\w*)[^%\d\[]{{0,20}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="рост MAU, %/мес — «рост MAU 8%/мес [C001]»"),
+             hint="рост MAU, %/мес — «рост MAU 8%/мес [C001]»; коридор → середина"),
         dict(key="conv_order", pct=True,
              re=[rf"конверс\w*[^%\d\[]{{0,60}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,8}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="конверсия активного в заказ, %/мес — «конверсия 4%/мес [C001]»; коридор → середина"),
+             hint="конверсия активного в заказ, %/мес — «конверсия 4%/мес [C001]»; базлайны из "
+                  "«С чем сравниваем» 06 не план (пропускаются); коридор → середина"),
         dict(key="orders_per_active", pct=False,
              re=[rf"заказ\w*[^%\d\[]{{0,30}}активн\w*[^%\d\[]{{0,20}}(?P<n>{NUMTOK})(?!\s*%)"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
@@ -251,13 +252,13 @@ PARAM_SPECS: dict[str, list[dict]] = {
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
              hint="средний чек с валютой — «средний чек 1 200 ₽ [C001]»"),
         dict(key="take_rate", pct=True,
-             re=[rf"(?:take\s*rate|комисси\w+[^%\d\[]{{0,15}}платформ\w*)[^%\d\[]{{0,25}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"(?:take\s*rate|комисси\w+[^%\d\[]{{0,15}}платформ\w*)[^%\d\[]{{0,25}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="take rate платформы, % — «take rate 12% [C001]»"),
+             hint="take rate платформы, % — «take rate 12% [C001]»; коридор → середина"),
         dict(key="margin", pct=True,
-             re=[rf"марж\w*[^%\d\[]{{0,40}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"марж\w*[^%\d\[]{{0,40}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="валовая маржа, % — «валовая маржа 70% [C001]»"),
+             hint="валовая маржа, % — «валовая маржа 70% [C001]»; коридор → середина"),
     ],
     "cohort": [
         dict(key="sizes", pct=False, re=[], docs=[],
@@ -271,17 +272,17 @@ PARAM_SPECS: dict[str, list[dict]] = {
              docs=[("02_situation.md", False), ("07_quality_review.md", False)],
              hint="рынок-родитель (PAM) — «рынок — 1,2–2,4 млрд ₽/год [S001]»; коридор → середина"),
         dict(key="tam_share", pct=True,
-             re=[rf"\bTAM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"\bTAM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("02_situation.md", False), ("07_quality_review.md", False)],
-             hint="доля TAM от PAM, % — «TAM 60% [C001]»"),
+             hint="доля TAM от PAM, % — «TAM 60% [C001]»; коридор → середина"),
         dict(key="sam_share", pct=True,
-             re=[rf"\bSAM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"\bSAM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("02_situation.md", False), ("07_quality_review.md", False)],
-             hint="доля SAM от TAM, % — «SAM 40% [C001]»"),
+             hint="доля SAM от TAM, % — «SAM 40% [C001]»; коридор → середина"),
         dict(key="som_share", pct=True,
-             re=[rf"\bSOM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"\bSOM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("02_situation.md", False), ("07_quality_review.md", False)],
-             hint="доля SOM от SAM, % — «SOM 5% [C001]»"),
+             hint="доля SOM от SAM, % — «SOM 5% [C001]»; коридор → середина"),
     ],
 }
 
@@ -292,8 +293,10 @@ def _num(text: str) -> float:
     return float(t)
 
 
-def _grab(line: str, pattern: str) -> tuple[float, str] | None:
-    """Первое число по шаблону: (значение, единица). Коридор «2–5» → середина."""
+def _grab(line: str, pattern: str) -> tuple[float, str, int] | None:
+    """Первое число по шаблону: (значение, единица, позиция числа в строке).
+    Позиция (старт группы n) нужна, чтобы приписать числу ближайший C/S-тег:
+    у числа в этой строке свой тег стоит сразу после него. Коридор «2–5» → середина."""
     m = re.search(pattern, line, re.IGNORECASE)
     if not m:
         return None
@@ -301,7 +304,7 @@ def _grab(line: str, pattern: str) -> tuple[float, str] | None:
     if not nums:
         return None
     raw = round(nums[0] if len(nums) == 1 else (nums[0] + nums[-1]) / 2, 6)
-    return raw, (m.groupdict().get("u") or "")
+    return raw, (m.groupdict().get("u") or ""), m.start("n")
 
 
 def _normalize(raw: float, unit: str, pct: bool) -> float:
@@ -318,13 +321,17 @@ def _normalize(raw: float, unit: str, pct: bool) -> float:
     return round(raw, 6)
 
 
-def _ctag(line: str) -> str | None:
-    """C-тег строки (приоритет) или S-тег — источник числа."""
-    tags = TAG_RE.findall(line)
+def _ctag(line: str, pos: int = 0) -> str | None:
+    """Тег (C при наличии, иначе S), ближайший к числу — pos это позиция числа
+    из _grab. На multi-tag строке («…ARPU 350 ₽ [C001]; конверсия 4% [C002]»)
+    последний тег или соседний приписали бы числу чужой источник.
+    При равных дистанциях — тег раньше в строке."""
+    tags = [(abs(m.start() - pos), m.start(), m.group(1) + m.group(2))
+            for m in TAG_RE.finditer(line)]
     if not tags:
         return None
-    cs = [t for t in tags if t[0] == "C"]
-    return ("C" + cs[-1][1]) if cs else ("S" + tags[-1][1])
+    cs = [t for t in tags if t[2].startswith("C")]
+    return min(cs or tags)[2]
 
 
 def _econ_lines(lines: list[str]) -> list[str]:
@@ -339,25 +346,53 @@ def _econ_lines(lines: list[str]) -> list[str]:
     return out
 
 
+COMPARE_HEADING = re.compile(r"^#{1,6}\s+.*сравнива", re.IGNORECASE)
+
+
+def _plan_lines(lines: list[str]) -> list[str]:
+    """Строки вне разделов «С чем сравниваем» (06): базлайн — не план-значение,
+    коридор freemium-конверсий из базлайна не должен стать conv_order."""
+    out, inside = [], False
+    for ln in lines:
+        if ln.startswith("#"):
+            inside = bool(COMPARE_HEADING.match(ln))
+        if not inside:
+            out.append(ln)
+    return out
+
+
 def _retention(docs: dict[str, list[str]]) -> tuple[list, str] | None:
-    """Цели удержания из 06: «удержание M1 с 32% до 40%» → слот M1 = 0,4."""
+    """Цели удержания из 06: «удержание M1 с 32% до 40%» → слот M1 = 0,4.
+    Спан процентов ограничен ближайшей границей — следующий якорь, следующая
+    ссылка на месяц (M<н>) или C/S-тег: иначе «удержание M1 …, M3 45%»
+    записало бы 45% в слот M1."""
     slots: dict[int, float] = {}
     notes: list[str] = []
     for name in ("06_validation_plan.md", "04_product_strategy.md"):
         for line in docs.get(name) or []:
-            for m in RET_ANCHOR.finditer(line):
+            anchors = list(RET_ANCHOR.finditer(line))
+            for i, m in enumerate(anchors):
                 mi = int(m.group("m"))
                 if not 0 <= mi < MONTHS:
                     continue
-                rest = line[m.end():].split("[")[0]
-                pcts = RET_PCT.findall(rest)
+                rest = line[m.end():]
+                cuts = [len(rest)]
+                if i + 1 < len(anchors):  # следующий якорь удержани*/retention*
+                    cuts.append(max(0, anchors[i + 1].start() - m.end()))
+                mref = re.search(r"M\s*\d", rest)  # ссылка на другой месяц в этой же строке
+                if mref:
+                    cuts.append(mref.start())
+                br = rest.find("[")  # C/S-тег и прочее в скобках — за границей спана
+                if br >= 0:
+                    cuts.append(br)
+                pcts = RET_PCT.findall(rest[:min(cuts)])
                 if not pcts:
                     continue
                 val = _num(pcts[-1])  # «с 32% до 40%» — берём целевое
                 if val > 1:
                     val /= 100
                 slots[mi] = val
-                tag = _ctag(line)
+                tag = _ctag(line, m.start())  # ближайший к якорю тег
                 if tag:
                     notes.append(f"{name} [{tag}]: M{mi}={val:g}")
     if not slots:
@@ -369,7 +404,10 @@ def _retention(docs: dict[str, list[str]]) -> tuple[list, str] | None:
 
 
 def _merge(base: dict, cfg: dict | None) -> dict:
-    """Слияние примера и секции calcs.json: null и _-ключи не ломают книги."""
+    """Слияние примера и секции calcs.json: null и _-ключи не ломают книги.
+    В списках null заполняется примером на своей позиции; null в хвосте за
+    пределами примера заполнить нечем — список обрезается на нём, позиции
+    никогда не сдвигаются (размер когорты 8 не становится размером когорты 7)."""
     out = dict(base)
     for k, v in (cfg or {}).items():
         if k.startswith("_") or v is None:
@@ -380,8 +418,13 @@ def _merge(base: dict, cfg: dict | None) -> dict:
                 out[k] = [(v[i] if i < len(v) and v[i] is not None else base_list[i])
                           for i in range(len(base_list))]
             else:
-                cleaned = [x for x in v if x is not None]
-                out[k] = cleaned if cleaned else base_list
+                merged = [(base_list[i] if i < len(base_list) and x is None else x)
+                          for i, x in enumerate(v)]
+                for i, x in enumerate(merged):
+                    if x is None:  # null за пределами примера — обрезаем здесь, не сдвигая хвост
+                        merged = merged[:i]
+                        break
+                out[k] = merged if merged else base_list
         else:
             out[k] = v
     return out
@@ -397,18 +440,24 @@ def scaffold_stats(cfg: dict) -> tuple[int, int]:
 
 def scaffold(pdir: Path) -> tuple[dict, int, int]:
     """Каркас calcs.json из 02/04/06/07: найденные числа — с C/S-тегом в _notes,
-    ненайденные — null + подсказка в _hints. Заданные вручную значения не трогает."""
+    ненайденные — null + подсказка в _hints. Числу приписывается ближайший к нему
+    тег, разделы «С чем сравниваем» (06) пропускаются — базлайн не план-значение.
+    Заданные вручную значения не трогает, их _notes/_hints сохраняет."""
     docs: dict[str, list[str]] = {}
     for name in DOCS:
         p = pdir / "outputs" / name
         docs[name] = p.read_text(encoding="utf-8").splitlines() if p.exists() else []
     econ = {name: _econ_lines(docs[name]) for name in DOCS}
+    docs = {name: _plan_lines(lines) for name, lines in docs.items()}  # базлайны «С чем сравниваем» — не план
     existing = core.read_json(pdir / "calcs.json", {}) or {}
 
     cfg: dict[str, dict] = {}
     for section in ("unit_econ", "growth", "cohort", "market"):
-        old = {k: v for k, v in (existing.get(section) or {}).items() if not k.startswith("_")}
+        old_sec = existing.get(section) or {}
+        old = {k: v for k, v in old_sec.items() if not k.startswith("_")}
         sec: dict = {k: v for k, v in old.items() if v is not None}
+        old_notes: dict = old_sec.get("_notes") or {}
+        old_hints: dict = old_sec.get("_hints") or {}
         notes: dict[str, str] = {}
         hints: dict[str, str] = {}
         for spec in PARAM_SPECS[section]:
@@ -432,10 +481,10 @@ def scaffold(pdir: Path) -> tuple[dict, int, int]:
                             grabbed = _grab(line, pat)
                             if grabbed is None:
                                 continue
-                            tag = _ctag(line)
+                            raw, unit, pos = grabbed
+                            tag = _ctag(line, pos)  # ближайший к числу тег, не последний в строке
                             if not tag:
                                 continue  # число без источника не переносим
-                            raw, unit = grabbed
                             sec[key] = _normalize(raw, unit, spec["pct"])
                             snippet = line.strip()
                             notes[key] = (f"{doc} [{tag}]: {snippet[:77]}…" if len(snippet) > 80
@@ -453,10 +502,13 @@ def scaffold(pdir: Path) -> tuple[dict, int, int]:
         if section == "unit_econ" and "note" not in sec:
             sec["note"] = ("каркас pfs calc scaffold из 02/04/06/07: найденные числа — с тегом в _notes; "
                            "null — заполните вручную, недостающее подставится примером с пометкой «ПРИМЕР»")
-        if notes:
-            sec["_notes"] = notes
-        if hints:
-            sec["_hints"] = hints
+        if notes or old_notes:  # provenance ручных и прошлых значений переживает повторный запуск
+            kept = {k: v for k, v in old_notes.items()
+                    if k in sec and k not in notes and sec.get(k) is not None}
+            sec["_notes"] = {**kept, **notes}
+        if hints or old_hints:  # пользовательскую подсказку всё ещё-null ключа не перетираем
+            sec["_hints"] = {**hints,
+                             **{k: v for k, v in old_hints.items() if k in sec and sec.get(k) is None}}
         cfg[section] = sec
     for k, v in existing.items():  # пользовательские секции не теряем
         if k not in cfg and not k.startswith("_"):
