@@ -230,10 +230,13 @@ pfs finish                      # full package in one chain: pfs check → calc 
                                 # any check error stops the build (same as pfs check --strict); re-running is idempotent
 pfs finish --no-deck            # same without the HTML deck
 pfs finish --en                 # + EN draft of the six-pager: SIX_PAGER_EN.md + DOCX (tool skeleton in
-                                # English; document content stays as written — full translation is the agent's job per the spec)
+                                # English; document sections are marked "[RU source — translate]"; check
+                                # compares RU↔EN tags and warns when the EN draft lags behind RU)
 pfs export                     # REPORT.md: all documents + appendices A–E
                                # registry snapshot in outputs/.export_state.json; if claims/sources/Excel changed after the build — ⚠ on `pfs status` and on the next export
 pfs export --six-pager         # SIX_PAGER.md (FAQ-1…6) + Excel rebuild
+pfs export --six-pager --en    # + EN skeleton: SIX_PAGER_EN.md — same structure/numbers/tags, English skeleton,
+                               # document sections marked "[RU source — translate]" (translation is the agent's job)
 pfs export --six-pager --no-calcs   # rebuild text without regenerating workbooks
 pfs export --deck                   # 16:9 HTML deck from SIX_PAGER.md
 pfs docx <file.md> [--out]          # Markdown → Word, dependency-free (path: project directory → cwd; docx versions of HELP/README live in docs/docx/)
