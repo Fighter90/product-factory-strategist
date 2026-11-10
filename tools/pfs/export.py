@@ -11,6 +11,67 @@ from .xlsx import sheet_names
 ORDER = ["00_brief.md", "01_research_plan.md", "02_situation.md", "03_options.md", "04_product_strategy.md",
          "05_comms_strategy.md", "06_validation_plan.md", "07_quality_review.md"]
 
+STATE = ".export_state.json"
+
+
+# ---------- свежесть экспорта: снимок реестра на момент сборки ----------
+
+def _registry_snapshot(pdir: Path) -> dict:
+    """Снимок реестра на момент экспорта: числа строк и mtimes расчётов
+    (calcs.json и outputs/attachments/*.xlsx)."""
+    calcs = pdir / "calcs.json"
+    att_mtime = max((p.stat().st_mtime for p in (pdir / "outputs" / "attachments").glob("*.xlsx")),
+                    default=None)
+    return {"at": core.now(),
+            "claims": len(core.read_jsonl(pdir / "claims.jsonl")),
+            "sources": len(core.read_jsonl(pdir / "sources.jsonl")),
+            "calcs_mtime": calcs.stat().st_mtime if calcs.exists() else None,
+            "attachments_mtime": att_mtime}
+
+
+def read_state(pdir: Path) -> dict | None:
+    """Снимок из последнего экспорта или None, если экспорта ещё не было."""
+    snap = core.read_json(pdir / "outputs" / STATE)
+    return snap if isinstance(snap, dict) else None
+
+
+def save_state(pdir: Path) -> dict:
+    """Зафиксировать снимок реестра в outputs/.export_state.json (после успешной сборки)."""
+    snap = _registry_snapshot(pdir)
+    core.write_json(pdir / "outputs" / STATE, snap)
+    return snap
+
+
+def _excel_changed(pdir: Path, snap: dict) -> bool:
+    """calcs.json или книги в outputs/attachments изменились после последнего экспорта."""
+    calcs = pdir / "calcs.json"
+    if (calcs.stat().st_mtime if calcs.exists() else None) != snap.get("calcs_mtime"):
+        return True
+    att_mtime = max((p.stat().st_mtime for p in (pdir / "outputs" / "attachments").glob("*.xlsx")),
+                    default=None)
+    return att_mtime != snap.get("attachments_mtime")
+
+
+def freshness_warnings(pdir: Path) -> list[str]:
+    """Предупреждение об устаревшем отчёте: реестр изменился после последнего экспорта.
+    [] — снимка нет или с момента сборки ничего не поменялось."""
+    snap = read_state(pdir)
+    if not snap:
+        return []
+    parts = []
+    d_claims = len(core.read_jsonl(pdir / "claims.jsonl")) - int(snap.get("claims") or 0)
+    d_sources = len(core.read_jsonl(pdir / "sources.jsonl")) - int(snap.get("sources") or 0)
+    if d_claims:
+        parts.append(f"{d_claims:+d} claims")
+    if d_sources:
+        parts.append(f"{d_sources:+d} sources")
+    if _excel_changed(pdir, snap):
+        parts.append("Excel пересобран")
+    if not parts:
+        return []
+    return ["⚠ Реестр изменился после последнего экспорта: " + ", ".join(parts)
+            + " — приложения REPORT/SIX_PAGER устарели. Пересоберите: `pfs export`."]
+
 
 def build(pdir: Path) -> Path:
     meta = core.read_json(pdir / "project.json", {})
