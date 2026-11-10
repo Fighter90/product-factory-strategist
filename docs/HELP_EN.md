@@ -116,7 +116,8 @@ pfs source add https://example.com/report            # web page: fetched, cleane
 pfs source add ~/Downloads/report.pdf                # PDF/DOCX/XLSX/CSV/image
 pfs source add --text-file doc.md --url <url> --title "…"   # if a site blocks automated fetching
 pfs source fetch <url> --title "…"                   # unreachable URL (403/SSL/JS/timeout) in one call:
-                                                     # direct request → r.jina.ai → web.archive.org, origin=excerpt
+                                                     # direct request → r.jina.ai → web.archive.org;
+                                                     # origin: public on direct success, excerpt on fallback
 pfs source add interview.md --origin interview       # your interview (no personal data)
 pfs source add transcript.md --origin synthetic      # AI respondent: hypotheses only
 pfs source list | pfs source show S003
@@ -378,7 +379,7 @@ Linear integration: key in `.env` (`LINEAR_API_KEY`), server — `npx mcp-server
 ```bash
 pfs new "…" "…" / pfs use slug / pfs status          # projects
 pfs source add <url|file>                            # sources
-pfs source fetch <url>                               # unreachable URL: reader/archive fallbacks, origin=excerpt
+pfs source fetch <url>                               # unreachable URL: reader/archive fallbacks; refresh reuses the chain
 pfs claim add "…" --kind fact --source S001 --grade B       # claims
 pfs check --strict                                   # quality gate
 pfs calc all                                         # Excel

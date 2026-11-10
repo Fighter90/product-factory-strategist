@@ -119,7 +119,7 @@ def cmd_source(a):
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
         print(f"{'Добавлен' if new else 'Уже есть (повтор пропущен)'}: {rec['id']} — {rec['title']} ({rec['chars']} зн.){flag}")
     elif a.action == "fetch":
-        rec, new, channel = sources.fetch(pdir, a.target, title=a.title, origin=a.origin or "excerpt",
+        rec, new, channel = sources.fetch(pdir, a.target, title=a.title, origin=a.origin,
                                           note=a.note, published=a.published, force=a.force)
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
         via = sources.VIA_LABELS.get(channel, channel)
@@ -376,11 +376,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = sp.add_parser("source", help="источники (add/fetch/list/show/refresh)")
     s.add_argument("action", choices=["add", "fetch", "list", "show", "refresh"],
-                   help="fetch — недоступный URL (403/SSL/JS/таймаут): прямой запрос → r.jina.ai → web.archive.org, "
-                        "origin=excerpt; полный фейл — предложение --text-file")
+                   help="fetch — недоступный URL (403/SSL/JS/таймаут): прямой запрос → r.jina.ai → web.archive.org; "
+                        "полный фейл — предложение --text-file")
     s.add_argument("target", nargs="?")
     s.add_argument("--text-file"); s.add_argument("--url"); s.add_argument("--title")
-    s.add_argument("--origin", help="public | excerpt (выписка, первоисточник недоступен) | own | interview | synthetic | agent")
+    s.add_argument("--origin", help="public | excerpt (выписка, первоисточник недоступен) | own | interview | synthetic | agent; "
+                                    "для fetch по умолчанию: public при прямом успехе, excerpt при фолбэке (reader/архив)")
     s.add_argument("--note"); s.add_argument("--published"); s.add_argument("--force", action="store_true")
     s.add_argument("--max-chars", type=int, default=4000, help="лимит знаков превью (show/refresh)")
     s.set_defaults(f=cmd_source)

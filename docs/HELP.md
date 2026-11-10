@@ -115,7 +115,8 @@ pfs source add https://example.ru/report            # сайт: скачивае
 pfs source add ~/Downloads/report.pdf               # PDF/DOCX/XLSX/CSV/изображение
 pfs source add --text-file doc.md --url <url> --title "…"   # если сайт блокирует автоматическую загрузку
 pfs source fetch <url> --title "…"                  # недоступный URL (403/SSL/JS/таймаут) одним вызовом:
-                                                    # прямой запрос → r.jina.ai → web.archive.org, origin=excerpt
+                                                    # прямой запрос → r.jina.ai → web.archive.org;
+                                                    # origin: public при прямом успехе, excerpt при фолбэке
 pfs source add interview.md --origin interview      # ваше интервью (без персональных данных)
 pfs source add transcript.md --origin synthetic     # ИИ-респондент: только гипотезы
 pfs source list | pfs source show S003
@@ -369,7 +370,7 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
 ```bash
 pfs new "…" "…" / pfs use slug / pfs status          # проекты
 pfs source add <url|файл>                            # источники
-pfs source fetch <url>                               # недоступный URL: фолбэки reader/архив, origin=excerpt
+pfs source fetch <url>                               # недоступный URL: фолбэки reader/архив; refresh идёт той же цепочкой
 pfs claim add "…" --kind fact --source S001 --grade B       # утверждения
 pfs check --strict                                   # контроль качества
 pfs calc all                                         # Excel

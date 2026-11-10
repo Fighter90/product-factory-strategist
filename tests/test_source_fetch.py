@@ -1,4 +1,5 @@
 """Тесты pfs source fetch: цепочка попыток прямой → r.jina.ai → web.archive.org. Запуск: python3 -m unittest discover -s tests"""
+import hashlib
 import os
 import tempfile
 import unittest
@@ -9,6 +10,8 @@ os.environ["PFS_PROJECTS_DIR"] = TMP
 
 from tools.pfs import core, extract, project, sources  # noqa: E402
 from tools.pfs.core import PfsError  # noqa: E402
+
+EXCERPT_MARK_TEXT = "ВЫПИСКА, первоисточник недоступен из среды"
 
 URL = "https://example.org/pricing"
 
@@ -104,17 +107,41 @@ class FetchTests(unittest.TestCase):
         self.assertIn("3,79 евро", (self.pdir / "sources" / f"{rec['id']}.md").read_text(encoding="utf-8"))
 
     def test_direct_success_is_normal_web(self):
-        """Прямой запрос удался: обычный web-источник, refresh по-прежнему работает."""
+        """Прямой запрос удался: обычный web-источник origin=public, без пометки «ВЫПИСКА»."""
         with fetch_map(DIRECT_PAGE, ERR_TIMEOUT, ARCHIVE_PAGE):
             rec, created, channel = sources.fetch(self.pdir, URL)
         self.assertTrue(created)
         self.assertEqual(channel, "direct")
-        self.assertEqual((rec["kind"], rec["via"], rec["origin"]), ("web", "direct", "excerpt"))
+        self.assertEqual((rec["kind"], rec["via"], rec["origin"]), ("web", "direct", "public"))
         self.assertEqual(rec["title"], "Прайс")
+        text = (self.pdir / "sources" / f"{rec['id']}.md").read_text(encoding="utf-8")
+        self.assertNotIn(EXCERPT_MARK_TEXT, text)  # прямой успех — не выписка
         new_page = (page("Обновлённый прайс: цена выросла до 4,19 евро в месяц по новым тарифам. " * 8), "text/html")
         with fetch_map(new_page, ERR_TIMEOUT, ARCHIVE_PAGE):
             res = sources.refresh(self.pdir, rec["id"])
         self.assertTrue(res["changed"])
+
+    def test_explicit_origin_overrides_channel_default(self):
+        """Явный --origin перекрывает дефолт по каналу: reader-фолбэк с origin=public без пометки выписки."""
+        with fetch_map(ERR_403, READER_BYTES, ARCHIVE_PAGE):
+            rec, _, channel = sources.fetch(self.pdir, URL, origin="public")
+        self.assertEqual((channel, rec["origin"]), ("reader", "public"))
+        self.assertNotIn(EXCERPT_MARK_TEXT, (self.pdir / "sources" / f"{rec['id']}.md").read_text(encoding="utf-8"))
+
+    def test_refresh_fallback_source_uses_recorded_channel(self):
+        """Источник получен через reader: refresh идёт той же цепочкой (прямой URL по-прежнему 403)."""
+        with fetch_map(ERR_403, READER_BYTES, ARCHIVE_PAGE):
+            rec, _, _ = sources.fetch(self.pdir, URL)
+        self.assertEqual(rec["via"], "reader")
+        updated = ("Title: Hetzner Cloud Pricing\n\nMarkdown Content:\n\n"
+                   + "Обновлённый прайс через reader: CX22 стоит 4,19 евро в месяц по новым тарифам. " * 8)
+        with fetch_map(ERR_403, (updated.encode("utf-8"), "text/plain"), ERR_TIMEOUT):
+            res = sources.refresh(self.pdir, rec["id"])
+        self.assertTrue(res["changed"])
+        self.assertEqual(res["new_sha8"], hashlib.sha256(
+            updated.encode("utf-8")).hexdigest()[:8])
+        rows = self.rows()
+        self.assertEqual([r for r in rows if r["id"] == rec["id"]][0]["via"], "reader")
 
     def test_all_fail_suggests_excerpt_text_file(self):
         """Ни один канал не ответил: понятная ошибка с предложением --text-file --origin excerpt, реестр не тронут."""

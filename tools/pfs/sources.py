@@ -189,32 +189,23 @@ def _reader_title(body: str) -> str | None:
     return m.group(1).strip()[:200] if m else None
 
 
-def fetch(pdir: Path, url: str, *, title: str | None = None, origin: str = "excerpt",
-          note: str | None = None, published: str | None = None, force: bool = False) -> tuple[dict, bool, str]:
-    """Зарегистрировать web-источник цепочкой попыток: прямой запрос → r.jina.ai (reader) → web.archive.org.
+def _fetch_via_chain(pdir: Path, url: str, *, prefer: str | None = None) -> tuple[str, str, str | None, Path | None, str]:
+    """Загрузить URL цепочкой каналов: прямой запрос → r.jina.ai (reader) → web.archive.org.
 
-    Возвращает (запись, создан_ли_новый, канал). URL с 403/SSL/таймаутом/JS-пустышкой регистрируется
-    одним вызовом через фолбэк-канал. Полный фейл — ошибка с предложением сохранить выписку вручную
-    (pfs source add --text-file … --url … --origin excerpt).
+    prefer — канал, с которого начать (refresh начинает с канала, которым источник был получен).
+    Возвращает (kind, body, заголовок_страницы, путь_к_raw_pdf, канал). Полный фейл — PfsError
+    с причинами по каждому каналу.
     """
-    if origin not in ORIGINS:
-        raise PfsError(f"origin: {', '.join(ORIGINS)}")
-    if not re.match(r"^https?://", url):
-        raise PfsError("fetch принимает только http(s)-ссылку; файлы добавляются через pfs source add")
-    ok, why = _domain_ok(core.read_json(pdir / "project.json", {}), url)
-    if not ok and not force:
-        raise PfsError(f"Источник не разрешён: {why}. Измените allowed_sources в project.json или используйте --force с обоснованием в --note")
-    for r in load(pdir):
-        if r.get("url") == url:
-            return r, False, "existing"
+    ordered = list(FALLBACK_CHANNELS)
+    if prefer in dict(FALLBACK_CHANNELS):
+        ordered = [c for c in ordered if c[0] != prefer]
+        ordered.insert(0, (prefer, dict(FALLBACK_CHANNELS)[prefer]))
     errors: list[str] = []
     kind, body, raw_path = "web", "", None
-    channel = "direct"
-    page_title: str | None = None
-    for channel, template in FALLBACK_CHANNELS:
+    for channel, template in ordered:
         target = template.format(url=url)
+        page_title = None
         try:
-            page_title = None
             if channel == "direct":
                 kind, body, page_title, raw_path = _fetch_text(pdir, url)
             else:
@@ -230,19 +221,43 @@ def fetch(pdir: Path, url: str, *, title: str | None = None, origin: str = "exce
                 raise PfsError(f"извлечено {len(body.strip())} знаков — страница рендерится JavaScript или пуста")
             if channel == "reader":
                 page_title = page_title or _reader_title(body)
-            break
+            return kind, body, page_title, raw_path, channel
         except PfsError as exc:
             errors.append(f"{channel}: {str(exc).splitlines()[0][:180]}")
             raw_path = None
-    else:
-        raise PfsError("Не удалось получить страницу ни одним каналом (direct → r.jina.ai → web.archive.org):\n- "
-                       + "\n- ".join(errors) +
-                       f"\nСохраните выписку вручную и зарегистрируйте одним вызовом: "
+    raise PfsError("Не удалось получить страницу ни одним каналом (direct → r.jina.ai → web.archive.org):\n- "
+                   + "\n- ".join(errors))
+
+
+def fetch(pdir: Path, url: str, *, title: str | None = None, origin: str | None = None,
+          note: str | None = None, published: str | None = None, force: bool = False) -> tuple[dict, bool, str]:
+    """Зарегистрировать web-источник цепочкой попыток: прямой запрос → r.jina.ai (reader) → web.archive.org.
+
+    Возвращает (запись, создан_ли_новый, канал). URL с 403/SSL/таймаутом/JS-пустышкой регистрируется
+    одним вызовом через фолбэк-канал. origin: None — origin=public при прямом успехе, excerpt при
+    reader/archive (текст получен не напрямую с сайта); явный --origin перекрывает. Полный фейл —
+    ошибка с предложением сохранить выписку вручную (pfs source add --text-file … --url … --origin excerpt).
+    """
+    if origin is not None and origin not in ORIGINS:
+        raise PfsError(f"origin: {', '.join(ORIGINS)}")
+    if not re.match(r"^https?://", url):
+        raise PfsError("fetch принимает только http(s)-ссылку; файлы добавляются через pfs source add")
+    ok, why = _domain_ok(core.read_json(pdir / "project.json", {}), url)
+    if not ok and not force:
+        raise PfsError(f"Источник не разрешён: {why}. Измените allowed_sources в project.json или используйте --force с обоснованием в --note")
+    for r in load(pdir):
+        if r.get("url") == url:
+            return r, False, "existing"
+    try:
+        kind, body, page_title, raw_path, channel = _fetch_via_chain(pdir, url)
+    except PfsError as exc:
+        raise PfsError(f"{exc}\nСохраните выписку вручную и зарегистрируйте одним вызовом: "
                        f"pfs source add --text-file <файл> --url {url} --origin excerpt "
                        f"(пометка «{EXCERPT_MARK.lower()}»)")
+    resolved_origin = origin or ("public" if channel == "direct" else "excerpt")
     if kind == "web":
         title = title or page_title
-    rec, created = _register_web(pdir, url=url, kind=kind, body=body, title=title, origin=origin,
+    rec, created = _register_web(pdir, url=url, kind=kind, body=body, title=title, origin=resolved_origin,
                                  note=note, published=published, raw_path=raw_path, via=channel,
                                  tool="pfs source fetch")
     return rec, created, channel
@@ -266,10 +281,10 @@ def refresh(pdir: Path, sid: str, max_chars: int = 4000) -> dict:
     if not path.exists():
         raise PfsError(f"Файл sources/{sid}.md отсутствует — восстановите источник заново через pfs source add")
     old_text = path.read_text(encoding="utf-8")
-    kind, body, _page_title, _raw = _fetch_text(pdir, url)
-    if kind in ("web", "pdf") and len(body.strip()) < 200:
-        raise PfsError(f"Из {url} извлечено {len(body.strip())} знаков — страница, вероятно, отрисовывается "
-                       f"JavaScript или это скан. Источник {sid} не изменён; обновите вручную: "
+    try:
+        kind, body, _page_title, _raw, channel = _fetch_via_chain(pdir, url, prefer=rec.get("via"))
+    except PfsError as exc:
+        raise PfsError(f"{sid} не обновлён: {exc}\nИсточник не изменён; обновите вручную: "
                        "pfs source add --text-file <новый> --url <ссылка>")
     new_digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
     if new_digest == rec["sha256"]:
@@ -278,7 +293,8 @@ def refresh(pdir: Path, sid: str, max_chars: int = 4000) -> dict:
     old_chars = rec.get("chars")
     flags = scan_injection(body)
     core.atomic_write(pdir / "sources" / "raw" / f"{sid}_old_{old_sha8}.txt", old_text)
-    rec.update({"sha256": new_digest, "chars": len(body), "retrieved": core.now(), "injection_flags": flags})
+    rec.update({"sha256": new_digest, "chars": len(body), "retrieved": core.now(), "injection_flags": flags,
+                "via": channel})  # канал, которым фактически получен свежий текст
     core.atomic_write(path, _source_md(rec, body, flags))
     rows = load(pdir)
     core.write_jsonl(pdir / "sources.jsonl",
