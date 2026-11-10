@@ -9,6 +9,8 @@ claims/sources/decisions/log — транскриптами не считают�
 
 Запуск: python3 -m unittest tests.test_cost_session_alias -v
 """
+from __future__ import annotations
+
 import contextlib
 import json
 import os
