@@ -12,3 +12,4 @@ projects/**/.tmp-*
 
 # личные сессии не публикуем
 projects/*/*_session.json
+product_factory_strategist.egg-info/
