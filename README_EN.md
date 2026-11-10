@@ -263,6 +263,7 @@ Higgsfield visuals, Lovable web version).
 | `pfs calc [all\|unit-econ\|growth\|cohort\|market]` | Excel attachments |
 | `pfs export [--six-pager --no-calcs]` | REPORT.md / SIX_PAGER.md |
 | `pfs export --deck` | 16:9 HTML deck from the six-pager |
+| `pfs finish [--no-deck --en]` | full package in one chain: check → Excel → REPORT → six-pager → DOCX → deck (idempotent) |
 | `pfs docx <file.md> [--out]` | Markdown → Word |
 | `pfs kb search/show/index` | knowledge search |
 | `pfs models [show/pick/use/sync/escalate]` | model routing |

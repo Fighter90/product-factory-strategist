@@ -3,6 +3,19 @@
 Формат — Keep a Changelog; версионирование — SemVer.
 
 
+## 1.2.7 — 2026-11-10 · swarm PRO-32 + PRO-31: six-pager в воркфлоу и финальный пакет одной командой
+
+### Added
+- **Feat** (PRO-32) — `pfs next` после шага review без `outputs/SIX_PAGER.md` первым пунктом напоминает о комитет-пакете («📋 Собрать комитет-пакет: pfs calc scaffold → pfs calc all → pfs export --six-pager»); stop-хук сессии дожимает завершённые проекты без six-pager. Тесты: `tests/test_next_sixpager.py`.
+- **Feat** (PRO-31) — `pfs finish` собирает финальный пакет одной цепочкой в фиксированном порядке: автопроверка `pfs check` (сборку останавливает любая её ошибка — как `pfs check --strict`; предупреждения не мешают) → `calc all` (Excel ДО отчёта — Приложение E полно) → REPORT → SIX_PAGER → снимок реестра ПОСЛЕ сборки → DOCX REPORT+SIX_PAGER → deck. Флаги: `--no-deck` (без HTML-деки), `--en` (+ EN-черновик six-pager: `SIX_PAGER_EN.md` + DOCX, скелет инструмента на английском). Повторный вызов идемпотентен; в конце — сводка «что собрано + что устарело» (несвежие основания предупреждают до пересборки и снимаются ею). Тесты: `tests/test_finish.py`.
+
+### Notes
+- Deliberately NOT changed: `pfs export`/`pfs calc` работают как раньше — `finish` только фиксирует порядок их вызова; RU six-pager и REPORT не изменились, EN — отдельный файл `SIX_PAGER_EN.md`, содержимое документов 00–07 инструмент не переводит (перевод по спецификации — работа агента).
+
+> Из сессии: финальный пакет собирали вручную шестью разрозненными вызовами, и порядок нарушался — REPORT экспортировали ДО Excel и ДО свежих утверждений (Приложение E пустое, реестр обрезан). `pfs finish` (`tools/pfs/finish.py`) фиксирует порядок; EN-скелет six-pager — словарь `_EN` в `tools/pfs/export.py`. Справка: docs/HELP.md, docs/HELP_EN.md, README.md, README_EN.md.
+> build · glm-5.3-flash
+
+
 ## 1.2.6 — 2026-11-10 · swarm PRO-35 (round 3): правки ревью calc scaffold
 
 ### Fixed

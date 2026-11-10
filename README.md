@@ -325,6 +325,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 | `pfs calc [all\|unit-econ\|growth\|cohort\|market]` | Excel-приложения |
 | `pfs export [--six-pager --no-calcs]` | REPORT.md / SIX_PAGER.md |
 | `pfs export --deck` | HTML-дека 16:9 из six-pager |
+| `pfs finish [--no-deck --en]` | финальный пакет одной цепочкой: check → Excel → REPORT → six-pager → DOCX → deck (идемпотентно) |
 | `pfs docx <file.md> [--out]` | Markdown → Word |
 | `pfs kb search/show/index` | поиск по базе знаний |
 | `pfs models [show/pick/use/sync/escalate]` | маршрутизация моделей |

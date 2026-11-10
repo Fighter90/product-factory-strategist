@@ -8,8 +8,8 @@ import shutil
 import sys
 from pathlib import Path
 
-from . import (calc, check, claims, core, cost, data, decisions, docx, export, gaps, impact, kb, models,
-               participate, project, route, sources)
+from . import (calc, check, claims, core, cost, data, decisions, docx, export, finish, gaps, impact,
+               kb, models, participate, project, route, sources)
 from .core import PfsError
 
 
@@ -368,6 +368,15 @@ def cmd_docx(a):
     print(f"DOCX: {out.resolve()}")
 
 
+def cmd_finish(a):
+    pdir = _p(a)
+    res = finish.run(pdir, no_deck=a.no_deck, en=a.en)
+    for w in res["stale_warnings"]:  # несвежие основания ДО сборки — свежая сборка их сняла
+        print(w)
+    print(check.report_text(res["check"]))
+    print(finish.summary_text(res))
+
+
 def cmd_doctor(a):
     ok = sys.version_info >= (3, 9)
     print(f"Python {sys.version.split()[0]}: {'ok' if ok else 'нужен 3.9+'}")
@@ -524,6 +533,10 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("questions", help="вопросные блоки шага (настраиваемость стратегии)")
     s.add_argument("block", nargs="?", default=None, help="шаг или id блока, напр. options-criteria; без аргумента — обзор всех шагов")
     s.set_defaults(f=cmd_questions)
+    s = sp.add_parser("finish", help="собрать финальный пакет одной цепочкой: Excel → REPORT → six-pager → DOCX → deck")
+    s.add_argument("--no-deck", action="store_true", help="не собирать HTML-деку")
+    s.add_argument("--en", action="store_true", help="дополнительно EN-черновик six-pager (SIX_PAGER_EN.md + DOCX)")
+    s.set_defaults(f=cmd_finish)
     sp.add_parser("doctor", help="проверка окружения и реестров источников").set_defaults(f=cmd_doctor)
     return ap
 
