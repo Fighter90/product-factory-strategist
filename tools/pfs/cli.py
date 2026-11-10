@@ -391,8 +391,7 @@ def cmd_docx(a):
 def cmd_finish(a):
     pdir = _p(a)
     res = finish.run(pdir, no_deck=a.no_deck, en=a.en)
-    for w in res["stale_warnings"]:  # несвежие основания ДО сборки — свежая сборка их сняла
-        print(w)
+    # предупреждения о несвежем реестре печатает summary_text (PRO-41: без дублей)
     print(check.report_text(res["check"]))
     print(finish.summary_text(res))
 
