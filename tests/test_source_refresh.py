@@ -84,16 +84,24 @@ class RefreshTests(unittest.TestCase):
         with fetch(PAGE_B):
             self.assertTrue(sources.refresh(self.pdir, self.sid)["changed"])
         snapshot = (self.path.read_text(encoding="utf-8"),
-                    self.source_rows(),
                     os.stat(self.path).st_mtime_ns,
                     len(self.refresh_logs()))
+        # PRO-28: время последней проверки сдвинуто в прошлое — без изменения текста refresh
+        # должен обновить только отметку retrieved (напоминание в pfs next снимается),
+        # не трогая файл, бэкап и журнал.
+        rows = self.source_rows()
+        rows[0]["retrieved"] = "2025-01-01T00:00:00+03:00"
+        core.write_jsonl(self.pdir / "sources.jsonl", rows)
         with fetch(PAGE_B):
             res = sources.refresh(self.pdir, self.sid)
         self.assertEqual(res, {"sid": self.sid, "changed": False})
         self.assertEqual((self.path.read_text(encoding="utf-8"),
-                          self.source_rows(),
                           os.stat(self.path).st_mtime_ns,
-                          len(self.refresh_logs())), snapshot)  # файл, реестр, журнал не тронуты
+                          len(self.refresh_logs())), snapshot)  # файл, бэкап-строки, журнал не тронуты
+        row = self.source_rows()[0]
+        self.assertEqual([r["id"] for r in self.source_rows()], [self.sid])  # без дубля
+        self.assertEqual(row["sha256"], SHA_B)  # дайджест прежний — контент не переписан
+        self.assertNotEqual(row["retrieved"], "2025-01-01T00:00:00+03:00")  # отметка проверки обновлена
 
     def test_refresh_overwrites_flags(self):
         with fetch(PAGE_B):

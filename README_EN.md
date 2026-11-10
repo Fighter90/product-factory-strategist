@@ -248,7 +248,7 @@ Higgsfield visuals, Lovable web version).
 | `pfs new / list / use / status [--brief]` | projects and state |
 | `pfs route "<request>" [--override --economy --json]` | scenario, cards, model plan |
 | `pfs questions <step\|block>` | question blocks for strategy tuning |
-| `pfs next` | "what to decide now": step, commitments, reviews |
+| `pfs next` | "what to decide now": step, commitments, stale sources with a refresh command, reviews |
 | `pfs step <step> in_progress\|done [--note --next]` | step mark + mandatory cards |
 | `pfs ask / answer / question` | human checkpoints |
 | `pfs source add/list/show [--text-file --url --origin --force]` | sources S### |

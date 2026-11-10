@@ -318,7 +318,9 @@ def fetch(pdir: Path, url: str, *, title: str | None = None, origin: str | None 
 
 
 def refresh(pdir: Path, sid: str, max_chars: int = 4000) -> dict:
-    """Перезагрузить web-источник. Текст не изменился — ничего не трогаем (идемпотентность).
+    """Перезагрузить web-источник. Текст не изменился — файл, бэкап и журнал не трогаем
+    (идемпотентность); в реестре обновляется только отметка проверки retrieved, чтобы
+    напоминание «источник не проверялся дольше N дн.» в pfs next снялось самим refresh (PRO-28).
 
     Изменился — старый файл уходит в sources/raw/<sid>_old_<sha8>.txt, новый пишется с тем же
     заголовком, что и при add, запись в sources.jsonl перезаписывается (без дубля).
@@ -342,6 +344,9 @@ def refresh(pdir: Path, sid: str, max_chars: int = 4000) -> dict:
                        "pfs source add --text-file <новый> --url <ссылка>")
     new_digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
     if new_digest == rec["sha256"]:
+        rows = load(pdir)
+        rec["retrieved"] = core.now()  # источник проверен — напоминание снимается
+        core.write_jsonl(pdir / "sources.jsonl", [{**r, **rec} if r["id"] == sid else r for r in rows])
         return {"sid": sid, "changed": False}
     old_sha8 = rec["sha256"][:8]
     old_chars = rec.get("chars")

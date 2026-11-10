@@ -1,7 +1,7 @@
 """Поддержка решений: основания, ответственные, показатели, условия пересмотра, обязательства."""
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from . import claims as claims_mod, core, sources as src_mod
@@ -105,22 +105,32 @@ def _days_since(iso: str | None) -> int | None:
 
 
 def due(pdir: Path, on: str | None = None) -> dict:
-    """Что решать сейчас: просроченные обязательства, наступившие даты пересмотра, устаревшие основания."""
+    """Что решать сейчас: просроченные обязательства, даты пересмотра (наступившие и в ближайшие
+    14 дней), устаревшие основания (неактивные утверждения) и источники в основаниях решений,
+    не проверявшиеся дольше stale_after_days, — по одному на источник, с готовой командой
+    refresh (PRO-28). Возраст источника считается от последней проверки (retrieved), поэтому
+    `pfs source refresh S###` снимает напоминание."""
     today = on or core.today()
+    soon_limit = (date.fromisoformat(today) + timedelta(days=14)).isoformat()
     meta = core.read_json(pdir / "project.json", {})
     stale_days = meta.get("stale_after_days", 180)
     claims = {c["id"]: c for c in claims_mod.load(pdir)}
     srcs = {s["id"]: s for s in src_mod.load(pdir)}
-    out = {"overdue": [], "review_now": [], "stale_grounds": [], "awaiting_human": None}
+    out = {"overdue": [], "review_now": [], "review_soon": [], "stale_grounds": [], "stale_sources": [],
+           "stale_days": stale_days, "awaiting_human": None}
+    stale_by_sid: dict[str, int] = {}
     for d in load(pdir):
         if d["status"] not in ("accepted", "revisit"):
             continue
         for k in d["commitments"]:
             if k["status"] == "open" and k.get("due") and k["due"] <= today:
                 out["overdue"].append(f"{d['id']}/{k['id']} «{k['what']}» — отв. {k['owner']}, срок {k['due']}")
-        if d["review"].get("date") and d["review"]["date"] <= today:
+        rev = d["review"].get("date")
+        if rev and rev <= today:
             out["review_now"].append(f"{d['id']} «{d['title']}»: дата пересмотра {d['review']['date']}; триггеры: "
                                      + "; ".join(d["review"]["triggers"]))
+        elif rev and today < rev <= soon_limit:
+            out["review_soon"].append(f"{d['id']} «{d['title']}»: дата пересмотра {rev}")
         for cid in d["grounds"]:
             c = claims.get(cid)
             if not c:
@@ -133,20 +143,35 @@ def due(pdir: Path, on: str | None = None) -> dict:
             if weak:
                 out["stale_grounds"].append(f"{d['id']}: основание {cid} опирается на неактивные {', '.join(weak)}")
             for sid in c["sources"]:
-                age = _days_since(srcs.get(sid, {}).get("published") or srcs.get(sid, {}).get("retrieved"))
+                s = srcs.get(sid) or {}
+                age = _days_since(s.get("retrieved") or s.get("published"))
                 if age is not None and age > stale_days:
-                    out["stale_grounds"].append(f"{d['id']}: {cid} опирается на {sid} возрастом {age} дн. (> {stale_days})")
+                    stale_by_sid[sid] = max(stale_by_sid.get(sid, 0), age)
+    out["stale_sources"] = [{"sid": sid, "age": age, "kind": srcs.get(sid, {}).get("kind"),
+                             "url": srcs.get(sid, {}).get("url")}
+                            for sid, age in sorted(stale_by_sid.items(), key=lambda kv: (-kv[1], kv[0]))]
     out["awaiting_human"] = core.read_json(pdir / "state.json", {}).get("awaiting_human")
     return out
+
+
+def stale_source_line(s: dict) -> str:
+    """Готовое действие по устаревшему источнику: refresh для web, ручное обновление для остальных."""
+    if s.get("kind") == "web":
+        return f"pfs source refresh {s['sid']} — {s['age']} дн. с последней проверки"
+    hint = f"{s['sid']} — не web-источник, обновите вручную: pfs source add --text-file <новый>"
+    return f"{hint}{' --url ' + s['url'] if s.get('url') else ''} — {s['age']} дн. с последней проверки"
 
 
 def due_text(res: dict) -> str:
     out = []
     if res["awaiting_human"]:
         out.append(f"РЕШИТЬ СЕЙЧАС: {res['awaiting_human']['question']}")
+    if res.get("stale_sources"):
+        out.append(f"Устаревшие источники в основаниях решений (> {res.get('stale_days', 180)} дн. без проверки):")
+        out += [f"  - {stale_source_line(s)}" for s in res["stale_sources"]]
     for key, title in (("overdue", "Просроченные обязательства"), ("review_now", "Пора пересмотреть"),
-                       ("stale_grounds", "Устаревшие основания")):
-        if res[key]:
+                       ("review_soon", "Пересмотр в ближайшие 14 дней"), ("stale_grounds", "Устаревшие основания")):
+        if res.get(key):
             out.append(title + ":")
             out += [f"  - {x}" for x in res[key]]
     return "\n".join(out) or "Нет просроченных обязательств, пересмотров и устаревших оснований."

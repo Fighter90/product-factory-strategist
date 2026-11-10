@@ -198,11 +198,17 @@ def next_text(pdir: Path) -> str:
         for o in due["overdue"][:3]:
             label = o.get("commitment") or o.get("text") or str(o) if isinstance(o, dict) else str(o)
             lines.append(f"  · {str(label)[:120]}")
+    if due.get("stale_sources"):
+        # PRO-28: источники в основаниях решений, не проверявшиеся дольше нормы, — с готовой командой
+        lines.append(f"♻ Источники в основаниях решений не проверялись дольше {due.get('stale_days', 180)} дн.:")
+        lines += ["  · " + decisions_mod.stale_source_line(s) for s in due["stale_sources"][:6]]
+    if due.get("stale_grounds"):
+        lines.append(f"⚠ Устаревшие основания: {len(due['stale_grounds'])} — pfs decision rebase / claim supersede")
     if due.get("review_now"):
         ids = [d.get("id", d) if isinstance(d, dict) else str(d) for d in due["review_now"]]
         lines.append(f"🔎 К пересмотру решений: {', '.join(map(str, ids[:3]))}")
-    if due.get("stale_grounds"):
-        lines.append(f"⚠ Устаревшие основания: {len(due['stale_grounds'])} — pfs decision rebase / claim supersede")
+    if due.get("review_soon"):
+        lines.append("📅 Пересмотр в ближайшие 14 дней: " + "; ".join(map(str, due["review_soon"][:3])))
     oq = state.get("open_questions", [])
     if oq:
         lines.append(f"❓ Открытые вопросы: {len(oq)}")
