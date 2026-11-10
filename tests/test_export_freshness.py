@@ -10,7 +10,7 @@ import unittest
 TMP = tempfile.mkdtemp(prefix="pfs-test-fresh-")
 os.environ["PFS_PROJECTS_DIR"] = TMP
 
-from tools.pfs import claims, export, project, sources  # noqa: E402
+from tools.pfs import claims, core, export, project, sources  # noqa: E402
 
 
 def fresh(slug):
@@ -85,6 +85,46 @@ class FreshnessTests(unittest.TestCase):
         (pdir / "calcs.json").write_text('{"unit_econ": {"arpu": 10}}', encoding="utf-8")
         warns = export.freshness_warnings(pdir)
         self.assertIn("Excel пересобран", warns[0])
+
+    def test_claim_retract_warns_without_count_change(self):
+        # Отзыв утверждения (как и rebase) ПЕРЕПИСЫВАЕТ claims.jsonl на месте: число строк
+        # не меняется, но Приложение A собранного отчёта уже врёт — предупреждение обязательно.
+        pdir = self.pdir
+        c = claims.add(pdir, "Рынок растёт на 20%", "hypothesis", [], grade="D")
+        export.build(pdir)
+        export.save_state(pdir)
+        self.assertEqual(export.freshness_warnings(pdir), [])
+        claims.retract(pdir, c["id"], "источник оказался недостоверным")
+        warns = export.freshness_warnings(pdir)
+        self.assertEqual(len(warns), 1)
+        self.assertIn("⚠", warns[0])
+        self.assertIn("claims.jsonl", warns[0])  # содержимое изменилось без +/− по строкам
+        self.assertNotIn("claims+", warns[0])
+        self.assertIn("⚠", project.status_text(pdir))
+        # Повторный экспорт снимает предупреждение.
+        export.build(pdir)
+        export.save_state(pdir)
+        self.assertEqual(export.freshness_warnings(pdir), [])
+
+    def test_sources_inplace_rewrite_warns(self):
+        # pfs source refresh перезаписывает строку sources.jsonl на месте (без дубля):
+        # число источников то же, таблица источников в отчёте устарела — предупреждение.
+        pdir = self.pdir
+        s, _created = sources.add(pdir, text="Отчёт за 2025 год", title="Отчёт")
+        export.build(pdir)
+        export.save_state(pdir)
+        self.assertEqual(export.freshness_warnings(pdir), [])
+        rows = core.read_jsonl(pdir / "sources.jsonl")  # то же, что делает sources.refresh
+        for r in rows:
+            if r["id"] == s["id"]:
+                r["title"] = "Отчёт за 2026 год (обновлён)"
+                r["retrieved"] = core.now()
+        core.write_jsonl(pdir / "sources.jsonl", rows)
+        warns = export.freshness_warnings(pdir)
+        self.assertEqual(len(warns), 1)
+        self.assertIn("⚠", warns[0])
+        self.assertIn("sources.jsonl", warns[0])
+        self.assertNotIn("+1 sources", warns[0])
 
     def test_combined_changes_in_one_warning(self):
         pdir = self.pdir

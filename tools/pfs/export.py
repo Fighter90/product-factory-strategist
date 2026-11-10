@@ -1,6 +1,7 @@
 """Сборка итогового отчёта: документы + реестр утверждений + источники + решения + стоимость."""
 from __future__ import annotations
 
+import hashlib
 import html as html_mod
 import re
 from pathlib import Path
@@ -17,16 +18,24 @@ STATE = ".export_state.json"
 # ---------- свежесть экспорта: снимок реестра на момент сборки ----------
 
 def _registry_snapshot(pdir: Path) -> dict:
-    """Снимок реестра на момент экспорта: числа строк и mtimes расчётов
-    (calcs.json и outputs/attachments/*.xlsx)."""
+    """Снимок реестра на момент экспорта: числа строк, sha256 содержимого реестров
+    и mtimes расчётов (calcs.json и outputs/attachments/*.xlsx). Хеш ловит правки
+    на месте (retract/rebase/supersede, source refresh), которые число строк не меняют."""
     calcs = pdir / "calcs.json"
     att_mtime = max((p.stat().st_mtime for p in (pdir / "outputs" / "attachments").glob("*.xlsx")),
                     default=None)
     return {"at": core.now(),
             "claims": len(core.read_jsonl(pdir / "claims.jsonl")),
             "sources": len(core.read_jsonl(pdir / "sources.jsonl")),
+            "claims_sha": _file_sha(pdir / "claims.jsonl"),
+            "sources_sha": _file_sha(pdir / "sources.jsonl"),
             "calcs_mtime": calcs.stat().st_mtime if calcs.exists() else None,
             "attachments_mtime": att_mtime}
+
+
+def _file_sha(path: Path) -> str | None:
+    """sha256 файла реестра или None, если файла нет."""
+    return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
 
 
 def read_state(pdir: Path) -> dict | None:
@@ -53,7 +62,8 @@ def _excel_changed(pdir: Path, snap: dict) -> bool:
 
 
 def freshness_warnings(pdir: Path) -> list[str]:
-    """Предупреждение об устаревшем отчёте: реестр изменился после последнего экспорта.
+    """Предупреждение об устаревшем отчёте: реестр изменился после последнего экспорта
+    (по числу строк ИЛИ по содержимому — отзыв/замещение/refresh пишут файл на месте).
     [] — снимка нет или с момента сборки ничего не поменялось."""
     snap = read_state(pdir)
     if not snap:
@@ -63,8 +73,12 @@ def freshness_warnings(pdir: Path) -> list[str]:
     d_sources = len(core.read_jsonl(pdir / "sources.jsonl")) - int(snap.get("sources") or 0)
     if d_claims:
         parts.append(f"{d_claims:+d} claims")
+    elif snap.get("claims_sha") and _file_sha(pdir / "claims.jsonl") != snap["claims_sha"]:
+        parts.append("изменено содержимое claims.jsonl")
     if d_sources:
         parts.append(f"{d_sources:+d} sources")
+    elif snap.get("sources_sha") and _file_sha(pdir / "sources.jsonl") != snap["sources_sha"]:
+        parts.append("изменено содержимое sources.jsonl")
     if _excel_changed(pdir, snap):
         parts.append("Excel пересобран")
     if not parts:
