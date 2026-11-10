@@ -114,6 +114,9 @@ pfs questions <шаг|блок>                 # вопросные блоки 
 pfs source add https://example.ru/report            # сайт: скачивается, чистится, дедуп по URL/SHA-256
 pfs source add ~/Downloads/report.pdf               # PDF/DOCX/XLSX/CSV/изображение
 pfs source add --text-file doc.md --url <url> --title "…"   # если сайт блокирует автоматическую загрузку
+pfs source fetch <url> --title "…"                  # недоступный URL (403/SSL/JS/таймаут) одним вызовом:
+                                                    # прямой запрос → r.jina.ai → web.archive.org;
+                                                    # origin: public при прямом успехе, excerpt при фолбэке
 pfs source add interview.md --origin interview      # ваше интервью (без персональных данных)
 pfs source add transcript.md --origin synthetic     # ИИ-респондент: только гипотезы
 pfs source list | pfs source show S003
@@ -353,6 +356,7 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
 | `Ошибка: Факт без источника недопустим` | Так и задумано: добавьте источник (`pfs source add`) или запишите как hypothesis/assumption |
 | `Источник не разрешён: домен …` | Домен вне `allowed_sources` проекта; отредактируйте `project.json` или добавьте с `--force --note "обоснование"` |
 | `Из <url> извлечено 0 знаков` | Страница рендерится JavaScript: сохраните текст вручную → `pfs source add --text-file … --url …` |
+| `Не удалось получить страницу ни одним каналом` | Сайт недоступен из среды (403/SSL/таймаут): сохраните выписку → `pfs source add --text-file … --url … --origin excerpt` (пометка «выписка, первоисточник недоступен из среды») |
 | Excel открывается «пустым» | Это кэш до пересчёта: формулы посчитаются при открытии в Excel/Numbers/LibreOffice/Google Sheets |
 | `Ошибка: Утверждение C### не найдено` | Опечатка в ID: `pfs claim list` |
 | Субагент/скилл не появился | Перезапустите сессию Claude Code — новые компоненты подхватываются при старте |
@@ -366,6 +370,7 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
 ```bash
 pfs new "…" "…" / pfs use slug / pfs status          # проекты
 pfs source add <url|файл>                            # источники
+pfs source fetch <url>                               # недоступный URL: фолбэки reader/архив; refresh идёт той же цепочкой
 pfs claim add "…" --kind fact --source S001 --grade B       # утверждения
 pfs check --strict                                   # контроль качества
 pfs calc all                                         # Excel

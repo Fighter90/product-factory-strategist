@@ -115,6 +115,9 @@ pfs questions <step|block>             # question blocks per step for strategy t
 pfs source add https://example.com/report            # web page: fetched, cleaned, deduped by URL/SHA-256
 pfs source add ~/Downloads/report.pdf                # PDF/DOCX/XLSX/CSV/image
 pfs source add --text-file doc.md --url <url> --title "…"   # if a site blocks automated fetching
+pfs source fetch <url> --title "…"                   # unreachable URL (403/SSL/JS/timeout) in one call:
+                                                     # direct request → r.jina.ai → web.archive.org;
+                                                     # origin: public on direct success, excerpt on fallback
 pfs source add interview.md --origin interview       # your interview (no personal data)
 pfs source add transcript.md --origin synthetic      # AI respondent: hypotheses only
 pfs source list | pfs source show S003
@@ -362,6 +365,7 @@ Linear integration: key in `.env` (`LINEAR_API_KEY`), server — `npx mcp-server
 | `Error: A fact without a source is not allowed` | By design: add a source (`pfs source add`) or record as hypothesis/assumption |
 | `Source not allowed: domain …` | Domain outside `allowed_sources`; edit `project.json` or add with `--force --note "justification"` |
 | `Extracted 0 chars from <url>` | JS-rendered page: save text manually → `pfs source add --text-file … --url …` |
+| `Failed to fetch the page on any channel` | Site unreachable from the environment (403/SSL/timeout): save an excerpt → `pfs source add --text-file … --url … --origin excerpt` (marked "excerpt, primary source unavailable") |
 | Excel looks "empty" | That's the cached preview: formulas compute on open in Excel/Numbers/LibreOffice/Google Sheets |
 | `Error: claim C### not found` | Typo in the ID: `pfs claim list` |
 | Subagent/skill missing | Restart the Claude Code session — new components load at startup |
@@ -375,6 +379,7 @@ Linear integration: key in `.env` (`LINEAR_API_KEY`), server — `npx mcp-server
 ```bash
 pfs new "…" "…" / pfs use slug / pfs status          # projects
 pfs source add <url|file>                            # sources
+pfs source fetch <url>                               # unreachable URL: reader/archive fallbacks; refresh reuses the chain
 pfs claim add "…" --kind fact --source S001 --grade B       # claims
 pfs check --strict                                   # quality gate
 pfs calc all                                         # Excel
