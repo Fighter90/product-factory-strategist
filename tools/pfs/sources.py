@@ -11,6 +11,8 @@ from . import core, extract
 from .core import PfsError
 
 ORIGINS = ("public", "excerpt", "own", "interview", "synthetic", "agent")
+# Файл блокировки реестра источников: выделение S### + запись идут под core.file_lock (PRO-34).
+LOCK_NAME = ".sources.lock"
 # Каналы pfs source fetch: прямой запрос → r.jina.ai (reader) → снапшот web.archive.org.
 FALLBACK_CHANNELS = (("direct", "{url}"), ("reader", "https://r.jina.ai/{url}"), ("archive", "https://web.archive.org/web/{url}"))
 VIA_LABELS = {"direct": "напрямую", "reader": "r.jina.ai (reader)", "archive": "web.archive.org"}
@@ -158,26 +160,78 @@ def add(pdir: Path, target: str | None = None, *, text: str | None = None, url: 
     return rec, created
 
 
+def free_id(pdir: Path, rows: list[dict]) -> str:
+    """Первый свободный S###: нет в реестре и без файла sources/S###.md (PRO-34).
+
+    Как core.next_id (max+1, пропуски сохраняются), но ID, чей файл уже занят
+    (сирота прошлой гонки или ручной правки), пропускается — retry с новым ID
+    вместо перезаписи чужого источника (кейс S020: Eurostat затёрт XING).
+    """
+    taken = {str(r.get("id", "")) for r in rows}
+    nums = [int(r["id"][1:]) for r in rows if str(r.get("id", "")).startswith("S") and r["id"][1:].isdigit()]
+    n = max(nums) + 1 if nums else 1
+    while f"S{n:03d}" in taken or (pdir / "sources" / f"S{n:03d}.md").exists():
+        n += 1
+    return f"S{n:03d}"
+
+
+def audit(pdir: Path) -> list[str]:
+    """Целостность реестра источников для pfs doctor (PRO-34).
+
+    Биекция sources.jsonl ↔ sources/*.md и уникальность ID/URL.
+    Возвращает список проблем; пустой список — реестр согласован.
+    """
+    rows = load(pdir)
+    problems: list[str] = []
+    id_counts: dict[str, int] = {}
+    url_owner: dict[str, str] = {}
+    for r in rows:
+        sid = str(r.get("id", "?"))
+        id_counts[sid] = id_counts.get(sid, 0) + 1
+        url = r.get("url")
+        if url:
+            if url in url_owner:
+                problems.append(f"дубль URL: {url} ({url_owner[url]} и {sid})")
+            else:
+                url_owner[url] = sid
+    for sid, n in sorted(id_counts.items()):
+        if n > 1:
+            problems.append(f"дубль ID: {sid} ×{n} — реестр повреждён гонкой, пересоберите вручную")
+    ids = set(id_counts)
+    files = {p.stem for p in (pdir / "sources").glob("*.md")}
+    for sid in sorted(ids - files):
+        problems.append(f"{sid}: запись в sources.jsonl, но нет файла sources/{sid}.md")
+    for sid in sorted(files - ids):
+        problems.append(f"sources/{sid}.md есть, но записи в sources.jsonl нет — добавьте заново (pfs source add) или удалите файл")
+    return problems
+
+
 def _register_web(pdir: Path, *, url: str | None, kind: str, body: str, title: str | None, origin: str,
                   note: str | None, published: str | None, raw_path: Path | None = None,
                   via: str | None = None, tool: str = "pfs source add") -> tuple[dict, bool]:
-    """Записать источник в реестр (дедуп по sha256 → повтор пропускается). Общий хвост add и fetch."""
-    rows = load(pdir)
+    """Записать источник в реестр (дедуп по sha256/url → повтор пропускается). Общий хвост add и fetch.
+
+    Вся критическая секция «перечитать реестр → дедуп → выделить ID → записать файл и строку»
+    идёт под файловым lock (PRO-34, кейс S020): параллельные pfs-процессы больше не получают
+    один S### и не перезаписывают источники друг друга.
+    """
     digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
-    for r in rows:
-        if r.get("sha256") == digest:
-            return r, False
-    sid = core.next_id("S", rows)
     flags = scan_injection(body)
-    rec = {
-        "id": sid, "title": (title or url or sid)[:200], "url": url, "path": str(raw_path.relative_to(pdir)) if raw_path else None,
-        "kind": kind, "origin": origin, "retrieved": core.now(), "published": published,
-        "sha256": digest, "chars": len(body), "injection_flags": flags, "note": note,
-    }
-    if via:
-        rec["via"] = via
-    core.atomic_write(pdir / "sources" / f"{sid}.md", _source_md(rec, body, flags))
-    core.append_jsonl(pdir / "sources.jsonl", rec)
+    with core.file_lock(pdir / LOCK_NAME):
+        rows = load(pdir)  # под локом: другой процесс мог успеть дописать источник
+        for r in rows:
+            if r.get("sha256") == digest or (url and r.get("url") == url):
+                return r, False
+        sid = free_id(pdir, rows)
+        rec = {
+            "id": sid, "title": (title or url or sid)[:200], "url": url, "path": str(raw_path.relative_to(pdir)) if raw_path else None,
+            "kind": kind, "origin": origin, "retrieved": core.now(), "published": published,
+            "sha256": digest, "chars": len(body), "injection_flags": flags, "note": note,
+        }
+        if via:
+            rec["via"] = via
+        core.atomic_write(pdir / "sources" / f"{sid}.md", _source_md(rec, body, flags))
+        core.append_jsonl(pdir / "sources.jsonl", rec)
     core.log(pdir, "source", f"{sid} добавлен: {rec['title'][:80]}", tool=tool, url=url,
              injection_flags=len(flags) or None)
     return rec, True
