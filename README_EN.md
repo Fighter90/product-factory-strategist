@@ -23,7 +23,7 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 115 tests
+python3 -m unittest discover -s tests          # 260 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -255,6 +255,7 @@ Higgsfield visuals, Lovable web version).
 | `pfs source refresh S###` | refresh a web source: sha256 delta, backup, impact |
 | `pfs claim add/list/supersede/retract/rebase [--kind --source --from --grade]` | claims C### |
 | `pfs check [--strict --json] · pfs impact C###` | quality and change impact |
+| `pfs review lock` | lock the review verdict; registry edits after the lock → "verdict stale" in check/status/export |
 | `pfs decision add/list/due/done/status/rebase` | decisions and monitoring |
 | `pfs data profile/cohort <csv> [--save]` | table profile, cohorts |
 | `pfs data funnel/stats <csv>` | funnel over events/columns; stats with 95% CI |

@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import claims as claims_mod, core, gaps, sources as src_mod
+from . import claims as claims_mod, core, gaps, review, sources as src_mod
 from .impact import TAG
 
 
@@ -134,6 +134,8 @@ def run(pdir: Path) -> dict:
         warnings.append(w)
     # 4. Сверка тегов RU↔EN: EN-каркас six-pager отстал от RU после правок документов
     warnings.extend(en_sync_warnings(pdir))
+    # 5. PRO-27: реестр изменился после lock вердикта review — вердикт устарел
+    warnings.extend(review.stale_warnings(pdir))
     score = max(0, 100 - 10 * len(errors) - 2 * len(warnings))
     return {"errors": errors, "warnings": warnings, "passed": passed, "score": score}
 

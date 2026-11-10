@@ -24,7 +24,7 @@ Windsurf, Copilot.
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 115 тестов
+python3 -m unittest discover -s tests          # 260 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -317,6 +317,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 | `pfs source refresh S###` | обновить web-источник: sha256-дельта, бэкап, impact |
 | `pfs claim add/list/supersede/retract/rebase [--kind --source --from --grade]` | реестр C### |
 | `pfs check [--strict --json] · pfs impact C###` | качество и влияние изменений |
+| `pfs review lock` | lock вердикта review; правки реестра после lock → «вердикт review устарел» в check/status/export |
 | `pfs decision add/list/due/done/status/rebase` | решения и мониторинг |
 | `pfs data profile/cohort <csv> [--save]` | профиль таблиц, когорты |
 | `pfs data funnel/stats <csv>` | воронка по событиям/колонкам; статистика с ДИ 95% |

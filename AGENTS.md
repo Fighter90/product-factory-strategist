@@ -135,6 +135,7 @@ pfs claim add "вывод" --kind inference --from C001,C004
 pfs claim supersede --id C003 "новый текст" --reason "…" [--from C…] | retract --id C003 --reason "…"
 pfs claim rebase [--id C010]                 # перенаправить выводы с замещённых оснований на замены
 pfs impact C003 | S002                       pfs check [--strict]
+pfs review lock                              # после ревизии evidence-auditor; правки реестра после lock → «вердикт review устарел» — повторите review и lock
 pfs gap list                                 pfs gap close 3 --claim C069 [--note "чем закрыт"]  # пробел закрыт синхронно в 01 и 02; check ловит рассинхрон
 pfs kb search "когортный анализ удержания"   pfs kb show M-jtbd | pfs kb index
 pfs data profile file.csv --save profile     pfs data cohort file.csv --user id --date dt --save cohorts

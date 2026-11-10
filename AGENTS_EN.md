@@ -142,6 +142,7 @@ pfs claim add "inference" --kind inference --from C001,C004
 pfs claim supersede --id C003 "new text" --reason "…" [--from C…] | retract --id C003 --reason "…"
 pfs claim rebase [--id C010]                 # point conclusions from superseded grounds at the replacements
 pfs impact C003 | S002                       pfs check [--strict]
+pfs review lock                              # after the evidence-auditor review; registry edits after lock → "review verdict stale" — re-run review and lock
 pfs gap list                                 pfs gap close 3 --claim C069 [--note "how it was closed"]  # gap closed synchronously in 01 and 02; check catches desync
 pfs kb search "cohort retention analysis"    pfs kb show M-jtbd | pfs kb index
 pfs data profile file.csv --save profile     pfs data cohort file.csv --user id --date dt --save cohorts
