@@ -14,6 +14,7 @@ GitHub Release с секцией этой версии из CHANGELOG.md; 13 т�
     python3 tools/release_notes.py --backfill --dry-run
     python3 tools/release_notes.py --backfill          # gh release create по всем тегам
     python3 tools/release_notes.py --changelog PATH v1.2.13
+    python3 tools/release_notes.py --changelog PATH --backfill [--dry-run]
 """
 import argparse
 import os
@@ -157,13 +158,20 @@ def create_release(tag, notes):
             os.remove(path)
 
 
-def cmd_backfill(dry_run):
-    if not os.path.exists(CHANGELOG_PATH):
-        print("ошибка: %s не найден" % CHANGELOG_PATH, file=sys.stderr)
+def cmd_backfill(dry_run, changelog_path=CHANGELOG_PATH, tags=None):
+    """Идемпотентный бэкфилл Releases по тегам-версиям.
+
+    changelog_path — путь к CHANGELOG (проксируется из CLI-опции --changelog,
+    чтобы бэкфилл не молча игнорировал её); tags — инъекция списка тегов
+    (по умолчанию `git tag` репозитория), чтобы логику можно было проверить
+    на чекауте без тегов.
+    """
+    if not os.path.exists(changelog_path):
+        print("ошибка: %s не найден" % changelog_path, file=sys.stderr)
         return 1
-    with open(CHANGELOG_PATH, encoding="utf-8") as f:
+    with open(changelog_path, encoding="utf-8") as f:
         changelog = f.read()
-    plan = backfill_plan(list_git_tags(), changelog)
+    plan = backfill_plan(tags if tags is not None else list_git_tags(), changelog)
     if not plan:
         print("бэкфилл не нужен: Releases уже созданы для всех тегов-версий")
         return 0
@@ -199,7 +207,7 @@ def main(argv=None):
                     help="показать план бэкфилда, ничего не создавать")
     args = ap.parse_args(argv)
     if args.backfill:
-        return cmd_backfill(args.dry_run)
+        return cmd_backfill(args.dry_run, changelog_path=args.changelog)
     if not args.tag:
         ap.error("укажите тег, например v1.2.13, или --backfill")
     if args.dry_run:

@@ -22,10 +22,14 @@ jobs:
           fetch-depth: 0
 
       - name: Release for pushed tag
-        if: github.ref_type == 'tag'
+        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME уже существует — пропускаю (повторный запуск)"
+            exit 0
+          fi
           python3 tools/release_notes.py "$GITHUB_REF_NAME" > release_notes.md
           gh release create "$GITHUB_REF_NAME" \
             --title "$GITHUB_REF_NAME" \
@@ -33,7 +37,7 @@ jobs:
             --verify-tag
 
       - name: Backfill releases for existing tags (manual run)
-        if: github.ref_type == 'branch'
+        if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 tools/release_notes.py --backfill

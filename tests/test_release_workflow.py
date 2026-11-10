@@ -15,14 +15,18 @@ tools/release_notes.py, чтобы их можно было проверить �
 
 Запуск: python3 -m unittest tests.test_release_workflow -v
 """
+import contextlib
+import io
 import os
 import re
 import subprocess
 import sys
+import tempfile
 import unittest
 
 from tools.release_notes import (
     backfill_plan,
+    cmd_backfill,
     extract_section,
     fallback_notes,
     normalize_tag,
@@ -204,15 +208,65 @@ class CliTests(unittest.TestCase):
         self.assertNotIn("## 1.2.12", out.stdout)
 
     def test_cli_backfill_dry_run_lists_target_tags(self):
+        """Бэкфилл-план печатается по инъекция тегов, а не по реальному `git tag`.
+
+        Ревью note 1: в CI actions/checkout по умолчанию не фетчит теги, поэтому
+        тест не имеет права зависеть от тегов чекаута — cmd_backfill принимает
+        tags= и changelog_path= (прокинут из --changelog, note 2).
+        """
+        fixture = SAMPLE + "\n## 1.2.8 — 2026-01-08 · восьмая\n\n- фича 1.2.8\n"
+        tags = ["v1.2.%d" % i for i in range(1, 14)]
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            rc = cmd_backfill(True, changelog_path=os.path.join(REPO, "CHANGELOG.md"),
+                              tags=tags)
+        self.assertEqual(rc, 0)
+        out = buf.getvalue()
+        for i in range(1, 14):
+            self.assertIn("v1.2.%d" % i, out)
+        self.assertIn("DRY-RUN", out)
+
+    def test_cli_backfill_honors_changelog_option(self):
+        """Ревью note 2: --changelog не игнорируется с --backfill.
+
+        У v1.2.8 в реальном CHANGELOG секции нет (будет «fallback»), а в
+        фикстуре секция есть — если cmd_backfill читает реальный CHANGELOG
+        вместо переданного пути, в выводе будет «fallback», а не «секция CHANGELOG».
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "CHANGELOG-fixture.md")
+            with open(path, "w", encoding="utf-8") as f:
+                f.write("# Changelog\n\n## 1.2.8 — d · фикстурная секция\n\n"
+                        "- фича из фикстуры\n")
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                rc = cmd_backfill(True, changelog_path=path, tags=["v1.2.8"])
+        self.assertEqual(rc, 0)
+        self.assertIn("секция CHANGELOG", buf.getvalue())
+        self.assertNotIn("fallback", buf.getvalue())
+
+    def test_cli_backfill_missing_changelog_fails(self):
+        """--backfill с несуществующим --changelog — ошибка выхода 1 (не молчаливый
+        игнор пути в пользу CHANGELOG_PATH по умолчанию)."""
         out = subprocess.run(
             [sys.executable, os.path.join("tools", "release_notes.py"),
-             "--backfill", "--dry-run"],
+             "--backfill", "--dry-run", "--changelog",
+             os.path.join(tempfile.gettempdir(), "no-such-changelog-pro45.md")],
             cwd=REPO, capture_output=True, text=True,
         )
-        self.assertEqual(out.returncode, 0, out.stderr)
-        for i in range(1, 14):
-            self.assertIn("v1.2.%d" % i, out.stdout)
-        self.assertIn("v1.2.8", out.stdout)
+        self.assertEqual(out.returncode, 1)
+        self.assertIn("не найден", out.stderr)
+        self.assertIn("no-such-changelog-pro45.md", out.stderr)
+
+    def test_cli_backfill_injected_tags_missing_section_fallback(self):
+        """Инъекция тегов без секции в CHANGELOG — план использует fallback-текст."""
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            rc = cmd_backfill(True, changelog_path=os.path.join(REPO, "CHANGELOG.md"),
+                              tags=["v1.2.8"])
+        self.assertEqual(rc, 0)
+        self.assertIn("v1.2.8", buf.getvalue())
+        self.assertIn("fallback", buf.getvalue())
 
 
 class WorkflowFileTests(unittest.TestCase):
@@ -236,6 +290,18 @@ class WorkflowFileTests(unittest.TestCase):
     def test_creates_release_from_changelog_script(self):
         self.assertIn("release_notes.py", self.text)
         self.assertIn("gh release create", self.text)
+
+    def test_tag_step_guards_existing_release(self):
+        """Ревью note 3: повторный прогон по тегу не падает и не дублирует Release —
+        перед `gh release create` проверяется `gh release view` (как в бэкфилле)."""
+        self.assertIn('gh release view "$GITHUB_REF_NAME"', self.text)
+
+    def test_step_conditions_use_event_name(self):
+        """Ревью note 4: шаги разделяются по github.event_name (push/workflow_dispatch),
+        а не по github.ref_type (последний может быть 'tag' и при dispatch)."""
+        self.assertIn("github.event_name == 'push'", self.text)
+        self.assertIn("github.event_name == 'workflow_dispatch'", self.text)
+        self.assertNotIn("github.ref_type", self.text)
 
     def test_contents_write_permission(self):
         self.assertIn("contents: write", self.text)
