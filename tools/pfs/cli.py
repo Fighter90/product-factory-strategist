@@ -350,6 +350,8 @@ def cmd_export(a):
         return
     if a.six_pager:
         print(f"Six-pager: {export.build_six_pager(pdir, with_calcs=not a.no_calcs)}")
+        if a.en:  # EN-каркас в одном вызове: те же структура/числа/теги, скелет на английском
+            print(f"Six-pager EN: {export.build_six_pager(pdir, with_calcs=not a.no_calcs, lang='en')}")
     else:
         print(f"Отчёт: {export.build(pdir)}")
     export.save_state(pdir)  # реестр попадает в REPORT/SIX_PAGER — фиксируем снимок после сборки
@@ -527,6 +529,9 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("export", help="собрать REPORT.md, SIX_PAGER.md или deck.html")
     s.add_argument("--deck", action="store_true", help="HTML-дека 16:9 из SIX_PAGER.md")
     s.add_argument("--six-pager", action="store_true", help="six-pager FAQ-1…6 + Excel-приложения")
+    s.add_argument("--en", action="store_true",
+                   help="вместе с --six-pager собрать EN-каркас (SIX_PAGER_EN.md): скелет на английском, "
+                        "секции из документов — с пометкой «[RU source — translate]»")
     s.add_argument("--no-calcs", action="store_true", help="не перегенерировать Excel")
     s.set_defaults(f=cmd_export)
     s = sp.add_parser("calc", help="Excel-приложения: юнит-экономика, модель роста, когорты, рынок")
