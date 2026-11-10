@@ -42,6 +42,25 @@ class NumericCrosscheckTests(unittest.TestCase):
         self.assertIn("19", w[0])
         self.assertIn("17", w[0])
 
+    def test_title_stale_body_confirms_is_flagged_as_stale(self):
+        """Числа утверждения подтверждены ТЕЛОМ источника, но не заголовком →
+        мягкое предупреждение «заголовок устарел» (не серьёзное расхождение)."""
+        sources.add(self.pdir, text=BODY_17, title="Продукт: 20 локалей")
+        # в теле источника есть 17 (BODY_17), в утверждении иная пара с 17 → stale-вариант
+        c = claims.add(self.pdir, "Поддержка 17 локалей и 3 языка справки", "fact", ["S001"], grade="B")
+        pair = f"{c['id']}/S001"
+        w = [x for x in self._warns() if pair in x]
+        self.assertTrue(w, self._warns())
+        self.assertIn("устарели", w[0])
+
+    def test_synthetic_source_skips_claim_vs_title(self):
+        """Синтетические интервью-источники: заголовок несёт метаданные персоны
+        (возраст и т.п.) — claim-vs-title не проверяется."""
+        sources.add(self.pdir, text=BODY_17, title="ИИ-респондент: Markus, 35, PM (Берлин)", origin="synthetic")
+        claims.add(self.pdir, "Тариф 100–120 принимается", "hypothesis", ["S001"])
+        w = [x for x in self._warns() if "заголовка источника" in x]
+        self.assertFalse(w, self._warns())
+
     def test_claim_matches_title_is_quiet(self):
         """Критерий приёмки: чистый проект (числа совпадают) — новых предупреждений нет."""
         sources.add(self.pdir, text=BODY_17, title=TITLE_17)
