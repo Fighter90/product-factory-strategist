@@ -350,7 +350,19 @@ async function main() {
           log('  merged via direct squash push (без PR)');
         } else {
           log(`  PR: ${prUrl}`);
-          await sh(`gh pr merge ${prUrl.split('/').pop()} --squash --delete-branch`, { timeoutMs: 300_000 });
+          const mg = await sh(`gh pr merge ${prUrl.split('/').pop()} --squash --delete-branch`, { timeoutMs: 300_000 });
+          if (mg.code !== 0) {
+            // rc!=0 ≠ провал (бывает «already merged»), проверяем факт; не слит — локальный squash с union-разрешением CHANGELOG
+            const chk = await sh(`gh pr view ${prUrl.split('/').pop()} --json state --jq .state`, { timeoutMs: 60_000 });
+            if (!/MERGED/.test(chk.out)) {
+              log(`  merge failed (${short(mg.all, 120)}) — fallback: локальный squash-merge`);
+              await sh('git checkout -q --detach origin/main');
+              const sm = await sh(`git merge -X union --squash ${branch} && git commit -q -m ${JSON.stringify(`${issue.identifier}: ${issue.title} (squash)`)}`, { timeoutMs: 120_000 });
+              if (sm.code !== 0) throw new Error(`fallback squash failed: ${short(sm.all)}`);
+              const pp = await sh('git push -q origin HEAD:main', { timeoutMs: 300_000 });
+              if (pp.code !== 0) throw new Error(`fallback push failed: ${short(pp.all)}`);
+            }
+          }
         }
 
         await sh('git fetch origin -q && git checkout -q --detach origin/main');
