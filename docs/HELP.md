@@ -39,7 +39,7 @@ python3 -m tools.pfs doctor     # проверка окружения
 python3 -m unittest discover -s tests   # самопроверка (260 тестов)
 ```
 
-`doctor` показывает: версию Python, наличие pdftotext/pypdf, число карт в базе знаний, активный проект.
+`doctor` показывает: способ установки (editable/venv/source), версию пакета, путь до `pfs` (which), здоровье PATH, расположение projects dir, версию Python, наличие pdftotext/pypdf, число карт в базе знаний, активный проект.
 Никаких ключей для работы CLI не нужно. Ключи (например, Linear API) кладите в `.env` — он не коммитится.
 
 ---

@@ -60,7 +60,7 @@ uv tool uninstall product-factory-strategist   # или: rm ~/.pfs-venv ~/.local
 ```bash
 python3 -m unittest discover -s tests          # вся сюита (277+ тестов, чистый stdlib)
 python3 -m unittest tests.test_finish -v       # один файл
-pfs doctor                                     # окружение: python, pypdf, БЗ, реестры
+pfs doctor                                     # установка и окружение: python, pypdf, БЗ, реестры
 pfs --project <slug> check --strict            # quality gate документов (ошибки → rc≠0)
 ./scripts/install.sh && pfs doctor             # проверка установки
 ```
