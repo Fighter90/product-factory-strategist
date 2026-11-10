@@ -255,7 +255,7 @@ pfs models                     # which model solves which task (config/models.js
 pfs models pick red_team       # plan for a task
 pfs models use cursor-mixed    # profile for another environment
 pfs models sync                # write models into Claude Code subagents
-pfs cost [--transcript session.jsonl] [--window]   # cost from Claude Code transcripts or an OpenCode session (session.json; plan providers like zai-coding-plan get $0 tokens marked «plan»); elsewhere:
+pfs cost [--transcript session.jsonl] [--session ses_e43_session.json] [--window]   # cost from Claude Code transcripts or an OpenCode session (session.json; plan providers like zai-coding-plan get $0 tokens marked «plan»); --session <file> without --transcript is an alias with auto-detection in the project root (*_session.json / *.jsonl; no value — the newest one; registry claims/sources/decisions/log.jsonl are not treated as transcripts); elsewhere:
 pfs log "Manual edit" --usd 0.8 --human-minutes 15
 ```
 

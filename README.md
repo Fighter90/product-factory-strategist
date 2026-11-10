@@ -329,7 +329,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 | `pfs docx <file.md> [--out]` | Markdown → Word |
 | `pfs kb search/show/index` | поиск по базе знаний |
 | `pfs models [show/pick/use/sync/escalate]` | маршрутизация моделей |
-| `pfs cost [--transcript --window] · pfs log --usd` | стоимость |
+| `pfs cost [--transcript --session --window] · pfs log --usd` | стоимость |
 | `pfs doctor` | диагностика |
 
 ## Интеграции
