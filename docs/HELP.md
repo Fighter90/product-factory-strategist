@@ -241,7 +241,7 @@ pfs models                     # таблица: какая модель на к
 pfs models pick red_team       # план на задачу
 pfs models use cursor-mixed    # профиль для другой среды
 pfs models sync                # прописать модели в субагентов Claude Code
-pfs cost [--transcript session.jsonl] [--window]   # стоимость по транскриптам; в других средах:
+pfs cost [--transcript session.jsonl] [--window]   # стоимость по транскриптам Claude Code или сессии OpenCode (session.json; для план-провайдеров типа zai-coding-plan — токены с $0 и пометкой «plan»); в других средах:
 pfs log "Ручная правка" --usd 0.8 --human-minutes 15
 ```
 

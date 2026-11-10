@@ -9,3 +9,6 @@ __pycache__/
 projects/**/.tmp-*
 *.swp
 .task-board/
+
+# личные сессии не публикуем
+projects/*/*_session.json

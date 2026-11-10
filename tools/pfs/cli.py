@@ -221,7 +221,8 @@ def cmd_cost(a):
         print(f"Окно учёта: {cost.set_window(pdir, a.since, a.until)}")
     if a.transcript:
         s = cost.record_session(pdir, a.session or Path(a.transcript).stem, Path(a.transcript), a.since, a.until)
-        print(f"Сессия учтена: ${s['usd']:.4f}")
+        mark = " (plan)" if any(t.get("plan") for t in s["models"].values()) else ""
+        print(f"Сессия учтена{mark}: ${s['usd']:.4f}")
     print(cost.summary_text(pdir))
 
 
@@ -430,7 +431,8 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("log", help="запись в журнал / ручная стоимость"); s.add_argument("message")
     s.add_argument("--kind", default="action"); s.add_argument("--step"); s.add_argument("--usd", type=float, default=0.0)
     s.add_argument("--human-minutes", type=float, default=0.0); s.set_defaults(f=cmd_log)
-    s = sp.add_parser("cost", help="стоимость"); s.add_argument("--transcript"); s.add_argument("--session")
+    s = sp.add_parser("cost", help="стоимость"); s.add_argument("--transcript", help="транскрипт Claude Code (jsonl) или сессия OpenCode (session.json)")
+    s.add_argument("--session")
     s.add_argument("--since", help="ISO-время начала задачи (UTC), учитывать сообщения после него")
     s.add_argument("--until", help="ISO-время окончания задачи (UTC)")
     s.add_argument("--window", action="store_true", help="сохранить --since/--until в project.json (хук Stop будет их соблюдать)")
