@@ -572,6 +572,24 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    if argv is None and len(sys.argv) == 1:
+        # дружелюбный запуск без аргументов: краткая шпаргалка вместо usage-ошибки
+        import importlib.metadata
+        ver = "?"
+
+        try:
+            ver = importlib.metadata.version("product-factory-strategist")
+        except Exception:
+            pass
+        print(f"Strategist CLI (pfs) v{ver} — стратег-агент для цифровых продуктов")
+        print()
+        print("Быстрый старт:")
+        print("  pfs new \"<название>\" \"<запрос дословно>\"   # новый проект")
+        print("  pfs list / status / next                  # где остановились, что решать")
+        print("  pfs finish                                # финальный пакет одной цепочкой")
+        print()
+        print("Полная справка: pfs --help | Сценарий под задачу: pfs route \"<запрос>\"")
+        return 0
     args = build_parser().parse_args(argv)
     try:
         args.f(args)
