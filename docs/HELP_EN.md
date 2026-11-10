@@ -98,6 +98,10 @@ pfs list                               # list projects
 pfs use <slug>                         # make a project active
 pfs status [--brief]                   # where we stopped, what's next, cost
 ```
+The active project is stored in `projects/.active`: switch with `pfs use <slug>` before working on another
+project — no need to export environment variables (the env override exists for tests only, via `PFS_PROJECTS_DIR`).
+File paths in `source add`, `docx` and `media add` resolve first against the project directory
+(`projects/<slug>/…`), falling back to the current directory; the resolved path is printed in the output.
 
 ### Steps and questions
 ```bash
@@ -114,6 +118,8 @@ pfs questions <step|block>             # question blocks per step for strategy t
 ```bash
 pfs source add https://example.com/report            # web page: fetched, cleaned, deduped by URL/SHA-256
 pfs source add ~/Downloads/report.pdf                # PDF/DOCX/XLSX/CSV/image
+pfs source add sources/raw/report.md                 # relative path: project directory first
+                                                     # (projects/<slug>/…), then cwd; resolved path is printed
 pfs source add --text-file doc.md --url <url> --title "…"   # if a site blocks automated fetching
 pfs source fetch <url> --title "…"                   # unreachable URL (403/SSL/JS/timeout) in one call:
                                                      # direct request → r.jina.ai → web.archive.org;
@@ -178,6 +184,7 @@ pfs interview save transcript.md --persona "…" --title "…"     # AI-responde
 pfs media add screenshot.png --desc "what is visible"          # media within declared limits: the file is copied
                                         # to sources/raw and its description — "only what is visible/audible" —
                                         # becomes a source; interpretations are separate claims
+                                        # (path: project directory → cwd)
 pfs ux scaffold S003 --focus "onboarding"                      # UX scaffold of 10 heuristics in analysis/ux_<S###>.md
                                         # with the rule "conclusions only from the source material"
 ```
@@ -210,7 +217,7 @@ pfs export                     # REPORT.md: all documents + appendices A–E
 pfs export --six-pager         # SIX_PAGER.md (FAQ-1…6) + Excel rebuild
 pfs export --six-pager --no-calcs   # rebuild text without regenerating workbooks
 pfs export --deck                   # 16:9 HTML deck from SIX_PAGER.md
-pfs docx <file.md> [--out]          # Markdown → Word, dependency-free (docx versions of HELP/README live in docs/docx/)
+pfs docx <file.md> [--out]          # Markdown → Word, dependency-free (path: project directory → cwd; docx versions of HELP/README live in docs/docx/)
 ```
 Six-pager structure: FAQ-1 market & competitors · FAQ-2 segments & personas · FAQ-3 initiatives & objections ·
 FAQ-4 tactics · FAQ-5 plan & validation · FAQ-6 success metrics · Excel attachments table.
