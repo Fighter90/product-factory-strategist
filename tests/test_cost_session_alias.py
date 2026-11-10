@@ -99,6 +99,34 @@ class SessionAliasTests(unittest.TestCase):
         self.assertEqual(s["sessions"], 1)
         self.assertGreater(s["tokens"], 300)        # input 300 + output 100 (+cache) — не нули из реестра
 
+    def test_registry_file_as_explicit_hint_rejected(self):
+        # ревью round 3: ветка точного пути не проверяла REGISTRY_JSONL — «--session log.jsonl»
+        # обрабатывала файл реестра как транскрипт; теперь — ошибка и сессия не записана
+        rc, out, err = _run(["--project", self.slug, "cost", "--session", "log.jsonl"])
+        self.assertEqual(rc, 2)
+        self.assertIn("реестров", err)
+        self.assertEqual(cost.summary(self.pdir)["sessions"], 0)
+
+    def test_ambiguous_hint_lists_all_candidates(self):
+        # ревью round 3: список кандидатов в ошибке не обрезается — виден каждый, включая шестой;
+        # mtime по убыванию (ses_a6 самый старый), чтобы до фикса он гарантированно срезался [:5]
+        for i in range(1, 7):
+            self._session_file(f"ses_a{i}_session.json", mtime=time.time() - i)
+        rc, out, err = _run(["--project", self.slug, "cost", "--session", "ses_a"])
+        self.assertEqual(rc, 2)
+        self.assertIn("несколько", err)
+        self.assertIn("ses_a6_session.json", err)
+
+    def test_equal_mtime_tiebreaks_by_name(self):
+        # ревью round 3: равные mtime разбираются по имени файла — выбор детерминирован
+        t = time.time() - 100
+        self._session_file("ses_b_session.json", mtime=t)
+        self._session_file("ses_a_session.json", mtime=t)
+        rc, out, err = _run(["--project", self.slug, "cost", "--session"])
+        self.assertEqual(rc, 0, err)
+        self.assertIn("ses_a_session.json", out)    # a < b — стабильный победитель при равном mtime
+        self.assertNotIn("ses_b_session", out)
+
     def test_hint_matches_partial_name(self):
         self._session_file("ses_z9_session.json")
         rc, out, err = _run(["--project", self.slug, "cost", "--session", "ses_z9"])
