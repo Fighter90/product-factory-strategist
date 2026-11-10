@@ -292,7 +292,170 @@ def _sources_footnotes(pdir: Path) -> str | None:
     return "\n".join(lines)
 
 
-def _unit_econ_block(pdir: Path) -> str | None:
+# ---------- i18n скелета six-pager (RU по умолчанию; EN — черновик, PRO-31) ----------
+# Переводятся только фиксированные строки-скелет, которые генерирует инструмент.
+# Содержимое документов 00–07 остаётся на языке автора — полный синхронный перевод
+# по спецификации SIX_PAGER_PROMPT.md делает агент, не CLI (вне возможностей stdlib).
+
+_EN: dict[str, str] = {
+    "# {title}: six-pager": "# {title}: Six-pager (EN draft)",
+    "> Собрано {ts} командой `pfs export --six-pager` по спецификации "
+    "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
+    "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
+    "Теги [C###]/[S###] — происхождение чисел; сноски-источники — в конце документа.":
+        "> Assembled {ts} by `pfs export --six-pager` per the spec `knowledge/templates/"
+        "SIX_PAGER_PROMPT.md` (growth-strategy reference format: FAQ-1…6 with numbered "
+        "sub-items, a tactics matrix, KPI in two planes). Tags [C###]/[S###] mark where "
+        "numbers come from; source footnotes are at the end. Skeleton only: sections sourced "
+        "from documents 00–07 stay in their original language — full translation per the spec.",
+    "**Запрос:** {q}": "**Request:** {q}",
+    "## FAQ-1. Анализ текущего состояния": "## FAQ-1. Current state analysis",
+    "### 1.1 Обзор рынка: тренды, вызовы и возможности":
+        "### 1.1 Market overview: trends, challenges and opportunities",
+    "> Раздел появится после шага «situation» (02_situation.md): объём и динамика "
+    "рынка диапазонами, ключевые тренды буллетами с жирными заголовками.":
+        "> This section appears after the «situation» step (02_situation.md): market size "
+        "and dynamics as ranges, key trends as bold bullets.",
+    "### 1.2 Ключевые конкуренты и анализ их стратегий роста и промо-механик":
+        "### 1.2 Key competitors: growth and promo mechanics",
+    "Сравнительная таблица групп конкурентов (заполните после конкурентного анализа):":
+        "Comparative table of competitor groups (fill in after competitive analysis):",
+    "| | Группа 1 | Группа 2 | Группа 3 |": "| | Group 1 | Group 2 | Group 3 |",
+    "| **Ключевые преимущества** | … | … | … |": "| **Key advantages** | … | … | … |",
+    "| **Стратегия роста и промо-механики** | … | … | … |":
+        "| **Growth and promo mechanics** | … | … | … |",
+    "| **Риски для компании** | … — Высокий/Средний/Низкий | … | … |":
+        "| **Risks for the company** | … — High/Medium/Low | … | … |",
+    "> **Вывод (умозаключение):** окно возможностей и его срок — заполните по данным 1.1–1.2.":
+        "> **Conclusion (inference):** the opportunity window and its horizon — fill from 1.1–1.2.",
+    "## FAQ-2. User Persona. Кто является целевой аудиторией?":
+        "## FAQ-2. User Persona. Who is the target audience?",
+    "### 2.1 Сегменты": "### 2.1 Segments",
+    "> Добавьте сегменты/персоны в 02_situation.md.": "> Add segments/personas to 02_situation.md.",
+    "Таблица персон (заполните):": "Persona table (fill in):",
+    "| | Сегмент 1 | Сегмент 2 | Сегмент 3 |": "| | Segment 1 | Segment 2 | Segment 3 |",
+    "| **Кто они?** | … | … | … |": "| **Who are they?** | … | … | … |",
+    "| **Что используют сегодня и почему?** | … | … | … |":
+        "| **What do they use today and why?** | … | … | … |",
+    "| **С какими трудностями сталкиваются?** | … | … | … |":
+        "| **What difficulties do they face?** | … | … | … |",
+    "| **Общие трудности** | … | … |": "| **Common difficulties** | … | … |",
+    "### 2.2 Барьеры на каждом этапе пути": "### 2.2 Barriers at each journey stage",
+    "| Этап пути | Барьер сегодня | Что делает продукт |":
+        "| Journey stage | Barrier today | What the product does |",
+    "| Привлечение | … | … |": "| Acquisition | … | … |",
+    "| Выбор / использование | … | … |": "| Choice / usage | … | … |",
+    "| Оплата | … | … |": "| Payment | … | … |",
+    "| Постоплатный опыт | … | … |": "| Post-payment experience | … | … |",
+    "Что сдерживает от старта или продления? (заполните по сегментам):":
+        "What holds back signup or renewal? (fill in per segment):",
+    "| Сегмент | Сдерживающий фактор | Чем снимается |":
+        "| Segment | Blocking factor | How it is removed |",
+    "| Сегмент 1 | … | … |": "| Segment 1 | … | … |",
+    "> **Вывод (умозаключение):** сегментация по барьеру входа; лестница тиров "
+    "обслуживает все барьеры; приоритизация — по ёмкости/CAC/конкуренции (расчёт — выше).":
+        "> **Conclusion (inference):** segment by the entry barrier; the tier ladder serves "
+        "all barriers; prioritize by capacity/CAC/competition (calculation above).",
+    "## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.":
+        "## FAQ-3. Strategic initiatives. Justify each one briefly.",
+    "> Раздел появится после шага «options» (03_options.md).":
+        "> This section appears after the «options» step (03_options.md).",
+    "### Инициативы выбранного направления (драйверы)":
+        "### Initiatives of the chosen direction (drivers)",
+    "Сформулируйте 3–4 инициативы по схеме: «**Первый драйвер** — …», «**Второй драйвер** — …», "
+    "далее «Ключевые направления» (буллеты) и пошаговый расчёт эффекта. Закройте "
+    "выводом-умозаключением.":
+        "Formulate 3–4 initiatives as: «**First driver** — …», «**Second driver** — …», then "
+        "«Key directions» (bullets) and a step-by-step effect calculation. Close with an "
+        "inference-conclusion.",
+    "Юнит-экономика — расчёт пошагово:": "Unit economics — step-by-step:",
+    "## FAQ-4. Тактики. Детализируйте каждую инициативу до конкретных тактик.":
+        "## FAQ-4. Tactics. Detail each initiative into concrete tactics.",
+    "> Добавьте тактики по каждой инициативе в 04_product_strategy.md.":
+        "> Add tactics for each initiative to 04_product_strategy.md.",
+    "Матрица тактик (из Outcome-роадмапа 04_product_strategy.md):":
+        "Tactics matrix (from the outcome roadmap 04_product_strategy.md):",
+    "Матрица тактик (заполните):": "Tactics matrix (fill in):",
+    "| Инициатива 1 | … | … | … |": "| Initiative 1 | … | … | … |",
+    "| Инициатива 2 | … | … | … |": "| Initiative 2 | … | … | … |",
+    "## FAQ-5. Высокоуровневый план реализации": "## FAQ-5. High-level implementation plan",
+    "> Раздел появится после шага «validation» (06_validation_plan.md).":
+        "> This section appears after the «validation» step (06_validation_plan.md).",
+    "Ожидаемое распределение вклада инициатив в общий результат (сумма 100%):":
+        "Expected contribution of initiatives to the outcome (must sum to 100%):",
+    "- __% — Инициатива 1;": "- __% — Initiative 1;",
+    "- __% — Инициатива 2;": "- __% — Initiative 2;",
+    "- __% — Инициатива 3.": "- __% — Initiative 3.",
+    "Порядок тактик: высокий → средний → базовый приоритет. Тайминг — к сезонам рынка. "
+    "Параллельные треки: комьюнити/партнёрства — вне основной линии.":
+        "Tactic order: high → medium → base priority. Timing follows market seasons. Parallel "
+        "tracks: community/partnerships — off the main line.",
+    "## FAQ-6. Метрики успеха. KPI в двух плоскостях":
+        "## FAQ-6. Success metrics. KPI in two planes",
+    "> Добавьте метрики успеха в 04/06 документы — таблица KPI соберётся "
+    "автоматически из сводных таблиц 06_validation_plan.md.":
+        "> Add success metrics to the 04/06 documents — the KPI table is assembled "
+        "automatically from the summary tables of 06_validation_plan.md.",
+    "KPI в двух направлениях: **1) Бизнес** — деньги и база (выручка/MRR, платящие, "
+    "конверсия в оплату, доля тарифов, фактический LTV/CAC); **2) Продукт** — активация, "
+    "время до первой ценности, число действий до результата, churn, CSAT/NPS. "
+    "У каждого KPI: база → цель к сроку → порог действия. Контр-метрики — по одной "
+    "на удар red team.":
+        "KPI in two planes: **1) Business** — money and base (revenue/MRR, paying users, "
+        "payment conversion, plan mix, actual LTV/CAC); **2) Product** — activation, "
+        "time to first value, actions to result, churn, CSAT/NPS. Each KPI: baseline → target "
+        "by deadline → action threshold. Counter-metrics — one per red-team hit.",
+    "## Источники (сноски)": "## Sources (footnotes)",
+    "## Приложения (Excel)": "## Appendices (Excel)",
+    "> Ещё нет: `pfs calc all`.": "> Not yet: `pfs calc all`.",
+    "> Формулы пересчитываются при открытии (Excel / Numbers / LibreOffice). "
+    "Детализация по спецификации — knowledge/templates/SIX_PAGER_PROMPT.md. "
+    "Полная версия с доказательствами — REPORT.md.":
+        "> Formulas recalculate on open (Excel / Numbers / LibreOffice). Detailing per the "
+        "spec: knowledge/templates/SIX_PAGER_PROMPT.md. Full evidence version — REPORT.md.",
+    # юнит-экономика
+    "Допущения: {note}": "Assumptions: {note}",
+    "Допущения [укажите теги]: ARPU, переменные, CAC, churn — лист «Ввод» unit_economics.xlsx.":
+        "Assumptions [add C-tags]: ARPU, variable costs, CAC, churn — the «Ввод» sheet of unit_economics.xlsx.",
+    "CM = ARPU × (1 − доля переменных)": "CM = ARPU × (1 − variable share)",
+    "Средняя жизнь платящего = 1 / churn": "Average paying lifetime = 1 / churn",
+    "**{x} мес**": "**{x} mo**",
+    "**{x}** (критерий ≥ 3)": "**{x}** (target ≥ 3)",
+    "**{x}** (критерий ≥ 3)": "**{x}** (target ≥ 3)",
+    "Окупаемость CAC = CAC / CM": "CAC payback = CAC / CM",
+    "**Вывод (умозаключение):** LTV/CAC ≥ 3 держится до churn ≈ {churn} %/мес, "
+    "до CAC ≈ €{cac}, до доли переменных расходов ≈ {vc} % "
+    "(каждый порог — при прочих равных; сетка — лист «Чувствительность»).":
+        "**Conclusion (inference):** LTV/CAC ≥ 3 holds up to churn ≈ {churn} %/mo, "
+        "CAC ≈ €{cac}, variable-cost share ≈ {vc} % "
+        "(each threshold — all else equal; grid — the «Чувствительность» sheet).",
+    "**Вывод (умозаключение):** запас прочности модели — какой допуск выдерживает "
+    "каждое допущение (см. лист «Чувствительность»).":
+        "**Conclusion (inference):** safety margin — which deviation each assumption survives "
+        "(see the «Чувствительность» sheet).",
+    # решение
+    "**Решение {did}** — {title}.": "**Decision {did}** — {title}.",
+    " Обязательство: {commit}.": " Commitment: {commit}.",
+    "промежуточный пересмотр {date}; триггер: {trig}": "interim review {date}; trigger: {trig}",
+    "промежуточный пересмотр {date}": "interim review {date}",
+    # матрица тактик и KPI
+    "| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |":
+        "| Strategic initiative | Focus | User needs and expectations | Decisions (tactics) |",
+    " **Результат:** {gate}": " **Outcome:** {gate}",
+    "| Плоскость | Гипотеза | Метрика | База → цель к сроку | Порог действия (остановить) |":
+        "| Plane | Hypothesis | Metric | Baseline → target by deadline | Action threshold (stop) |",
+    "Бизнес": "Business",
+    "Продукт": "Product",
+    "база — 06_validation_plan.md": "baseline — 06_validation_plan.md",
+}
+
+
+def _t(s: str, lang: str = "ru") -> str:
+    """Строка скелета six-pager: RU как есть, EN — из словаря _EN (нет записи — RU как есть)."""
+    return _EN.get(s, s) if lang == "en" else s
+
+
+def _unit_econ_block(pdir: Path, lang: str = "ru") -> str | None:
     """Пошаговая юнит-экономика из calcs.json (unit_econ): CM, LTV, LTV/CAC, окупаемость."""
     cfg = core.read_json(pdir / "calcs.json", {}).get("unit_econ") or {}
     arpu, vc = cfg.get("arpu"), cfg.get("vc_share")
@@ -310,29 +473,34 @@ def _unit_econ_block(pdir: Path) -> str | None:
     payback = cac / cm
     life = 1 / churn
     rows = [
-        ("CM = ARPU × (1 − доля переменных)", f"{n(arpu)} × (1 − {n(vc)}) = {n(arpu)} × {n(1 - vc)}", f"**CM = {n(cm)}**"),
-        ("Средняя жизнь платящего = 1 / churn", f"1 / {n(churn)}", f"**{n(life)} мес**"),
+        (_t("CM = ARPU × (1 − доля переменных)", lang),
+         f"{n(arpu)} × (1 − {n(vc)}) = {n(arpu)} × {n(1 - vc)}", f"**CM = {n(cm)}**"),
+        (_t("Средняя жизнь платящего = 1 / churn", lang), f"1 / {n(churn)}",
+         _t("**{x} мес**", lang).format(x=n(life))),
         ("LTV = CM / churn", f"{n(cm)} / {n(churn)}", f"**LTV = {n(ltv)}**"),
-        ("LTV/CAC", f"{n(ltv)} / {n(cac)}", f"**{n(ratio)}** (критерий ≥ 3)"),
-        ("Окупаемость CAC = CAC / CM", f"{n(cac)} / {n(cm)}", f"**{n(payback)} мес**"),
+        ("LTV/CAC", f"{n(ltv)} / {n(cac)}", _t("**{x}** (критерий ≥ 3)", lang).format(x=n(ratio))),
+        (_t("Окупаемость CAC = CAC / CM", lang), f"{n(cac)} / {n(cm)}",
+         _t("**{x} мес**", lang).format(x=n(payback))),
     ]
     table = "| Формула | Расчёт | Результат |\n|---|---|---|\n" + \
         "\n".join(f"| {f} | {c} | {r} |" for f, c, r in rows)
     note = _flat(cfg.get("note"))
-    head = (f"Допущения: {note}" if note else
-            "Допущения [укажите теги]: ARPU, переменные, CAC, churn — лист «Ввод» unit_economics.xlsx.")
+    head = (_t("Допущения: {note}", lang).format(note=note) if note else
+            _t("Допущения [укажите теги]: ARPU, переменные, CAC, churn — лист «Ввод» unit_economics.xlsx.", lang))
     # Чувствительность к критерию LTV/CAC ≥ 3: порог по каждому допущению при прочих равных.
     if cm > 0 and ltv > 0:
-        sens = (f"**Вывод (умозаключение):** LTV/CAC ≥ 3 держится до churn ≈ {n(cm / (3 * cac) * 100)} %/мес, "
-                f"до CAC ≈ €{n(ltv / 3)}, до доли переменных расходов ≈ {n((1 - 3 * cac / ltv) * 100)} % "
-                "(каждый порог — при прочих равных; сетка — лист «Чувствительность»).")
+        sens = _t("**Вывод (умозаключение):** LTV/CAC ≥ 3 держится до churn ≈ {churn} %/мес, "
+                  "до CAC ≈ €{cac}, до доли переменных расходов ≈ {vc} % "
+                  "(каждый порог — при прочих равных; сетка — лист «Чувствительность»).",
+                  lang).format(churn=n(cm / (3 * cac) * 100), cac=n(ltv / 3),
+                               vc=n((1 - 3 * cac / ltv) * 100))
     else:
-        sens = ("**Вывод (умозаключение):** запас прочности модели — какой допуск выдерживает "
-                "каждое допущение (см. лист «Чувствительность»).")
+        sens = _t("**Вывод (умозаключение):** запас прочности модели — какой допуск выдерживает "
+                  "каждое допущение (см. лист «Чувствительность»).", lang)
     return f"{head}\n\n{table}\n\n{sens}"
 
 
-def _decision_block(pdir: Path) -> str | None:
+def _decision_block(pdir: Path, lang: str = "ru") -> str | None:
     """Последнее зафиксированное решение D### — обязательство, срок, пересмотр."""
     rows = core.read_jsonl(pdir / "decisions.jsonl")
     if not rows:
@@ -345,12 +513,13 @@ def _decision_block(pdir: Path) -> str | None:
     if isinstance(rv, dict):
         date = _flat(rv.get("date"))
         trig = _flat(rv.get("triggers") or rv.get("trigger"))
-        review = f"промежуточный пересмотр {date}" + (f"; триггер: {trig}" if trig else "")
+        review = _t("промежуточный пересмотр {date}; триггер: {trig}", lang).format(date=date, trig=trig) \
+            if trig else _t("промежуточный пересмотр {date}", lang).format(date=date)
     else:
         review = _flat(rv)
-    out = f"**Решение {did}** — {title}."
+    out = _t("**Решение {did}** — {title}.", lang).format(did=did, title=title)
     if commit:
-        out += f" Обязательство: {commit}."
+        out += _t(" Обязательство: {commit}.", lang).format(commit=commit)
     if review:
         out += f" {review[0].upper() + review[1:]}."
     return out
@@ -386,7 +555,7 @@ def _table_rows(text: str, headers: tuple[str, ...]) -> list[list[str]]:
 _BUSINESS = ("выручк", "mrr", "платящ", "ltv", "cac", "оплат", "тариф", "arpu", "цен")
 
 
-def _kpi_table(pdir: Path) -> str | None:
+def _kpi_table(pdir: Path, lang: str = "ru") -> str | None:
     """Таблица KPI двух плоскостей (Бизнес/Продукт) из сводных таблиц 06_validation_plan.md:
     «Ожидаемое изменение» (гипотеза → метрика → цель), «С чем сравниваем» (база) и
     «Критерии решения» (порог остановки). Сводных таблиц нет — None (заглушка-структура)."""
@@ -404,16 +573,16 @@ def _kpi_table(pdir: Path) -> str | None:
     def cell(s: str) -> str:
         return s.replace("|", "/")
 
-    out = ["| Плоскость | Гипотеза | Метрика | База → цель к сроку | Порог действия (остановить) |",
+    out = [_t("| Плоскость | Гипотеза | Метрика | База → цель к сроку | Порог действия (остановить) |", lang),
            "|---|---|---|---|---|"]
     for r in rows:
         if len(r) < 4:
             continue
         hid, hyp, metric, target = r[0], r[1], r[2], r[3]
-        base = bases.get(hid, "база — 06_validation_plan.md").split(";")[0].strip()
+        base = bases.get(hid, _t("база — 06_validation_plan.md", lang)).split(";")[0].strip()
         if re.fullmatch(r"H\d+", hid.strip()):
             hyp = f"{hid.strip()} — {hyp}"
-        plane = "Бизнес" if any(w in f"{metric} {hyp}".lower() for w in _BUSINESS) else "Продукт"
+        plane = _t("Бизнес", lang) if any(w in f"{metric} {hyp}".lower() for w in _BUSINESS) else _t("Продукт", lang)
         out.append(f"| {plane} | {cell(hyp)} | {cell(metric)} | {cell(base)} → {cell(target)} | "
                    f"{cell(thresholds.get(hid, '—'))} |")
     return "\n".join(out)
@@ -422,7 +591,7 @@ def _kpi_table(pdir: Path) -> str | None:
 _INITIATIVE = re.compile(r"^-\s*\*\*(.+?):\*\*\s*(.+)$")
 
 
-def _tactics_matrix(pdir: Path) -> str | None:
+def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
     """Матрица тактик из Outcome-роадмапа 04_product_strategy.md: буллеты вида
     «- **Этап N (…):** тактики … **Результат …:** …» раскладываются в канонические
     колонки «Инициатива | Фокус | Потребности | Решения (тактики)». Похоже на роадмап
@@ -447,32 +616,35 @@ def _tactics_matrix(pdir: Path) -> str | None:
     def cell(s: str) -> str:
         return s.replace("|", "/")
 
-    out = ["| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |",
+    out = [_t("| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |", lang),
            "|---|---|---|---|"]
     for label, tactics, gate in rows:
         focus = re.split(r"[.;]", tactics)[0].strip() or "—"
-        solutions = tactics + (f" **Результат:** {gate}" if gate else "")
+        solutions = tactics + (_t(" **Результат:** {gate}", lang).format(gate=gate) if gate else "")
         out.append(f"| {cell(label)} | {cell(focus)} | — | {cell(solutions)} |")
     return "\n".join(out)
 
 
-def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
+def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Path:
     """Six-pager в структуре референса стратегии роста: FAQ-1…FAQ-6 с нумерованными
     подпунктами (1.1/1.2 обзор рынка и конкуренты; 2.1/2.2 персоны и барьеры по этапам),
     юнит-экономикой с чувствительностью, матрицей тактик и KPI в двух плоскостях
     (бизнес/продукт). Документы 03/04/06 вставляются целиком с понижением заголовков
     на 2 уровня; секции, уже попавшие в вывод через _grab, повторно не вставляются;
     резка — только по границам секций. Сноски-источники — полный список sources.jsonl.
+    lang="en" — EN-черновик: скелет инструмента на английском (_EN), содержимое
+    документов 00–07 остаётся как написано → outputs/SIX_PAGER_EN.md.
     Спецификация детализации: knowledge/templates/SIX_PAGER_PROMPT.md."""
     if with_calcs:
         calc.run(pdir, "all")
     meta = core.read_json(pdir / "project.json", {})
-    parts = [f"# {meta.get('title')}: six-pager", "",
-             f"> Собрано {core.now()[:16]} командой `pfs export --six-pager` по спецификации "
-             "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
-             "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
-             "Теги [C###]/[S###] — происхождение чисел; сноски-источники — в конце документа.", "",
-             f"**Запрос:** {meta.get('question', '')}", ""]
+    parts = [_t("# {title}: six-pager", lang).format(title=meta.get("title")), "",
+             _t("> Собрано {ts} командой `pfs export --six-pager` по спецификации "
+                "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
+                "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
+                "Теги [C###]/[S###] — происхождение чисел; сноски-источники — в конце документа.",
+                lang).format(ts=core.now()[:16]), "",
+             _t("**Запрос:** {q}", lang).format(q=meta.get("question", "")), ""]
     reg: dict[str, set[int]] = {}  # вставленные секции (fname → номера блоков) — против дублей
 
     def grab(fname: str, sections: tuple[str, ...], cap: int = 6000, require_section: bool = False):
@@ -480,105 +652,106 @@ def build_six_pager(pdir: Path, with_calcs: bool = True) -> Path:
 
     faq1 = grab("02_situation.md", ("Короткий ответ", "Что известно", "Рынок", "Тренды",
                                     "Противоречия", "Чего не знаем"), 8000)
-    parts += ["## FAQ-1. Анализ текущего состояния", "",
-              "### 1.1 Обзор рынка: тренды, вызовы и возможности", "",
-              faq1 or "> Раздел появится после шага «situation» (02_situation.md): объём и динамика "
-                      "рынка диапазонами, ключевые тренды буллетами с жирными заголовками.", "",
-              "### 1.2 Ключевые конкуренты и анализ их стратегий роста и промо-механик", "",
+    parts += [_t("## FAQ-1. Анализ текущего состояния", lang), "",
+              _t("### 1.1 Обзор рынка: тренды, вызовы и возможности", lang), "",
+              faq1 or _t("> Раздел появится после шага «situation» (02_situation.md): объём и динамика "
+                         "рынка диапазонами, ключевые тренды буллетами с жирными заголовками.", lang), "",
+              _t("### 1.2 Ключевые конкуренты и анализ их стратегий роста и промо-механик", lang), "",
               grab("02_situation.md", ("Конкуренты", "Конкурентный анализ"), 3000, True)
-              or "Сравнительная таблица групп конкурентов (заполните после конкурентного анализа):", "",
-              "| | Группа 1 | Группа 2 | Группа 3 |",
+              or _t("Сравнительная таблица групп конкурентов (заполните после конкурентного анализа):", lang), "",
+              _t("| | Группа 1 | Группа 2 | Группа 3 |", lang),
               "|---|---|---|---|",
-              "| **Ключевые преимущества** | … | … | … |",
-              "| **Стратегия роста и промо-механики** | … | … | … |",
-              "| **Риски для компании** | … — Высокий/Средний/Низкий | … | … |", "",
-              "> **Вывод (умозаключение):** окно возможностей и его срок — заполните по данным 1.1–1.2.", ""]
+              _t("| **Ключевые преимущества** | … | … | … |", lang),
+              _t("| **Стратегия роста и промо-механики** | … | … | … |", lang),
+              _t("| **Риски для компании** | … — Высокий/Средний/Низкий | … | … |", lang), "",
+              _t("> **Вывод (умозаключение):** окно возможностей и его срок — заполните по данным 1.1–1.2.", lang), ""]
     faq2 = grab("02_situation.md", ("Сегменты", "Персоны", "Аудитория"), 3000)
     if not faq2 or len(faq2) < 120:
         faq2 = grab("04_product_strategy.md", ("Аудитория",), 3000)
-    parts += ["## FAQ-2. User Persona. Кто является целевой аудиторией?", "",
-              "### 2.1 Сегменты", "",
-              faq2 or "> Добавьте сегменты/персоны в 02_situation.md.", "",
-              "Таблица персон (заполните):", "",
-              "| | Сегмент 1 | Сегмент 2 | Сегмент 3 |",
+    parts += [_t("## FAQ-2. User Persona. Кто является целевой аудиторией?", lang), "",
+              _t("### 2.1 Сегменты", lang), "",
+              faq2 or _t("> Добавьте сегменты/персоны в 02_situation.md.", lang), "",
+              _t("Таблица персон (заполните):", lang), "",
+              _t("| | Сегмент 1 | Сегмент 2 | Сегмент 3 |", lang),
               "|---|---|---|---|",
-              "| **Кто они?** | … | … | … |",
-              "| **Что используют сегодня и почему?** | … | … | … |",
-              "| **С какими трудностями сталкиваются?** | … | … | … |",
-              "| **Общие трудности** | … | … |", "",
-              "### 2.2 Барьеры на каждом этапе пути", "",
-              "| Этап пути | Барьер сегодня | Что делает продукт |",
-              "|---|---|---|---|",
-              "| Привлечение | … | … |",
-              "| Выбор / использование | … | … |",
-              "| Оплата | … | … |",
-              "| Постоплатный опыт | … | … |", "",
-              "Что сдерживает от старта или продления? (заполните по сегментам):", "",
-              "| Сегмент | Сдерживающий фактор | Чем снимается |",
+              _t("| **Кто они?** | … | … | … |", lang),
+              _t("| **Что используют сегодня и почему?** | … | … | … |", lang),
+              _t("| **С какими трудностями сталкиваются?** | … | … | … |", lang),
+              _t("| **Общие трудности** | … | … |", lang), "",
+              _t("### 2.2 Барьеры на каждом этапе пути", lang), "",
+              _t("| Этап пути | Барьер сегодня | Что делает продукт |", lang),
               "|---|---|---|",
-              "| Сегмент 1 | … | … |", "",
-              "> **Вывод (умозаключение):** сегментация по барьеру входа; лестница тиров "
-              "обслуживает все барьеры; приоритизация — по ёмкости/CAC/конкуренции (расчёт — выше).", ""]
+              _t("| Привлечение | … | … |", lang),
+              _t("| Выбор / использование | … | … |", lang),
+              _t("| Оплата | … | … |", lang),
+              _t("| Постоплатный опыт | … | … |", lang), "",
+              _t("Что сдерживает от старта или продления? (заполните по сегментам):", lang), "",
+              _t("| Сегмент | Сдерживающий фактор | Чем снимается |", lang),
+              "|---|---|---|",
+              _t("| Сегмент 1 | … | … |", lang), "",
+              _t("> **Вывод (умозаключение):** сегментация по барьеру входа; лестница тиров "
+                 "обслуживает все барьеры; приоритизация — по ёмкости/CAC/конкуренции (расчёт — выше).", lang), ""]
     doc03 = _insert_doc(pdir, "03_options.md", reg=reg)
-    parts += ["## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.", "",
-              doc03 or "> Раздел появится после шага «options» (03_options.md).", "",
-              "### Инициативы выбранного направления (драйверы)", "",
-              "Сформулируйте 3–4 инициативы по схеме: «**Первый драйвер** — …», «**Второй драйвер** — …», "
-              "далее «Ключевые направления» (буллеты) и пошаговый расчёт эффекта. Закройте "
-              "выводом-умозаключением.", ""]
-    ue = _unit_econ_block(pdir)
+    parts += [_t("## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.", lang), "",
+              doc03 or _t("> Раздел появится после шага «options» (03_options.md).", lang), "",
+              _t("### Инициативы выбранного направления (драйверы)", lang), "",
+              _t("Сформулируйте 3–4 инициативы по схеме: «**Первый драйвер** — …», «**Второй драйвер** — …», "
+                 "далее «Ключевые направления» (буллеты) и пошаговый расчёт эффекта. Закройте "
+                 "выводом-умозаключением.", lang), ""]
+    ue = _unit_econ_block(pdir, lang)
     if ue:
-        parts += ["Юнит-экономика — расчёт пошагово:", "", ue, ""]
+        parts += [_t("Юнит-экономика — расчёт пошагово:", lang), "", ue, ""]
     doc04 = _insert_doc(pdir, "04_product_strategy.md", reg=reg)
-    matrix = _tactics_matrix(pdir)
-    parts += ["## FAQ-4. Тактики. Детализируйте каждую инициативу до конкретных тактик.", "",
-              doc04 or "> Добавьте тактики по каждой инициативе в 04_product_strategy.md.", ""]
+    matrix = _tactics_matrix(pdir, lang)
+    parts += [_t("## FAQ-4. Тактики. Детализируйте каждую инициативу до конкретных тактик.", lang), "",
+              doc04 or _t("> Добавьте тактики по каждой инициативе в 04_product_strategy.md.", lang), ""]
     if matrix:
-        parts += ["Матрица тактик (из Outcome-роадмапа 04_product_strategy.md):", "", matrix, ""]
+        parts += [_t("Матрица тактик (из Outcome-роадмапа 04_product_strategy.md):", lang), "", matrix, ""]
     else:
-        parts += ["Матрица тактик (заполните):", "",
-                  "| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |",
+        parts += [_t("Матрица тактик (заполните):", lang), "",
+                  _t("| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |", lang),
                   "|---|---|---|---|",
-                  "| Инициатива 1 | … | … | … |",
-                  "| Инициатива 2 | … | … | … |", ""]
+                  _t("| Инициатива 1 | … | … | … |", lang),
+                  _t("| Инициатива 2 | … | … | … |", lang), ""]
     doc06 = _insert_doc(pdir, "06_validation_plan.md", reg=reg)
-    parts += ["## FAQ-5. Высокоуровневый план реализации", "",
-              doc06 or "> Раздел появится после шага «validation» (06_validation_plan.md).", "",
-              "Ожидаемое распределение вклада инициатив в общий результат (сумма 100%):", "",
-              "- __% — Инициатива 1;",
-              "- __% — Инициатива 2;",
-              "- __% — Инициатива 3.", "",
-              "Порядок тактик: высокий → средний → базовый приоритет. Тайминг — к сезонам рынка. "
-              "Параллельные треки: комьюнити/партнёрства — вне основной линии.", ""]
-    dec = _decision_block(pdir)
+    parts += [_t("## FAQ-5. Высокоуровневый план реализации", lang), "",
+              doc06 or _t("> Раздел появится после шага «validation» (06_validation_plan.md).", lang), "",
+              _t("Ожидаемое распределение вклада инициатив в общий результат (сумма 100%):", lang), "",
+              _t("- __% — Инициатива 1;", lang),
+              _t("- __% — Инициатива 2;", lang),
+              _t("- __% — Инициатива 3.", lang), "",
+              _t("Порядок тактик: высокий → средний → базовый приоритет. Тайминг — к сезонам рынка. "
+                 "Параллельные треки: комьюнити/партнёрства — вне основной линии.", lang), ""]
+    dec = _decision_block(pdir, lang)
     if dec:
         parts += [dec, ""]
     faq6 = grab("04_product_strategy.md", ("Метрики", "Показатели"), 3000) \
         or grab("06_validation_plan.md", ("Ожидаемое изменение", "Критерии решения"), 3000)
-    kpi = _kpi_table(pdir)
-    parts += ["## FAQ-6. Метрики успеха. KPI в двух плоскостях", ""]
+    kpi = _kpi_table(pdir, lang)
+    parts += [_t("## FAQ-6. Метрики успеха. KPI в двух плоскостях", lang), ""]
     if faq6:
         parts += [faq6, ""]
     if kpi:
         parts += [kpi, ""]
     elif not faq6 and doc04 is None and doc06 is None:
-        parts += ["> Добавьте метрики успеха в 04/06 документы — таблица KPI соберётся "
-                  "автоматически из сводных таблиц 06_validation_plan.md.", ""]
-    parts += ["KPI в двух направлениях: **1) Бизнес** — деньги и база (выручка/MRR, платящие, "
-              "конверсия в оплату, доля тарифов, фактический LTV/CAC); **2) Продукт** — активация, "
-              "время до первой ценности, число действий до результата, churn, CSAT/NPS. "
-              "У каждого KPI: база → цель к сроку → порог действия. Контр-метрики — по одной "
-              "на удар red team.", ""]
+        parts += [_t("> Добавьте метрики успеха в 04/06 документы — таблица KPI соберётся "
+                     "автоматически из сводных таблиц 06_validation_plan.md.", lang), ""]
+    parts += [_t("KPI в двух направлениях: **1) Бизнес** — деньги и база (выручка/MRR, платящие, "
+                 "конверсия в оплату, доля тарифов, фактический LTV/CAC); **2) Продукт** — активация, "
+                 "время до первой ценности, число действий до результата, churn, CSAT/NPS. "
+                 "У каждого KPI: база → цель к сроку → порог действия. Контр-метрики — по одной "
+                 "на удар red team.", lang), ""]
     src = _sources_footnotes(pdir)
     if src:
-        parts += ["## Источники (сноски)", "", src, ""]
-    parts += ["## Приложения (Excel)", "", attachments_table(pdir) or "> Ещё нет: `pfs calc all`.", "",
-              "", "> Формулы пересчитываются при открытии (Excel / Numbers / LibreOffice). "
-                  "Детализация по спецификации — knowledge/templates/SIX_PAGER_PROMPT.md. "
-                  "Полная версия с доказательствами — REPORT.md."]
-    path = pdir / "outputs" / "SIX_PAGER.md"
+        parts += [_t("## Источники (сноски)", lang), "", src, ""]
+    parts += [_t("## Приложения (Excel)", lang), "",
+              attachments_table(pdir) or _t("> Ещё нет: `pfs calc all`.", lang), "",
+              "", _t("> Формулы пересчитываются при открытии (Excel / Numbers / LibreOffice). "
+                     "Детализация по спецификации — knowledge/templates/SIX_PAGER_PROMPT.md. "
+                     "Полная версия с доказательствами — REPORT.md.", lang)]
+    path = pdir / "outputs" / ("SIX_PAGER_EN.md" if lang == "en" else "SIX_PAGER.md")
     core.atomic_write(path, "\n".join(parts) + "\n")
-    core.log(pdir, "action", "Собран outputs/SIX_PAGER.md (формат референса)", tool="pfs export --six-pager")
+    core.log(pdir, "action", f"Собран outputs/{path.name} (формат референса)", tool="pfs export --six-pager")
     return path
 
 
