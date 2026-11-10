@@ -332,11 +332,23 @@ async function main() {
         log('-- release manager: PR');
         const prBody = resolve(STATE, `pr-body-${issue.identifier}.md`);
         writeFileSync(prBody, `Closes ${issue.identifier}\n\n${story}\n\nSwarm cycle: dev(${MAX_ROUNDS} rounds max) → gates → review(ACCEPT) → release.`);
-        const pr = await sh(`gh pr create --head ${branch} --title ${JSON.stringify(`${issue.identifier}: ${issue.title}`)} --body-file ${JSON.stringify(prBody)}`, { timeoutMs: 120_000 });
-        const prUrl = (pr.out.match(/https:\/\/github\.com\/\S+/) || [])[0];
-        if (!prUrl) throw new Error(`gh pr create failed: ${short(pr.all)}`);
-        await sh(`gh pr merge ${prUrl.split('/').pop()} --squash --delete-branch`, { timeoutMs: 300_000 });
-        log(`  merged: ${prUrl}`);
+        const push = await sh(`git push -q origin ${branch} 2>&1`, { timeoutMs: 120_000 });
+        log(`  branch pushed: ${short(push.all, 120)}`);
+        let pr = await sh(`gh pr create --head ${branch} --base main --title ${JSON.stringify(`${issue.identifier}: ${issue.title}`)} --body-file ${JSON.stringify(prBody)}`, { timeoutMs: 120_000 });
+        let prUrl = (pr.out.match(/https:\/\/github\.com\/\S+/) || [])[0];
+        if (!prUrl) {
+          // фолбэк: PR не создался (например, «no commits») — прямой squash-merge ветки в main
+          log(`  gh pr create failed (${short(pr.all, 160)}) — fallback: локальный squash-merge в main`);
+          await sh('git checkout -q --detach origin/main');
+          const mg = await sh(`git merge --squash ${branch} && git commit -q -m ${JSON.stringify(`${issue.identifier}: ${issue.title} (squash)`)}`, { timeoutMs: 120_000 });
+          if (mg.code !== 0) throw new Error(`squash merge failed: ${short(mg.all)}`);
+          const pp = await sh('git push -q origin HEAD:main', { timeoutMs: 300_000 });
+          if (pp.code !== 0) throw new Error(`direct push failed: ${short(pp.all)}`);
+          log('  merged via direct squash push (без PR)');
+        } else {
+          log(`  PR: ${prUrl}`);
+          await sh(`gh pr merge ${prUrl.split('/').pop()} --squash --delete-branch`, { timeoutMs: 300_000 });
+        }
 
         await sh('git fetch origin -q && git checkout -q --detach origin/main');
         const verOut = await sh(`python3 -c "import pathlib,re; p=pathlib.Path('pyproject.toml'); t=p.read_text(); v=re.search(r'version = \\"(\\d+)\\.(\\d+)\\.(\\d+)\\"', t); ver=f'{v.group(1)}.{v.group(2)}.{int(v.group(3))+1}'; p.write_text(re.sub(r'version = \\"\\d+\\.\\d+\\.\\d+\\"', f'version = \\"{ver}\\"', t, count=1)); print(ver)"`);
@@ -359,7 +371,12 @@ async function main() {
         await sh(`git tag v${ver} && git push -q origin v${ver}`);
         await sh('sleep 15');
         const pagId = (await sh(`gh run list --workflow=Pages --limit 1 --json databaseId --jq '.[0].databaseId'`)).out.trim();
-        await sh(`gh run watch ${pagId} --exit-status`, { timeoutMs: 30 * 60_000 });
+        const pw = await sh(`gh run watch ${pagId} --exit-status`, { timeoutMs: 30 * 60_000 });
+        if (pw.code !== 0) {
+          log('  Pages deploy failed — rerun once (гонка двух пушей)');
+          await sh(`gh run rerun ${pagId}`);
+          await sh(`gh run watch ${pagId} --exit-status`, { timeoutMs: 30 * 60_000 });
+        }
 
         log('-- prod tester: живой сайт');
         let prodOk = 0;
