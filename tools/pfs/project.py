@@ -163,6 +163,20 @@ def status_text(pdir: Path, brief: bool = False) -> str:
     return "\n".join(lines)
 
 
+def is_finished(pdir: Path) -> bool:
+    """Проект завершён: все шаги процесса отмечены done/skipped."""
+    steps = load_state(pdir).get("steps", {})
+    return all(steps.get(sid, {}).get("status") in ("done", "skipped") for sid in STAGE_IDS)
+
+
+def six_pager_due(pdir: Path) -> bool:
+    """Комитет-пакет нужен: шаг review пройден, а outputs/SIX_PAGER.md ещё не собран."""
+    if (pdir / "outputs" / "SIX_PAGER.md").exists():
+        return False
+    st = load_state(pdir).get("steps", {}).get("review", {})
+    return st.get("status") == "done"
+
+
 def next_text(pdir: Path) -> str:
     """«Что решать сейчас»: шаг, ожидания человека, обязательства, пересмотры, открытые вопросы."""
     from . import decisions as decisions_mod
@@ -170,6 +184,10 @@ def next_text(pdir: Path) -> str:
     meta = core.read_json(pdir / "project.json", {})
     lines = [f"ЧТО РЕШАТЬ СЕЙЧАС — {meta.get('title')} [{meta.get('slug')}]"]
     lines.append(f"Шаг: {state.get('stage')} · Далее: {state.get('next_action')}")
+    if six_pager_due(pdir):
+        # PRO-32: six-pager собирают на review — напоминаем первым пунктом, пока его нет.
+        lines.append("📋 Собрать комитет-пакет: pfs calc scaffold → pfs calc all → pfs export "
+                     "--six-pager (spec: knowledge/templates/SIX_PAGER_PROMPT.md)")
     if state.get("awaiting_human"):
         ah = state["awaiting_human"]
         opts = f" ({' / '.join(ah['options'])})" if ah.get("options") else ""

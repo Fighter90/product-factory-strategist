@@ -106,7 +106,9 @@ File paths in `source add`, `docx` and `media add` resolve first against the pro
 ### Steps and questions
 ```bash
 pfs next                                # "what to decide now": current step, human checkpoint,
-                                        # overdue commitments, reviews due, open questions
+                                        # overdue commitments, reviews due, open questions;
+                                        # after review without SIX_PAGER.md — committee package
+                                        # build first (calc scaffold → calc all → export --six-pager)
 pfs step <step> in_progress|done --note "…" --next "…"
 pfs ask "Question?" --options "A,B,C"  # pause: agent waits for your answer
 pfs answer "Option B"
