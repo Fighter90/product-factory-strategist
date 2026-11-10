@@ -1,10 +1,15 @@
 """Пути, состояние проекта и безопасная запись файлов."""
 from __future__ import annotations
 
+try:
+    import fcntl  # Unix: межпроцессный lock; на платформах без fcntl деградирует до отсутствия блокировки
+except ImportError:  # pragma: no cover — Windows не целевая платформа
+    fcntl = None
 import json
 import os
 import re
 import tempfile
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
@@ -62,6 +67,24 @@ def atomic_write(path: Path, text: str) -> None:
         fh.write(text)
     os.chmod(tmp, 0o644)  # mkstemp создаёт 0600 — делаем обычные права
     os.replace(tmp, path)
+
+
+@contextmanager
+def file_lock(path: Path):
+    """Эксклюзивный межпроцессный lock (fcntl.flock) на время критической секции.
+
+    Гонки двух параллельных pfs-процессов при выделении ID сериализуются (PRO-34,
+    кейс S020): второй процесс ждёт, затем перечитывает реестр и берёт свой ID.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a+") as fh:
+        if fcntl is not None:
+            fcntl.flock(fh, fcntl.LOCK_EX)
+        try:
+            yield fh
+        finally:
+            if fcntl is not None:
+                fcntl.flock(fh, fcntl.LOCK_UN)
 
 
 def read_json(path: Path, default: Any = None) -> Any:

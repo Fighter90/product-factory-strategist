@@ -247,7 +247,7 @@ pfs log "Manual edit" --usd 0.8 --human-minutes 15
 
 ### Diagnostics
 ```bash
-pfs doctor
+pfs doctor      # environment + source registry integrity: duplicate IDs/URLs, record without file, orphan file (PRO-34)
 ```
 
 ---

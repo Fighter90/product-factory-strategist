@@ -372,8 +372,22 @@ def cmd_doctor(a):
         print("pypdf: есть")
     except ImportError:
         print("pypdf: нет (необязательно)")
-    print(f"Карт в базе знаний: {len(kb.cards())}; проектов: {len(project.list_projects())}; активный: {core.active_slug()}")
+    projects = project.list_projects()
+    print(f"Карт в базе знаний: {len(kb.cards())}; проектов: {len(projects)}; активный: {core.active_slug()}")
     print(f"Профиль моделей: {models.load().get('active_profile')}")
+    problems = 0
+    for meta in projects:
+        issues = sources.audit(core.projects_dir() / meta["slug"])
+        if issues:
+            problems += len(issues)
+            print(f"⚠ Реестр источников [{meta['slug']}]:")
+            for i in issues:
+                print(f"  - {i}")
+    if problems:
+        print(f"Реестры источников: проблем {problems} — записи без файла пересоздайте (pfs source add), "
+              "файлы-сироты и дубли ID/URL разберите вручную (см. выше)")
+    else:
+        print(f"Реестры источников: ok ({len(projects)} проектов)")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -502,7 +516,7 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("questions", help="вопросные блоки шага (настраиваемость стратегии)")
     s.add_argument("block", nargs="?", default=None, help="шаг или id блока, напр. options-criteria; без аргумента — обзор всех шагов")
     s.set_defaults(f=cmd_questions)
-    sp.add_parser("doctor", help="проверка окружения").set_defaults(f=cmd_doctor)
+    sp.add_parser("doctor", help="проверка окружения и реестров источников").set_defaults(f=cmd_doctor)
     return ap
 
 
