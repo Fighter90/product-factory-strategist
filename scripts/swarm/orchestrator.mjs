@@ -154,15 +154,18 @@ const extractDev = (all) => {
 const extractVerdict = (all) => {
   // VERDICT только в начале строки (не в tool-выводе/цитатах), берём ПОСЛЕДНЕЕ вхождение;
   // эхо плейсхолдеров шаблона («<numbered, …>») = вердикта нет (guard как у clerk в career-ops).
-  const re = /^VERDICT:\s*(ACCEPT|RETURN)\s*$/gm;
+  // двуязычный вердикт: VERDICT: ACCEPT/RETURN и ВЕРДИКТ: ПРИНЯТЬ/ВЕРНУТЬ
+  const re = /^\s*(?:VERDICT|ВЕРДИКТ)\s*:\s*(ACCEPT|ПРИНЯТЬ|RETURN|ВЕРНУТЬ)[^\n]*$/gmi;
   let m, last = null;
   while ((m = re.exec(all))) last = m;
   if (!last) return { verdict: 'RETURN', notes: 'reviewer produced no verdict — treat as RETURN' };
+  const verb = last[1].toUpperCase();
   const seg = all.slice(last.index);
   // эхо шаблона = ТОЧНЫЕ плейсхолдеры из роли (не любые < > — они встречаются в легитимных заметках)
   if (/(notes:\s*<numbered|<REAL\s|<issueId|<identifier>|<title>)/i.test(seg.slice(0, 300)))
     return { verdict: 'RETURN', notes: 'reviewer echoed template placeholders — no real verdict' };
-  if (last[1] === 'ACCEPT') return { verdict: 'ACCEPT', notes: '' };
+  const accept = (last[1] === 'ACCEPT' || last[1] === 'ПРИНЯТЬ');
+  if (accept) return { verdict: 'ACCEPT', notes: '' };
   return { verdict: 'RETURN', notes: seg.split('\n').slice(1).join('\n').slice(0, 800).trim() || 'RETURN' };
 };
 
