@@ -310,7 +310,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 | `pfs new / list / use / status [--brief]` | проекты и состояние |
 | `pfs route "<запрос>" [--override --economy --json]` | сценарий, карты, план моделей |
 | `pfs questions <шаг\|блок>` | вопросные блоки для настраиваемости |
-| `pfs next` | «что решать сейчас»: шаг, обязательства, пересмотры |
+| `pfs next` | «что решать сейчас»: шаг, обязательства, устаревшие источники с командой refresh, пересмотры |
 | `pfs step <шаг> in_progress\|done [--note --next]` | отметка шага + обязательные карты |
 | `pfs ask / answer / question` | паузы с человеком |
 | `pfs source add/list/show [--text-file --url --origin --force]` | источники S### |

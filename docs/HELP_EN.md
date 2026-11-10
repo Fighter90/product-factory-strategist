@@ -106,7 +106,9 @@ File paths in `source add`, `docx` and `media add` resolve first against the pro
 ### Steps and questions
 ```bash
 pfs next                                # "what to decide now": current step, human checkpoint,
-                                        # overdue commitments, reviews due, open questions;
+                                        # overdue commitments, grounds sources unchecked for 180+ days
+                                        # (with a ready `pfs source refresh S###` command), reviews due
+                                        # (past and within 14 days), open questions;
                                         # after review without SIX_PAGER.md — committee package
                                         # build first (calc scaffold → calc all → export --six-pager)
 pfs step <step> in_progress|done --note "…" --next "…"
@@ -166,7 +168,8 @@ pfs impact C005                 # what a change affects: conclusions → documen
 pfs decision add --title "…" --decision "…" --owner "CPO" --grounds C001,C007 \
   --metric "M1 retention: 38% -> 45% @2027-01-01" --review 2027-01-01 \
   --trigger "M1 < 40% for two months" --commit "Launch pilot|PM|2026-12-01"
-pfs decision due          # what to decide now: overdue commitments, stale grounds
+pfs decision due          # what to decide now: overdue commitments, stale grounds, sources
+                          # unchecked for 180+ days — with a ready `pfs source refresh S###` command
 pfs decision done --id D001 --commitment K1
 pfs decision list | status | rebase
 ```
