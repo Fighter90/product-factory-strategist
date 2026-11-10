@@ -35,7 +35,7 @@ VERDICT RULES
 
 Print EXACTLY this block at the end (and nothing after it):
 
-VERDICT: ACCEPT
+VERDICT: ACCEPT      (или ВЕРДИКТ: ПРИНЯТЬ — русский формат тоже допустим)
 or
-VERDICT: RETURN
+VERDICT: RETURN      (или ВЕРДИКТ: ВЕРНУТЬ)
 notes: <numbered, concrete notes; omit on ACCEPT>
