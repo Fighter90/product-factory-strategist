@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import claims as claims_mod, core, sources as src_mod
+from . import claims as claims_mod, core, gaps, sources as src_mod
 from .impact import TAG
 
 
@@ -111,6 +111,10 @@ def run(pdir: Path) -> dict:
                     errors.append(f"{name}: обещание без подтверждения (нет C###/S###): «{r[:80]}»")
         if not errors or all(not e.startswith(name) for e in errors):
             passed.append(name)
+
+    # 3. Гэп-трекинг: пробел закрыт в 02, но строка 01 всё ещё «открыт»
+    for w in gaps.sync_warnings(pdir):
+        warnings.append(w)
     score = max(0, 100 - 10 * len(errors) - 2 * len(warnings))
     return {"errors": errors, "warnings": warnings, "passed": passed, "score": score}
 

@@ -140,6 +140,10 @@ Kinds: `fact` (needs a source; synthetic material never counts as one), `hypothe
 ### Checks and impact
 ```bash
 pfs check [--strict] [--json]   # quality gate: untagged numbers, dead links, document structure
+pfs gap list                    # research gaps from 02 "What we don't know": numbers and status (open/partial/closed)
+pfs gap close 3 --claim C069 --note "how it was closed"
+                                # mark a gap closed SYNCHRONOUSLY: the 02 row + the 01 item / question status;
+                                # pfs check warns if 02 says "closed" but the 01 line still says "open"
 pfs impact C005                 # what a change affects: conclusions → document lines → decisions
 ```
 
