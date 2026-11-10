@@ -1,0 +1,39 @@
+name: Release
+
+# PRO-45: GitHub Release из CHANGELOG.md.
+# - push тега v*  -> Release этой версии (секция из CHANGELOG.md);
+# - workflow_dispatch -> идемпотентный бэкфилл Releases по всем тегам v*
+#   (пропускает существующие; для версий без секции — fallback-текст).
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Release for pushed tag
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/release_notes.py "$GITHUB_REF_NAME" > release_notes.md
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file release_notes.md \
+            --verify-tag
+
+      - name: Backfill releases for existing tags (manual run)
+        if: github.ref_type == 'branch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/release_notes.py --backfill
