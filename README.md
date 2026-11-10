@@ -288,6 +288,8 @@ UX и клиентские метрики · анализ данных и A/B ·
 `pfs calc` строит 4 книги Excel на формулах (юнит-экономика с LTV/CAC/пейбеком и чувствительностью,
 модель роста 12 мес, когортное удержание, PAM→TAM→SAM→SOM + PESTEL): лист «Ввод» — редактируемые
 параметры из `calcs.json` (каждое значение — C###), кэш значений для предпросмотра, пересчёт при открытии.
+Каркас `calcs.json` собирает `pfs calc scaffold` из документов 02/04/06/07: найденные числа — со своим
+C/S-тегом в `_notes`, ненайденные — null + подсказка в `_hints` (ручная дописка — только null-поля).
 
 ---
 
@@ -319,6 +321,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 | `pfs data profile/cohort <csv> [--save]` | профиль таблиц, когорты |
 | `pfs data funnel/stats <csv>` | воронка по событиям/колонкам; статистика с ДИ 95% |
 | `pfs interview guide\|save · pfs media add · pfs ux scaffold` | гайды интервью, медиа-источники, UX-каркас |
+| `pfs calc scaffold` | каркас `calcs.json` из 02/04/06/07 (числа с C/S-тегами, остальное — null) |
 | `pfs calc [all\|unit-econ\|growth\|cohort\|market]` | Excel-приложения |
 | `pfs export [--six-pager --no-calcs]` | REPORT.md / SIX_PAGER.md |
 | `pfs export --deck` | HTML-дека 16:9 из six-pager |

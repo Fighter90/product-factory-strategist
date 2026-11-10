@@ -191,11 +191,14 @@ pfs ux scaffold S003 --focus "onboarding"                      # UX scaffold of 
 
 ### Excel models (six-pager attachments)
 ```bash
+pfs calc scaffold                      # calcs.json skeleton from 02/04/06/07: numbers carry
+                                       # C/S tags in _notes; misses become null + _hints
 pfs calc all                          # 4 workbooks → projects/<slug>/outputs/attachments/
 pfs calc unit-econ | growth | cohort | market
 ```
 Each workbook: an **Input** sheet (editable parameters) + calculation sheets **built on formulas** — Excel
-recalculates on open. Parameters come from `projects/<slug>/calcs.json`:
+recalculates on open. Parameters come from `projects/<slug>/calcs.json`; the skeleton is generated
+by `pfs calc scaffold` (manual filling — only the null fields):
 
 ```json
 {
@@ -207,8 +210,10 @@ recalculates on open. Parameters come from `projects/<slug>/calcs.json`:
   "market": {"pam": 120000000000, "tam_share": 0.6, "sam_share": 0.3, "som_share": 0.05}
 }
 ```
-Anything missing falls back to the example in `tools/pfs/calc.py: DEFAULTS` marked "EXAMPLE".
-Trace every value to C###/S###: the source lives in the registry, the link goes into `note`.
+Anything missing falls back to the example in `tools/pfs/calc.py: DEFAULTS` marked "EXAMPLE"
+(null fields from the skeleton too). Trace every value to C###/S###: the source lives in the
+registry, the link goes into `note`; numbers found by the scaffold carry their tag in the
+section's `_notes`.
 
 ### Reports
 ```bash

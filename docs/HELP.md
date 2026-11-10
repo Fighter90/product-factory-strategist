@@ -191,11 +191,14 @@ pfs ux scaffold S003 --focus "онбординг"                      # UX-ка
 
 ### Excel-расчёты (приложения к six-pager)
 ```bash
+pfs calc scaffold                      # каркас calcs.json из 02/04/06/07: числа с C/S-тегами
+                                       # в _notes; ненайденные — null + подсказка в _hints
 pfs calc all                          # 4 книги → projects/<slug>/outputs/attachments/
 pfs calc unit-econ | growth | cohort | market
 ```
 Каждая книга: лист **«Ввод»** (редактируемые параметры) + расчётные листы **на формулах** — Excel
-пересчитывает при открытии. Параметры агент берёт из `projects/<slug>/calcs.json`:
+пересчитывает при открытии. Параметры агент берёт из `projects/<slug>/calcs.json`; каркас
+генерирует `pfs calc scaffold` (ручная дописка — только null-поля):
 
 ```json
 {
@@ -207,8 +210,9 @@ pfs calc unit-econ | growth | cohort | market
   "market": {"pam": 120000000000, "tam_share": 0.6, "sam_share": 0.3, "som_share": 0.05}
 }
 ```
-Чего нет в `calcs.json` — подставится пример из `tools/pfs/calc.py: DEFAULTS` с пометкой «ПРИМЕР».
-Каждое значение прослеживайте до C###/S###: источник — в реестре, ссылка — в `note`.
+Чего нет в `calcs.json` — подставится пример из `tools/pfs/calc.py: DEFAULTS` с пометкой «ПРИМЕР»
+(null-поля из каркаса — тоже). Каждое значение прослеживайте до C###/S###: источник — в реестре,
+ссылка — в `note`; найденные каркасом числа несут свой тег в `_notes` секции.
 
 ### Отчёты
 ```bash
