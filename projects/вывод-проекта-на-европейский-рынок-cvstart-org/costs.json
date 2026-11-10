@@ -1,9 +1,18 @@
 {
   "sessions": {
     "emelyanov_sergey_a04_session": {
-      "models": {},
+      "models": {
+        "glm-5.3-flash": {
+          "input": 235456,
+          "output": 94903,
+          "cache_write": 0,
+          "cache_read": 19404672,
+          "messages": 133,
+          "plan": 1
+        }
+      },
       "usd": 0.0,
-      "updated": "2026-11-09T21:54:12+03:00",
+      "updated": "2026-11-10T01:09:07+03:00",
       "stage": "monitoring",
       "since": "2026-11-08T19:42:01Z",
       "until": null
