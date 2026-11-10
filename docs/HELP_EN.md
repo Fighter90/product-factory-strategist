@@ -225,6 +225,12 @@ section's `_notes`, and a re-run preserves `_notes`/`_hints` of values already s
 
 ### Reports
 ```bash
+pfs finish                      # full package in one chain: pfs check → calc all → REPORT →
+                                # SIX_PAGER → registry snapshot → DOCX → deck → "built + stale" summary;
+                                # any check error stops the build (same as pfs check --strict); re-running is idempotent
+pfs finish --no-deck            # same without the HTML deck
+pfs finish --en                 # + EN draft of the six-pager: SIX_PAGER_EN.md + DOCX (tool skeleton in
+                                # English; document content stays as written — full translation is the agent's job per the spec)
 pfs export                     # REPORT.md: all documents + appendices A–E
                                # registry snapshot in outputs/.export_state.json; if claims/sources/Excel changed after the build — ⚠ on `pfs status` and on the next export
 pfs export --six-pager         # SIX_PAGER.md (FAQ-1…6) + Excel rebuild

@@ -225,6 +225,12 @@ pfs calc unit-econ | growth | cohort | market
 
 ### Отчёты
 ```bash
+pfs finish                      # финальный пакет одной цепочкой: автопроверка pfs check → calc all → REPORT →
+                                # SIX_PAGER → снимок реестра → DOCX → deck → сводка «что собрано + что устарело»;
+                                # сборку останавливает любая ошибка check (как pfs check --strict); повторный вызов идемпотентен
+pfs finish --no-deck            # то же без HTML-деки
+pfs finish --en                 # + EN-черновик six-pager: SIX_PAGER_EN.md + DOCX (скелет на английском,
+                                # содержимое документов остаётся как написано — перевод по спецификации делает агент)
 pfs export                     # REPORT.md: все документы + приложения A–E
                                # снимок реестра в outputs/.export_state.json; если claims/sources/Excel изменились после сборки — ⚠ при `pfs status` и при следующем экспорте
 pfs export --six-pager         # SIX_PAGER.md в формате референса (подпункты, матрица тактик, KPI, сноски) + пересборка Excel
