@@ -159,7 +159,9 @@ const extractVerdict = (all) => {
   while ((m = re.exec(all))) last = m;
   if (!last) return { verdict: 'RETURN', notes: 'reviewer produced no verdict — treat as RETURN' };
   const seg = all.slice(last.index);
-  if (/[<>]/.test(seg.slice(0, 300))) return { verdict: 'RETURN', notes: 'reviewer echoed template placeholders — no real verdict' };
+  // эхо шаблона = ТОЧНЫЕ плейсхолдеры из роли (не любые < > — они встречаются в легитимных заметках)
+  if (/(notes:\s*<numbered|<REAL\s|<issueId|<identifier>|<title>)/i.test(seg.slice(0, 300)))
+    return { verdict: 'RETURN', notes: 'reviewer echoed template placeholders — no real verdict' };
   if (last[1] === 'ACCEPT') return { verdict: 'ACCEPT', notes: '' };
   return { verdict: 'RETURN', notes: seg.split('\n').slice(1).join('\n').slice(0, 800).trim() || 'RETURN' };
 };
@@ -282,6 +284,7 @@ async function main() {
             DESCRIPTION: issue.description || '(judge the diff against the issue title)',
             DIFF: `<DIFF>\n(дифф может быть обрезан по лимиту символов — это ожидаемо, не дефект; судьте по видимой части)\n${diff.all.slice(0, 100_000)}\n</DIFF>`,
           }, { timeoutMs: 12 * 60_000 });
+          writeFileSync('/tmp/swarm-review-verdict.md', rev.all.slice(-8000));
           const v = extractVerdict(rev.all);
           if (v.verdict === 'ACCEPT') { accepted = true; log('  verdict: ACCEPT'); break; }
           accepted = false;
