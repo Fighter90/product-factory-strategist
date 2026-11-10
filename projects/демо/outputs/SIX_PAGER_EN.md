@@ -11,21 +11,22 @@
 ### 1.1 Market overview: resume & job-search tools — trends, challenges and opportunities
 
 The resume-tools market, per aggregator estimates, stood at $1.2–2.4B in 2024–2025; the AI
-sub-segment grew from $1.3B to $1.47B (13.1% CAGR)¹. Online recruitment overall: $37.97B in 2025,
-7.1% CAGR to 2033². The AI sub-segment is expected to keep growing at double digits:
+sub-segment grew from $1.3B to $1.47B (13.1% CAGR)¹ [C005]. Online recruitment overall: $37.97B
+in 2025, 7.1% CAGR to 2033² [C011]. The AI sub-segment is expected to keep growing at double digits:
 
 - AI sub-segment volume: +13%/yr through 2026–2030;
-- share of job seekers using AI: 31–74% across 2025–2026 surveys, +7 p.p. year over year³.
+- share of job seekers using AI: 31–74% across 2025–2026 surveys, +7 p.p. year over year³ [C009];
+  1.2M+ job seekers used Kickresume's AI features in 2025 [C010].
 
 Key trends in the job-search tools market:
 
-- **The ATS gate has become the hiring standard.** 98% of Fortune 500 companies use an ATS⁴ — a
+- **The ATS gate has become the hiring standard.** 98% of Fortune 500 companies use an ATS⁴ [C008] — a
   resume that fails machine screening devalues the candidate before a human ever sees it. "Check my
   resume against ATS" has moved from feature to hygiene minimum, and transparent scoring criteria
   became a trust argument.
 - **Subscription fatigue and auto-renewals.** Every mass-market competitor (Zety, resume.io,
   Novoresume, Kickresume, Enhancv, Teal, Rezi) runs freemium with paid tiers at $8–40/mo and
-  aggressive auto-renewals⁵. The "trial $2–3 → auto-renewal $24–40" pattern generates a steady stream
+  aggressive auto-renewals⁵ [C006]. The "trial $2–3 → auto-renewal $24–40" pattern generates a steady stream
   of complaints and opens a verifiable window for honest pricing.
 - **Generative AI drove the cost of text generation to zero.** Bare "AI writes text" is no longer a
   differentiator — value shifted to data (scanning real vacancies), context (resume against a
@@ -72,7 +73,8 @@ the specialists react).
 | **Common difficulties** | The resume must be tailored to every vacancy manually; application tracking lives in a spreadsheet; no feedback on why the resume was rejected | — | — |
 
 **Segment reasoning.** The tech core chooses tools deliberately and pays for search automation, not
-for text (synthetic: Sarah accepts $10–15, and $29 only "if it actually finds jobs"⁷); it is also
+for text (synthetic: Sarah accepts $10–15, and $29 only "if it actually finds jobs"⁷ — the
+willingness-to-pay hypothesis [C017] under test in the beta); it is also
 the source of the first organic reviews (GitHub/HN). Wave 2 is a multiplier on ready-made locales:
 the interface is already translated [C004], competitors are absent [C007], and the payment model is
 annual plans without auto-renewals (Markus: €100–120/yr, categorically against monthly traps⁸).
@@ -118,8 +120,10 @@ tiers monetize convenience (hosted scan + pipeline) instead of text generation.
 Key directions:
 
 - Three tiers: Free (BYOK, 3 resumes/mo) / Pro $12 / Unlimited $29 — a ladder answering the three barriers of FAQ-2.
-- Pricing without auto-renewals, one-click cancel, discounted annual plan (the Markus segment).
-- A public Methodology page: ATS-scoring criteria are open.
+- Pricing without auto-renewals, one-click cancel, discounted annual plan (the Markus segment) —
+  the honest-pricing-as-differentiator hypothesis [C014] under test in the beta.
+- A public Methodology page: ATS-scoring criteria are open (transparency as trust against the
+  98%-ATS reality [C008]).
 
 Unit economics calculation (assumptions [C016]): CM = $29 × 0.75 = **$21.75**; LTV = $21.75 / 0.08 =
 **$271.88**; LTV/CAC = $271.88 / $60 = **4.53**; CAC payback = $60 / $21.75 = **2.8 months**;
@@ -161,7 +165,8 @@ Key directions:
 
 - Locale waves: EN (US/EU) → DE/ES/PT-BR → JA/ZH; the next wave opens only after the previous one's conversion is confirmed.
 - Local payment models: annual plans (the €100–120 segment [C018]) without auto-renewals.
-- OSS track: the MIT version keeps evolving in parallel; hosted is opt-in — "the cloud is a choice, not a requirement" [C019].
+- OSS track: the MIT version keeps evolving in parallel; hosted is opt-in — "the cloud is a choice,
+  not a requirement": the local-mode promise stays intact [C001][C019].
 
 **Conclusion (inference).** The three initiatives close the three barriers of FAQ-2 (price trust,
 result trust, language/privacy) and rely only on existing product assets — therefore the plan is
@@ -172,8 +177,8 @@ feasible by a solo developer within a 12-month horizon.
 | Strategic initiative | Focus | User's needs & desires | Solutions (tactics) |
 |---|---|---|---|
 | **Honest monetization** | BYOK-free launch | Try without a card or auto-charge; understand what they pay for | Free tier with a BYOK key (zero cost to us); 3 resumes/mo limit with an honest "what unlocks" upgrade screen |
-| | Pricing page | Price without fine print; fear of auto-charges | A tariff table with explicit price and term; one-click cancel; annual −20% |
-| | Launch positioning | "Why are you better than Jobscan at $49.95?" | The message "Open source. Local-first. Honest pricing."; a competitor price comparison table on the landing |
+| | Pricing page | Price without fine print; fear of auto-charges [C006] | A tariff table with explicit price and term; one-click cancel; annual −20% |
+| | Launch positioning | "Why are you better than Jobscan at $49.95?" [C002] | The message "Open source. Local-first. Honest pricing."; a competitor price comparison table on the landing |
 | **"Vacancy → resume" path** | Scan + scoring | Not wasting applications on irrelevant roles | A 129-board feed with 0.0–5.0 scoring and filters; deduplication |
 | | CV Studio | A JD-specific resume in minutes that passes ATS | JD tuning + humanize + ATS bullets; PDF/DOCX; open scoring methodology |
 | | Tracker | Not losing applications and follow-ups | Kanban + follow-up cadence + reminders; funnel statistics |
@@ -198,6 +203,8 @@ season**: the beta launches into the December lull so the January hiring peak is
 accumulated statistics; locale waves — into the next peak.
 
 Decision D001 [C019]: beta in 3 EN geos by 2026-12-15 · 90 days of observation · review 2027-02-10 ·
+continue branch: paid ≥ 40 by week 12 with activation ≥ 50% → scale channels, open the DE/ES/PT-BR
+wave · change branch: paid 20–40 → rebuild the tier/price ($19?), strengthen activation onboarding ·
 stop trigger: paid < 20 with activation < 35% → close the commercial branch, the project stays OSS.
 
 ## FAQ-6: Success metrics. KPIs for evaluating the strategy
@@ -231,7 +238,7 @@ specific red-team hit and has a pre-written action (06_validation_plan.md).
 
 1. WiseGuy Reports — Resume Builder Market; MarketSizeAndTrends — Resume Builder Market ($1.2–2.4B range) — [S006]
 2. SkyQuest — Online Recruitment Market $37.97B (2025) — [S007]
-3. Employ Inc. / Resume Now / Novoresume / Greenhouse — AI-usage surveys 31–74% — [S005]
+3. Employ Inc. / Resume Now / Novoresume / Greenhouse — AI-usage surveys 31–74%; Kickresume — 1.2M AI users in 2025 — [S005]
 4. Jobscan — 98% of Fortune 500 use ATS — [S007]
 5. Rezi/Kickresume/Teal/Enhancv/Zety/resume.io pricing pages; Kickresume — 6 UI languages — [S004]
 6. Product site and README, cvstart.org / career-ops-ui — [S001][S002]
