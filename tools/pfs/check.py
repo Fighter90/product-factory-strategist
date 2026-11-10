@@ -103,10 +103,11 @@ def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict])
             tnums = _numbers(s.get("title") or "")
             if tnums and cnums and not (set(tnums) & set(cnums)):
                 if set(cnums) & body:
-                    # числа подтверждены текстом источника — устарел заголовок
-                    out.append(f"{c['id']}/{sid}: числа заголовка источника ({_fmt(tnums)}) устарели "
-                               f"относительно утверждения ({_fmt(cnums)}) — число подтверждено текстом "
-                               f"sources/{sid}.md, обновите заголовок")
+                    # числа подтверждены текстом источника — заголовок может нести
+                    # другую метрику (кейс C004/S002: звёзды vs локали), это не устаревание
+                    out.append(f"{c['id']}/{sid}: числа заголовка источника ({_fmt(tnums)}) не совпадают "
+                               f"с числами утверждения ({_fmt(cnums)}); число подтверждено текстом "
+                               f"sources/{sid}.md — возможно, разные показатели")
                 else:
                     out.append(f"{c['id']}/{sid}: числа утверждения ({_fmt(cnums)}) не совпадают с числами "
                                f"заголовка источника ({_fmt(tnums)}) и отсутствуют в его тексте — "
