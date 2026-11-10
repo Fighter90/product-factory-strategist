@@ -131,6 +131,27 @@ class ScaffoldTests(unittest.TestCase):
         self.assertNotIn("arpu", cfg["unit_econ"]["_notes"])
         (self.pdir / "calcs.json").unlink()  # вернуть состояние после scaffold
 
+    def test_manual_provenance_preserved_on_rerun(self):
+        # _notes/_hints значений, уже заданных в calcs.json, не теряются при повторном scaffold
+        import json
+        (self.pdir / "calcs.json").write_text(json.dumps({
+            "unit_econ": {"arpu": 999, "_notes": {"arpu": "ручная правка [C099]"}},
+            "cohort": {"sizes": None, "_hints": {"sizes": "моё: перенесите из воронки 06"}},
+        }, ensure_ascii=False), encoding="utf-8")
+        self.addCleanup(lambda: (self.pdir / "calcs.json").unlink(missing_ok=True))
+        cfg, _, _ = calc.scaffold(self.pdir)
+        self.assertEqual(cfg["unit_econ"]["_notes"]["arpu"], "ручная правка [C099]")
+        self.assertEqual(cfg["cohort"]["_hints"]["sizes"], "моё: перенесите из воронки 06")
+        self.assertIn("[C003]", cfg["unit_econ"]["_notes"]["vc_share"])  # свежие находки рядом
+
+    def test_rerun_keeps_scaffold_notes(self):
+        # повторный запуск: значения, найденные прошлым запуском, не теряют свой C-тег
+        cfg1, _, _ = calc.scaffold(self.pdir)
+        self.assertIn("[C003]", cfg1["unit_econ"]["_notes"]["arpu"])
+        cfg2, _, _ = calc.scaffold(self.pdir)
+        self.assertIn("[C003]", cfg2["unit_econ"]["_notes"]["arpu"])
+        self.assertIn("[C009]", cfg2["market"]["_notes"]["pam"])
+
 
 class ScaffoldUntaggedTests(unittest.TestCase):
     def test_untagged_numbers_become_null(self):
@@ -206,6 +227,32 @@ class CorridorTests(unittest.TestCase):
         self.assertEqual(m["som_share"], 0.04)  # 3–5% → 4%
 
 
+class RetentionSpanTests(unittest.TestCase):
+    """Спан процентов в _retention ограничен: проценты из «M3 …» не уезжают в слот M1."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pdir = project.create("Scaffold спан удержания", "Вопрос?", slug="sc5")
+        make_docs(cls.pdir, {"06_validation_plan.md": """# 06 · План проверки
+
+## Критерии решения
+
+- Удержание M1 с 32% до 40%, M3 — 45% [C040].
+- Удержание M2 30%, удержание M4 50% [C041].
+"""})
+        cls.cfg, _, _ = calc.scaffold(cls.pdir)
+
+    def test_single_anchor_does_not_swallow_next_month_pct(self):
+        ret = self.cfg["cohort"]["retention"]
+        self.assertEqual(ret[1], 0.40)   # «с 32% до 40%» — целевое, не 45% из «M3 — 45%»
+        self.assertIsNone(ret[3])        # «M3» без якоря удержани*/retention* — слот не заполняется
+
+    def test_second_anchor_gets_own_span(self):
+        ret = self.cfg["cohort"]["retention"]
+        self.assertEqual(ret[2], 0.30)   # первый якорь — свой спан до «удержание M4»
+        self.assertEqual(ret[4], 0.50)
+
+
 class MergeAndParseTests(unittest.TestCase):
     def test_merge_skips_none_and_underscores(self):
         merged = calc._merge(calc.DEFAULTS["unit_econ"], {"arpu": None, "cac": 5, "_hints": {"x": "y"}})
@@ -228,8 +275,9 @@ class MergeAndParseTests(unittest.TestCase):
     def test_merge_sizes_longer_than_example_kept(self):
         merged = calc._merge(calc.DEFAULTS["cohort"], {"sizes": [10, 20, 30, 40, 50, 60, None, 80]})
         # позиции 0–5 в пределах примера сохранены; null в хвосте за пределами примера
-        # заполнить нечем (примера там нет) — он отбрасывается, книга собирается
-        self.assertEqual(merged["sizes"], [10, 20, 30, 40, 50, 60, 80])
+        # заполнить нечем (примера там нет) — список обрезается на нём: 80 не уезжает
+        # влево на позицию когорты 7 (позиции не сдвигаются)
+        self.assertEqual(merged["sizes"], [10, 20, 30, 40, 50, 60])
 
     def test_num_parses_spaces_and_comma(self):
         self.assertEqual(calc._num("1 200"), 1200)

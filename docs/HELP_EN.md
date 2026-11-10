@@ -212,10 +212,11 @@ by `pfs calc scaffold` (manual filling — only the null fields):
 ```
 Anything missing falls back to the example in `tools/pfs/calc.py: DEFAULTS` marked "EXAMPLE"
 (null fields from the skeleton too). Number ranges ("60–70%") are taken as the midpoint by the
-skeleton; a null inside lists (sizes/retention) is filled from the example at its own position
-when the workbook is built — positions never shift. Trace every value to C###/S###: the source lives in the
-registry, the link goes into `note`; numbers found by the scaffold carry their tag in the
-section's `_notes`.
+skeleton; a null inside lists (sizes/retention) is filled from the example at its own position,
+while a null in the tail beyond the example truncates the list right there — positions never
+shift, cohort 8's size never becomes cohort 7's. Trace every value to C###/S###: the source lives
+in the registry, the link goes into `note`; numbers found by the scaffold carry their tag in the
+section's `_notes`, and a re-run preserves `_notes`/`_hints` of values already set.
 
 ### Reports
 ```bash

@@ -340,17 +340,30 @@ def _econ_lines(lines: list[str]) -> list[str]:
 
 
 def _retention(docs: dict[str, list[str]]) -> tuple[list, str] | None:
-    """Цели удержания из 06: «удержание M1 с 32% до 40%» → слот M1 = 0,4."""
+    """Цели удержания из 06: «удержание M1 с 32% до 40%» → слот M1 = 0,4.
+    Спан процентов ограничен ближайшей границей — следующий якорь, следующая
+    ссылка на месяц (M<н>) или C/S-тег: иначе «удержание M1 …, M3 45%»
+    записало бы 45% в слот M1."""
     slots: dict[int, float] = {}
     notes: list[str] = []
     for name in ("06_validation_plan.md", "04_product_strategy.md"):
         for line in docs.get(name) or []:
-            for m in RET_ANCHOR.finditer(line):
+            anchors = list(RET_ANCHOR.finditer(line))
+            for i, m in enumerate(anchors):
                 mi = int(m.group("m"))
                 if not 0 <= mi < MONTHS:
                     continue
-                rest = line[m.end():].split("[")[0]
-                pcts = RET_PCT.findall(rest)
+                rest = line[m.end():]
+                cuts = [len(rest)]
+                if i + 1 < len(anchors):  # следующий якорь удержани*/retention*
+                    cuts.append(max(0, anchors[i + 1].start() - m.end()))
+                mref = re.search(r"M\s*\d", rest)  # ссылка на другой месяц в этой же строке
+                if mref:
+                    cuts.append(mref.start())
+                br = rest.find("[")  # C/S-тег и прочее в скобках — за границей спана
+                if br >= 0:
+                    cuts.append(br)
+                pcts = RET_PCT.findall(rest[:min(cuts)])
                 if not pcts:
                     continue
                 val = _num(pcts[-1])  # «с 32% до 40%» — берём целевое
@@ -370,7 +383,9 @@ def _retention(docs: dict[str, list[str]]) -> tuple[list, str] | None:
 
 def _merge(base: dict, cfg: dict | None) -> dict:
     """Слияние примера и секции calcs.json: null и _-ключи не ломают книги.
-    В списках null заполняется примером на своей позиции — порядок не сдвигается."""
+    В списках null заполняется примером на своей позиции; null в хвосте за
+    пределами примера заполнить нечем — список обрезается на нём, позиции
+    никогда не сдвигаются (размер когорты 8 не становится размером когорты 7)."""
     out = dict(base)
     for k, v in (cfg or {}).items():
         if k.startswith("_") or v is None:
@@ -383,7 +398,10 @@ def _merge(base: dict, cfg: dict | None) -> dict:
             else:
                 merged = [(base_list[i] if i < len(base_list) and x is None else x)
                           for i, x in enumerate(v)]
-                merged = [x for x in merged if x is not None]  # хвост за пределами примера
+                for i, x in enumerate(merged):
+                    if x is None:  # null за пределами примера — обрезаем здесь, не сдвигая хвост
+                        merged = merged[:i]
+                        break
                 out[k] = merged if merged else base_list
         else:
             out[k] = v
@@ -400,7 +418,8 @@ def scaffold_stats(cfg: dict) -> tuple[int, int]:
 
 def scaffold(pdir: Path) -> tuple[dict, int, int]:
     """Каркас calcs.json из 02/04/06/07: найденные числа — с C/S-тегом в _notes,
-    ненайденные — null + подсказка в _hints. Заданные вручную значения не трогает."""
+    ненайденные — null + подсказка в _hints. Заданные вручную значения не трогает,
+    их _notes/_hints сохраняет."""
     docs: dict[str, list[str]] = {}
     for name in DOCS:
         p = pdir / "outputs" / name
@@ -410,8 +429,11 @@ def scaffold(pdir: Path) -> tuple[dict, int, int]:
 
     cfg: dict[str, dict] = {}
     for section in ("unit_econ", "growth", "cohort", "market"):
-        old = {k: v for k, v in (existing.get(section) or {}).items() if not k.startswith("_")}
+        old_sec = existing.get(section) or {}
+        old = {k: v for k, v in old_sec.items() if not k.startswith("_")}
         sec: dict = {k: v for k, v in old.items() if v is not None}
+        old_notes: dict = old_sec.get("_notes") or {}
+        old_hints: dict = old_sec.get("_hints") or {}
         notes: dict[str, str] = {}
         hints: dict[str, str] = {}
         for spec in PARAM_SPECS[section]:
@@ -456,10 +478,13 @@ def scaffold(pdir: Path) -> tuple[dict, int, int]:
         if section == "unit_econ" and "note" not in sec:
             sec["note"] = ("каркас pfs calc scaffold из 02/04/06/07: найденные числа — с тегом в _notes; "
                            "null — заполните вручную, недостающее подставится примером с пометкой «ПРИМЕР»")
-        if notes:
-            sec["_notes"] = notes
-        if hints:
-            sec["_hints"] = hints
+        if notes or old_notes:  # provenance ручных и прошлых значений переживает повторный запуск
+            kept = {k: v for k, v in old_notes.items()
+                    if k in sec and k not in notes and sec.get(k) is not None}
+            sec["_notes"] = {**kept, **notes}
+        if hints or old_hints:  # пользовательскую подсказку всё ещё-null ключа не перетираем
+            sec["_hints"] = {**hints,
+                             **{k: v for k, v in old_hints.items() if k in sec and sec.get(k) is None}}
         cfg[section] = sec
     for k, v in existing.items():  # пользовательские секции не теряем
         if k not in cfg and not k.startswith("_"):
