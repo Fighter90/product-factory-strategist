@@ -40,7 +40,7 @@ python3 -m tools.pfs doctor                    # environment check
 python3 -m unittest discover -s tests          # self-check (260 tests)
 ```
 
-`doctor` reports Python version, pdftotext/pypdf availability, number of knowledge cards, active project.
+`doctor` reports install mode (editable/venv/source), package version, `pfs` path (which), PATH health, projects dir location, Python version, pdftotext/pypdf availability, number of knowledge cards, active project.
 CLI needs no API keys. Keys (e.g., Linear API) go into `.env` — it is git-ignored.
 
 ---
