@@ -307,7 +307,7 @@ _EN: dict[str, str] = {
         "SIX_PAGER_PROMPT.md` (growth-strategy reference format: FAQ-1…6 with numbered "
         "sub-items, a tactics matrix, KPI in two planes). Tags [C###]/[S###] mark where "
         "numbers come from; source footnotes are at the end. Skeleton only: sections sourced "
-        "from documents 00–07 stay in their original language — full translation per the spec.",
+        "verbatim from documents 00–07 are marked [RU source — translate] for the translator.",
     "**Запрос:** {q}": "**Request:** {q}",
     "## FAQ-1. Анализ текущего состояния": "## FAQ-1. Current state analysis",
     "### 1.1 Обзор рынка: тренды, вызовы и возможности":
@@ -454,6 +454,18 @@ _EN: dict[str, str] = {
 def _t(s: str, lang: str = "ru") -> str:
     """Строка скелета six-pager: RU как есть, EN — из словаря _EN (нет записи — RU как есть)."""
     return _EN.get(s, s) if lang == "en" else s
+
+
+RU_SOURCE = "[RU source — translate]"
+
+
+def _mark_ru(text: str | None, lang: str, fname: str) -> str | None:
+    """EN-каркас: секция, вставленная из документа 00–07 дословно, помечается маркером
+    «[RU source — translate]» (переводит агент, не CLI); RU-версия и заглушки-скелет
+    без маркера. Маркер идёт строкой-цитатой ПЕРЕД контентом с именем файла-источника."""
+    if lang != "en" or not text:
+        return text
+    return f"> {RU_SOURCE} {fname}\n\n{text}"
 
 
 def _unit_econ_block(pdir: Path, lang: str = "ru") -> str | None:
@@ -634,7 +646,8 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
     на 2 уровня; секции, уже попавшие в вывод через _grab, повторно не вставляются;
     резка — только по границам секций. Сноски-источники — полный список sources.jsonl.
     lang="en" — EN-черновик: скелет инструмента на английском (_EN), содержимое
-    документов 00–07 остаётся как написано → outputs/SIX_PAGER_EN.md.
+    документов 00–07 вставляется дословно с пометкой «[RU source — translate]»
+    (переводит агент, не CLI) → outputs/SIX_PAGER_EN.md.
     Спецификация детализации: knowledge/templates/SIX_PAGER_PROMPT.md."""
     if with_calcs:
         calc.run(pdir, "all")
@@ -651,14 +664,15 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
     def grab(fname: str, sections: tuple[str, ...], cap: int = 6000, require_section: bool = False):
         return _grab(pdir, fname, sections, cap, require_section, reg)
 
-    faq1 = grab("02_situation.md", ("Короткий ответ", "Что известно", "Рынок", "Тренды",
-                                    "Противоречия", "Чего не знаем"), 8000)
+    faq1 = _mark_ru(grab("02_situation.md", ("Короткий ответ", "Что известно", "Рынок", "Тренды",
+                                             "Противоречия", "Чего не знаем"), 8000), lang, "02_situation.md")
     parts += [_t("## FAQ-1. Анализ текущего состояния", lang), "",
               _t("### 1.1 Обзор рынка: тренды, вызовы и возможности", lang), "",
               faq1 or _t("> Раздел появится после шага «situation» (02_situation.md): объём и динамика "
                          "рынка диапазонами, ключевые тренды буллетами с жирными заголовками.", lang), "",
               _t("### 1.2 Ключевые конкуренты и анализ их стратегий роста и промо-механик", lang), "",
-              grab("02_situation.md", ("Конкуренты", "Конкурентный анализ"), 3000, True)
+              _mark_ru(grab("02_situation.md", ("Конкуренты", "Конкурентный анализ"), 3000, True),
+                       lang, "02_situation.md")
               or _t("Сравнительная таблица групп конкурентов (заполните после конкурентного анализа):", lang), "",
               _t("| | Группа 1 | Группа 2 | Группа 3 |", lang),
               "|---|---|---|---|",
@@ -667,8 +681,11 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
               _t("| **Риски для компании** | … — Высокий/Средний/Низкий | … | … |", lang), "",
               _t("> **Вывод (умозаключение):** окно возможностей и его срок — заполните по данным 1.1–1.2.", lang), ""]
     faq2 = grab("02_situation.md", ("Сегменты", "Персоны", "Аудитория"), 3000)
+    faq2_src = "02_situation.md"
     if not faq2 or len(faq2) < 120:
         faq2 = grab("04_product_strategy.md", ("Аудитория",), 3000)
+        faq2_src = "04_product_strategy.md"
+    faq2 = _mark_ru(faq2, lang, faq2_src)
     parts += [_t("## FAQ-2. User Persona. Кто является целевой аудиторией?", lang), "",
               _t("### 2.1 Сегменты", lang), "",
               faq2 or _t("> Добавьте сегменты/персоны в 02_situation.md.", lang), "",
@@ -692,7 +709,7 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
               _t("| Сегмент 1 | … | … |", lang), "",
               _t("> **Вывод (умозаключение):** сегментация по барьеру входа; лестница тиров "
                  "обслуживает все барьеры; приоритизация — по ёмкости/CAC/конкуренции (расчёт — выше).", lang), ""]
-    doc03 = _insert_doc(pdir, "03_options.md", reg=reg)
+    doc03 = _mark_ru(_insert_doc(pdir, "03_options.md", reg=reg), lang, "03_options.md")
     parts += [_t("## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.", lang), "",
               doc03 or _t("> Раздел появится после шага «options» (03_options.md).", lang), "",
               _t("### Инициативы выбранного направления (драйверы)", lang), "",
@@ -702,7 +719,7 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
     ue = _unit_econ_block(pdir, lang)
     if ue:
         parts += [_t("Юнит-экономика — расчёт пошагово:", lang), "", ue, ""]
-    doc04 = _insert_doc(pdir, "04_product_strategy.md", reg=reg)
+    doc04 = _mark_ru(_insert_doc(pdir, "04_product_strategy.md", reg=reg), lang, "04_product_strategy.md")
     matrix = _tactics_matrix(pdir, lang)
     parts += [_t("## FAQ-4. Тактики. Детализируйте каждую инициативу до конкретных тактик.", lang), "",
               doc04 or _t("> Добавьте тактики по каждой инициативе в 04_product_strategy.md.", lang), ""]
@@ -714,7 +731,7 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
                   "|---|---|---|---|",
                   _t("| Инициатива 1 | … | … | … |", lang),
                   _t("| Инициатива 2 | … | … | … |", lang), ""]
-    doc06 = _insert_doc(pdir, "06_validation_plan.md", reg=reg)
+    doc06 = _mark_ru(_insert_doc(pdir, "06_validation_plan.md", reg=reg), lang, "06_validation_plan.md")
     parts += [_t("## FAQ-5. Высокоуровневый план реализации", lang), "",
               doc06 or _t("> Раздел появится после шага «validation» (06_validation_plan.md).", lang), "",
               _t("Ожидаемое распределение вклада инициатив в общий результат (сумма 100%):", lang), "",
@@ -726,8 +743,12 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
     dec = _decision_block(pdir, lang)
     if dec:
         parts += [dec, ""]
-    faq6 = grab("04_product_strategy.md", ("Метрики", "Показатели"), 3000) \
-        or grab("06_validation_plan.md", ("Ожидаемое изменение", "Критерии решения"), 3000)
+    faq6 = grab("04_product_strategy.md", ("Метрики", "Показатели"), 3000)
+    faq6_src = "04_product_strategy.md"
+    if not faq6:
+        faq6 = grab("06_validation_plan.md", ("Ожидаемое изменение", "Критерии решения"), 3000)
+        faq6_src = "06_validation_plan.md"
+    faq6 = _mark_ru(faq6, lang, faq6_src)
     kpi = _kpi_table(pdir, lang)
     parts += [_t("## FAQ-6. Метрики успеха. KPI в двух плоскостях", lang), ""]
     if faq6:

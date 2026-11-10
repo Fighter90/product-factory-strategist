@@ -31,6 +31,23 @@ def _section_body(text: str, name: str) -> str:
     return "\n".join(out)
 
 
+def en_sync_warnings(pdir: Path) -> list[str]:
+    """Сверка тегов RU↔EN: обе версии six-pager собраны, но в RU появились теги
+    (C###/S###/D###), которых в EN ещё нет — EN-каркас отстал от RU (типовой случай:
+    драйверы добавили в 03/04 после сборки EN) и подлежит пересборке. EN нет или
+    теги совпадают — предупреждений нет (EN-черновик опционален)."""
+    ru, en = pdir / "outputs" / "SIX_PAGER.md", pdir / "outputs" / "SIX_PAGER_EN.md"
+    if not (ru.exists() and en.exists()):
+        return []
+    missing = sorted(set(TAG.findall(ru.read_text(encoding="utf-8")))
+                     - set(TAG.findall(en.read_text(encoding="utf-8"))),
+                     key=lambda t: (t[0], int(t[1:])))
+    if not missing:
+        return []
+    return [f"SIX_PAGER_EN.md отстал от RU: нет тегов {', '.join(missing)} — "
+            "пересоберите пару: pfs export --six-pager --en"]
+
+
 def run(pdir: Path) -> dict:
     cfg = core.read_json(core.CONFIG / "quality_gate.json", {})
     errors: list[str] = []
@@ -115,6 +132,8 @@ def run(pdir: Path) -> dict:
     # 3. Гэп-трекинг: пробел закрыт в 02, но строка 01 всё ещё «открыт»
     for w in gaps.sync_warnings(pdir):
         warnings.append(w)
+    # 4. Сверка тегов RU↔EN: EN-каркас six-pager отстал от RU после правок документов
+    warnings.extend(en_sync_warnings(pdir))
     score = max(0, 100 - 10 * len(errors) - 2 * len(warnings))
     return {"errors": errors, "warnings": warnings, "passed": passed, "score": score}
 

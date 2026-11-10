@@ -230,10 +230,13 @@ pfs finish                      # финальный пакет одной це�
                                 # сборку останавливает любая ошибка check (как pfs check --strict); повторный вызов идемпотентен
 pfs finish --no-deck            # то же без HTML-деки
 pfs finish --en                 # + EN-черновик six-pager: SIX_PAGER_EN.md + DOCX (скелет на английском,
-                                # содержимое документов остаётся как написано — перевод по спецификации делает агент)
+                                # секции из документов — с пометкой «[RU source — translate]»; check сверяет
+                                # теги RU↔EN и предупреждает, если EN отстал от RU)
 pfs export                     # REPORT.md: все документы + приложения A–E
                                # снимок реестра в outputs/.export_state.json; если claims/sources/Excel изменились после сборки — ⚠ при `pfs status` и при следующем экспорте
 pfs export --six-pager         # SIX_PAGER.md в формате референса (подпункты, матрица тактик, KPI, сноски) + пересборка Excel
+pfs export --six-pager --en    # + EN-каркас: SIX_PAGER_EN.md — те же структура/числа/теги, скелет на английском,
+                               # секции из документов с пометкой «[RU source — translate]» (перевод — работа агента)
 pfs export --six-pager --no-calcs   # пересобрать текст без перегенерации книг
 pfs export --deck                   # HTML-дека 16:9 из SIX_PAGER.md
 pfs docx <файл.md> [--out]     # Markdown → Word без зависимостей (путь: каталог проекта → cwd)
