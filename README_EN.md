@@ -255,6 +255,7 @@ Higgsfield visuals, Lovable web version).
 | `pfs source refresh S###` | refresh a web source: sha256 delta, backup, impact |
 | `pfs claim add/list/supersede/retract/rebase [--kind --source --from --grade]` | claims C### |
 | `pfs check [--strict --json] · pfs impact C###` | quality and change impact |
+| `pfs review lock` | lock the review verdict; registry edits after the lock → "verdict stale" in check/status/export |
 | `pfs decision add/list/due/done/status/rebase` | decisions and monitoring |
 | `pfs data profile/cohort <csv> [--save]` | table profile, cohorts |
 | `pfs data funnel/stats <csv>` | funnel over events/columns; stats with 95% CI |

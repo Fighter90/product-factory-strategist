@@ -317,6 +317,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 | `pfs source refresh S###` | обновить web-источник: sha256-дельта, бэкап, impact |
 | `pfs claim add/list/supersede/retract/rebase [--kind --source --from --grade]` | реестр C### |
 | `pfs check [--strict --json] · pfs impact C###` | качество и влияние изменений |
+| `pfs review lock` | lock вердикта review; правки реестра после lock → «вердикт review устарел» в check/status/export |
 | `pfs decision add/list/due/done/status/rebase` | решения и мониторинг |
 | `pfs data profile/cohort <csv> [--save]` | профиль таблиц, когорты |
 | `pfs data funnel/stats <csv>` | воронка по событиям/колонкам; статистика с ДИ 95% |

@@ -149,8 +149,9 @@ def status_text(pdir: Path, brief: bool = False) -> str:
         by_kind[c["kind"]] = by_kind.get(c["kind"], 0) + 1
     decs = core.read_jsonl(pdir / "decisions.jsonl")
     lines.append(f"Источники: {len(srcs)} | Утверждения: {len(active)} {by_kind} | Решения: {len(decs)}")
-    from . import export as export_mod
+    from . import export as export_mod, review as review_mod
     lines += export_mod.freshness_warnings(pdir)
+    lines += review_mod.stale_warnings(pdir)  # PRO-27: вердикт review устарел после правок реестра
     total = cost_mod.summary(pdir)
     lines.append(f"Стоимость: ${total['usd']:.2f} (~{total['rub']:.0f} ₽), токенов {total['tokens']:,}".replace(",", " "))
     if not brief:

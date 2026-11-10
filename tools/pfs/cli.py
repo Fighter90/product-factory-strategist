@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 from . import (calc, check, claims, core, cost, data, decisions, docx, export, finish, gaps, impact,
-               kb, models, participate, project, route, sources)
+               kb, models, participate, project, review, route, sources)
 from .core import PfsError
 
 
@@ -187,6 +187,15 @@ def cmd_check(a):
         sys.exit(1)
 
 
+def cmd_review(a):
+    snap = review.lock(_p(a))
+    docs = sum(1 for sha in snap["documents"].values() if sha)
+    print(f"Вердикт review зафиксирован: снимок реестра в outputs/{review.STATE} "
+          f"(claims, sources, документов на месте: {docs}/8). Правки реестра после lock "
+          "будут помечены «вердикт review устарел» в check/status/export — "
+          "после повторной ревизии зафиксируйте снова: pfs review lock.")
+
+
 def cmd_impact(a):
     print(impact.impact_text(impact.impact(_p(a), a.id)))
 
@@ -343,7 +352,7 @@ def cmd_models(a):
 
 def cmd_export(a):
     pdir = _p(a)
-    for w in export.freshness_warnings(pdir):  # снимок сравнивается ДО сборки: предыдущий отчёт устарел
+    for w in export.freshness_warnings(pdir) + review.stale_warnings(pdir):  # снимки сравниваются ДО сборки
         print(w)
     if a.deck:
         print(f"Дека: {export.build_deck(_p(a))}")
@@ -458,6 +467,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = sp.add_parser("check", help="контроль качества"); s.add_argument("--json", action="store_true")
     s.add_argument("--strict", action="store_true"); s.set_defaults(f=cmd_check)
+    s = sp.add_parser("review", help="lock вердикта review: снимок реестра после ревизии (PRO-27)")
+    s.add_argument("action", choices=["lock"],
+                   help="lock — sha256 claims/sources и документов 00–07 в outputs/.review_state.json; "
+                        "правки реестра после lock дают «⚠ вердикт review устарел» в check/status/export; "
+                        "повторный lock после ревизии снимает предупреждение")
+    s.set_defaults(f=cmd_review)
     s = sp.add_parser("impact", help="что затронет изменение"); s.add_argument("id"); s.set_defaults(f=cmd_impact)
 
     s = sp.add_parser("decision", help="решения"); s.add_argument("action", choices=["add", "list", "due", "done", "status", "rebase"])
