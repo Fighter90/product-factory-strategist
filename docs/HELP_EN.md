@@ -211,7 +211,9 @@ by `pfs calc scaffold` (manual filling — only the null fields):
 }
 ```
 Anything missing falls back to the example in `tools/pfs/calc.py: DEFAULTS` marked "EXAMPLE"
-(null fields from the skeleton too). Trace every value to C###/S###: the source lives in the
+(null fields from the skeleton too). Number ranges ("60–70%") are taken as the midpoint by the
+skeleton; a null inside lists (sizes/retention) is filled from the example at its own position
+when the workbook is built — positions never shift. Trace every value to C###/S###: the source lives in the
 registry, the link goes into `note`; numbers found by the scaffold carry their tag in the
 section's `_notes`.
 

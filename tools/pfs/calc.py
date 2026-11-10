@@ -203,7 +203,7 @@ DOCS = ("02_situation.md", "04_product_strategy.md", "06_validation_plan.md", "0
 ECON_HEADING = re.compile(r"^#{1,6}\s+.*эконом", re.IGNORECASE)
 NUMTOK = r"\d[\d\u00a0\u202f ]*(?:[.,]\d+)?"
 TAG_RE = re.compile(r"\[(C|S)(\d{1,4})\]")
-RET_ANCHOR = re.compile(r"(?:удержание\w*|retention\w*)[^%\d\[]{0,12}M\s*(?P<m>\d{1,2})", re.IGNORECASE)
+RET_ANCHOR = re.compile(r"(?:удержани\w*|retention\w*)[^%\d\[]{0,12}M\s*(?P<m>\d{1,2})", re.IGNORECASE)
 RET_PCT = re.compile(rf"({NUMTOK})\s*%")
 MULT = {"млрд": 1e9, "млн": 1e6, "тысяч": 1e3, "тыс": 1e3}
 
@@ -217,17 +217,17 @@ PARAM_SPECS: dict[str, list[dict]] = {
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
              hint="ARPU с C-тегом из «Экономики» 04, напр.: «ARPU 350 ₽/мес [C001]»"),
         dict(key="vc_share", pct=True,
-             re=[rf"(?:переменн\w*|себестоимост\w*|\bVC\b)[^%\d\[]{{0,40}}(?P<n>{NUMTOK})\s*(?P<u>%)"],
+             re=[rf"(?:переменн\w*|себестоимост\w*|\bVC\b)[^%\d\[]{{0,40}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="доля переменных затрат, % — «переменные затраты 25% [C001]»"),
+             hint="доля переменных затрат, % — «переменные затраты 25% [C001]»; коридор → середина"),
         dict(key="cac", pct=False,
              re=[rf"\bCAC\b[^%\d\[]{{0,12}}(?P<n>{NUMTOK})\s*(?=₽|\$|руб)"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
              hint="CAC с валютой — «CAC 700 ₽ [C001]»; LTV/CAC и окупаемость CAC не подходят"),
         dict(key="churn_month", pct=True,
-             re=[rf"(?:churn|отток\w*)[^%\d\[]{{0,30}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"(?:churn|отток\w*)[^%\d\[]{{0,30}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="отток в месяц, % — «churn 8%/мес [C001]» или из критериев 06"),
+             hint="отток в месяц, % — «churn 8%/мес [C001]» или из критериев 06; коридор → середина"),
     ],
     "growth": [
         dict(key="mau_start", pct=False,
@@ -235,9 +235,9 @@ PARAM_SPECS: dict[str, list[dict]] = {
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
              hint="MAU на старте — «MAU на старте 50 000 [C001]»"),
         dict(key="mau_growth_month", pct=True,
-             re=[rf"(?:рост\w*[^%\d\[]{{0,20}}\bMAU\b|\bMAU\b[^%\d\[]{{0,20}}рост\w*)[^%\d\[]{{0,20}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"(?:рост\w*[^%\d\[]{{0,20}}\bMAU\b|\bMAU\b[^%\d\[]{{0,20}}рост\w*)[^%\d\[]{{0,20}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="рост MAU, %/мес — «рост MAU 8%/мес [C001]»"),
+             hint="рост MAU, %/мес — «рост MAU 8%/мес [C001]»; коридор → середина"),
         dict(key="conv_order", pct=True,
              re=[rf"конверс\w*[^%\d\[]{{0,60}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,8}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
@@ -251,13 +251,13 @@ PARAM_SPECS: dict[str, list[dict]] = {
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
              hint="средний чек с валютой — «средний чек 1 200 ₽ [C001]»"),
         dict(key="take_rate", pct=True,
-             re=[rf"(?:take\s*rate|комисси\w+[^%\d\[]{{0,15}}платформ\w*)[^%\d\[]{{0,25}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"(?:take\s*rate|комисси\w+[^%\d\[]{{0,15}}платформ\w*)[^%\d\[]{{0,25}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="take rate платформы, % — «take rate 12% [C001]»"),
+             hint="take rate платформы, % — «take rate 12% [C001]»; коридор → середина"),
         dict(key="margin", pct=True,
-             re=[rf"марж\w*[^%\d\[]{{0,40}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"марж\w*[^%\d\[]{{0,40}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("04_product_strategy.md", True), ("06_validation_plan.md", False)],
-             hint="валовая маржа, % — «валовая маржа 70% [C001]»"),
+             hint="валовая маржа, % — «валовая маржа 70% [C001]»; коридор → середина"),
     ],
     "cohort": [
         dict(key="sizes", pct=False, re=[], docs=[],
@@ -271,17 +271,17 @@ PARAM_SPECS: dict[str, list[dict]] = {
              docs=[("02_situation.md", False), ("07_quality_review.md", False)],
              hint="рынок-родитель (PAM) — «рынок — 1,2–2,4 млрд ₽/год [S001]»; коридор → середина"),
         dict(key="tam_share", pct=True,
-             re=[rf"\bTAM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"\bTAM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("02_situation.md", False), ("07_quality_review.md", False)],
-             hint="доля TAM от PAM, % — «TAM 60% [C001]»"),
+             hint="доля TAM от PAM, % — «TAM 60% [C001]»; коридор → середина"),
         dict(key="sam_share", pct=True,
-             re=[rf"\bSAM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"\bSAM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("02_situation.md", False), ("07_quality_review.md", False)],
-             hint="доля SAM от TAM, % — «SAM 40% [C001]»"),
+             hint="доля SAM от TAM, % — «SAM 40% [C001]»; коридор → середина"),
         dict(key="som_share", pct=True,
-             re=[rf"\bSOM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK})\s*(?P<u>%)?"],
+             re=[rf"\bSOM\b[^%\d\[]{{0,40}}(?P<n>{NUMTOK}(?:[^%\d\[]{{0,4}}{NUMTOK})?)\s*(?P<u>%)?"],
              docs=[("02_situation.md", False), ("07_quality_review.md", False)],
-             hint="доля SOM от SAM, % — «SOM 5% [C001]»"),
+             hint="доля SOM от SAM, % — «SOM 5% [C001]»; коридор → середина"),
     ],
 }
 
@@ -369,7 +369,8 @@ def _retention(docs: dict[str, list[str]]) -> tuple[list, str] | None:
 
 
 def _merge(base: dict, cfg: dict | None) -> dict:
-    """Слияние примера и секции calcs.json: null и _-ключи не ломают книги."""
+    """Слияние примера и секции calcs.json: null и _-ключи не ломают книги.
+    В списках null заполняется примером на своей позиции — порядок не сдвигается."""
     out = dict(base)
     for k, v in (cfg or {}).items():
         if k.startswith("_") or v is None:
@@ -380,8 +381,10 @@ def _merge(base: dict, cfg: dict | None) -> dict:
                 out[k] = [(v[i] if i < len(v) and v[i] is not None else base_list[i])
                           for i in range(len(base_list))]
             else:
-                cleaned = [x for x in v if x is not None]
-                out[k] = cleaned if cleaned else base_list
+                merged = [(base_list[i] if i < len(base_list) and x is None else x)
+                          for i, x in enumerate(v)]
+                merged = [x for x in merged if x is not None]  # хвост за пределами примера
+                out[k] = merged if merged else base_list
         else:
             out[k] = v
     return out

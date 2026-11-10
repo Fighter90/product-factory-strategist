@@ -144,6 +144,68 @@ class ScaffoldUntaggedTests(unittest.TestCase):
         self.assertEqual(found, 0)
 
 
+class RetentionGenitiveTests(unittest.TestCase):
+    """Склонённые формы «удержания/удержанию/удержании» тоже заполняют слоты M."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pdir = project.create("Scaffold удержание склонения", "Вопрос?", slug="sc3")
+        make_docs(cls.pdir, {"06_validation_plan.md": """# 06 · План проверки
+
+## Критерии решения
+
+- Цель удержания M3 — не ниже 35% [C022].
+- По удержанию M6 — не ниже 25% [C023].
+- Об удержании M9 — 20% [C024].
+"""})
+        cls.cfg, _, _ = calc.scaffold(cls.pdir)
+
+    def test_genitive_dative_prepositional_fill_slots(self):
+        ret = self.cfg["cohort"]["retention"]
+        self.assertEqual(ret[3], 0.35)   # «удержания M3»
+        self.assertEqual(ret[6], 0.25)   # «удержанию M6»
+        self.assertEqual(ret[9], 0.20)   # «удержании M9»
+        self.assertIn("[C022]", self.cfg["cohort"]["_notes"]["retention"])
+
+
+class CorridorTests(unittest.TestCase):
+    """Коридор «60–70%» → середина для всех долевых параметров, не только pam/conv_order."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pdir = project.create("Scaffold коридоры", "Вопрос?", slug="sc4")
+        make_docs(cls.pdir, {
+            "04_product_strategy.md": """# 04 · Продуктовая стратегия
+
+## Экономика
+
+- MAU на старте 20 000 [C018]; рост MAU 3–5%/мес [C019].
+- Переменные затраты 20–25% [C020]; churn платящих 6–8%/мес [C021].
+- Take rate платформы 10–12% [C022]; валовая маржа 60–70% [C023].
+""",
+            "02_situation.md": """# 02 · Ситуация
+
+## Размер рынка
+
+- TAM 60–70% от PAM [C024]; SAM 30–40% [C025]; SOM 3–5% от SAM за 3 года [C026].
+"""})
+        cls.cfg, _, _ = calc.scaffold(cls.pdir)
+
+    def test_growth_corridors_take_midpoint(self):
+        g = self.cfg["growth"]
+        self.assertEqual(g["mau_growth_month"], 0.04)  # 3–5% → 4%
+        self.assertEqual(self.cfg["unit_econ"]["vc_share"], 0.225)    # 20–25% → 22,5%
+        self.assertEqual(self.cfg["unit_econ"]["churn_month"], 0.07)  # 6–8% → 7%
+        self.assertEqual(g["take_rate"], 0.11)   # 10–12% → 11%
+        self.assertEqual(g["margin"], 0.65)      # 60–70% → 65%
+
+    def test_market_share_corridors_take_midpoint(self):
+        m = self.cfg["market"]
+        self.assertEqual(m["tam_share"], 0.65)  # 60–70% → 65%
+        self.assertEqual(m["sam_share"], 0.35)  # 30–40% → 35%
+        self.assertEqual(m["som_share"], 0.04)  # 3–5% → 4%
+
+
 class MergeAndParseTests(unittest.TestCase):
     def test_merge_skips_none_and_underscores(self):
         merged = calc._merge(calc.DEFAULTS["unit_econ"], {"arpu": None, "cac": 5, "_hints": {"x": "y"}})
@@ -156,7 +218,18 @@ class MergeAndParseTests(unittest.TestCase):
         self.assertEqual(merged["retention"][0], 1.0)  # пропущенный слот → пример
         self.assertEqual(merged["retention"][1], 0.5)  # найденный — на своём месте
         self.assertEqual(merged["retention"][2], 0.42)
-        self.assertEqual(merged["sizes"], [10, 30])
+        self.assertEqual(merged["sizes"], [10, 6000, 30])  # null → пример на своей позиции, порядок не сдвигается
+        wb = calc.cohort(merged)  # книга собирается, когорты не теряются и не сдвигаются
+        size_rows = [r[0] for r in wb.sheets[0].rows if str(r[0]).startswith("Размер когорты")]
+        self.assertEqual(size_rows, ["Размер когорты 1 (вход в M0)",
+                                     "Размер когорты 2 (вход в M1)",
+                                     "Размер когорты 3 (вход в M2)"])
+
+    def test_merge_sizes_longer_than_example_kept(self):
+        merged = calc._merge(calc.DEFAULTS["cohort"], {"sizes": [10, 20, 30, 40, 50, 60, None, 80]})
+        # позиции 0–5 в пределах примера сохранены; null в хвосте за пределами примера
+        # заполнить нечем (примера там нет) — он отбрасывается, книга собирается
+        self.assertEqual(merged["sizes"], [10, 20, 30, 40, 50, 60, 80])
 
     def test_num_parses_spaces_and_comma(self):
         self.assertEqual(calc._num("1 200"), 1200)
