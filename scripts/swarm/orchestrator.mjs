@@ -206,7 +206,7 @@ async function main() {
       if (DRY) { log('dry-run: would claim → develop → gates → review → document → release → prod-QA → Done.'); break; }
 
       const branch = `swarm/${issue.identifier.toLowerCase()}`;
-      let accepted = null, devStatus = null, devSummary = '', story = null, mergedDone = false;
+      let accepted = null, devStatus = null, devSummary = '', story = null, mergedDone = false, gatesLine = '?';
 
       try {
         await claimIssue(issue);
@@ -274,7 +274,8 @@ async function main() {
             devStatus = 'gates-failed';
             break;
           }
-          log(`  gates green (${passLine || '?'} tests OK)`);
+          gatesLine = `${passLine || "?"} tests OK`;
+          log(`  gates green (${passLine || "?"} tests OK)`);
 
           log(`-- round ${round + 1}: review`);
           const diff = await sh(`git diff origin/main...HEAD`);
@@ -387,7 +388,7 @@ async function main() {
         if (prodOk !== 4) throw new Error(`prod QA: страниц 200 = ${prodOk}/4`);
         log(`  prod QA: 4/4 страниц 200`);
 
-        const evidence = `**Shipped by the agent swarm in v${ver}** (${today})\n\n- Issue: ${issue.identifier} — ${issue.title}\n- PR: ${prUrl} (squash-merged)\n- Gates: unittest ${passLine || '?'} tests OK + pfs doctor OK\n- Release: tag v${ver} → Pages deploy success → prod QA 4/4 страниц 200\n- Story: ${short(story, 300)}`;
+        const evidence = `**Shipped by the agent swarm in v${ver}** (${today})\n\n- Issue: ${issue.identifier} — ${issue.title}\n- PR: ${prUrl} (squash-merged)\n- Gates: unittest ${gatesLine} + pfs doctor OK\n- Release: tag v${ver} → Pages deploy success → prod QA 4/4 страниц 200\n- Story: ${short(story, 300)}`;
         await doneIssue(issue, evidence);
         await sh(`git branch -D ${branch}`);
         log(`=== DONE: ${issue.identifier} shipped as v${ver} ===`);
