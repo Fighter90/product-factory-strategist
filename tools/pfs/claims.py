@@ -6,11 +6,13 @@
 """
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from . import core, sources as src_mod
 from .core import PfsError
 
+LOCK_NAME = ".claims.lock"  # файл блокировки реестра: батчевая валидация + запись идут под core.file_lock (PRO-33)
 KINDS = ("fact", "hypothesis", "forecast", "assumption", "inference")
 KIND_RU = {"fact": "факт", "hypothesis": "гипотеза", "forecast": "прогноз", "assumption": "допущение", "inference": "вывод"}
 CONFIDENCE = ("high", "medium", "low")
@@ -76,6 +78,87 @@ def add(pdir: Path, text: str, kind: str, sources: list[str] | None = None, deri
     core.append_jsonl(pdir / "claims.jsonl", rec)
     core.log(pdir, "claim", f"{rec['id']} [{KIND_RU[kind]}] {text[:90]}", sources=sources or None)
     return rec
+
+
+def _as_list(value) -> list[str]:
+    """Строка «a,b» или список → список строк (поля source/from/tags в JSONL-строке батча)."""
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [x.strip() for x in value.split(",") if x.strip()]
+    if isinstance(value, list):
+        return [str(x).strip() for x in value if str(x).strip()]
+    raise PfsError("ожидался список или строка через запятую")
+
+
+def _batch_items(path: Path) -> list[dict]:
+    """Прочитать JSONL-файл батча: JSON-объект на строку, пустые строки пропускаются."""
+    if not path.exists():
+        raise PfsError(f"Файл не найден: {path}")
+    items = []
+    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise PfsError(f"Строка {n}: не JSON ({exc.msg})") from None
+        if not isinstance(row, dict):
+            raise PfsError(f"Строка {n}: ожидался JSON-объект {{\"text\": …, \"kind\": …}}")
+        items.append(row)
+    if not items:
+        raise PfsError("Файл не содержит строк с утверждениями")
+    return items
+
+
+def add_batch(pdir: Path, path: Path) -> dict:
+    """Массовая регистрация утверждений из JSONL-файла (PRO-33).
+
+    Строка файла: {"text": "…", "kind": "fact", "source": "S001", "grade": "B",
+    "quote": "…", "from": "C004", "confidence": "high", "note": "…", "tags": "a,b"} —
+    source/from/tags можно списком или строкой через запятую. Все строки валидируются
+    ДО записи: невалидная строка отменяет весь батч (атомарность). Дубликаты по тексту
+    (реестр и сам батч) пропускаются. В журнал пишется одна запись на батч, а не по
+    записи на каждое утверждение.
+    """
+    items = _batch_items(path)
+    with core.file_lock(pdir / LOCK_NAME):
+        rows = load(pdir)
+        active_texts = {r["text"].strip() for r in rows if r["status"] == "active"}
+        recs, skipped, seen = [], 0, set()
+        for n, item in enumerate(items, 1):
+            try:
+                text = str(item.get("text") or "").strip()
+                if not text:
+                    raise PfsError("пустой text")
+                if text in active_texts or text in seen:
+                    skipped += 1
+                    seen.add(text)
+                    continue
+                seen.add(text)
+                kind, grade = item.get("kind"), item.get("grade")
+                if grade is not None and grade not in GRADES:
+                    raise PfsError(f"grade: {', '.join(GRADES)}")
+                confidence = item.get("confidence") or "medium"
+                sources_list = _as_list(item.get("source") or item.get("sources"))
+                derived = _as_list(item.get("from") or item.get("derived_from"))
+                basis = _validate(pdir, kind, sources_list, derived, confidence)
+                recs.append({"id": core.next_id("C", rows + recs), "text": text, "kind": kind,
+                             "sources": sources_list, "derived_from": derived, "confidence": confidence,
+                             "basis": basis, "quote": item.get("quote"), "tags": _as_list(item.get("tags")),
+                             "grade": grade, "status": "active", "created": core.now(), "note": item.get("note")})
+            except PfsError as exc:
+                raise PfsError(f"Строка {n}: {exc}") from None
+        if recs:  # вся пачка одной записью: обрыв посреди батча не оставляет полреестра
+            payload = "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in recs)
+            target = pdir / "claims.jsonl"
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with target.open("a", encoding="utf-8") as fh:
+                fh.write(payload)
+    if recs:
+        core.log(pdir, "claim", f"add-batch: создано {len(recs)}, дубликаты пропущены {skipped}")
+    return {"created": [r["id"] for r in recs], "skipped": skipped, "total": len(items)}
 
 
 def _update(pdir: Path, cid: str, **fields) -> dict:

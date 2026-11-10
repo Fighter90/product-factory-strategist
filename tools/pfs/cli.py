@@ -156,6 +156,11 @@ def cmd_claim(a):
     if a.action == "add":
         c = claims.add(pdir, a.text, a.kind, _split(a.source), _split(a.derived_from), a.confidence, a.note, a.quote, grade=a.grade)
         print(f"{c['id']} [{claims.KIND_RU[c['kind']]}] записано")
+    elif a.action == "add-batch":
+        res = claims.add_batch(pdir, core.resolve_input(a.text, pdir))
+        print(f"Батч: создано {len(res['created'])}, дубликаты пропущены {res['skipped']}")
+        if res["created"]:
+            print("Новые: " + ", ".join(res["created"]))
     elif a.action == "list":
         rows = [c for c in claims.load(pdir) if (a.all or c["status"] == "active") and (not a.kind or c["kind"] == a.kind)]
         print(claims.table(rows))
@@ -424,7 +429,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--max-chars", type=int, default=4000, help="лимит знаков превью (show/refresh)")
     s.set_defaults(f=cmd_source)
 
-    s = sp.add_parser("claim", help="утверждения"); s.add_argument("action", choices=["add", "list", "retract", "supersede", "rebase"])
+    s = sp.add_parser("claim", help="утверждения")
+    s.add_argument("action", choices=["add", "add-batch", "list", "retract", "supersede", "rebase"],
+                   help="add-batch — пачка из JSONL-файла (text/kind/source/grade/quote/from); "
+                        "невалидная строка отменяет весь батч")
     s.add_argument("text", nargs="?"); s.add_argument("--id"); s.add_argument("--kind", choices=claims.KINDS)
     s.add_argument("--source"); s.add_argument("--from", dest="derived_from"); s.add_argument("--confidence", default="medium")
     s.add_argument("--note"); s.add_argument("--quote"); s.add_argument("--reason"); s.add_argument("--all", action="store_true")

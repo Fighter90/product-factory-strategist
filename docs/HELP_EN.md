@@ -138,6 +138,9 @@ Rules: project domains (`project.json → allowed_sources`) are checked before t
 pfs claim add "Market is 40 B RUB" --kind fact --source S002 --grade B
 pfs claim add "People will pay for family protection" --kind hypothesis --source S005
 pfs claim add "Therefore focus on families" --kind inference --from C003,C010
+pfs claim add-batch claims.jsonl        # register a batch from JSONL (text/kind/source/grade/quote/from):
+                                        # one line = one claim; an invalid line cancels the whole
+                                        # batch; duplicates by text are skipped
 pfs claim list [--kind fact] [--all]
 pfs claim retract --id C005 --reason "methodology error"
 pfs claim supersede --id C005 "Market is 45 B RUB" --reason "new report" [--source S009]
@@ -397,6 +400,7 @@ pfs new "…" "…" / pfs use slug / pfs status          # projects
 pfs source add <url|file>                            # sources
 pfs source fetch <url>                               # unreachable URL: reader/archive fallbacks; refresh reuses the chain
 pfs claim add "…" --kind fact --source S001 --grade B       # claims
+pfs claim add-batch claims.jsonl                            # register claims in bulk from JSONL
 pfs check --strict                                   # quality gate
 pfs calc all                                         # Excel
 pfs export --six-pager                               # committee report
