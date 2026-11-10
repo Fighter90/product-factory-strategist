@@ -344,6 +344,11 @@ def cmd_export(a):
 
 
 def cmd_calc(a):
+    if a.which == "scaffold":
+        _, found, total = calc.scaffold(_p(a))
+        print(f"Каркас calcs.json: {found}/{total} чисел найдено в 02/04/06/07; "
+              f"null-поля допишите вручную, затем pfs calc all")
+        return
     for p in calc.run(_p(a), a.which):
         print(f"Excel-приложение: {p}")
 
@@ -483,7 +488,9 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--no-calcs", action="store_true", help="не перегенерировать Excel")
     s.set_defaults(f=cmd_export)
     s = sp.add_parser("calc", help="Excel-приложения: юнит-экономика, модель роста, когорты, рынок")
-    s.add_argument("which", nargs="?", default="all", choices=["all", "unit-econ", "growth", "cohort", "market"])
+    s.add_argument("which", nargs="?", default="all",
+                   choices=["all", "unit-econ", "growth", "cohort", "market", "scaffold"],
+                   help="scaffold — каркас calcs.json из 02/04/06/07 (null — дописать вручную)")
     s.set_defaults(f=cmd_calc)
     s = sp.add_parser("docx", help="Markdown → DOCX (без зависимостей)")
     s.add_argument("file", help=".md файл (относительный путь: каталог проекта → cwd)"); s.add_argument("--out")
