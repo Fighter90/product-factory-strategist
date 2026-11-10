@@ -93,14 +93,26 @@ def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict])
             s = srcs.get(sid)
             if not s:
                 continue
+            # синтетические интервью-источники: заголовок несёт метаданные персоны
+            # (возраст, город), а не числа утверждения — claim-vs-title не проверяем
+            if s.get("origin") == "synthetic":
+                continue
+            if sid not in bodies and (pdir / "sources" / f"{sid}.md").exists():
+                bodies[sid] = set(_numbers(_source_body(pdir, sid)))
+            body = bodies.get(sid, set())
             tnums = _numbers(s.get("title") or "")
             if tnums and cnums and not (set(tnums) & set(cnums)):
-                out.append(f"{c['id']}/{sid}: числа утверждения ({_fmt(cnums)}) не совпадают с числами "
-                           f"заголовка источника ({_fmt(tnums)}) — сверьте утверждение с источником")
+                if set(cnums) & body:
+                    # числа подтверждены текстом источника — устарел заголовок
+                    out.append(f"{c['id']}/{sid}: числа заголовка источника ({_fmt(tnums)}) устарели "
+                               f"относительно утверждения ({_fmt(cnums)}) — число подтверждено текстом "
+                               f"sources/{sid}.md, обновите заголовок")
+                else:
+                    out.append(f"{c['id']}/{sid}: числа утверждения ({_fmt(cnums)}) не совпадают с числами "
+                               f"заголовка источника ({_fmt(tnums)}) и отсутствуют в его тексте — "
+                               f"серьёзное расхождение, сверьте утверждение с источником")
             quote = c.get("quote")
             if quote:
-                if sid not in bodies and (pdir / "sources" / f"{sid}.md").exists():
-                    bodies[sid] = set(_numbers(_source_body(pdir, sid)))
                 if sid in bodies:
                     missing = {v: raw for v, raw in _numbers(quote).items() if v not in bodies[sid]}
                     if missing:
