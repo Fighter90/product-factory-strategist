@@ -96,6 +96,11 @@ pfs list                                 # список проектов
 pfs use <slug>                           # сделать проект активным
 pfs status [--brief]                     # где остановились, что дальше, стоимость
 ```
+Активный проект хранится в `projects/.active`: переключайтесь `pfs use <slug>` перед работой
+с другим проектом — экспортировать переменные окружения не нужно (окружение переопределяется
+только в тестах через `PFS_PROJECTS_DIR`). Пути файлов в `source add`, `docx` и `media add`
+резолвятся сначала от каталога проекта (`projects/<slug>/…`), а если файла там нет — от текущего
+каталога; resolved-путь печатается в выводе.
 
 ### Шаги и вопросы
 ```bash
@@ -113,6 +118,8 @@ pfs questions <шаг|блок>                 # вопросные блоки 
 ```bash
 pfs source add https://example.ru/report            # сайт: скачивается, чистится, дедуп по URL/SHA-256
 pfs source add ~/Downloads/report.pdf               # PDF/DOCX/XLSX/CSV/изображение
+pfs source add sources/raw/report.md                # относительный путь: сначала каталог проекта
+                                                    # (projects/<slug>/…), затем cwd; резолв-путь — в выводе
 pfs source add --text-file doc.md --url <url> --title "…"   # если сайт блокирует автоматическую загрузку
 pfs source fetch <url> --title "…"                  # недоступный URL (403/SSL/JS/таймаут) одним вызовом:
                                                     # прямой запрос → r.jina.ai → web.archive.org;
@@ -177,6 +184,7 @@ pfs interview save transcript.md --persona "…" --title "…"    # транск
 pfs media add скрин.png --desc "что видно на скриншоте"       # медиа в заявленных границах: файл копируется
                                                               # в sources/raw, описание «только видимое/слышимое»
                                                               # становится источником; интерпретации — отдельные C###
+                                                              # (путь: каталог проекта → cwd)
 pfs ux scaffold S003 --focus "онбординг"                      # UX-каркас из 10 эвристик в analysis/ux_<S###>.md
                                                               # с правилом «выводы только по материалу источника»
 ```
@@ -209,7 +217,7 @@ pfs export                     # REPORT.md: все документы + прил
 pfs export --six-pager         # SIX_PAGER.md в формате референса (подпункты, матрица тактик, KPI, сноски) + пересборка Excel
 pfs export --six-pager --no-calcs   # пересобрать текст без перегенерации книг
 pfs export --deck                   # HTML-дека 16:9 из SIX_PAGER.md
-pfs docx <файл.md> [--out]     # Markdown → Word без зависимостей
+pfs docx <файл.md> [--out]     # Markdown → Word без зависимостей (путь: каталог проекта → cwd)
                                # (docx-версии HELP/README лежат в docs/docx/)
 ```
 Структура six-pager: FAQ-1 состояние рынка и конкуренты · FAQ-2 сегменты и персоны ·

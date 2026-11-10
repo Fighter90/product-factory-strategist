@@ -125,6 +125,22 @@ def project_dir(slug: str | None = None) -> Path:
     return p
 
 
+def resolve_input(value: str | Path, pdir: Path | None = None) -> Path:
+    """Путь ввода (source add / docx / media add): сначала от каталога проекта, затем от cwd.
+
+    Агент в сессиях пишет пути от каталога проекта (raw/…, sources/raw/…), а pfs запускается
+    из корня репозитория — резолв только от cwd давал ложный «Файл не найден».
+    Абсолютные пути и ~ возвращаются как есть; файла нет в обоих местах — возвращается
+    путь от cwd (ошибка «Файл не найден» покажет, что именно искали).
+    """
+    p = Path(value).expanduser()
+    if p.is_absolute():
+        return p
+    if pdir is not None and (pdir / p).exists():
+        return pdir / p
+    return p
+
+
 def log(pdir: Path, kind: str, msg: str, **extra: Any) -> dict:
     """Журнал действий: что сделано, каким инструментом, на каком шаге."""
     row = {"ts": now(), "kind": kind, "msg": msg}

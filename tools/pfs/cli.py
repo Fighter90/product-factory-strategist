@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -113,11 +114,17 @@ def cmd_gap(a):
 def cmd_source(a):
     pdir = _p(a)
     if a.action == "add":
-        text = sources.assert_safe_local(Path(a.text_file)).read_text(encoding="utf-8") if a.text_file else None
-        rec, new = sources.add(pdir, a.target, text=text, url=a.url, title=a.title, origin=a.origin or "public",
+        # относительные пути резолвятся от каталога проекта, если файла там нет — от cwd (PRO-36)
+        is_url = bool(a.target and re.match(r"^https?://", a.target))
+        target = a.target if is_url else (str(core.resolve_input(a.target, pdir)) if a.target else None)
+        text_file = str(core.resolve_input(a.text_file, pdir)) if a.text_file else None
+        text = sources.assert_safe_local(Path(text_file)).read_text(encoding="utf-8") if text_file else None
+        rec, new = sources.add(pdir, target, text=text, url=a.url, title=a.title, origin=a.origin or "public",
                                note=a.note, published=a.published, force=a.force)
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
         print(f"{'Добавлен' if new else 'Уже есть (повтор пропущен)'}: {rec['id']} — {rec['title']} ({rec['chars']} зн.){flag}")
+        if text_file or (not is_url and target):
+            print(f"Файл: {Path(text_file or target).resolve()}")
     elif a.action == "fetch":
         rec, new, channel = sources.fetch(pdir, a.target, title=a.title, origin=a.origin,
                                           note=a.note, published=a.published, force=a.force)
@@ -281,8 +288,11 @@ def cmd_interview(a):
 
 
 def cmd_media(a):
-    rec = participate.media(_p(a), Path(a.file), a.desc, a.title, a.origin)
+    pdir = _p(a)
+    path = core.resolve_input(a.file, pdir)
+    rec = participate.media(pdir, path, a.desc, a.title, a.origin)
     print(f'{rec["id"]} [{rec["kind"]}] зарегистрирован: raw-файл и описание добавлены')
+    print(f"Файл: {path.resolve()}")
 
 
 def cmd_ux(a):
@@ -339,9 +349,12 @@ def cmd_calc(a):
 
 
 def cmd_docx(a):
-    src = Path(a.file)
+    pdir = core.project_dir(a.project) if (core.active_slug() or a.project) else None
+    src = core.resolve_input(a.file, pdir)
+    if not src.exists():
+        raise core.PfsError(f"Файл не найден: {src.resolve()}")
     out = docx.convert(src, Path(a.out) if a.out else None)
-    print(f"DOCX: {out}")
+    print(f"DOCX: {out.resolve()}")
 
 
 def cmd_doctor(a):
@@ -381,8 +394,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("action", choices=["add", "fetch", "list", "show", "refresh"],
                    help="fetch — недоступный URL (403/SSL/JS/таймаут): прямой запрос → r.jina.ai → web.archive.org; "
                         "полный фейл — предложение --text-file")
-    s.add_argument("target", nargs="?")
-    s.add_argument("--text-file"); s.add_argument("--url"); s.add_argument("--title")
+    s.add_argument("target", nargs="?",
+                   help="URL или файл; относительный путь: сначала каталог проекта, затем cwd")
+    s.add_argument("--text-file", help="файл с текстом выписки (путь: каталог проекта → cwd)")
+    s.add_argument("--url"); s.add_argument("--title")
     s.add_argument("--origin", help="public | excerpt (выписка, первоисточник недоступен) | own | interview | synthetic | agent; "
                                     "для fetch по умолчанию: public при прямом успехе, excerpt при фолбэке (reader/архив)")
     s.add_argument("--note"); s.add_argument("--published"); s.add_argument("--force", action="store_true")
@@ -443,7 +458,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = sp.add_parser("media", help="медиа-файл как источник: raw-копия + описание")
     s.add_argument("action", choices=["add"], help="add — зарегистрировать")
-    s.add_argument("file", help="путь к изображению/аудио/видео")
+    s.add_argument("file", help="путь к изображению/аудио/видео (относительный: каталог проекта → cwd)")
     s.add_argument("--desc", required=True, help="что видно/слышимо, без домыслов")
     s.add_argument("--title", help="заголовок источника")
     s.add_argument("--origin", default="own", help="public | own | interview | synthetic | agent")
@@ -471,7 +486,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("which", nargs="?", default="all", choices=["all", "unit-econ", "growth", "cohort", "market"])
     s.set_defaults(f=cmd_calc)
     s = sp.add_parser("docx", help="Markdown → DOCX (без зависимостей)")
-    s.add_argument("file"); s.add_argument("--out")
+    s.add_argument("file", help=".md файл (относительный путь: каталог проекта → cwd)"); s.add_argument("--out")
     s.set_defaults(f=cmd_docx)
     s = sp.add_parser("next", help="что решать сейчас: шаг, обязательства, пересмотры, открытые вопросы")
     s.set_defaults(f=cmd_next)
