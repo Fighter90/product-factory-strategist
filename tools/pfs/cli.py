@@ -321,6 +321,8 @@ def cmd_models(a):
 
 def cmd_export(a):
     pdir = _p(a)
+    for w in export.freshness_warnings(pdir):  # снимок сравнивается ДО сборки: предыдущий отчёт устарел
+        print(w)
     if a.deck:
         print(f"Дека: {export.build_deck(_p(a))}")
         return
@@ -328,6 +330,7 @@ def cmd_export(a):
         print(f"Six-pager: {export.build_six_pager(pdir, with_calcs=not a.no_calcs)}")
     else:
         print(f"Отчёт: {export.build(pdir)}")
+    export.save_state(pdir)  # реестр попадает в REPORT/SIX_PAGER — фиксируем снимок после сборки
 
 
 def cmd_calc(a):
