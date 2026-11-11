@@ -93,6 +93,7 @@
 - [Проектирование, сборка и тестирование GenAI-прототипа — от сценария к решению о запуске](methods/genai-prototyping.md) `M-genai-prototyping` — ai, llm, прототип, золотой-набор, регресс
 - [Цели, драйверы роста, стримы, фокусы, продуктовые ставки и портфель инициатив](methods/goals-drivers-bets.md) `M-goals-drivers-bets` — цели, smart, драйверы-роста, стримы, фокусы
 - [Фреймворки роста: AARRR, HEART, Flywheel, Growth Loops, Growth Model Canvas](methods/growth-frameworks.md) `M-growth-frameworks` — aarrr, heart, flywheel, growth-loop, виральность
+- [Выход на новый рынок — GTM по странам как чек-лист вопросов](methods/gtm-new-market.md) `M-gtm-new-market` — gtm, новый-рынок, локализация, vat, mor
 - [Анализ и представление результатов глубинных интервью](methods/interview-analysis.md) `M-interview-analysis` — анализ-интервью, кодирование, категории, инсайты, сила-доказательств
 - [JTBD и Advanced JTBD — работы, граф работ, экспертные интервью, superdiscovery, барьеры, ага-момент](methods/jtbd.md) `M-jtbd` — jtbd, ajtbd, граф-работ, ценность, барьеры
 - [Сопутствующие ландшафты — маркетинг, технологии, бизнес-модель и функции бизнеса](methods/landscapes.md) `M-landscapes` — бизнес-модель, маркетинг, технологии, продажи, три-линзы
@@ -115,6 +116,8 @@
 - [Продуктовые фреймворки — что, когда и зачем](methods/product-frameworks.md) `M-product-frameworks` — фреймворки, приоритизация, метрики, процесс, hadi
 - [Типы исследований и выбор метода под вопрос](methods/research-types.md) `M-research-types` — исследования, качественные, количественные, кабинетные, бенчмарк
 - [Риски стратегии — идентификация, оценка, AATM, митигация и план Б](methods/risks.md) `M-risks` — риски, матрица-рисков, accept-avoid-transfer-mitigate, план-б, триггер-метрика
+- [Сценарное моделирование эффекта — пессимистичный, базовый и оптимистичный сценарии, чувствительность](methods/scenario-modeling.md) `M-scenario-modeling` — сценарии, чувствительность, модель, прогноз, риск
+- [Эталон six-pager — разбор структуры, «хорошо и плохо» на каждом FAQ](methods/six-pager-etalon.md) `M-six-pager-etalon` — six-pager, комитет, структура, отчёт, качество
 - [Six-pager — шести-страничный стратегический отчёт с Excel-приложениями](methods/six-pager.md) `M-six-pager` — отчёт, six-pager, комитет, excel
 - [Карта методов: вопрос руководителя продукта → какие карты и в каком порядке](methods/skills-map.md) `M-skills-map` — навигация, маршрут, карта-навыков, порядок-карт, типовые-задачи
 - [Дизайн решения — гипотезы решений, оценка, риски, валидация и пост-mortem](methods/solution-design.md) `M-solution-design` — гипотеза-решения, rice, риски-решений, fake-door, a-b-тест
@@ -130,6 +133,7 @@
 - [Эвристическая оценка интерфейса — только по видимому, со шкалой серьёзности и доказательствами](methods/ux-heuristics.md) `M-ux-heuristics` — эвристики, нильсен, шнайдерман, норман, экспертная-оценка
 - [Van Westendorp Price Sensitivity Meter — метод исследования восприятия цены (PSM)](methods/van-westendorp.md) `M-van-westendorp` — ценообразование, psm, van-westendorp, willingness-to-pay, ценовая-чувствительность
 - [Wardley Mapping — карта эволюции компонентов и решения build/buy/rent](methods/wardley-mapping.md) `M-wardley-mapping` — wardley, карта, эволюция, genesis, commodity
+- [Взвешенный скоринг вариантов и фильтры — прозрачное сравнение альтернатив](methods/weighted-scoring.md) `M-weighted-scoring` — скоринг, приоритизация, критерии, веса, фильтры
 - [Воркшопы и фасилитация — как провести сессию, которая заканчивается решением](methods/workshops.md) `M-workshops` — воркшоп, фасилитация, hmw, дивергенция, конвергенция
 
 ## Стратегия (`strategy`)
@@ -153,12 +157,14 @@
 - [Цели, драйверы роста, стримы, фокусы, продуктовые ставки и портфель инициатив](methods/goals-drivers-bets.md) `M-goals-drivers-bets` — цели, smart, драйверы-роста, стримы, фокусы
 - [Фреймворки роста: AARRR, HEART, Flywheel, Growth Loops, Growth Model Canvas](methods/growth-frameworks.md) `M-growth-frameworks` — aarrr, heart, flywheel, growth-loop, виральность
 - [Go-to-Market — тиры запуска (T1/T2/T3), сегментация аудиторий запуска, каналы, метрики и чек-лист запуска](methods/gtm-launch.md) `M-gtm-launch` — gtm, запуск, launch-tiers, аудитории, каналы
+- [Выход на новый рынок — GTM по странам как чек-лист вопросов](methods/gtm-new-market.md) `M-gtm-new-market` — gtm, новый-рынок, локализация, vat, mor
 - [JTBD и Advanced JTBD — работы, граф работ, экспертные интервью, superdiscovery, барьеры, ага-момент](methods/jtbd.md) `M-jtbd` — jtbd, ajtbd, граф-работ, ценность, барьеры
 - [Landing page design — typography with personality, bold colour systems, atmospheric backgrounds, animation patterns, anti-patterns](methods/landing-design.md) `M-landing-design` — дизайн, лендинг, визуал
 - [Сопутствующие ландшафты — маркетинг, технологии, бизнес-модель и функции бизнеса](methods/landscapes.md) `M-landscapes` — бизнес-модель, маркетинг, технологии, продажи, три-линзы
 - [Lean Canvas — гипотезы бизнеса на одном листе](methods/lean-canvas.md) `M-lean-canvas` — бизнес-модель, фреймворки, lean
 - [Оценка объёма рынка (PAM / TAM / SAM / SOM)](methods/market-sizing.md) `M-market-sizing` — рынок, tam, sam, som, top-down
 - [Маркетинговые исследования: трекинг бренда, Кано, MaxDiff, TURF](methods/marketing-research.md) `M-marketing-research` — маркетинговые-исследования, bht, трекинг-бренда, u-a, кано
+- [Коммуникационная стратегия — message house, доказательства обещаний, барьер понимания](methods/message-house.md) `M-message-house` — коммуникация, message-house, обещания, позиционирование, каналы
 - [ML для продакта — где ML оправдан, гипотезы и валидация, метрики качества модели vs бизнес-метрики, ML в A/B-тестах, риски](methods/ml-for-product.md) `M-ml-for-product` — ml, машинное-обучение, регрессия, классификация, ранжирование
 - [Top-Down и Bottom-up моделирование бизнеса](methods/model-topdown-bottomup.md) `M-model-topdown-bottomup` — top-down, bottom-up, tam, sam, som
 - [Валидация модели (бэктест, бенчмарки, sensitivity)](methods/model-validation.md) `M-model-validation` — валидация, бэктест, бенчмарки, sensitivity, сценарии
@@ -182,6 +188,7 @@
 - [Критика источников и аналитических отчётов, шкала достоверности, фиксация происхождения](methods/source-criticism.md) `M-source-criticism` — источники, достоверность, триангуляция, red-flags, evidence-log
 - [Продуктовая стратегия, типы роста и структура стратегического документа](methods/strategy-growth.md) `M-strategy-growth` — стратегия, рост, ансофф, каскадирование, unfair-advantage
 - [Метрики успеха — North Star Metric, дерево метрик, AARRR и OKR](methods/success-metrics.md) `M-success-metrics` — nsm, north-star-metric, дерево-метрик, aarrr, okr
+- [Ценообразование тарифной лестницы — ARPU-микс, freemium, CAC платящего, годовые планы](methods/tariff-ladder-pricing.md) `M-tariff-ladder` — ценообразование, тарифы, arpu, freemium, cac
 - [Команда и люди — состав по стадиям, найм, оргструктура, стейкхолдеры и соседние команды](methods/team.md) `M-team` — команда, найм, аутсорс, стейкхолдеры, оргструктура
 - [Трекшн-модель (модель роста): построение, эффекты, валидация](methods/traction-model.md) `M-traction-model` — трекшн-модель, baseline, top-down, bottom-up, когорты
 - [Анализ трендов и сценарное планирование](methods/trends-scenarios.md) `M-trends-scenarios` — тренды, трендвотчинг, сценарии, delphi, backcasting
@@ -232,6 +239,7 @@
 - [MVP, MLP и пилоты — выбор формата проверки, метрики, критерии успеха, выводы](methods/mvp-pilots.md) `M-mvp-pilots` — mvp, mlp, пилот, прототип, трекшн-модель
 - [North Star Playbook — главная метрика и дерево входных метрик (подход Amplitude)](methods/north-star-playbook.md) `M-north-star-playbook` — nsm, северная звезда, входные метрики, дерево метрик, цель
 - [Сроки стратегии и Outcome Roadmap — фазы, критерии перехода, стоп-сигналы](methods/outcome-roadmap.md) `M-outcome-roadmap` — роадмап, outcome-roadmap, фазы, пилот, валидация
+- [Удержание платных подписок и win-back — продления, dunning, save-offer, возврат ушедших](methods/paid-retention-winback.md) `M-paid-retention` — удержание, подписки, churn, win-back, dunning
 - [Экономика платформы: TCO, эффекты, финмодель, метрики](methods/platform-economics.md) `M-platform-economics` — платформы, tco, финмодель, dcf, irr
 - [Риски платформы, оценка концепции, пилот, масштабирование и защита](methods/platform-risks-rollout.md) `M-platform-risks-rollout` — платформы, риски, risk-register, пилот, adoption
 - [Масштабирование и Product-Market Fit — когда расти, как измерять PMF (механизм Superhuman)](methods/pmf-scaling.md) `M-pmf-scaling` — pmf, масштабирование, юнит-экономика, retention, nps
@@ -245,6 +253,7 @@
 - [Кривые удержания — формы (smile-кривая, плато, спад), как читать, когортные кривые и бенчмарки по индустриям](methods/retention-curves.md) `M-retention-curves` — retention, кривые-удержания, когорты, smile-кривая, плато
 - [Риски стратегии — идентификация, оценка, AATM, митигация и план Б](methods/risks.md) `M-risks` — риски, матрица-рисков, accept-avoid-transfer-mitigate, план-б, триггер-метрика
 - [Роадмап — как устроен, как строится и как проверяется на качество](methods/roadmap.md) `M-roadmap` — роадмап, okr, приоритизация, зависимости, capacity
+- [Сценарное моделирование эффекта — пессимистичный, базовый и оптимистичный сценарии, чувствительность](methods/scenario-modeling.md) `M-scenario-modeling` — сценарии, чувствительность, модель, прогноз, риск
 - [Six-pager — шести-страничный стратегический отчёт с Excel-приложениями](methods/six-pager.md) `M-six-pager` — отчёт, six-pager, комитет, excel
 - [Карта методов: вопрос руководителя продукта → какие карты и в каком порядке](methods/skills-map.md) `M-skills-map` — навигация, маршрут, карта-навыков, порядок-карт, типовые-задачи
 - [Дизайн решения — гипотезы решений, оценка, риски, валидация и пост-mortem](methods/solution-design.md) `M-solution-design` — гипотеза-решения, rice, риски-решений, fake-door, a-b-тест
@@ -253,6 +262,7 @@
 - [Продуктовая стратегия, типы роста и структура стратегического документа](methods/strategy-growth.md) `M-strategy-growth` — стратегия, рост, ансофф, каскадирование, unfair-advantage
 - [Метрики успеха — North Star Metric, дерево метрик, AARRR и OKR](methods/success-metrics.md) `M-success-metrics` — nsm, north-star-metric, дерево-метрик, aarrr, okr
 - [Синтетические респонденты (ИИ-симуляция) — допустимое использование, спецификация персоны, обязательная маркировка](methods/synthetic-respondents.md) `M-synthetic-respondents` — синтетические-респонденты, ai, персоны, гипотезы, маркировка
+- [Ценообразование тарифной лестницы — ARPU-микс, freemium, CAC платящего, годовые планы](methods/tariff-ladder-pricing.md) `M-tariff-ladder` — ценообразование, тарифы, arpu, freemium, cac
 - [Команда и люди — состав по стадиям, найм, оргструктура, стейкхолдеры и соседние команды](methods/team.md) `M-team` — команда, найм, аутсорс, стейкхолдеры, оргструктура
 - [Трекшн-модель (модель роста): построение, эффекты, валидация](methods/traction-model.md) `M-traction-model` — трекшн-модель, baseline, top-down, bottom-up, когорты
 - [Юнит-экономика (LTV, CAC, окупаемость)](methods/unit-economics.md) `M-unit-economics` — юнит-экономика, ltv, cac, payback, маржа
@@ -277,6 +287,7 @@
 - [Модели монетизации, value metric и ценообразование (с разделом про аукционы)](methods/monetization.md) `M-monetization` — монетизация, ценообразование, value-metric, take-rate, cpa
 - [MVP, MLP и пилоты — выбор формата проверки, метрики, критерии успеха, выводы](methods/mvp-pilots.md) `M-mvp-pilots` — mvp, mlp, пилот, прототип, трекшн-модель
 - [Сроки стратегии и Outcome Roadmap — фазы, критерии перехода, стоп-сигналы](methods/outcome-roadmap.md) `M-outcome-roadmap` — роадмап, outcome-roadmap, фазы, пилот, валидация
+- [Удержание платных подписок и win-back — продления, dunning, save-offer, возврат ушедших](methods/paid-retention-winback.md) `M-paid-retention` — удержание, подписки, churn, win-back, dunning
 - [Риски платформы, оценка концепции, пилот, масштабирование и защита](methods/platform-risks-rollout.md) `M-platform-risks-rollout` — платформы, риски, risk-register, пилот, adoption
 - [Масштабирование и Product-Market Fit — когда расти, как измерять PMF (механизм Superhuman)](methods/pmf-scaling.md) `M-pmf-scaling` — pmf, масштабирование, юнит-экономика, retention, nps
 - [Коммуникация и защита продукта — от роадмапа к решению стейкхолдеров](methods/product-communication.md) `M-product-communication` — защита-продукта, decision-memo, one-pager, стейкхолдеры, гейты
@@ -285,10 +296,12 @@
 - [Количественные методы: опрос, выборка, анализ данных](methods/quant-methods.md) `M-quant-methods` — опрос, анкета, выборка, размер-выборки, репрезентативность
 - [Риски стратегии — идентификация, оценка, AATM, митигация и план Б](methods/risks.md) `M-risks` — риски, матрица-рисков, accept-avoid-transfer-mitigate, план-б, триггер-метрика
 - [Роадмап — как устроен, как строится и как проверяется на качество](methods/roadmap.md) `M-roadmap` — роадмап, okr, приоритизация, зависимости, capacity
+- [Сценарное моделирование эффекта — пессимистичный, базовый и оптимистичный сценарии, чувствительность](methods/scenario-modeling.md) `M-scenario-modeling` — сценарии, чувствительность, модель, прогноз, риск
 - [Карта методов: вопрос руководителя продукта → какие карты и в каком порядке](methods/skills-map.md) `M-skills-map` — навигация, маршрут, карта-навыков, порядок-карт, типовые-задачи
 - [Дизайн решения — гипотезы решений, оценка, риски, валидация и пост-mortem](methods/solution-design.md) `M-solution-design` — гипотеза-решения, rice, риски-решений, fake-door, a-b-тест
 - [SQL для продуктовой аналитики — типовые запросы (воронка, когорты, ARPU), join и оконные функции, качество данных](methods/sql-for-pm.md) `M-sql-for-pm` — sql, воронка, retention, когорты, arpu
 - [Метрики успеха — North Star Metric, дерево метрик, AARRR и OKR](methods/success-metrics.md) `M-success-metrics` — nsm, north-star-metric, дерево-метрик, aarrr, okr
+- [Ценообразование тарифной лестницы — ARPU-микс, freemium, CAC платящего, годовые планы](methods/tariff-ladder-pricing.md) `M-tariff-ladder` — ценообразование, тарифы, arpu, freemium, cac
 - [Команда и люди — состав по стадиям, найм, оргструктура, стейкхолдеры и соседние команды](methods/team.md) `M-team` — команда, найм, аутсорс, стейкхолдеры, оргструктура
 - [Трекшн-модель (модель роста): построение, эффекты, валидация](methods/traction-model.md) `M-traction-model` — трекшн-модель, baseline, top-down, bottom-up, когорты
 - [Юнит-экономика (LTV, CAC, окупаемость)](methods/unit-economics.md) `M-unit-economics` — юнит-экономика, ltv, cac, payback, маржа
@@ -299,13 +312,13 @@
 
 ## Все карты по курсам
 
-**strategy**: [M-auctions-marketplaces](methods/auctions-marketplaces.md), [M-competitors](methods/competitors.md), [M-crossing-chasm](methods/crossing-chasm.md), [M-customers](methods/customers.md), [M-external-environment](methods/external-environment.md), [M-goals-drivers-bets](methods/goals-drivers-bets.md), [M-gtm-launch](methods/gtm-launch.md), [M-landscapes](methods/landscapes.md), [M-lean-canvas](methods/lean-canvas.md), [M-lean-startup](methods/lean-startup.md), [M-model-topdown-bottomup](methods/model-topdown-bottomup.md), [M-model-validation](methods/model-validation.md), [M-north-star-playbook](methods/north-star-playbook.md), [M-outcome-roadmap](methods/outcome-roadmap.md), [M-platform-case-concept](methods/platform-case-concept.md), [M-platform-economics](methods/platform-economics.md), [M-platform-ecosystem-audit](methods/platform-ecosystem-audit.md), [M-platform-risks-rollout](methods/platform-risks-rollout.md), [M-platforms-types-criteria](methods/platforms-types-criteria.md), [M-prioritization-ricews](methods/prioritization-ricews.md), [M-product-lifecycle-strategy](methods/product-lifecycle-strategy.md), [M-risks](methods/risks.md), [M-six-pager](methods/six-pager.md), [M-strategy-growth](methods/strategy-growth.md), [M-success-metrics](methods/success-metrics.md), [M-team](methods/team.md), [M-van-westendorp](methods/van-westendorp.md), [M-wardley-mapping](methods/wardley-mapping.md)
+**strategy**: [M-auctions-marketplaces](methods/auctions-marketplaces.md), [M-committee-style](methods/committee-style.md), [M-competitors](methods/competitors.md), [M-crossing-chasm](methods/crossing-chasm.md), [M-customers](methods/customers.md), [M-external-environment](methods/external-environment.md), [M-goals-drivers-bets](methods/goals-drivers-bets.md), [M-gtm-launch](methods/gtm-launch.md), [M-gtm-new-market](methods/gtm-new-market.md), [M-landscapes](methods/landscapes.md), [M-lean-canvas](methods/lean-canvas.md), [M-lean-startup](methods/lean-startup.md), [M-message-house](methods/message-house.md), [M-model-topdown-bottomup](methods/model-topdown-bottomup.md), [M-model-validation](methods/model-validation.md), [M-north-star-playbook](methods/north-star-playbook.md), [M-outcome-roadmap](methods/outcome-roadmap.md), [M-platform-case-concept](methods/platform-case-concept.md), [M-platform-economics](methods/platform-economics.md), [M-platform-ecosystem-audit](methods/platform-ecosystem-audit.md), [M-platform-risks-rollout](methods/platform-risks-rollout.md), [M-platforms-types-criteria](methods/platforms-types-criteria.md), [M-prioritization-ricews](methods/prioritization-ricews.md), [M-product-lifecycle-strategy](methods/product-lifecycle-strategy.md), [M-risks](methods/risks.md), [M-six-pager-etalon](methods/six-pager-etalon.md), [M-six-pager](methods/six-pager.md), [M-strategy-growth](methods/strategy-growth.md), [M-success-metrics](methods/success-metrics.md), [M-team](methods/team.md), [M-van-westendorp](methods/van-westendorp.md), [M-wardley-mapping](methods/wardley-mapping.md), [M-weighted-scoring](methods/weighted-scoring.md)
 
-**pm**: [M-decision-daci](methods/decision-daci.md), [M-delivery](methods/delivery.md), [M-jtbd](methods/jtbd.md), [M-mvp-pilots](methods/mvp-pilots.md), [M-pmf-scaling](methods/pmf-scaling.md), [M-problem-design](methods/problem-design.md), [M-product-communication](methods/product-communication.md), [M-product-context](methods/product-context.md), [M-product-metrics](methods/product-metrics.md), [M-roadmap](methods/roadmap.md), [M-solution-design](methods/solution-design.md)
+**pm**: [M-decision-daci](methods/decision-daci.md), [M-delivery](methods/delivery.md), [M-jtbd](methods/jtbd.md), [M-mvp-pilots](methods/mvp-pilots.md), [M-paid-retention](methods/paid-retention-winback.md), [M-pmf-scaling](methods/pmf-scaling.md), [M-problem-design](methods/problem-design.md), [M-product-communication](methods/product-communication.md), [M-product-context](methods/product-context.md), [M-product-metrics](methods/product-metrics.md), [M-roadmap](methods/roadmap.md), [M-solution-design](methods/solution-design.md)
 
 **ux**: [M-ai-in-research](methods/ai-in-research.md), [M-audience-research](methods/audience-research.md), [M-brief-hypotheses](methods/brief-hypotheses.md), [M-cjm](methods/cjm.md), [M-design-thinking](methods/design-thinking.md), [M-dogfooding](methods/dogfooding.md), [M-in-depth-interviews](methods/in-depth-interviews.md), [M-interview-analysis](methods/interview-analysis.md), [M-landing-design](methods/landing-design.md), [M-loyalty-metrics](methods/loyalty-metrics.md), [M-marketing-research](methods/marketing-research.md), [M-quant-methods](methods/quant-methods.md), [M-research-types](methods/research-types.md), [M-synthetic-respondents](methods/synthetic-respondents.md), [M-usability-testing](methods/usability-testing.md), [M-usp](methods/usp.md), [M-ux-backlog](methods/ux-backlog.md), [M-ux-frameworks](methods/ux-frameworks.md), [M-ux-heuristics](methods/ux-heuristics.md), [M-workshops](methods/workshops.md)
 
-**skills**: [M-benchmarking](methods/benchmarking.md), [M-business-models](methods/business-models.md), [M-cannibalization](methods/cannibalization.md), [M-growth-frameworks](methods/growth-frameworks.md), [M-market-sizing](methods/market-sizing.md), [M-monetization](methods/monetization.md), [M-skills-map](methods/skills-map.md), [M-source-criticism](methods/source-criticism.md), [M-traction-model](methods/traction-model.md), [M-trends-scenarios](methods/trends-scenarios.md), [M-unit-economics](methods/unit-economics.md)
+**skills**: [M-benchmarking](methods/benchmarking.md), [M-business-models](methods/business-models.md), [M-cannibalization](methods/cannibalization.md), [M-growth-frameworks](methods/growth-frameworks.md), [M-market-sizing](methods/market-sizing.md), [M-monetization](methods/monetization.md), [M-scenario-modeling](methods/scenario-modeling.md), [M-skills-map](methods/skills-map.md), [M-source-criticism](methods/source-criticism.md), [M-tariff-ladder](methods/tariff-ladder-pricing.md), [M-traction-model](methods/traction-model.md), [M-trends-scenarios](methods/trends-scenarios.md), [M-unit-economics](methods/unit-economics.md)
 
 **synthesis**: [M-double-diamond](methods/double-diamond.md), [M-product-frameworks](methods/product-frameworks.md)
 
