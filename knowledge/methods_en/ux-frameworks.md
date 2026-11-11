@@ -1,20 +1,104 @@
 ---
 id: M-ux-frameworks
 lang: en
-title: UX research frameworks — star brief, JTBD, Job Stories and choosing the right artifact
+title: UX research frameworks — the brief, JTBD, Job Stories and choosing an artifact
 course: pm-approaches-en
-sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
+sources: ["EN mirror of the RU card; original sources listed there"]
 stages: [intake, research, options]
-tags: [en, summary]
+tags: [ux, frameworks, brief, jtbd, job-stories, user-stories, user-flow, bpmn, stage-metrics, versioning]
 related: [M-cjm, M-jtbd, M-brief-hypotheses, M-research-types, M-in-depth-interviews, M-interview-analysis, M-design-thinking, M-ux-backlog, M-product-metrics]
 ---
 
-# UX Research Frameworks: Brief, JTBD, Job Stories, Artifacts (EN summary)
+# UX research frameworks: the brief, JTBD, Job Stories, choosing an artifact
 
-**When:** the request is vague ("understand why the feature isn't adopted", "improve onboarding") and two things must be decided: whether research is needed at all, and which artifact (journey map, customer jobs, flow, process) will turn scattered facts into a decision basis. Used at intake and options: it defines what data to collect and in what form to hand it to the team.
+## When to apply
+When the request is vague ("understand why the feature isn't catching on", "improve onboarding") and two things must be decided: whether research is needed at all, and which artifact (a journey map, the client's "jobs", a flow, a process) will turn scattered facts into a basis for a decision. The map is needed at intake and at the options stage: it defines which data to collect and in what form to hand it to the team.
 
-**Core:** a framework is a process skeleton, not a pretty slide: it gives repeatability (a newcomer reads the artifact and understands the logic), saves time, ties work to metrics, and protects against "broken telephone" between researcher, designer and developer. Artifact-to-question map: **star brief (7 rays)** — should we research at all, and what happens to the result (data: the sponsor's decision; provides no facts itself); **CJM/journey map** — WHERE on the journey the experience breaks (interviews, logs, support, observation; doesn't give motivation); **JTBD** — WHY the person takes on the job and what counts as success (in-depth interviews + importance × satisfaction survey; doesn't give position on the journey); **Job Story** — IN WHICH SITUATION and for what outcome (verbatim stories of real people; no role, no implementation); **User Story** — WHAT to build (role + feature; derived from a Job Story and an agreement with engineering; no reason); **User Flow** — WHICH steps inside the interface, how many clicks/fields (prototype, mockups; no emotions or context); **BPMN** — WHO and which systems participate, expectations and SLAs (back-office process; the user is just one "player"; no UX emotions); **hybrid CJM × JTBD** — which job is broken by which barrier at which stage. Course selection rule: CJM as the panorama first, then extract a User Flow for the narrow segment; bring in BPMN when UX hits internal services; don't mix emotions and processes in one artifact. **JTBD:** people "hire" a product for a job in a specific life situation and "fire" it when a better performer exists; three job layers — functional (what to get done), emotional (how to feel), social (how to look to others); versus the traditional approach: context, motivation and usage situations instead of demographics and feature lists. Myths: JTBD is only about functions (no — emotion and social layers are critical); churned users can be ignored (no — their reasons expose weak spots); it's a rigid template (no — it's a lens). **Job Story vs User Story:** a User Story ("As <role>, I want <feature>, so that…") is convenient for estimation and planning but constrains understanding of motivation; a Job Story ("When <situation/trigger>, I want <action>, so that <outcome/feeling>") is born in interviews and answers "why"; the User Story is its operational descendant answering "what to build" — usually both are needed. Work-layer → metric mapping: functional — Time-to-Job (median from trigger to result) and Success Rate (successful / valid attempts per period); emotional — stage CSAT/CES (fix the calculation method and window; CSAT shown as 0–100 in the course); social — Referral rate and NPS (recommenders / respondents per period).
+## Core idea
+A framework is a skeleton of the process, not a "pretty slide". It gives repeatability (a new person reads the artifact and understands the logic), saves time (we don't invent a format), ties the work to metrics, and protects against the "broken telephone" between the researcher, the designer and the developer. Each framework answers its own question:
 
-**How:** (1) fill the star brief's 7 rays: Need (why new data), Hypothesis/Decision (what's at stake), Audience, Context & Stage (which journey step), Method & Evidence (how we'll confirm), Impact/KPI (metric: baseline → goal), Next Action (what we do with conclusions); any empty ray = don't launch the study, close the gap with the sponsor first — protection from expensive useless interviews; (2) check whether research is needed: the answer already sits in analytics or past research (UX backlog)? The decision is made and won't change with the result? Then say plainly: no research; (3) pick the artifact by the question table; for a complex question use the chain JTBD (why) → CJM (where) → hybrid; (4) collect data (in-depth interviews, analytics, support, observation) — every fact gets a source; unsourced = hypothesis; (5) run the 12-minute JTBD sprint to quick-test an idea: context/trigger → Job Story (≤25 words) → 2–3 alternatives (including offline, Excel, "ask a friend", "do nothing") → barriers → success KPI; (6) cluster jobs from transcripts: fragments → tags (context, trigger, obstacle, desired outcome) → 3–6 JTBD clusters; (7) if prioritization is needed, run the importance × satisfaction survey (5-point, strictly within one segment): important + unsatisfied = underserved job (priority); important + satisfied = fine; unimportant + unsatisfied = low priority; unimportant + satisfied = over-served; (8) translate to metrics: one headline metric + 2–3 guardrails; (9) translate to the backlog: Job Story → User Story → Epic with KPI in the Definition of Done; link to the CJM and the UX backlog; (10) maintain lifetime: revisit the map and Job Stories quarterly (~90 days) and after major releases; version artifacts (`CJM-2.3 · date`; major = stage rebuild, minor = new barriers/metrics, patch = wording); store the map, Job Stories and metrics together (shared base/Git) or the artifact becomes a museum exhibit; wire alerts: a stage CSAT drop >5 pp or a rising drop-rate → the team channel, not only the dashboard.
+| Artifact | Answers the question | Data basis | What it does NOT give |
+|---|---|---|---|
+| "Star" brief (7 rays) | Whether it's worth researching and what happens to the result | The sponsor's decision | The facts themselves |
+| CJM (journey map) | WHERE on the journey the experience breaks | Interviews, logs, support, observation | The "why" motivation |
+| JTBD (the "job") | WHY the person takes on the task and what counts as success | In-depth interviews + an importance×satisfaction survey | Position on the journey |
+| Job Story | IN WHICH SITUATION and for what outcome | Verbatim stories of real people | Role, implementation |
+| User Story | WHAT to implement (role + feature) | A Job Story, an agreement with engineering | The reason for the choice |
+| User Flow | Which STEPS inside the interface, how many clicks/fields | A prototype, mockups | Emotions and context |
+| BPMN | Who and which system participates, where the expectations and SLAs are | A back-office process | UX emotions; the user is just one of the "players" |
+| CJM × JTBD hybrid | Which "job" is broken by which barrier at which stage | All of the above | — |
 
-**Pitfalls:** asking about features instead of situations (true motivation invisible) → start with "how did you solve this before"; vague Job Stories ("buy fast and cheap") → add trigger, place, time, feeling; importance × satisfaction without segmentation (averaged temperature) → compute per segment; digital-only alternatives (offline and "do nothing" ignored) → add real-life substitutes; emotional-only KPI (business effect invisible) → add a functional one (CR, Time-to-Job); a Job Story replacing the User Story in the dev backlog (or vice versa) → keep both, linked; roles mixed in one artifact (buyer + courier + warehouse) → that's BPMN, not a CJM; churned users ignored (blind spot) → recruit them; a brief with an empty ray but the study launched → stop before launch.
+The course's selection rule: first the CJM as the panorama, then a User Flow is pulled out of it for a narrow section; BPMN is brought in when UX runs into internal services. Do not mix emotions and processes in one artifact.
+
+**JTBD.** People "hire" a product for a job in a specific life situation and "fire" it when a better performer exists. Three layers of a job: functional (what to get done), emotional (what to feel), social (how to look in the eyes of others). The difference from the traditional approach: context, motivation and usage situations instead of demographics and a feature list. Myths: JTBD is only about functions (no — the emotional and social layers are critical); churned users can be ignored (no — their reasons expose weak spots); it is a rigid template (no — it is a lens).
+
+**Job Story vs User Story.** A User Story ("As a <role>, I want <feature>, so that…") is convenient for estimation and planning, but it limits the understanding of motivation. A Job Story ("When <situation/trigger>, I want <action>, so that <outcome/feeling>") is born from interviews and answers "why"; a User Story is its "operational" offspring and answers "what to implement". Usually you need both.
+
+## Procedure
+1. **The "star" brief.** Fill in the 7 rays (the table below). If at least one ray is empty — do not launch the research; first close the gap with the sponsor. This is protection from expensive but useless interviews.
+2. **Check whether research is needed.** Is the answer already in analytics or past research (see [[M-ux-backlog]])? Has the decision already been made and does it not change with the result? Then research is not needed — say so plainly.
+3. **Choose the artifact** using the table above (question → artifact). For a complex question — a chain: JTBD (why) → CJM (where) → a hybrid.
+4. **Collect the data** (in-depth interviews, [[M-in-depth-interviews]]; analytics; support; observation — [[M-dogfooding]]). Attach a source to every fact. Without a source — it's a hypothesis.
+5. **A 12-minute JTBD sprint** (when an idea needs to be quick-tested): context/trigger → a Job Story (≤25 words) → 2–3 alternatives (including offline, Excel, "ask a friend", "do nothing") → barriers → a success KPI.
+6. **Clustering the jobs** (if there are transcripts): fragments → tags (context, trigger, obstacle, desired outcome) → 3–6 JTBD clusters.
+7. **Importance × satisfaction** (if prioritization is needed): a survey on a 5-point scale — "How important is it to get the job done?" and "How satisfied are you with the current solution?" — strictly within one segment. Quadrants: important + unsatisfied = an underserved job (priority); important + satisfied = everything is fine; unimportant + unsatisfied = low priority; unimportant + satisfied = over-served.
+8. **Translate into metrics** (the table below): one headline metric + 2–3 guardrails.
+9. **Translate into the backlog:** Job Story → User Story → an Epic with a KPI in the "Definition of Done"; link it with [[M-cjm]] and [[M-ux-backlog]].
+10. **Lifetime.** Revisit the map and the Job Stories regularly (in the course — once a quarter / every ~90 days) and after major releases. Artifact versioning: a version number + an update date (for example, `CJM-2.3 · date`); major — a rebuild of the stages, minor — new barriers/metrics, patch — wording edits. Keep the map, Job Stories and metrics files together (a shared base/Git), otherwise the artifact turns into a "museum exhibit".
+
+**The artifact "viability" checklist:** the map was updated no later than ~90 days ago; every stage has a metric and an owner; every JTBD cluster is described by a Job Story and linked to the backlog; the files are versioned; the map, the Job Stories and the metrics live in one accessible place. Wiring in alerts: a drop in a stage's CSAT (for example, > 5 pp) or a rising drop-rate is a signal into the team's shared channel, not only onto a dashboard.
+
+## Template / checklist
+
+**The "star" brief (7 rays):**
+
+| Ray | Question | Example wording |
+|---|---|---|
+| Need | Why are the new data needed? | "The conversion of step X is falling — there is a barrier" |
+| Hypothesis / Decision | Which hypothesis or decision is at stake? | "Suspicion that the document upload step is difficult" |
+| Audience | Who are we researching? | New users of segment Y |
+| Context & Stage | At which stage of the journey is the problem? | "Sign-up → document upload" |
+| Method & Evidence | How will we confirm it? | N interviews + Time-to-X logs |
+| Impact / KPI | Which metric do we move? | Step conversion: baseline → target |
+| Next Action | What will we do with the conclusions? | Redesign the flow, run an A/B test |
+
+**Mini-JTBD (5 blocks):** Context | Job Story | Alternatives | Barriers | Success KPI.
+Quality criteria: the context is specific ("at night", "on the road", not "when there is a task"); the Job Story is understandable to a newcomer without explanations; there is at least one "unfair" alternative (offline, a friend); the barrier is phrased in the user's language; the KPI is measurable and connected to a data source.
+
+**Job layer → metric:**
+
+| Layer | Metric | Formula / period |
+|---|---|---|
+| Functional | Time-to-Job; Success Rate | the median time from trigger to result; successful / valid attempts, per period |
+| Emotional | Stage CSAT, CES | in the course, CSAT is shown as a 0–100 score; always record the calculation method and the window |
+| Social | Referral rate, NPS | the share of those who recommended / respondents, per period |
+
+**Job Story — check:** there is a situation/trigger; there is no solution inside the wording; an outcome or a feeling is stated; ≤25 words; the words of real users (verbatim quotes), not invented personas.
+
+**Evidence for every statement:** a source label [quote, n=…], [metric, period], [support], [observation]; otherwise — [a team hypothesis].
+
+## Typical mistakes
+| Mistake | Consequence | How to fix |
+|---|---|---|
+| Asking about features, not about the situation | The true motivation is invisible | Start with "tell us how you solved this task before" |
+| A vague Job Story ("buy fast and cheap") | The design solves "everything" and nothing | Add a trigger, place, time, feeling |
+| An importance×satisfaction survey without segmentation | An averaged "average temperature" | Compute per segment |
+| Digital-only alternatives | Offline and "do nothing" are ignored | Add real-life substitutes |
+| An emotional-only KPI (CSAT) | The effect on the business is invisible | Add a functional one (CR, Time-to-Job) |
+| A Job Story replacing the User Story in the dev backlog (or vice versa) | The "why" or the "what" is lost | Keep both, linked by a reference |
+| Roles mixed (buyer + courier + warehouse) in one artifact | You got a BPMN instead of a CJM | Split the artifacts |
+| Users who quit the product are ignored | A blind spot of weak places | Include them in the recruit |
+| A brief with an empty ray, but the research is launched | Expensive useless research | Stop before filling it in |
+
+## Questions that can change the decision
+- Which decision will the sponsor make depending on the result? If none — the research is not needed.
+- Are there already data (logs, support, past interviews), so we don't collect them anew?
+- Is this a new customer job (JTBD, discovery) or an optimization of a known path (CJM, usability)?
+- Do several roles/systems participate in the experience (then you need BPMN, not only a CJM)?
+- Can we get access to real customers and to those who quit? Without this, the evidence falls to the level of hypotheses.
+- How many segments with different jobs are there? They must not be averaged.
+
+A note on boundaries: the course does not separately cover HEART, Kano surveys and other UX metric frameworks (Kano is only mentioned as a prioritization method in the session on ethnography). If they are needed — mark them as knowledge outside the course.
+
+## Related maps
+[[M-cjm]], [[M-jtbd]], [[M-brief-hypotheses]], [[M-in-depth-interviews]], [[M-interview-analysis]], [[M-design-thinking]], [[M-ux-backlog]], [[M-product-metrics]], [[M-research-types]]

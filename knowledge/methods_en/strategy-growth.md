@@ -1,20 +1,125 @@
 ---
 id: M-strategy-growth
 lang: en
-title: Product strategy, growth models and types — five components, unfair advantage, goal cascade, document skeleton
+title: Product strategy, growth types and the structure of a strategy document
 course: pm-approaches-en
-sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
+sources: ["EN mirror of the RU card; original sources listed there"]
 stages: [intake, options, strategy, validation]
-tags: [en, summary]
+tags: [product-strategy, growth, ansoff, cascading, unfair-advantage, product-led, sales-led, marketing-led, document-structure]
 related: [M-external-environment, M-customers, M-competitors, M-goals-drivers-bets, M-landscapes, M-risks, M-outcome-roadmap, M-success-metrics, M-team, M-monetization, M-pmf-scaling]
 ---
 
-# Product Strategy, Growth Types and Document Structure (EN summary)
+# Product strategy, growth types and the structure of a strategy document
 
-**When:** a product lead arrives with a vague request ("we need a growth strategy", "we must grow faster", "what to do with the product for 2–3 years") and the agent needs to know what counts as strategy, which mandatory parts it consists of, and how it links to the company's business strategy. The card frames the whole final document; the other course cards fill its sections.
+## When to apply
+When a product lead arrives with a vague request ("we need a growth strategy", "we must grow faster", "what to do with the product for the next 2–3 years") and the agent needs to understand what exactly counts as a strategy, which mandatory parts it consists of, and how to link it to the company's business strategy. The card sets the frame for the whole final document: the other course cards (`M-external-environment` … `M-team`) fill in its sections.
 
-**Core:** Strategy — a long-term plan of moving from state A (where we are) to state B (where we want to be). Not vision, not roadmap, not backlog: vision describes only point B without a plan; roadmap and backlog are tactical instruments derived from strategy. Five mandatory components: (1) current state A — key metrics now, market position, strengths/weaknesses; every claim a number with source and date; (2) target state B — target metrics, horizon usually 2–3 years, vision; an early startup may use a "first sales" milestone; (3) external context — market, trends, clients, competitors, opportunities and threats, each scored by importance and probability; (4) internal context — unfair advantage, resources, constraints; an advantage is what a competitor cannot copy quickly; (5) plan of achievement — streams, drivers, bets, phases, risks, team; the chain "goal → driver → bet → metric" unbroken. Unfair advantage — what you have and competitors don't: an audience to launch new things at minimal acquisition cost; a quality culture; distribution; unique data or technology; partnerships unavailable to a startup. Sustainability check via VRIO: Valuable to the client, Rare, hard to Imitate, Organizationally exploitable — only "yes" on all four gives a realized, durable advantage. Four strategy-metric types: Impact (business efficiency, 3–5 years: EBITDA, ROI, LTV/CAC, revenue per employee — top management); Outcome (business and user result for the goal period: revenue, deals, retention — product lead, team goals); Output (intermediate, often a proxy: purchase conversion, order buyout share, response speed — product manager); Input (what the team directly influences: feature adoption, AOV, pushes per user — PM and analyst). A strategy that doesn't move business metrics (impact/outcome) is useless; product metrics (output/input) exist so the team can steer. Goal cascading: a top-level goal (e.g. revenue) decomposes into direction goals (marketing: DAU; product: retention; partners: new channels), then clusters and teams; business and product may pick different paths but must converge in the top metric; without a cascade you get desync (business buys traffic the product can't convert, or vice versa). Cascading is a process, not a document: in mature companies goals live in a shared tool with the "company → direction → cluster → team" link visible top-down. A team's local goal can sit one level higher than usual (Outcome instead of Input) if the team proves the link in an A/B test (the messenger team held a goal directly in deals). Metric types by cascade level: company — Impact; direction — Outcome; cluster — Outcome/Output; team — Output/Input. Product types by relation to earning: monetizable (direct earning: subscriptions, transactions, ads); lead-generating (attracting users for other products: free tools, freemium); image/brand (corporate LLMs, social projects) — for a non-monetizable product the goal is formulated as contribution to the business (leads, brand metrics, ecosystem retention), not revenue. Growth models around the product define the product's role and admissible bets: product-led (acquisition via product, virality, organic; fast time-to-value, "try first"; retention via a user "collection" of contacts/boards/data; PM focus: needs, value, retention — Miro, messengers); marketing-led (ads, triggers, promos; discount-driven conversion; CRM reminders; PM focus: purchase conversion, tools for marketing — marketplaces, e-commerce); sales-led (sales finds decision-makers; demo, pilot, negotiation; success manager and regular value reports; PM focus: deal-mandatory features, working off sales signals — B2B enterprise, 2GIS). Most companies mix models (classifieds: private users product-led, sellers marketing-led, auto dealers sales-led); "real PMs exist only in product-led" is a myth. Business and product strategy link: business inherits the product strategy (product-led, tech companies); product inherits and refines the business strategy (sales/marketing-led); a single strategy with mature cascading culture. Good synergy: business bets on product-led + product with viral tools (Miro); bad: a bold business move (free browser bundled with the OS) + a product violating platform standards (IE6). Growth types (reference, Ansoff matrix): market penetration (existing product/market; low risk, low resources; 6–12 months); market development (existing product/new market; medium risk; 12–24 months); product development (new product/existing market; medium risk, high resources; 12–18 months); diversification (new/new; high risk, very high resources; 24–36 months) — the figures are the lecture's reference points, confirm with project data. Link to goal types: Growth/Activation/Monetization goals usually sit in "penetration"; Strategic Expansion in "market development" or "diversification".
+## Core idea
+**Strategy** — a long-term plan for moving from state A (where we are now) to state B (where we want to arrive). It is not a vision, not a roadmap and not a backlog: a vision describes only point B without a plan; a roadmap and a backlog are tactical instruments derived from the strategy.
 
-**How:** (1) determine the business's growth model (sales/marketing/product-led or a mix by segment) and the product's lifecycle stage (PMF, growth, maturity, decline) — they constrain the admissible goal type; (2) fix A: 5–10 metrics with period and source; what can't be measured now is a gap with a validation plan; (3) fix B: target metrics on a 2–3-year horizon and intermediate points; mark which are business (impact/outcome) and which product (output/input); (4) find the next-level goal (director, cluster) and build the cascade — how the product goal contributes; if the next-level goal is unknown, that's a question to the product lead, not a reason to invent; (5) collect external context (market, clients, competitors) and internal (marketing/tech/business landscapes, VRIO); (6) formulate at least three growth options, including "change nothing" and "close the direction / narrow focus"; compare by effect on B metrics, resources, risk, reversibility; (7) choose the strategy: goals → streams → drivers → bets, then risks, metrics, phases and timing, team; (8) make the strategy checkable: every key claim typed (fact with source / assumption / forecast), every bet with a success criterion and a stop condition, the whole strategy with a review date. Document skeleton (course example + final-work structure): 1 current-state analysis (market: size, dynamics, trends, challenges, opportunities — with numbers and source footnotes); 1a competitors (groups, advantages, growth strategy, promo mechanics, risks to us with level); 2 clients (types by market side — sellers/buyers: who, why they come, what difficulties, what holds them back from more frequent actions); 3 strategic initiatives (2–4 directions with rationale derived from sections 1–2, e.g. "market concentrated → avoid frontal battle, build a defensible niche; traffic comparable → grow frequency on the current base"); 4 tactics (initiative / focus / user needs / solutions table); 5 implementation plan (teams per initiative, expected contribution, priority order, tie to seasons and dates); 6 success metrics (business block: sales volume, orders, transactions per user, active sellers; product block: A/B conversion, actions per order, CSAT); 7 risks and mitigation (8 types, matrix, AATM, plan B); 8 team and resources (roles, hiring, stakeholders, dependencies). In the course example numbers are replaced by "X" with footnotes: in a live version every "X" needs a source; the agent marks gaps instead of inventing values. Document maturity checklist: A and B in metrics with period and source; cascade from business goal to product goal shown; unfair advantage named and copyability checked; ≥3 options analyzed incl. inaction and closure; each bet with data-backed pain, transition criterion, stop signal; risks described, red zone with plan B; resources and hiring built into timing; review date and triggers stated.
+**Five mandatory components of a product strategy**
+| Component | What must be written | Check |
+|---|---|---|
+| Current state (A) | Key metrics right now, market position, strengths and weaknesses | Every claim is a number with a source and a date |
+| Target state (B) | Target metrics, a horizon (usually 2–3 years), the vision | The goal is expressed in metrics; for an early startup a "first sales" milestone is acceptable |
+| External context | Market, trends, clients, competitors, opportunities and threats | Every threat/opportunity is scored by importance and probability |
+| Internal context | Unfair advantage, resources, constraints | An advantage is something a competitor cannot copy quickly |
+| Plan of achievement | Streams, drivers, bets, phases, risks, team | The chain "goal → driver → bet → metric" is not broken |
 
-**Pitfalls:** growth for growth's sake (vanity metrics, "grow first, earn later", ignored unit economics — cured by LTV > CAC and a path to profit); roadmap or vision instead of strategy (no current state in metrics, no transition path); underestimating competitors ("we have none") and ignoring indirect ones and substitutes; premature scaling (costs grow faster than revenue; hiring before PMF; expansion without a model); a goal in a proxy metric (average check, conversion as an end in itself — proxies diverge from money and deals at scale); strategy without cascade (the product optimizes a metric the business doesn't count as a goal); strategy as a one-off document (no "hypothesis → test → result → confirm or recast" cycle; two random hits taken as correlation); misplaced responsibility — a PM choosing metrics the team can't statistically "light up" (a small team can't measure the revenue effect of the whole company — choose proxies with a proven link to outcome).
+**Unfair advantage** — something you have that is unavailable to competitors: an audience on which new launches can run at minimal acquisition cost; a culture of quality; distribution; unique data or technology; partnerships a startup cannot get. To check the resource's durability — VRIO: value for the client, rarity, difficulty of copying, and the organization's ability to exploit the resource. Only "yes" on all four points gives a realized, durable advantage.
+
+**Four types of strategy metrics** (details in `M-success-metrics`)
+| Type | What it shows | Examples | Who owns it |
+|---|---|---|---|
+| Impact (business) | Company/direction efficiency, a long horizon (3–5 years) | EBITDA, ROI, LTV/CAC, revenue per employee | top management |
+| Outcome (business) | The result for the business and the user over the goal-setting period | revenue, deals/purchases, retention | product lead, team goals |
+| Output (product) | An intermediate result, often a proxy for outcome | purchase conversion, share of bought-out orders, response speed | product manager |
+| Input (product) | What the team influences directly | feature adoption, AOV, pushes per user | product manager, analyst |
+A strategy that does not move business metrics (impact/outcome) is useless; product metrics (output/input) are needed so that the team can steer.
+
+**Cascading goals**: a top-level goal (for example, revenue) decomposes into direction goals (marketing: DAU; product: retention; partners: new channels), then into clusters and teams. Business and product are entitled to choose different paths, but they must converge in the top-level metric. Without a cascade a desync is possible: the business buys traffic while the product is not ready to convert it, or vice versa. Cascading is a **process, not a document**: in mature companies goals live in a shared tool, where the link "company → direction → cluster → team" is visible top-down rather than smeared across spreadsheets. A team's local goal may sit one level higher than usual (Outcome, not Input) if the team can prove the link in an A/B test — that is how the messenger team held its goal directly in deals. The linkage of metrics across cascade levels: company — Impact; direction — Outcome; cluster — Outcome/Output; team — Output/Input.
+
+**Product types by relation to earning money** — not every product must earn money directly, but every one must bring the business value:
+| Type | Purpose | Examples |
+|---|---|---|
+| Monetizable | direct earning | subscriptions, transactions, advertising |
+| Lead-generating | attracting users for other products | free tools, freemium |
+| Brand-building | brand, HR brand, lobbying | corporate LLMs, social-impact projects |
+Hence a strategy check: for a non-monetizable product the goal is formulated not in revenue but in contribution to the business (leads, brand metrics, ecosystem retention).
+
+**Business growth models around the product** — they define the product's role and the admissible hypotheses
+| Model | Acquisition | Conversion | Retention | Product manager's focus | Course examples |
+|---|---|---|---|---|---|
+| Product-led | the product, virality, organic traffic | fast time-to-value, "try first" | the user's "collection" (contacts, boards, data) | needs research, value, retention | Miro, messengers |
+| Marketing-led | advertising, triggers, promotions | discounts, funnel conversion | CRM reminders | purchase conversion, tools for marketing | marketplaces, e-commerce |
+| Sales-led | a sales team hunting for decision makers (DMs) | demo, pilot, negotiations | a success manager, regular value reports | features considered mandatory for a deal; working off sales signals | B2B enterprise, 2GIS |
+Most companies combine models (a classifieds site: private users — product-led, sellers — marketing-led, car dealers — sales-led). The myth "real product managers exist only in product-led" is false.
+
+**Linking business strategy and product strategy** — three variants: the business inherits the product's strategy (product-led, technology companies); the product inherits and refines the business's strategy (sales/marketing-led); a single shared strategy with a mature cascading culture. Good synergy: the business bets on product-led + a product with virality tools (Miro). Bad: a bold business move (a free browser bundled with the OS) + a product violating platform standards (Internet Explorer 6).
+
+**Growth types (optional, reference from the extended notes of session 2)** — the Ansoff matrix:
+| Strategy | Product / market | Risk | Resources | Timeline benchmark |
+|---|---|---|---|---|
+| Penetration | existing / existing | low | low | 6–12 months |
+| Market development | existing / new | medium | medium | 12–24 months |
+| Product development | new / existing | medium | high | 12–18 months |
+| Diversification | new / new | high | very high | 24–36 months |
+The timelines and risk levels in the table are benchmarks from the notes, not measurements; in a strategy, confirm them with the project's own data. Link to the course's goal types (`M-goals-drivers-bets`): Growth/Activation/Monetization goals usually fall in the "penetration" zone; Strategic Expansion — "market development" or "diversification".
+
+## Procedure
+1. **Determine the business's growth model** (sales/marketing/product-led, or a mix by segments) and the product's lifecycle stage (PMF search, growth, maturity, decline) — the admissible goal type depends on them.
+2. **Fix A**: 5–10 metrics with a period and a source. Whatever cannot be measured right now — mark as a gap and add to the validation plan.
+3. **Fix B**: target metrics on a 2–3 year horizon and intermediate checkpoints; specify which of them are business (impact/outcome) and which are product (output/input).
+4. **Find out the goal of the level above** (a director, a cluster) and build the cascade: how the product's goal contributes to it. If the higher-level goal is unknown — that is a question for the product lead, not a reason to invent one.
+5. **Collect the external context** using the cards `M-external-environment`, `M-customers`, `M-competitors`; the **internal** one — using `M-landscapes` (marketing, technology, business model) and VRIO.
+6. **Formulate growth options** (at least three, including "change nothing" and "close the direction / narrow the focus"); compare them by effect on the B metrics, resources, risk, and reversibility.
+7. **Choose the strategy**: goals → streams → drivers → bets (`M-goals-drivers-bets`), then risks (`M-risks`), metrics (`M-success-metrics`), phases and timing (`M-outcome-roadmap`), team (`M-team`).
+8. **Make the strategy checkable**: for every key claim specify its type (fact with a source / assumption / forecast), for every bet — a success criterion and a stop condition, for the strategy as a whole — a review date.
+
+## Template / checklist
+**Strategy document skeleton** (after the course example and the final-work structure):
+| # | Section | Content | Card |
+|---|---|---|---|
+| 1 | Current-state analysis | Market: size, dynamics, trends, challenges, opportunities (with numbers and footnotes to sources) | `M-external-environment` |
+| 1a | Competitors | Competitor groups, their advantages, growth strategy and promo mechanics, risks to us with a level (high/low) | `M-competitors` |
+| 2 | Clients | Client types by market side (sellers / buyers): who they are, why they come, what difficulties they face, what holds them back from acting more often | `M-customers` |
+| 3 | Strategic initiatives | 2–4 directions with brief rationale derived from sections 1–2 (e.g.: the market is concentrated → not a frontal battle but a defensible niche; traffic is comparable → grow through frequency on the current base) | `M-goals-drivers-bets` |
+| 4 | Tactics | A table "initiative / focus / user needs / solutions" | `M-goals-drivers-bets` |
+| 5 | Implementation plan | Teams per initiative, each one's expected contribution to the result, priority order, ties to seasons and dates | `M-outcome-roadmap`, `M-team` |
+| 6 | Success metrics | KPIs in two blocks: business (sales volume, number of orders, transactions per user, active sellers) and product (conversion per A/B, number of actions to an order, CSAT) | `M-success-metrics` |
+| 7 | Risks and mitigation | 8 types, matrix, AATM, plan B | `M-risks` |
+| 8 | Team and resources | Roles, hiring, stakeholders, dependencies | `M-team` |
+
+In the course example the numbers are replaced with "X" and supplied with footnotes: in a working version every "X" must have a source; the agent does not insert made-up values but marks gaps.
+
+**Document maturity checklist**
+- [ ] A and B are expressed in metrics with a period and a source
+- [ ] The cascade from the business goal to the product goal is shown
+- [ ] The unfair advantage is named and checked for copyability
+- [ ] At least three options are analyzed, including doing nothing and closing the direction
+- [ ] Every bet has a pain backed by data, a transition criterion and a stop signal
+- [ ] Risks are described; the red zone has a plan B
+- [ ] Resources and hiring are built into the timelines
+- [ ] The review date and triggers for revisiting the strategy are specified
+
+## Typical mistakes
+- **Growth for growth's sake**: vanity metrics, "grow first, earn later", ignoring unit economics; cured by LTV > CAC and a path to profitability (`M-unit-economics`).
+- **A roadmap or a vision instead of a strategy**: no current state in metrics and no transition path.
+- **Underestimating competitors** ("we have no competitors"), ignoring indirect competitors and substitutes.
+- **Premature scaling**: costs grow faster than revenue, hiring before PMF, expansion without a model.
+- **A goal in a proxy metric** (average order value, conversion as an end in itself): proxies are convenient to measure, but at scale they diverge from money and deals.
+- **A strategy without a cascade**: the product optimizes a metric the business does not count as a goal (the team develops reviews while the company moves to a sales model without showing the item).
+- **A strategy as a one-off document**: no "hypothesis → test → result → confirmed / revised (recast)" cycle. Two random hits are taken for a correlation.
+- **Misplaced responsibility**: a product manager picks metrics the team cannot statistically "light up" (a small team cannot measure the effect on the whole company's revenue) — choose proxies whose link to outcome has been proven.
+
+## Questions that can change the decision
+- What is the business's growth model (sales/marketing/product-led), and does it match what the product wants to do?
+- What is the goal of the level above, and on which metric is it measured?
+- What stage is the product at (PMF search, growth, maturity, decline)? If retention is low, scaling is "pouring water into a leaky bucket".
+- Is there an unfair advantage that can be used quickly, or does it need to be built first?
+- What horizon and which constraints on resources, hiring and legal boundaries are already set?
+- What happens if we do nothing: what value of the B metric results from the inertial scenario?
+- Which assumptions of the strategy can be validated within a single quarter, and which only within a year?
+
+## Related maps
+[[M-external-environment]], [[M-customers]], [[M-competitors]], [[M-goals-drivers-bets]], [[M-landscapes]], [[M-risks]], [[M-outcome-roadmap]], [[M-success-metrics]], [[M-team]], [[M-pmf-scaling]], [[M-unit-economics]]
