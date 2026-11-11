@@ -182,7 +182,10 @@ async function main() {
   }
 
   try {
-    const attempts = new Map(); // identifier → проваленные попытки за прогон
+    const attemptsFile = resolve(STATE, 'attempts.json'); // счётчик переживает перезапуски роя
+    const attempts = new Map();
+    try { for (const [k, v] of Object.entries(JSON.parse(readFileSync(attemptsFile, 'utf8')))) attempts.set(k, v); } catch {}
+    const saveAttempts = () => { try { writeFileSync(attemptsFile, JSON.stringify(Object.fromEntries(attempts), null, 2)); } catch {} };
     for (let n = 0; n < MAX_TASKS; n++) {
       logFile = resolve(LOGS, `cycle-${Date.now()}.log`);
       log(`=== task ${n + 1}/${MAX_TASKS} ===`);
@@ -190,7 +193,12 @@ async function main() {
       // дерево: сбросить типовой чурн (активный проект) и потребовать чистоту
       await sh('git checkout -- projects/.active 2>/dev/null; true');
       const clean = await sh('git status --porcelain --untracked-files=no');
-      if (clean.out.trim()) throw new Error('working tree is not clean — aborting before pick');
+      if (clean.out.trim()) {
+        await sh('git stash push --include-untracked -q -m ' + JSON.stringify('swarm auto-stash before pick'), { timeoutMs: 60_000 });
+        const clean2 = await sh('git status --porcelain --untracked-files=no');
+        if (clean2.out.trim()) throw new Error('working tree still dirty after auto-stash — aborting before pick');
+        log('dirty tree before pick — auto-stashed (recoverable via git stash)');
+      }
       await sh('git fetch origin -q && git checkout -q --detach origin/main');
 
       // задачи с 2 проваленными попытками за прогон уходят в Backlog — очередь не зацикливается
@@ -242,6 +250,7 @@ async function main() {
             if (!sha && mergedSha) {
               const ev = `**Already merged to main** — the executor's work is commit ${mergedSha.slice(0, 9)} (an ancestor of origin/main). Nothing left to ship.`;
               await doneIssue(issue, ev);
+              attempts.delete(issue.identifier); saveAttempts();
               log(`already merged: ${mergedSha.slice(0, 9)} — issue closed as Done`);
               mergedDone = true; break;
             }
@@ -311,6 +320,7 @@ async function main() {
         if (!accepted) {
           await failIssue(issue, 'review', `no ACCEPT in ${MAX_ROUNDS} rounds; branch ${branch} kept for human review`);
           attempts.set(issue.identifier, (attempts.get(issue.identifier) || 0) + 1);
+          saveAttempts();
           log(`finished: ${issue.identifier} — review failed (attempt ${attempts.get(issue.identifier)}/2); moving on`);
           if ((attempts.get(issue.identifier) || 0) < 2) { try { await setState(issue.id, 'Todo'); } catch {} }
           continue;
@@ -404,6 +414,7 @@ async function main() {
 
         const evidence = `**Shipped by the agent swarm in v${ver}** (${today})\n\n- Issue: ${issue.identifier} — ${issue.title}\n- PR: ${prUrl} (squash-merged)\n- Gates: unittest ${gatesLine} + pfs doctor OK\n- Release: tag v${ver} → Pages deploy success → prod QA 4/4 страниц 200\n- Story: ${short(story, 300)}`;
         await doneIssue(issue, evidence);
+        attempts.delete(issue.identifier); saveAttempts();
         await sh(`git branch -D ${branch}`);
         log(`=== DONE: ${issue.identifier} shipped as v${ver} ===`);
       } catch (e) {
