@@ -390,5 +390,143 @@ class TestCommittedOutput(SiteBuildBase):
         self.assertTrue((ROOT / "site" / "assets" / "hero-swarm-2.mp4").exists())
 
 
+# ---------- раунд 2 (ревью PRO-66): favicon, бейдж «вы», громкие числа демо ----------
+
+def _load_build_module():
+    """Импорт scripts/build_site.py как модуля — для юнит-тестов demo_numbers/claim_facts."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("build_site_under_test", SCRIPT)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _fixture_demo(tmp: Path, *, options_md: str, claims: list[dict],
+                  letter: str = "A") -> Path:
+    """Мини-проект демо с той же структурой, что projects/демо, в tmp-каталоге.
+
+    letter — выбранный в D001 вариант; должен существовать среди заголовков 03_options.md.
+    """
+    demo = tmp / "demo"
+    (demo / "outputs").mkdir(parents=True)
+    (demo / "sources").mkdir()
+    (demo / "claims.jsonl").write_text(
+        "\n".join(json.dumps(r, ensure_ascii=False) for r in claims) + "\n", encoding="utf-8")
+    (demo / "sources.jsonl").write_text(
+        json.dumps({"id": "S001", "url": "https://example.com/a", "retrieved": "2026-01-15"},
+                   ensure_ascii=False) + "\n", encoding="utf-8")
+    (demo / "decisions.jsonl").write_text(
+        json.dumps({"id": "D001", "decision": f"Запустить вариант {letter}: hosted freemium SaaS",
+                    "review": {"date": "2027-02-10"}}, ensure_ascii=False) + "\n", encoding="utf-8")
+    (demo / "outputs" / "03_options.md").write_text(options_md, encoding="utf-8")
+    for name in ("SIX_PAGER.md", "SIX_PAGER_EN.md"):
+        (demo / "outputs" / name).write_text("## FAQ-1. Market\nMention of [C011] here.\n",
+                                             encoding="utf-8")
+    return demo
+
+
+OPT_OK = ("## Вариант A. Оставить как есть — бесплатный OSS\n"
+          "- Возражения red team: (1) первое возражение; (2) второе; (3) третье\n"
+          "- Скрытое допущение: что-то предполагается\n"
+          "## Сравнение по оси ARR\n"
+          "- Проза: здесь видно Скрытое допущение варианта B — но это не строка опции.\n")
+
+
+class TestRound2Pages(SiteBuildBase):
+    """Замечания ревью к страницам: favicon на /en/ и бейдж «вы» на процессе."""
+
+    def test_favicon_asset_prefix(self):
+        self.assertIn('<link rel="icon" href="assets/logo.svg"', self.built["ru"])
+        self.assertIn('<link rel="icon" href="../assets/logo.svg"', self.built["en"])
+
+    def test_favicon_resolves_from_page_dir(self):
+        for lang, page_dir in (("ru", "site"), ("en", "site/en")):
+            m = re.search(r'<link rel="icon" href="([^"]+)"', self.built[lang])
+            self.assertIsNotNone(m, lang)
+            self.assertTrue((ROOT / page_dir / m.group(1)).exists(),
+                            f"{lang}: favicon {m.group(1)} не существует от {page_dir}")
+
+    def test_process_badge_per_language(self):
+        ru_flat = self.built["ru"].replace(" ", "")
+        en_flat = self.built["en"].replace(" ", "")
+        self.assertIn('content:"вы"', ru_flat, "RU: бейдж «вы» у шагов 1/7/11")
+        self.assertIn('content:"you"', en_flat, "EN: бейдж «you» у шагов 1/7/11")
+        # кириллица не должна попасть в отрисовываемый CSS EN-страницы
+        # (комментарии не рендерятся — проверяем CSS без них)
+        style_en = re.search(r"<style>(.*?)</style>", self.built["en"], flags=re.S)
+        self.assertIsNotNone(style_en)
+        self.assertEqual(CYR.findall(_strip_css_comments(style_en.group(1))), [],
+                         "кириллица в отрисовываемом CSS EN-страницы")
+
+
+class TestRound2DemoNumbers(unittest.TestCase):
+    """Числа демо считаются громко: расхождение = BuildError, не тихий ноль."""
+
+    def setUp(self):
+        self.mod = _load_build_module()
+
+    def _demo(self, options_md: str, claims: list[dict] | None = None,
+              letter: str = "A") -> None:
+        import tempfile
+        tmp = Path(tempfile.mkdtemp(prefix="pfs-demo-numbers-"))
+        self.mod.DEMO = _fixture_demo(tmp, options_md=options_md, letter=letter,
+                                      claims=claims or [{"id": "C001", "kind": "fact",
+                                                         "grade": "B", "text": "т",
+                                                         "sources": ["S001"]}])
+
+    def test_two_digit_objections_counted(self):
+        self._demo(OPT_OK.replace("(1) первое возражение; (2) второе; (3) третье",
+                                  "(10) десятое; (11) одиннадцатое; (12) двенадцатое"))
+        nums = self.mod.demo_numbers()
+        self.assertEqual(nums["D_OBJ"], 12, "двузначные «(10)…(12)» должны считаться, не тихий 0")
+        self.assertEqual(nums["D_ASM"], 1, "упоминание «Скрытое допущение» в прозе не считается")
+
+    def test_missing_red_team_line_is_loud(self):
+        self._demo("## Вариант A. Закрыть проект\n- Скрытое допущение: что-то\n")
+        with self.assertRaisesRegex(self.mod.BuildError, "Возражения red team"):
+            self.mod.demo_numbers()
+
+    def test_red_team_without_numbered_items_is_loud(self):
+        self._demo("## Вариант B. Hosted freemium SaaS\n"
+                   "- Возражения red team: возражения перечислены без нумерации\n"
+                   "- Скрытое допущение: что-то\n", letter="B")
+        with self.assertRaisesRegex(self.mod.BuildError, "нумерованных"):
+            self.mod.demo_numbers()
+
+    def test_missing_assumption_line_is_loud(self):
+        self._demo("## Вариант A. Оставить как есть\n"
+                   "- Возражения red team: (1) а; (2) б; (3) в\n")
+        with self.assertRaisesRegex(self.mod.BuildError, "Скрытое допущени"):
+            self.mod.demo_numbers()
+
+    def test_num_tokens_normalizes_ru_and_en(self):
+        f = self.mod._num_tokens
+        self.assertEqual(
+            f("$37,97 млрд (2025), CAGR 7,1% до 2033; 685 млн профилей; 60+ стран; 59+ млн"),
+            sorted(["37.97", "2025", "7.1", "2033", "685", "60", "59"]))
+        self.assertEqual(
+            f("$37.97B in 2025 with a 7.1% CAGR to 2033; 60+ countries, 28 languages, "
+              "685M profiles; 59M+ profiles"),
+            sorted(["37.97", "2025", "7.1", "2033", "60", "28", "685", "59"]))
+
+    def test_text_en_numbers_must_match_registry(self):
+        claims = [{"id": "C011", "kind": "fact", "grade": "B",
+                   "text": "Мировой рынок: $40 млрд (2025), CAGR 8% до 2033; Indeed — 60 стран",
+                   "sources": ["S001"]}]
+        self._demo(OPT_OK, claims=claims)
+        with self.assertRaisesRegex(self.mod.BuildError, "TEXT_EN"):
+            self.mod.claim_facts()
+
+    def test_text_en_matches_registry_passes(self):
+        real = ("Мировой рынок онлайн-рекрутинга: $37,97 млрд (2025), CAGR 7,1% до 2033; "
+                "Indeed — 60+ стран, 28 языков, 685 млн профилей; Bayt (MENA) — 59+ млн профилей")
+        claims = [{"id": "C011", "kind": "fact", "grade": "B", "text": real,
+                   "sources": ["S001"]}]
+        self._demo(OPT_OK, claims=claims)
+        facts = self.mod.claim_facts()
+        self.assertEqual(facts["SEG_EN"], facts["TEXT_EN"].split(";")[0].strip())
+
+
 if __name__ == "__main__":
     unittest.main()
