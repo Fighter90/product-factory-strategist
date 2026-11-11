@@ -24,6 +24,7 @@ import os
 import shutil
 import tempfile
 import unittest
+from datetime import datetime, timedelta
 from pathlib import Path
 
 TMP = tempfile.mkdtemp(prefix="pfs-test-demo-consistency-")
@@ -69,6 +70,60 @@ class FreshnessSnapshotMatchesFiles(unittest.TestCase):
                          "снимок экспорта демо не соответствует файлам — чистый клон "
                          "получит ложное «⚠ Реестр изменился»")
         self.assertEqual(export.freshness_warnings(DEMO), [])
+
+
+class SnapshotNotOlderThanFinish(unittest.TestCase):
+    """«at» снимка свежести демо не старше последней записи pfs finish в журнале.
+
+    Ревью PRO-63 круг 6: .export_state.json говорил «at: 16:58:53», а последняя
+    запись finish в журнале — 19:37:52. pfs finish всегда переснимает реестр
+    (export.save_state внутри finish.run), поэтому снимок, старше последнего
+    finish, означает потерянный снимок той сборки. Допуск 2 с — на границу
+    секунды между save_state и записью журнала при реальном прогоне."""
+
+    _TOLERANCE_S = 2
+
+    @staticmethod
+    def _last_finish_ts(entries: list[dict]) -> str:
+        finishes = [e for e in entries
+                    if str(e.get("msg", "")).startswith("Собран финальный пакет")]
+        assert finishes, "в журнале демо нет записей pfs finish"
+        return str(finishes[-1]["ts"])
+
+    def test_snapshot_at_is_not_older_than_last_finish_entry(self):
+        entries = [json.loads(line)
+                   for line in (DEMO / "log.jsonl").read_text(encoding="utf-8").splitlines()
+                   if line.strip()]
+        finish_ts = datetime.fromisoformat(self._last_finish_ts(entries))
+        snap = export.read_state(DEMO)
+        self.assertIsNotNone(snap, "в демо нет снимка свежести .export_state.json")
+        snap_at = datetime.fromisoformat(str(snap["at"]))
+        self.assertGreaterEqual(
+            snap_at, finish_ts - timedelta(seconds=self._TOLERANCE_S),
+            f"снимок свежести ({snap_at.isoformat()}) старше последней записи finish "
+            f"({finish_ts.isoformat()}) — снимок той сборки потерян; "
+            f"ожидалось «at» времени finish (см. tools/pfs/finish.py: save_state)")
+
+
+class DeckExcludesUnitEconThresholdLine(unittest.TestCase):
+    """Строка «Вывод (умозаключение): … до CAC ≈ $90,62 …» FAQ-3 НЕ попадает в деку.
+
+    Ревью PRO-63 круг 6: правка этой строки в круге 5 (€90,62→$90,62) не изменила
+    deck.html — проверить, что это не рассинхрон six-pager/deck, а свойство рендера:
+    слайд берёт первые 6 тезисов раздела (_MAX_POINTS), и строка порогов стоит
+    дальше кэпа. Если тезисы FAQ-3 перестроят так, что строка войдёт в рендер,
+    тест упадёт — и валюту/формат строки тогда нужно проверять и в деке."""
+
+    def test_threshold_line_is_beyond_deck_thesis_cap(self):
+        from tools.pfs import export as exp
+        text = (DEMO / "outputs" / "SIX_PAGER.md").read_text(encoding="utf-8")
+        section = text.split("## FAQ-3", 1)[1].split("\n## ", 1)[0]
+        theses = exp._points(section)
+        self.assertLessEqual(len(theses), exp._MAX_POINTS)
+        hits = [t for t in theses if "CAC ≈ $90,62" in t or "CAC ≈ €90,62" in t]
+        self.assertEqual(hits, [],
+                         "строка порогов юнит-экономики вошла в рендер деки — "
+                         "deck.html надо пересобрать и проверить содержимое строки")
 
 
 class ReportCurrencyMatchesModel(unittest.TestCase):
