@@ -380,7 +380,9 @@ projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl �
                      outputs/ (00…07 · REPORT · SIX_PAGER · attachments/*.xlsx · presentations/)
                      демо-проект: демо — CVStart (сквозной прогон · six-pager RU/EN (MD/PDF/DOCX) ·
                      Excel · 100/100)
-site/                index.html · demo.html · materials.html · help.html (RU/EN)
+site/                index.html · en/index.html — генератор scripts/build_site.py (RU/EN,
+                     числа из репозитория, Метрика: site/ANALYTICS.md) · demo.html ·
+                     materials.html · help.html (RU/EN)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
 tests/               (355)
