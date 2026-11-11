@@ -5,6 +5,8 @@
 репозитория (карты/навыки/тесты/демо-проект), отсутствие языковых утечек в EN,
 цели Метрики, видимость без JS, постер и prefers-reduced-motion у видео.
 """
+from __future__ import annotations
+
 import html as html_mod
 import json
 import re
