@@ -182,22 +182,62 @@ async function main() {
   }
 
   try {
-    const attempts = new Map(); // identifier → проваленные попытки за прогон
+    // счётчик проваленных попыток переживает перезапуски роя. Правила (review round 3):
+    // (1) пишется в КАЖДОЙ ветке провала задачи, а не только при провале ревью;
+    // (2) затухает — запись старше TTL забывается, иначе задача с двумя провалами в любом
+    //     прошлом прогоне паркуется в Backlog навсегда; legacy-записи без ts считаются истёкшими;
+    // (3) ошибки чтения/записи логируются, а не глотаются молча (иначе потеря файла невидима).
+    const attemptsFile = resolve(STATE, 'attempts.json');
+    const ATTEMPT_TTL_DAYS = 7;
+    const ATTEMPT_TTL_MS = ATTEMPT_TTL_DAYS * 24 * 60 * 60_000;
+    const loadAttempts = () => {
+      const map = new Map();
+      let raw = '';
+      try { raw = readFileSync(attemptsFile, 'utf8'); }
+      catch (e) {
+        if (e && e.code !== 'ENOENT') log(`attempts: файл не прочитан (${short(String(e), 120)}) — счётчик начнётся с нуля`);
+        return map; // нет файла — это норма для первого запуска, не ошибка
+      }
+      try {
+        const now = Date.now();
+        for (const [k, v] of Object.entries(JSON.parse(raw))) {
+          const n = typeof v === 'number' ? v : (v && typeof v.n === 'number' ? v.n : 0);
+          const ts = (v && typeof v === 'object' && typeof v.ts === 'number') ? v.ts : 0;
+          if (n > 0 && now - ts < ATTEMPT_TTL_MS) map.set(k, { n, ts });
+        }
+      } catch (e) { log(`attempts: файл не разобран (${short(String(e), 120)}) — счётчик начнётся с нуля`); }
+      return map;
+    };
+    const attempts = loadAttempts();
+    const saveAttempts = () => {
+      try { writeFileSync(attemptsFile, JSON.stringify(Object.fromEntries(attempts), null, 2)); }
+      catch (e) { log(`attempts: НЕ СОХРАНЕНО (${short(String(e), 120)}) — счётчик может не пережить перезапуск`); }
+    };
+    const bumpAttempts = (id) => { // провал задачи: +1 попытка, сохранить, вернуть новое значение
+      const n = (attempts.get(id)?.n || 0) + 1;
+      attempts.set(id, { n, ts: Date.now() });
+      saveAttempts();
+      return n;
+    };
+    const triesOf = (id) => attempts.get(id)?.n || 0;
     for (let n = 0; n < MAX_TASKS; n++) {
       logFile = resolve(LOGS, `cycle-${Date.now()}.log`);
       log(`=== task ${n + 1}/${MAX_TASKS} ===`);
 
-      // дерево: сбросить типовой чурн (активный проект) и потребовать чистоту
+      // дерево: сбросить типовой чурн (активный проект) и потребовать чистоту.
+      // Отказ при грязном дереве — осознанно (review round 3): auto-stash с
+      // --include-untracked молча уносил WIP человека; пусть рой останавливается.
       await sh('git checkout -- projects/.active 2>/dev/null; true');
       const clean = await sh('git status --porcelain --untracked-files=no');
       if (clean.out.trim()) throw new Error('working tree is not clean — aborting before pick');
       await sh('git fetch origin -q && git checkout -q --detach origin/main');
 
-      // задачи с 2 проваленными попытками за прогон уходят в Backlog — очередь не зацикливается
+      // задачи с 2 проваленными попытками уходят в Backlog — очередь не зацикливается;
+      // счётчик персистентен, но затухает (TTL 7 дней) — старые провалы не паркан навсегда
       let issue = await pickIssue();
-      while (issue && (attempts.get(issue.identifier) || 0) >= 2) {
+      while (issue && triesOf(issue.identifier) >= 2) {
         await setState(issue.id, 'Backlog');
-        await comment(issue.id, '🏁 Swarm: 2 attempts failed this run (review/gates) — parked in Backlog for human review. Branch kept.');
+        await comment(issue.id, '🏁 Swarm: 2 attempts failed (review/gates; counter persists across runs, decays after 7 days) — parked in Backlog for human review. Branch kept.');
         log(`parked ${issue.identifier} (2 failed attempts) — skipping`);
         issue = await pickIssue();
       }
@@ -242,6 +282,7 @@ async function main() {
             if (!sha && mergedSha) {
               const ev = `**Already merged to main** — the executor's work is commit ${mergedSha.slice(0, 9)} (an ancestor of origin/main). Nothing left to ship.`;
               await doneIssue(issue, ev);
+              attempts.delete(issue.identifier); saveAttempts();
               log(`already merged: ${mergedSha.slice(0, 9)} — issue closed as Done`);
               mergedDone = true; break;
             }
@@ -269,8 +310,9 @@ async function main() {
               continue;
             }
             await failIssue(issue, 'gates', `failed after ${MAX_ROUNDS} rounds`);
-            log(`finished: ${issue.identifier} — gates failed; moving on`);
-            try { await setState(issue.id, 'Todo'); } catch {}
+            const tr = bumpAttempts(issue.identifier);
+            log(`finished: ${issue.identifier} — gates failed (attempt ${tr}/2); moving on`);
+            if (tr < 2) { try { await setState(issue.id, 'Todo'); } catch {} }
             devStatus = 'gates-failed';
             break;
           }
@@ -310,9 +352,9 @@ async function main() {
         }
         if (!accepted) {
           await failIssue(issue, 'review', `no ACCEPT in ${MAX_ROUNDS} rounds; branch ${branch} kept for human review`);
-          attempts.set(issue.identifier, (attempts.get(issue.identifier) || 0) + 1);
-          log(`finished: ${issue.identifier} — review failed (attempt ${attempts.get(issue.identifier)}/2); moving on`);
-          if ((attempts.get(issue.identifier) || 0) < 2) { try { await setState(issue.id, 'Todo'); } catch {} }
+          const tr = bumpAttempts(issue.identifier);
+          log(`finished: ${issue.identifier} — review failed (attempt ${tr}/2); moving on`);
+          if (tr < 2) { try { await setState(issue.id, 'Todo'); } catch {} }
           continue;
         }
 
@@ -404,6 +446,7 @@ async function main() {
 
         const evidence = `**Shipped by the agent swarm in v${ver}** (${today})\n\n- Issue: ${issue.identifier} — ${issue.title}\n- PR: ${prUrl} (squash-merged)\n- Gates: unittest ${gatesLine} + pfs doctor OK\n- Release: tag v${ver} → Pages deploy success → prod QA 4/4 страниц 200\n- Story: ${short(story, 300)}`;
         await doneIssue(issue, evidence);
+        attempts.delete(issue.identifier); saveAttempts();
         await sh(`git branch -D ${branch}`);
         log(`=== DONE: ${issue.identifier} shipped as v${ver} ===`);
       } catch (e) {
