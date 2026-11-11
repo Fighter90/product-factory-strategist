@@ -314,7 +314,9 @@ tools/pfs/  core · project · route · sources · claims · check · impact · 
 projects/<slug>/
             sources/ · claims.jsonl · decisions.jsonl · log.jsonl · costs.json · state.json
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
-site/index.html (RU/EN)
+site/       index.html · en/index.html — generator scripts/build_site.py (RU/EN,
+            numbers from the repository, Metrika: site/ANALYTICS.md) · demo.html ·
+            materials.html · help.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/ (420) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/ (455) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```
