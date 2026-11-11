@@ -113,8 +113,12 @@ def sub_bare(text: str, token: str, value: int) -> tuple[str, int]:
     return pattern.sub(repl, text), changed
 
 
-def update_file(path: Path, c: dict) -> int:
-    """Возвращает число замен; тесты — только на строках с `unittest discover`."""
+def update_file(path: Path, c: dict, write: bool = True) -> tuple[str, int]:
+    """Подстановка счётчиков в один файл. Возвращает (новый текст, число замен).
+
+    write=False — dry-run (режим --check): файл на диске не меняется, результат
+    сравнивается в памяти — гейт не должен молча править документы (PRO-63, ревью).
+    Тесты подставляются только на строках с `unittest discover`."""
     text = path.read_text(encoding="utf-8")
     total = 0
     lines = text.splitlines(keepends=True)
@@ -148,25 +152,26 @@ def update_file(path: Path, c: dict) -> int:
                 total += n
         lines[i] = line
     new_text = "".join(lines)
-    if new_text != text:
+    if write and new_text != text:
         path.write_text(new_text, encoding="utf-8")
-    return total
+    return new_text, total
 
 
-def main(argv: list[str]) -> int:
+def main(argv: list[str], root: Path = ROOT) -> int:
     check_only = "--check" in argv
     c = counts()
     print(f"Счётчики: тестов {c['tests']}, навыков {c['skills']}, карт RU {c['cards_ru']} "
           f"+ EN-зеркал {c['cards_en']}, субагентов {c['subagents']}")
     drift = 0
     for name in FILES:
-        p = ROOT / name
-        before = p.read_text(encoding="utf-8")
-        n = update_file(p, c)
-        after = p.read_text(encoding="utf-8")
-        if check_only and after != before:
-            drift += 1
-            print(f"РАЗЪЕХАЛОСЬ: {name} ({n} замен)")
+        p = root / name
+        old_text = p.read_text(encoding="utf-8")
+        # --check — dry-run: ничего не пишем, разъехавшиеся файлы сравниваем в памяти.
+        new_text, n = update_file(p, c, write=not check_only)
+        if check_only:
+            if new_text != old_text:
+                drift += 1
+                print(f"РАЗЪЕХАЛОСЬ: {name} ({n} замен)")
         elif n:
             print(f"{name}: замен {n}")
     if check_only:

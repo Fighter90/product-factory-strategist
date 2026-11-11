@@ -106,6 +106,20 @@ class FinishTests(unittest.TestCase):
         self.assertTrue((self.pdir / "outputs" / "SIX_PAGER.docx").exists())
         self.assertEqual(len(res["artifacts"]), 8)
 
+    def test_no_deck_log_entry_explains_skip(self):
+        # Ревью PRO-63 (круг 2, п.2): финальный finish демо шёл с --no-deck, в журнале
+        # остался пакет без deck.html — без пояснения это выглядит как регресс сборки деки.
+        # Запись журнала сама объясняет пропуск: «(без деки: --no-deck)».
+        finish.run(self.pdir, no_deck=True)
+        entries = core.read_jsonl(self.pdir / "log.jsonl")
+        entry = [e for e in entries if e.get("tool") == "pfs finish"][-1]
+        self.assertIn("--no-deck", entry["msg"])
+        # и обычный запуск пояснение не содержит
+        finish.run(self.pdir)
+        entry = [e for e in core.read_jsonl(self.pdir / "log.jsonl")
+                 if e.get("tool") == "pfs finish"][-1]
+        self.assertNotIn("--no-deck", entry["msg"])
+
     def test_en_flag_builds_en_draft_and_keeps_ru(self):
         finish.run(self.pdir, en=True)
         en = (self.pdir / "outputs" / "SIX_PAGER_EN.md").read_text(encoding="utf-8")

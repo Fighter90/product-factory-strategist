@@ -31,7 +31,7 @@ Key trends in the job-search tools market:
 - **Generative AI drove the cost of text generation to zero.** Bare "AI writes text" is no longer a
   differentiator — value shifted to data (scanning real vacancies), context (resume against a
   specific JD) and process (scoring → tuning → application → tracking in one pipeline).
-- **The multilingual gap.** Direct competitors' language coverage is EN+5 (Kickresume — 6
+- **The multilingual gap [C013].** Direct competitors' language coverage is EN+5 (Kickresume — 6
   languages)⁵, while the global labor market is multilingual; local resume conventions (EU, JA, ZH)
   are ignored by mass tools.
 - **Privacy and data sovereignty.** A resume is a concentrated PII package; part of the audience

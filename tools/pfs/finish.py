@@ -44,7 +44,10 @@ def run(pdir: Path, no_deck: bool = False, en: bool = False) -> dict:
     if not no_deck:  # 6. дека из готового SIX_PAGER
         artifacts.append(export.build_deck(pdir))
     missing = [name for name in export.ORDER if not (pdir / "outputs" / name).exists()]
-    core.log(pdir, "action", "Собран финальный пакет: " + ", ".join(p.name for p in artifacts),
+    # --no-deck фиксируется в журнале: пакет без deck.html не должен выглядеть
+    # как регресс сборки деки (PRO-63, ревью — демо-журнал вводил в заблуждение).
+    head = "Собран финальный пакет" + (" (без деки: --no-deck)" if no_deck else "")
+    core.log(pdir, "action", head + ": " + ", ".join(p.name for p in artifacts),
              tool="pfs finish")
     return {"check": qc, "artifacts": artifacts, "missing_docs": missing,
             "stale_warnings": stale, "stale_facts": stale_facts}
