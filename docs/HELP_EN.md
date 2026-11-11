@@ -359,6 +359,22 @@ Full registry of skills — [`SKILLS.md`](SKILLS.md).
 
 Hooks never crash the session: errors go to `.claude/hooks/hook_errors.log`.
 
+### End-to-end QA run (PRO-64)
+
+To check that "the agent handles new tasks", run the whole 12-step chain on a fresh clone:
+
+```bash
+scripts/e2e_opencode.sh en qa/tasks/antispam-en.md    # 3 tasks × ru/en in qa/tasks/
+# in OpenCode the same: the /pfs-e2e command — ru | en | all
+```
+
+The script does everything itself: a fresh clone into a temp directory → `opencode run --auto
+--format json` in autopilot mode (the agent answers its own `pfs ask` questions, works until
+`pfs finish`, no "continue" nudges) → log parsing → report `qa/E2E-<date>-<task>-<lang>.md`: steps,
+tool calls, errors, tokens and cost, time, `pfs check --strict` and six-pager build results,
+number of stops. A run takes 20–40 minutes. Comparison with plain chat and sample-size caveats:
+`docs/demo/comparison.md`.
+
 ---
 
 ## 9. Revising after new data
