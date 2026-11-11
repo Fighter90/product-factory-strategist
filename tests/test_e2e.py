@@ -186,6 +186,31 @@ class InvocationDetectionTests(unittest.TestCase):
         self.assertEqual((self.s["asks"], self.s["answers"]), (1, 1))
         self.assertTrue(self.s["finished"])
 
+    def test_bare_pfs_finish_after_and_counts(self):
+        """Голый pfs (глобальная установка install.sh) — фактический вызов.
+        price-increase-ru 2026-11-11: `pfs check … && pfs finish 2>&1 | tail -12` —
+        парсер раунда 3 не счёл его finish (ложноотрицательный вердикт ❌)."""
+        s = _parse_events([_tool("shell", "completed",
+                                 {"command": 'export PFS_PROJECTS_DIR="$PWD/projects" && '
+                                             'pfs check 2>&1 | head -4 && pfs finish 2>&1 | tail -12'},
+                                 "ok")])
+        self.assertTrue(s["finished"])
+
+    def test_bare_pfs_ask_answer_counted(self):
+        s = _parse_events([_tool("shell", "completed",
+                                 {"command": 'pfs ask "В?" --options "A,B" && '
+                                             'pfs answer "A — автопрогон QA"'},
+                                 "ok")])
+        self.assertEqual((s["asks"], s["answers"]), (1, 1))
+
+    def test_finish_help_is_not_a_call(self):
+        """`pfs finish --help` / `python3 -m tools.pfs finish --help` — запрос справки,
+        не вызов (цена ложноположительного — зелёные ворота без реального пакета)."""
+        for cmd in ("pfs finish --help 2>&1 | head -15",
+                    "python3 -m tools.pfs finish --help | head -15"):
+            s = _parse_events([_tool("shell", "completed", {"command": cmd}, "ok")])
+            self.assertFalse(s["finished"], cmd)
+
 
 class RenderReportTests(unittest.TestCase):
     def setUp(self):

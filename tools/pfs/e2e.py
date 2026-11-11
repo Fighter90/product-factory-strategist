@@ -33,11 +33,14 @@ from pathlib import Path
 ERR_MARKER_RE = re.compile(r"\b(?:Ошибка|Error|Traceback)\b")
 SHELL_TOOLS = ("shell", "bash")
 # Фактический вызов pfs: сегмент shell-команды, начинающийся с
-# `python3 -m tools.pfs ask|answer|finish` (ревью PRO-64, раунд 3).
+# `python3 -m tools.pfs ask|answer|finish` или голого `pfs ask|answer|finish`
+# (глобальная установка install.sh; price-increase-ru 2026-11-11 звал finish так:
+# `pfs check … && pfs finish 2>&1 | tail -12`). `--help`/`-h` — справка, не вызов.
 # Раньше матч был подстрокой в любом вводе инструмента — cat SKILL.md
 # с текстом «pfs answer» и payload edit'а с «pfs finish» считались вызовами.
 PFS_CALL_RE = re.compile(
-    r"^(?:[A-Za-z_][A-Za-z0-9_]*=\S*\s+)*python3\s+-m\s+tools\.pfs\s+(ask|answer|finish)\b")
+    r"^(?:[A-Za-z_][A-Za-z0-9_]*=\S*\s+)*(?:python3\s+-m\s+tools\.pfs|pfs)\s+(ask|answer|finish)"
+    r"\b(?!\s+(?:--help|-h)\b)")
 SEG_SPLIT_RE = re.compile(r"&&|\|\||;|\||\n")
 
 # Языковая консистентность реплик (ревью PRO-64): в EN-прогоне финальные реплики
