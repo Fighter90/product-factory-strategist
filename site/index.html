@@ -22,7 +22,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <style>
-/* Тёплый тёмный v3: тёплые нейтрали, один янтарный акцент, капсулы, тонкие линии */
+/* Warm dark v3: warm neutrals, one amber accent, pills, thin lines */
 :root{
   --bg:#0B0A09; --bg2:#12100E; --card:#151311; --line:rgba(214,210,204,.10); --line2:rgba(214,210,204,.18);
   --text:#D6D2CC; --strong:#F1EEE9; --muted:#8C877F; --accent:#EE8A3C; --accent-ink:#1A0E05; --pill:#BDB9B3;
@@ -30,7 +30,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
 a{color:inherit}
 .wrap{max-width:1160px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
@@ -45,7 +45,7 @@ h3{font-size:20px;line-height:1.3}
 .skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:16px;z-index:99;background:var(--strong);color:var(--bg);padding:8px 12px;border-radius:8px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
 
-/* шапка-капсула */
+/* fixed pill header */
 .nav{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:0;right:0;z-index:50}
 .nav .bar{position:relative;display:flex;align-items:center;gap:16px;height:56px;padding:0 8px 0 18px;border:1px solid var(--line2);border-radius:18px;background:rgba(11,10,9,.72);backdrop-filter:blur(14px)}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--strong);font-weight:600;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
@@ -68,7 +68,7 @@ h3{font-size:20px;line-height:1.3}
 .mlink-panel a{display:flex;align-items:center;min-height:44px;padding:0 14px;border-radius:12px;text-decoration:none;color:var(--strong);font-weight:500;font-size:15px}
 .mlink-panel a:hover{background:var(--bg2)}
 
-/* кнопки-капсулы */
+/* pill buttons */
 .pill{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 6px 0 20px;border-radius:999px;font-size:16px;font-weight:500;text-decoration:none;border:0;cursor:pointer;font-family:inherit;transition:filter .2s,background .2s}
 .pill .arr{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.18)}
 .pill .arr svg{width:16px;height:16px}
@@ -92,7 +92,7 @@ section{padding:110px 0;border-bottom:1px solid var(--line)}
 .head{display:flex;flex-direction:column;gap:14px;max-width:760px;margin-bottom:48px}
 .head p{margin:0;color:var(--muted)}
 
-/* схема: вход → реестр → результат */
+/* flow: request -> evidence registry -> result */
 .flow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr);gap:0;align-items:center}
 .col{display:flex;flex-direction:column;gap:12px}
 .node{position:relative;display:flex;gap:12px;align-items:flex-start;padding:16px 18px;border:1px solid var(--line2);border-radius:14px;background:var(--card)}
@@ -106,14 +106,14 @@ section{padding:110px 0;border-bottom:1px solid var(--line)}
 .core ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
 .core li{font-size:12px;padding:5px 10px;border:1px solid var(--line2);border-radius:999px;color:var(--text)}
 
-/* сравнение с обычным чатом */
+/* comparison with a plain chat */
 .cmp{border-top:1px solid var(--line2)}
 .cmp .row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr) minmax(0,1.3fr);gap:24px;padding:20px 0;border-bottom:1px solid var(--line);align-items:baseline}
 .cmp .row.hd{padding:12px 0}
 .cmp .what{color:var(--strong);font-weight:500}
 .cmp .yes{display:flex;gap:10px;align-items:baseline}.cmp .yes::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateY(-2px)}
 
-/* бенто-сетка возможностей */
+/* bento grid of features */
 .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
 .card{grid-column:span 4;min-width:0;padding:26px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:14px}
 .card.w6{grid-column:span 6}.card.w8{grid-column:span 8}
@@ -124,17 +124,17 @@ section{padding:110px 0;border-bottom:1px solid var(--line)}
 .faqlist li{list-style:none;padding:10px 12px;border-radius:10px;background:var(--bg2);font-size:14px}
 .faqlist b{color:var(--accent);font-weight:500;margin-right:8px}
 
-/* процесс */
+/* process */
 .phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .ph{padding:22px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:12px;min-width:0}
 .ph ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
 .ph li{display:flex;align-items:center;gap:12px;font-size:15px}
 .ph .n{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
 .ph li.h .n{border:1.5px solid var(--accent);color:var(--accent)}
-/* бейдж у шагов решения человека — текст задаётся пер-языковым токеном, чтобы не было утечек */
+/* badge on human-decision steps: the text comes from a per-language token to avoid leaks */
 .ph li.h::after{content:"вы";margin-left:auto;font-size:11px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
 
-/* цепочка доказательств: терминал, утверждение, excel */
+/* evidence chain: terminal, claim, excel */
 .proof{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:24px;align-items:start}
 .proof-side{display:flex;flex-direction:column;gap:16px;min-width:0}
 .term{border:1px solid var(--line2);border-radius:18px;background:#0D0C0A;overflow:hidden;min-width:0}
@@ -157,7 +157,7 @@ section{padding:110px 0;border-bottom:1px solid var(--line)}
 .xl tr:last-child td{border-bottom:0}
 .xl td:last-child{text-align:right;color:var(--strong);font-variant-numeric:tabular-nums}
 
-/* архитектура */
+/* architecture */
 .stack{display:flex;flex-direction:column;max-width:760px;margin:0 auto;width:100%}
 .layer{position:relative;display:flex;gap:16px;align-items:flex-start;padding:20px 24px;border:1px solid var(--line2);border-radius:16px;background:var(--card);min-width:0}
 .layer+.layer{margin-top:26px}
@@ -166,14 +166,14 @@ section{padding:110px 0;border-bottom:1px solid var(--line)}
 .layer b{display:block;color:var(--strong);font-weight:500;font-size:16px;margin-bottom:4px}
 .layer small{color:var(--muted);font-size:14px;line-height:1.5;display:block}
 
-/* демо */
+/* demo */
 .demo{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line2);border:1px solid var(--line2);border-radius:18px;overflow:hidden;margin:0}
 .stats div{background:var(--card);padding:22px;display:flex;flex-direction:column-reverse;gap:6px}
 .stats b{font-size:30px;font-weight:500;color:var(--strong);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
 .stats span{font-size:13px;color:var(--muted)}
 
-/* установка */
+/* install */
 .inst{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
 .steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
 .cmd{display:flex;align-items:center;gap:10px;padding:6px 6px 6px 16px;border:1px solid var(--line2);border-radius:14px;background:var(--card)}
@@ -184,7 +184,7 @@ blockquote{margin:6px 0 0;padding:18px 20px;border-radius:14px;background:var(--
 
 /* faq */
 .faq{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:40px}
-/* стили аккордеона ограничены разделом FAQ: details в шапке (mlink) стилизуется отдельно */
+/* accordion styles are scoped to the FAQ section: the header details (mlink) is styled separately */
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:64px;padding:12px 0;color:var(--strong);font-size:18px;font-weight:500}
 .faq summary::-webkit-details-marker{display:none}
@@ -192,7 +192,7 @@ blockquote{margin:6px 0 0;padding:18px 20px;border-radius:14px;background:var(--
 .faq details[open] summary .pm{transform:rotate(45deg)}
 .faq details p{margin:0 0 22px;color:var(--muted);max-width:44em}
 
-/* финал и футер */
+/* final CTA and footer */
 .final{position:relative;overflow:hidden;text-align:center;border-bottom:0}
 .final .box{position:relative;margin:0 auto;max-width:980px;padding:80px 28px;border:1px solid rgba(238,138,60,.4);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,rgba(238,138,60,.16),rgba(11,10,9,0) 60%),var(--bg2);display:flex;flex-direction:column;align-items:center;gap:22px}
 .procfig{margin:44px auto 0;max-width:760px}
@@ -456,7 +456,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}fo
     <div class="head" style="margin:0 auto 48px;text-align:center;align-items:center">
       <div class="label">Архитектура</div>
       <h2 id="arch-h">Гарантии — не в промптах, <span class="acc">а в коде и файлах</span></h2>
-      <p>Автотесты CLI (384) проверяют ядро после каждого изменения. Состояние проекта лежит в файлах рядом с кодом — работа переживает перерыв и переезд между средами.</p>
+      <p>Автотесты CLI (400) проверяют ядро после каждого изменения. Состояние проекта лежит в файлах рядом с кодом — работа переживает перерыв и переезд между средами.</p>
     </div>
     <div class="stack">
       <div class="layer"><span class="n">1</span><div><b>Среда · AGENTS.md</b><small>правила: источник у каждого числа, синтетика — только гипотезы, существенное решает человек · навыков: 121 · субагентов: 8 · хуков: 5</small></div></div>
