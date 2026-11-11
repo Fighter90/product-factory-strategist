@@ -1,20 +1,42 @@
 ---
 id: M-product-lifecycle-strategy
 lang: en
-title: Strategy by product life-cycle stage
+title: Strategy by life-cycle stage — introduction, growth, maturity, decline
 course: pm-approaches-en
-sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
+sources: ["EN mirror of the RU card; original sources listed there"]
 stages: [strategy, monitoring]
-tags: [en, summary]
+tags: [lifecycle, stage, introduction, growth, maturity, decline, strategy]
 related: [M-product-context, M-pmf-scaling, M-strategy-growth, M-growth-frameworks, M-monetization, M-risks]
 ---
 
-# Product Life-cycle Strategy (EN summary)
+# Life cycle: each stage has its own game and its own metrics
 
-**When:** strategy, channels and metrics are chosen by stage; a stage mismatch = playing someone else's game (scaling before PMF, cost-cutting during growth).
+## When to apply
+Strategy, channels and metrics are chosen by the product's stage; a stage error = playing someone else's game (scaling before
+PMF, optimizing costs during growth, etc.). Stage diagnostics is a mandatory step of strategy.
 
-**Core:** Introduction (prove value, find repeating users — danger: premature scale); Growth (capture pace while retention holds — danger: unit economics breaking); Maturity (defend & monetize: retention/ARPU, segmentation, v2 innovation — danger: complacency); Decline (managed value harvesting: migrate users, milk cash cows — danger: a late pivot). Stage is diagnosed by data (new vs returning dynamics, market share, channel elasticity), not by feelings.
+## Core idea
+- **Introduction (0→1)**: the goal is to prove value and find the first repeating users. Focus: PMF signals, qualitative
+  research, minimal marketing. Danger — premature scaling.
+- **Growth**: the goal is to capture momentum while keeping retention. Focus: channels and funnels, conversions, unit economics
+  turning positive per cohort. Danger — growth with breaking unit economics.
+- **Maturity**: the goal is defending and profit. Focus: retention/ARPU, segmentation, upsells, cost efficiency, innovation "on
+  the margins" (v2, adjacencies). Danger — complacency and market disaggregation (the beginning of decline).
+- **Decline**: the goal is managed value harvesting. Focus: cuts, "milking" cash cows, migrating users, or refreshing the
+  product. Danger — a pivot made too late.
+- **Stage diagnostics by metrics**, not by feelings: the pace of new vs retention of old, market share, channel elasticity.
 
-**How:** determine stage from data → choose the stage game and stage metrics (see M-pmf-scaling, M-product-metrics) → audit the initiative portfolio for stage fit → set stage-transition indicators into monitoring.
+## How to do it
+1. Determine the stage from data (dynamics of new/old users, retention, market share).
+2. Choose the stage's target game and the stage's metrics (see the tables in the cards `M-pmf-scaling` and `M-product-metrics`).
+3. Audit the initiative portfolio: does every initiative match the stage? Move the out-of-stage ones.
+4. Set stage-transition indicators → a scheduled strategy revision (in 06/monitoring).
 
-**Pitfalls:** "we are in growth" without retention data; treating maturity with discounts alone; not admitting decline.
+## Pitfalls
+- "We are in growth" without retention data — scaling breaks the product.
+- Treating maturity with discounts instead of innovation.
+- Not admitting decline (no value-harvesting plan built).
+
+## Connections
+Context diagnostics — `M-product-context`; after PMF — `M-pmf-scaling`; growth frameworks — `M-growth-frameworks`;
+monetization by stage — `M-monetization`.
