@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Help — Product Factory Strategist</title>
+<meta name="description" content="Full documentation for the Product Factory Strategist AI agent: the 12 process steps, sources S###, claims C###, decisions D###, Excel models, the six-pager, skills, subagents, MCP, environments, security and troubleshooting.">
+<meta property="og:title" content="Help — Product Factory Strategist">
+<meta property="og:description" content="Full documentation for the Product Factory Strategist AI agent: the 12 process steps, sources S###, claims C###, decisions D###, Excel models, the six-pager, skills, subagents, MCP, environments, security and troubleshooting.">
+<link rel="canonical" href="https://strategyproduct.ru/en/help.html">
+<link rel="alternate" hreflang="ru" href="https://strategyproduct.ru/help.html">
+<link rel="alternate" hreflang="en" href="https://strategyproduct.ru/en/help.html">
+<link rel="alternate" hreflang="x-default" href="https://strategyproduct.ru/help.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='.55' stop-color='%23818cf8'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='11' fill='%2305070f'/%3E%3Cg fill='none' stroke='url(%23g)' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M14 10H34L42 19L24 42L6 19Z'/%3E%3Cpath d='M6 19H42' opacity='.7'/%3E%3Cpath d='M14 10L20 19L24 42' opacity='.55'/%3E%3Cpath d='M34 10L28 19L24 42' opacity='.55'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+
+<meta property="og:url" content="https://strategyproduct.ru/help.html">
+<style>
+:root{
+  --bg:#05070f; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06);
+  --text:#eef2ff; --muted:#9aa7bd; --line:rgba(148,163,184,.16);
+  --accent:#2dd4bf; --accent2:#818cf8; --accent3:#f472b6; --warn:#f6ad55; --ok:#48bb78;
+  --code:rgba(8,12,24,.75);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+[id]{scroll-margin-top:92px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden;transition:opacity .18s ease}
+body.lang-switching{opacity:.55}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(1200px 800px at 78% -12%,rgba(129,140,248,.10),transparent 62%),radial-gradient(1000px 760px at -12% 32%,rgba(45,212,191,.08),transparent 62%),radial-gradient(1100px 820px at 108% 92%,rgba(244,114,182,.06),transparent 62%)}
+::selection{background:rgba(45,212,191,.3)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;opacity:.24;filter:blur(110px);
+  background:conic-gradient(from 0deg at 32% 28%,rgba(45,212,191,.15),transparent 28%,rgba(129,140,248,.15) 52%,transparent 76%,rgba(244,114,182,.12));
+  animation:auroraSpin 44s linear infinite}
+.noise{position:absolute;inset:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+
+#bar{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));box-shadow:0 0 12px rgba(129,140,248,.7)}
+header{position:sticky;top:0;z-index:50;background:rgba(5,7,15,.66);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:16px;padding:13px 0;flex-wrap:wrap}
+.logo{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:.2px}
+.logo-t{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo .mark{width:25px;height:25px;flex:none;filter:drop-shadow(0 0 10px rgba(45,212,191,.28));transition:filter .3s,transform .45s cubic-bezier(.2,.6,.2,1)}
+.logo:hover{text-decoration:none}
+.logo:hover .mark{transform:rotate(10deg) scale(1.06);filter:drop-shadow(0 0 14px rgba(129,140,248,.55))}
+.nav a.nl{color:var(--muted);font-size:14px;position:relative}
+.nav a.nl::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transition:width .25s}
+.nav a.nl:hover{color:var(--text);text-decoration:none}
+.nav a.nl:hover::after{width:100%}
+.nav a.nl.on{color:var(--accent)}
+.nav a.nl.on::after{width:100%}
+.lang{margin-left:auto;display:flex;gap:6px}
+.lang a{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:8px;cursor:pointer;font-size:13px;transition:.2s}
+.lang a:hover{color:#05070f;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));border-color:transparent;font-weight:700}
+.lang a.on{color:#05070f;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));border-color:transparent;font-weight:700}
+
+.help-hero{position:relative;padding:72px 0 56px;overflow:hidden;border-bottom:1px solid var(--line)}
+.help-art{position:absolute;inset:0;z-index:0;overflow:hidden}
+.help-art img{width:100%;height:100%;object-fit:cover;opacity:.42;
+  -webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent 100%);mask-image:linear-gradient(to bottom,#000 30%,transparent 100%)}
+.help-hero h1{font-size:clamp(30px,4vw,44px);font-weight:850;letter-spacing:-.8px;position:relative}
+.help-hero h1 .grad{background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 45%,var(--accent3) 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.help-hero .sub{color:var(--muted);font-size:16.5px;max-width:860px;margin:14px 0 0;position:relative}
+.help-hero .meta{position:relative;margin-top:14px;color:rgba(154,167,189,.85);font-size:13px}
+.search{margin-top:24px;max-width:560px;position:relative}
+.search input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px 12px 42px;color:var(--text);font-size:14px;outline:none;backdrop-filter:blur(8px);transition:border-color .2s}
+.search input:focus{border-color:var(--accent)}
+.search input::placeholder{color:rgba(154,167,189,.75)}
+.search::before{content:"⌕";position:absolute;left:15px;top:50%;transform:translateY(-52%);color:var(--muted);font-size:17px}
+
+.layout{display:grid;grid-template-columns:262px 1fr;gap:44px;padding:48px 0 72px;position:relative;z-index:2}
+.side{position:sticky;top:96px;align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 120px);overflow-y:auto;padding-right:6px;scrollbar-width:thin}
+.side .cap{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:rgba(154,167,189,.6);padding:14px 12px 6px}
+.side .cap:first-child{padding-top:0}
+.side a{color:var(--muted);font-size:13px;padding:5px 12px;border-left:2px solid var(--line);transition:.2s}
+.side a:hover{color:var(--text);border-color:var(--accent);text-decoration:none}
+.side a.on{color:var(--accent);border-color:var(--accent);background:rgba(45,212,191,.06)}
+.content{min-width:0}
+.noresult{display:none;color:var(--muted);border:1px dashed var(--line);border-radius:12px;padding:18px 20px;font-size:14px}
+
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:14px}
+.kp{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 17px;backdrop-filter:blur(8px);transition:border-color .25s,transform .25s}
+.kp:hover{border-color:rgba(129,140,248,.5);transform:translateY(-2px)}
+.kp b{display:block;font-size:13.5px;margin-bottom:5px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.kp span{color:var(--muted);font-size:13px}
+
+.faq{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:14px;backdrop-filter:blur(8px);position:relative;overflow:hidden}
+.faq::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2.5px;background:linear-gradient(to bottom,var(--accent),var(--accent2),var(--accent3));opacity:.55}
+.faq.hidden{display:none}
+.faq h3{font-size:15.5px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:9px}
+.faq p{color:var(--muted);font-size:14.5px;margin-bottom:8px}
+.faq p b{color:var(--text)}
+.faq .lbl{display:inline-block;font-size:11.5px;color:var(--accent3);border:1px solid rgba(244,114,182,.3);border-radius:6px;padding:0 8px;margin-right:6px;background:rgba(244,114,182,.06)}
+.note{border-left:3px solid var(--accent);background:var(--card);padding:13px 17px;border-radius:0 12px 12px 0;color:var(--muted);font-size:14px;margin:16px 0}
+.pause{color:var(--warn);font-weight:700}
+.ok{color:var(--ok);font-weight:700}
+
+pre{background:var(--code);border:1px solid var(--line);border-radius:14px;padding:16px 20px;overflow-x:auto;font-size:13px;line-height:1.65;margin:12px 0}
+code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+p code,li code,td code,.kp code,.faq b code{background:var(--code);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.9em;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;display:block;overflow-x:auto}
+th{background:var(--card2);text-align:left;padding:9px 12px;border:1px solid var(--line);font-weight:700;white-space:nowrap}
+td{padding:8px 12px;border:1px solid var(--line);color:var(--muted);vertical-align:top;overflow-wrap:anywhere}
+td code{white-space:nowrap}
+
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
+
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
+footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;gap:26px;padding-top:34px}
+  .side{position:static;flex-direction:row;flex-wrap:wrap;gap:8px;max-height:none;overflow:visible}
+  .side .cap{display:none}
+  .side a{border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+  .side a.on{border-color:var(--accent)}
+}
+@media(max-width:700px){.nav a.nl,.nav a.nl.keep{display:none}.logo{font-size:15px}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .aurora{display:none}
+  .rv{animation:rvIn linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="aurora"></div><div class="noise"></div></div>
+<div id="bar"></div>
+
+<header><div class="wrap nav">
+  <a class="logo" href="../index.html"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></lineargradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t"><span lang="en">Product Factory Strategist</span></span></a>
+  <a class="nl keep" href="index.html#features" lang="en">Features</a>
+  <a class="nl" href="index.html#process" lang="en">Process</a>
+  <a class="nl" href="demo.html" lang="en">Demo</a>
+  <a class="nl" href="index.html#architecture" lang="en">Architecture</a>
+  <a class="nl" href="index.html#commands" lang="en">Commands</a>
+  <a class="nl on" href="help.html" lang="en">Help</a>
+  <div class="lang" role="group" aria-label="Language"><a href="../help.html">RU</a><a href="help.html" class="on" aria-current="true">EN</a></div>
+</div></header>
+
+<div class="help-hero"><div class="wrap">
+  <div class="help-art" aria-hidden="true"><img src="../assets/help_network.jpg" alt=""></div>
+  <h1 lang="en">Agent <span class="grad">help</span></h1>
+  
+  <p class="sub" lang="en">Full documentation: talking to the agent, all 12 process steps, evidence S### → C### → D###, Excel models and the six-pager, tooling (CLI, MCP, skills, subagents, hooks), environments and integrations, security, glossary and troubleshooting.</p>
+  
+  <div class="meta" lang="en">12 steps · 89 knowledge cards · 121 skills · 8 subagents · 4 hooks · 18 MCP tools · 0 dependencies</div>
+  <div class="search"><input id="q" type="search" placeholder="Search the help…" aria-label="Search the help"></div>
+</div></div>
+
+<div class="wrap"><div class="layout">
+  <nav class="side" aria-label="Help sections">
+    <div class="cap" lang="en">Essentials</div>
+    <a href="#h-keypoints" lang="en">Key points</a>
+    <a href="#h-communicate" lang="en">Talking to the agent</a>
+    <a href="#h-phrases" lang="en">Control phrases</a>
+    <a href="#h-quickstart" lang="en">Quick start</a>
+    <a href="#h-first" lang="en">First project</a>
+    <a href="#h-demo" lang="en">CVStart demo ★</a>
+
+    <div class="cap" lang="en">Process</div>
+    <a href="#h-workflow" lang="en">Cycle overview</a>
+    <a href="#h-step0" lang="en">0 · Brief</a><a href="#h-step1" lang="en">1 · Sources</a><a href="#h-step2" lang="en">2 · Research</a><a href="#h-step3" lang="en">3 · Discovery</a>
+    <a href="#h-step4" lang="en">4 · Situation</a><a href="#h-step5" lang="en">5 · Options</a><a href="#h-step6" lang="en">6 · Choice</a><a href="#h-step7" lang="en">7 · Strategies</a>
+    <a href="#h-step8" lang="en">8 · Validation</a><a href="#h-step9" lang="en">9 · Review</a><a href="#h-step10" lang="en">10 · Decision</a><a href="#h-step11" lang="en">11 · Monitoring</a>
+
+    <div class="cap" lang="en">Evidence</div>
+    <a href="#h-sources" lang="en">Sources S###</a>
+    <a href="#h-source-types" lang="en">Source types</a>
+    <a href="#h-claims" lang="en">Claims C###</a>
+    <a href="#h-grades" lang="en">Grades A–D</a>
+    <a href="#h-supersede" lang="en">Supersede &amp; retract</a>
+    <a href="#h-impact" lang="en">Impact</a>
+    <a href="#h-decisions" lang="en">Decisions D###</a>
+
+    <div class="cap" lang="en">Artifacts</div>
+    <a href="#h-docs" lang="en">Documents 00–07</a>
+    <a href="#h-report" lang="en">REPORT.md</a>
+    <a href="#h-sixpager" lang="en">Six-pager</a>
+    <a href="#h-calcs" lang="en">calcs.json</a>
+    <a href="#h-excel" lang="en">Excel workbooks</a>
+    <a href="#h-deck" lang="en">Deck &amp; docx</a>
+
+    <div class="cap" lang="en">Tooling</div>
+    <a href="#h-cli" lang="en">CLI: all groups</a>
+    <a href="#h-mcp" lang="en">MCP: 18 tools</a>
+    <a href="#h-skills" lang="en">Skills (120)</a>
+    <a href="#h-subagents" lang="en">Subagents (8)</a>
+    <a href="#h-hooks" lang="en">Hooks (4)</a>
+    <a href="#h-models" lang="en">Models &amp; routing</a>
+    <a href="#h-cost" lang="en">Cost</a>
+    <a href="#h-data" lang="en">Data analysis</a>
+    <a href="#h-interviews" lang="en">Interviews &amp; synthetic</a>
+    <a href="#h-media-ux" lang="en">Media &amp; UX</a>
+
+    <div class="cap" lang="en">Environments</div>
+    <a href="#h-env-claude" lang="en">Claude Code</a>
+    <a href="#h-env-others" lang="en">Cursor · Codex · OpenCode…</a>
+    <a href="#h-env-linear" lang="en">Linear</a>
+    <a href="#h-env-lovable" lang="en">Lovable</a>
+    <a href="#h-env-misc" lang="en">Higgsfield · REA · Feynman</a>
+
+    <div class="cap" lang="en">Reliability</div>
+    <a href="#h-resume" lang="en">After a break</a>
+    <a href="#h-portability" lang="en">Portability</a>
+    <a href="#h-security" lang="en">Security</a>
+    <a href="#h-check" lang="en">What check verifies</a>
+    <a href="#h-trouble" lang="en">Troubleshooting</a>
+    <a href="#h-glossary" lang="en">Glossary</a>
+  </nav>
+
+  <div class="content" id="clist">
+
+    <div class="faq rv" id="h-keypoints"><h3 lang="en">Key points — the whole gist in one minute</h3>
+      <div class="kgrid">
+        <div class="kp"><b lang="en">Evidence, not eloquence</b><span lang="en">Every number and conclusion: a type (fact/hypothesis/forecast/assumption/inference), grade A–D, and a source. The chain S### → C### → D### is traceable from link to decision.</span></div>
+        <div class="kp"><b lang="en">12 steps, 3 human pauses</b><span lang="en">The agent drives: brief → sources → research → discovery → situation → options → <b>choice</b> → strategies → validation → review → <b>decision</b> → monitoring.</span></div>
+        <div class="kp"><b lang="en">Honest options</b><span lang="en">At least three substantively distinct ones, including "do nothing" and "shut it down". A dedicated red-team subagent attacks each.</span></div>
+        <div class="kp"><b lang="en">State lives in files</b><span lang="en">projects/&lt;slug&gt;/ stores everything. New chat, another environment, a break — work resumes where it stopped, no repeats.</span></div>
+        <div class="kp"><b lang="en">Formula Excel</b><span lang="en">4 workbooks (unit economics, growth, cohorts, market) build in the background; the Input sheet holds parameters, the rest are formulas.</span></div>
+        <div class="kp"><b lang="en">Transparency and cost</b><span lang="en">An action log, grounds behind conclusions, cost in tokens and money — <code>pfs cost</code>, <code>pfs next</code>, <code>pfs check --strict</code>.</span></div>
+      </div>
+    </div>
+
+    <div class="faq rv" id="h-communicate"><h3 lang="en">Talking to the agent</h3>
+      
+      <p lang="en">Write in plain language as to a colleague. The agent understands three kinds of messages: a <b>task</b> ("why is in-app retention dropping"), <b>answers to its questions</b> (pick an option or reply freely) and <b>control phrases</b> (see below). It never asks more than three questions at once and always explains what it is missing and why it matters for the next step.</p>
+      
+      <p lang="en"><b>A good first request</b> names the decision to make: "Help me decide whether to launch antispam as a paid subscription; here is the brief and six months of data." <b>A weak one</b> ("make me a strategy") also works — the agent clarifies the decision, audience and constraints via <code>pfs ask</code> before spending your tokens.</p></div>
+
+    <div class="faq rv" id="h-phrases"><h3 lang="en">Control phrases</h3>
+      
+      <table lang="en">
+        <tr><th>Phrase</th><th>What happens</th></tr>
+        <tr><td><b>"stop"</b></td><td>Pause: state saved, the agent stays quiet until a new command</td></tr>
+        <tr><td><b>"clarify: …"</b></td><td>Adjust the task; only the affected part is redone, sources are not duplicated</td></tr>
+        <tr><td><b>"redo section X"</b></td><td>Targeted rework of a single document section</td></tr>
+        <tr><td><b>"what should I decide now"</b></td><td><code>pfs next</code>: current step, overdue decisions, stale grounds, open questions</td></tr>
+        <tr><td><b>"what's due"</b></td><td><code>pfs decision due</code>: decisions and commitments whose review date arrived</td></tr>
+        <tr><td><b>"what will this new source affect"</b></td><td><code>pfs impact</code>: which conclusions, document lines and decisions go stale</td></tr>
+        <tr><td><b>"build the six-pager"</b></td><td><code>pfs calc all</code> + <code>pfs export --six-pager</code>: FAQ-1…6 report and 4 Excel workbooks</td></tr>
+        <tr><td><b>"recalculate Excel"</b></td><td><code>pfs calc all</code> — workbooks rebuilt from current calcs.json</td></tr>
+        <tr><td><b>"build the report" / "build the deck"</b></td><td><code>pfs export</code> → REPORT.md; <code>pfs export --deck</code> → 16:9 HTML deck</td></tr>
+        <tr><td><b>"make it a doc"</b></td><td><code>pfs docx file.md</code> — Markdown to Word, dependency-free</td></tr>
+        <tr><td><b>"check the project"</b></td><td><code>pfs check --strict</code> — numbers, links, options</td></tr>
+        <tr><td><b>"how much did it cost"</b></td><td><code>pfs cost</code> — tokens and money per model</td></tr>
+      </table>
+    </div>
+
+    <div class="faq rv" id="h-quickstart"><h3 lang="en">Quick start — 5 minutes</h3>
+      
+      <pre lang="en">$ git clone https://github.com/Fighter90/product-factory-strategist.git
+$ cd product-factory-strategist
+$ python3 -m tools.pfs doctor      # environment check
+$ python3 -m unittest discover -s tests   # 115 tests, optional
+$ pfs new "Why is retention dropping" "the request verbatim"</pre>
+      
+      <p lang="en">Requirements: Python 3.9+ and any supported environment. No packages to install — standard library only. Secrets (Linear and other MCP keys) go to <code>.env</code> — it is git-ignored and not required for the basic loop.</p></div>
+
+    <div class="faq rv" id="h-first"><h3 lang="en">First project — what happens</h3>
+      
+      <p lang="en"><code>pfs new "&lt;name&gt;" "&lt;the request verbatim&gt;"</code> creates <code>projects/&lt;slug&gt;/</code> (sources, interviews, analysis, outputs, state.json, log.jsonl) and activates it. The agent then: classifies the scenario via routing (<code>pfs route</code>), asks the intake question block — up to 3 questions — writes <code>outputs/00_brief.md</code> and <b>stops for your approval</b>. That is the first of three human pauses.</p>
+      
+      <p lang="en">Switch projects with <code>pfs use &lt;slug&gt;</code>, list them with <code>pfs list</code>, inspect state with <code>pfs status</code>.</p></div>
+
+    
+    <div class="faq rv" id="h-demo"><h3 lang="en">CVStart demo: how it was made and what to look at</h3>
+      
+      <p lang="en">A full end-to-end run on a live open-source product — <b>cvstart.org</b> (AI resume builder + job search: 129 job boards, AI scoring, 19 languages): 12 steps, 5 options, 20 red-team objections, both strategies, a six-pager in 6 formats (RU/EN × MD/PDF/DOCX, each with its language's screenshots), 4 Excel workbooks, decision D001, <b>check --strict 100/100</b>. Project: <code>projects/демо/</code>; interactive walkthrough: <a href="demo.html">demo.html</a>.</p>
+      
+      <p lang="en"><b>What to look at (in order):</b> 00_brief → 01_research_plan → 02_situation → 03_options (5 options + 20 red-team objections) → 04/05 (strategies) → 06_validation_plan (90-day thresholds) → REPORT.md and SIX_PAGER_RU / SIX_PAGER_EN in .md/.pdf/.docx; Excel in outputs/attachments/; product screenshots in outputs/img/ (19 locales); the action log is log.jsonl.</p>
+      
+      
+      
+      
+      <p lang="en"><b>Mistakes along the way (honestly):</b> market estimates from aggregators diverge ×2 — recorded as ranges [S006]; source numbering shifted during re-registration — tags re-bound and re-checked with check --strict; some C### links drifted to neighbouring claims during migration — caught by a registry audit and fixed. The human helped at three pauses: brief, option choice, decision D001 approval.</p>
+    </div>
+
+<div class="faq rv" id="h-workflow"><h3 lang="en">The cycle: 12 steps and phases</h3>
+      
+      <p lang="en">The cycle is 12 steps in four double-diamond phases: <b>Discover</b> (0–3) → <b>Define</b> (4–6) → <b>Develop</b> (7–9) → <b>Deliver</b> (10–11). Each step has mandatory knowledge cards (<code>pfs step</code> prints them), a question block (<code>pfs questions &lt;step&gt;</code>), quality gates and an artifact. Progress shows in one line: <code>Step N/12 · research · sources S001–S009 · next: situation</code>. Steps 0, 6, 10 are human pauses: brief, option choice, decision approval.</p></div>
+
+    <div class="faq rv" id="h-step0"><h3><span class="lbl" lang="en">step 0</span><span lang="en">Brief</span></h3>
+      
+      <p lang="en"><b>Input:</b> your request verbatim. <b>Agent:</b> clarifies the target decision, goal, audience and format, constraints, available data — the intake question block (≤3 questions with options and a recommendation). <b>Output:</b> <code>outputs/00_brief.md</code>. <b>Human:</b> <span class="pause">approves the brief</span> — it is then fixed and can ground assumptions (like source S011 in the demo). <b>Commands:</b> <code>pfs new</code>, <code>pfs questions intake</code>, <code>pfs answer "…"</code>.</p></div>
+
+    <div class="faq rv" id="h-step1"><h3><span class="lbl" lang="en">step 1</span><span lang="en">Sources</span></h3>
+      
+      <p lang="en"><b>Input:</b> your files and a list of public pages. <b>Agent:</b> registers materials — <code>pfs source add &lt;url|file&gt;</code> — dedup by URL and SHA-256 (a repeat adds nothing), extracts text from PDF/DOCX/XLSX/CSV/pages, checks the domain against the project's <code>allowed_sources</code>, flags embedded instruction-like phrases (data, not commands). <b>Output:</b> <code>sources/S###.md</code> + copies in <code>sources/raw/</code>. <b>Commands:</b> <code>add/list/show/refresh</code>; refreshing a web source compares hashes and warns on changes.</p></div>
+
+    <div class="faq rv" id="h-step2"><h3><span class="lbl" lang="en">step 2</span><span lang="en">Research</span></h3>
+      
+      <p lang="en"><b>Agent:</b> builds a plan from questions that could <i>change the decision</i> ("question → if yes / if no → how it affects"), extracts claims with type, grade and quote, runs calculations, prepares interviews when needed. A fact without a source cannot be stored — the tool refuses. <b>Output:</b> <code>outputs/01_research_plan.md</code>, <code>claims.jsonl</code> (C###), <code>analysis/</code>. <b>Commands:</b> <code>pfs claim add</code>, <code>pfs data profile|cohort|funnel|stats</code>, <code>pfs interview guide|save</code>, <code>pfs media add</code>. <b>Gate:</b> every key question answered with a C### or an explicitly named gap.</p></div>
+
+    <div class="faq rv" id="h-step3"><h3><span class="lbl" lang="en">step 3</span><span lang="en">Discovery</span></h3>
+      
+      <p lang="en"><b>Agent:</b> builds personas and their jobs-to-be-done, describes user alternatives — how people solve the problem today; the discovery question block fixes the segment. AI respondents (the <code>synthetic-respondent</code> subagent) yield hypotheses about motives and barriers — registered with <code>origin=synthetic</code> and <b>unable to prove demand</b>. <b>Output:</b> the "Segments" section of <code>02_situation.md</code>, transcripts in <code>interviews/synthetic/</code>.</p></div>
+
+    <div class="faq rv" id="h-step4"><h3><span class="lbl" lang="en">step 4</span><span lang="en">Situation</span></h3>
+      
+      <p lang="en"><b>Agent:</b> assembles a verifiable picture: what is known and from where (C### tags), what we do not know and why it matters, contradictions between sources. Every number in a document must carry a tag — <code>check</code> catches "naked" numbers. <b>Output:</b> <code>outputs/02_situation.md</code>. <b>Gate:</b> <code>pfs check</code> with zero errors.</p></div>
+
+    <div class="faq rv" id="h-step5"><h3><span class="lbl" lang="en">step 5</span><span lang="en">Options + red team</span></h3>
+      
+      <p lang="en"><b>Agent:</b> prepares <b>at least three substantively distinct options</b>, including "do nothing" and "shut it down" — check verifies their presence by keywords. Each with: strong objections (attacked by the <code>red-team</code> subagent), formula-based economics with ranges, and the conditions under which the option is right. <b>Output:</b> <code>outputs/03_options.md</code>. <b>Gate:</b> red team has responded, check passes.</p></div>
+
+    <div class="faq rv" id="h-step6"><h3><span class="lbl" lang="en">step 6</span><span lang="en">Choice — human pause</span></h3>
+      
+      <p lang="en"><b>Agent:</b> shows the option comparison (criteria, economics, risks) and a single recommendation, then asks — <code>pfs ask "Which option do we take?" --options "A,B,C"</code>. <b>Human:</b> <span class="pause">picks the option</span> — the answer is stored in state.json and grounds the strategies and the D### decision (like S011 in the CVStart demo). No strategies are written before the choice.</p></div>
+
+    <div class="faq rv" id="h-step7"><h3><span class="lbl" lang="en">step 7</span><span lang="en">Strategies</span></h3>
+      
+      <p lang="en"><b>Agent:</b> writes the <b>product</b> strategy — audience and their job, alternatives, the chosen direction and <i>conscious trade-offs</i>, benefit-to-cost economics — and the <b>communication</b> strategy — audience and situation, the comprehension barrier, the key message, its proof, channel roles. Consistency is enforced by a "promise → product proof" table: every promise cites a C###. The <code>comms-strategist</code> subagent drafts the comms part. <b>Output:</b> <code>04_product_strategy.md</code>, <code>05_comms_strategy.md</code>.</p></div>
+
+    <div class="faq rv" id="h-step8"><h3><span class="lbl" lang="en">step 8</span><span lang="en">Validation plan</span></h3>
+      
+      <p lang="en"><b>Agent:</b> states the expected change (which metric, by how much), the comparison baseline (prior period, control group), the observation window, unwanted side effects (counter-metrics), and continue / adjust / stop criteria. All five sections are mandatory — check enforces them. <b>Output:</b> <code>outputs/06_validation_plan.md</code>.</p></div>
+
+    <div class="faq rv" id="h-step9"><h3><span class="lbl" lang="en">step 9</span><span lang="en">Review</span></h3>
+      
+      <p lang="en"><b>Agent:</b> runs <code>pfs check --strict</code>, requests an independent rubric review (the <code>evidence-auditor</code> subagent) and assembles the committee pack: <code>pfs calc all</code> (4 Excel workbooks) and <code>pfs export --six-pager</code> (FAQ-1…6 + attachments). On a borderline score the model escalates and the step repeats. <b>Output:</b> <code>outputs/07_quality_review.md</code>, <code>SIX_PAGER.md</code>, <code>attachments/*.xlsx</code>.</p></div>
+
+    <div class="faq rv" id="h-step10"><h3><span class="lbl" lang="en">step 10</span><span lang="en">Decision — human pause</span></h3>
+      
+      <p lang="en"><b>Agent:</b> records the decision via <code>pfs decision add</code>: title, statement, owner, grounds (C###), metric with target and date, review date, trigger ("if X — revisit"), commitments ("what | who | when"). <b>Human:</b> <span class="pause">approves the decision</span>. <b>Output:</b> a record in <code>decisions.jsonl</code> (D###). From now on <code>pfs next</code> and <code>pfs decision due</code> watch the deadlines.</p></div>
+
+    <div class="faq rv" id="h-step11"><h3><span class="lbl" lang="en">step 11</span><span lang="en">Monitoring</span></h3>
+      
+      <p lang="en"><b>Agent:</b> keeps the step open: <code>pfs decision due</code> lists overdue reviews; when new data arrives — <code>pfs source refresh</code> + <code>pfs impact C###</code> locate affected conclusions; stale ones are superseded via <code>pfs claim supersede</code>, conclusions redirected by <code>pfs claim rebase</code>, decisions by <code>pfs decision rebase</code>. Gate: <code>pfs decision due</code> is empty or fully handled.</p></div>
+
+    <div class="faq rv" id="h-sources"><h3 lang="en">Sources S### — registration and hygiene</h3>
+      
+      <p lang="en">A source is the minimal unit of trust. <code>pfs source add &lt;url&gt;</code> downloads the page and extracts text; <code>pfs source add &lt;file&gt;</code> accepts PDF, DOCX, XLSX, CSV, images (your description of what is visible). For a JS-rendered page: save the text manually and add <code>pfs source add --text-file saved.md --url &lt;url&gt; --title "…"</code>. For screenshots/audio descriptions: <code>pfs media add</code> (see Media &amp; UX).</p>
+      
+      <p lang="en">Hygiene: dedup by URL and SHA-256; the domain is checked against <code>projects/&lt;slug&gt;/project.json → allowed_sources</code> (a hook blocks foreign domains <b>before</b> the request); <code>pfs source list</code> — the registry, <code>pfs source show S###</code> — text and metadata; <code>pfs source refresh S###</code> — reload: hash changed → warning and a reminder to run <code>pfs impact S###</code>.</p></div>
+
+    <div class="faq rv" id="h-source-types"><h3 lang="en">Source types: public, own, interview, synthetic</h3>
+      
+      <table lang="en">
+        <tr><th>Origin</th><th>What it is</th><th>Constraint</th></tr>
+        <tr><td><code>public/web</code></td><td>Public pages and publications (default)</td><td>Project-allowed domains</td></tr>
+        <tr><td><code>own</code></td><td>Your materials: briefs, data dumps, internal docs</td><td>No closed or personal data</td></tr>
+        <tr><td><code>interview</code></td><td>Real interviews — with participant consent</td><td>No personal data in the repository</td></tr>
+        <tr><td><code>synthetic</code></td><td>AI respondents, model-generated data</td><td><span class="pause">Hypotheses only</span>: facts on synthetic data are blocked by the checker</td></tr>
+      </table>
+    </div>
+
+    <div class="faq rv" id="h-claims"><h3 lang="en">Claims C### — five types</h3>
+      
+      <p lang="en">A claim is the atom of knowledge. The registry is <code>claims.jsonl</code>; written only via <code>pfs claim add</code>:</p>
+      
+      
+      <table lang="en">
+        <tr><th>Type</th><th>When to use</th><th>Requirement</th></tr>
+        <tr><td><code>fact</code></td><td>A verified statement</td><td>Source required; never on synthetic data; grade D forbidden</td></tr>
+        <tr><td><code>hypothesis</code></td><td>An assumption we intend to test</td><td>Grounds: a source or other claims</td></tr>
+        <tr><td><code>forecast</code></td><td>A model-based prediction</td><td>Grounds + visible assumptions in the model</td></tr>
+        <tr><td><code>assumption</code></td><td>Accepted without testing (demo frame, model scenario)</td><td>Grounds: where it came from (checker warns otherwise)</td></tr>
+        <tr><td><code>inference</code></td><td>Your conclusion from other claims</td><td><code>--from</code> required; never stronger than its weakest input</td></tr>
+      </table>
+    </div>
+
+    <div class="faq rv" id="h-grades"><h3 lang="en">Evidence grades A–D</h3>
+      
+      
+      <p lang="en">An inference is never stronger than its weakest critical input: two C grounds and one B give at most C. Set via <code>claim add --grade</code>; supersede preserves the grade automatically.</p></div>
+
+    <div class="faq rv" id="h-supersede"><h3 lang="en">Supersede, retract, rebase — history is kept</h3>
+      
+      
+      <p lang="en">After supersede, documents referencing the old ID get a check error with the replacement hint (<code>replacement: C058</code>) — re-tag the lines and rebuild exports. This is a guard, not a bug: documents cannot silently rely on stale claims. The history (who, when, why) stays in the registry.</p></div>
+
+    <div class="faq rv" id="h-impact"><h3 lang="en">Change impact: pfs impact</h3>
+      
+      <p lang="en"><code>pfs impact C005</code> / <code>pfs impact S002</code> shows transitively: which claims rely on it, which document lines cite it, which decisions are grounded in it. Practice: impact before an edit, impact after, then <code>pfs check --strict</code> as the final filter.</p></div>
+
+    <div class="faq rv" id="h-decisions"><h3 lang="en">Decisions D### — grounds, commitments, review</h3>
+      
+      
+      <p lang="en"><b>Track:</b> <code>pfs decision due</code> — overdue items, due reviews, decisions with stale grounds; <code>pfs decision done --id D001 --commitment K1</code> — close a commitment; <code>pfs decision list</code> — registry. New data changed the grounds? — run impact, supersede, then <code>pfs decision rebase --id D001 --note "…"</code>.</p></div>
+
+    <div class="faq rv" id="h-docs"><h3 lang="en">Project documents 00–07</h3>
+      
+      <p    class="en-only" lang="en">Same structure in English: brief → research plan → situation → options (≥3 incl. status quo) → product strategy → comms strategy → validation plan (5 mandatory sections) → quality review. Check enforces sections, tagged numbers and option counts.</p></div>
+
+    <div class="faq rv" id="h-report"><h3 lang="en">REPORT.md — the final document with all attachments</h3>
+      
+      <p lang="en"><code>pfs export</code> assembles REPORT.md: summary, brief, situation, options and choice, both strategies, the validation plan, appendices (claim registry with grades and sources, cost log, Excel links). Edit only outputs/*.md by hand — REPORT rebuilds so nothing drifts. <code>pfs export --six-pager</code> — the committee format.</p></div>
+
+    <div class="faq rv" id="h-sixpager"><h3   lang="en">Six-pager: FAQ-1…FAQ-6 structure</h3>
+      
+      <p    class="en-only" lang="en">FAQ-1 status (market, competitors) · FAQ-2 segments &amp; personas · FAQ-3 initiatives + red-team objections · FAQ-4 tactics (need → mechanics → effect) · FAQ-5 delivery &amp; validation plan · FAQ-6 success metrics with formulas. Numbers come from the claim registry, assumptions visible in calcs.json.</p></div>
+
+    <div class="faq rv" id="h-calcs"><h3   lang="en">calcs.json — full parameter reference</h3>
+      
+      <p   lang="en">The file is <code>projects/&lt;slug&gt;/calcs.json</code>. The agent fills values from claims and records grounds in <code>note</code>; missing keys fall back to examples marked "EXAMPLE", visible in Excel.</p>
+      
+    </div>
+
+    <div class="faq rv" id="h-excel"><h3 lang="en">Excel workbooks: structure and editing</h3>
+      
+      <p lang="en"><code>pfs calc all|unit-econ|growth|cohort|market</code> writes workbooks to <code>outputs/attachments/</code>. The <b>Input</b> sheet holds editable parameters (with source notes); all other sheets are <b>live formulas</b>: CM, LTV, LTV/CAC, payback, sensitivity (unit economics); MAU → orders → GMV → margin over 12 months (growth); cohorts and M1–M12 retention; PAM→TAM→SAM→SOM.</p>
+      
+      <p lang="en">Editing: change the Input values — Excel recalculates. If you edit calcs.json — rerun <code>pfs calc all</code> and <code>pfs export --six-pager</code> so the text and workbooks match. A file preview may look "empty" — that is a cached render; formulas compute on open.</p></div>
+
+    <div class="faq rv" id="h-deck"><h3 lang="en">Deck and docx</h3>
+      
+      <p lang="en"><code>pfs export --deck</code> builds a 16:9 HTML deck from SIX_PAGER.md — section slides in the site's gradient theme, printable to PDF from the browser. <code>pfs docx &lt;file.md&gt;</code> converts Markdown to Word (headings, tables, lists, inline code), dependency-free — for handing documents to the committee.</p></div>
+
+    <div class="faq rv" id="h-cli"><h3 lang="en">CLI: all command groups</h3>
+      
+      <p  class="en-only" lang="en">Same groups in English: projects (new/list/use/status) · steps (step/next/questions) · ask/answer · sources (S###, dedup, domains, refresh) · claims (C###, 5 types, grades, history) · quality (check/impact) · decisions (D###) · data (profile/cohort/funnel/stats) · interviews · media &amp; UX · knowledge (BM25 over 89 cards) · models (profiles, escalation) · calc (4 formula workbooks) · export (REPORT/six-pager/deck/docx) · log &amp; cost · doctor.</p></div>
+
+    <div class="faq rv" id="h-mcp"><h3 lang="en">MCP server: 18 tools</h3>
+      
+      <p lang="en">The <code>pfs-strategist</code> server (stdio, stdlib only) plugs into any environment's <code>.mcp.json</code> — the agent gets the same operations as the CLI. Tools:</p>
+      
+    </div>
+
+    <div class="faq rv" id="h-skills"><h3 lang="en">Skills (120): structure and three ways to invoke</h3>
+      
+      <p lang="en"><b>Structure:</b> base per-step skills (13) · product-skills, method procedures (27) · a personal library of ~59 (design, marketing, science, documents &amp; media, thinking modes, meta) · integrations. Each folder <code>.claude/skills/&lt;name&gt;/SKILL.md</code> holds instructions + scripts + references.</p>
+      
+      <p lang="en"><b>Invocation:</b> 1) automatic — description triggers; 2) explicit — "use skill <code>&lt;name&gt;</code>: <code>&lt;task&gt;</code>"; 3) per step — <code>pfs step</code> prints mandatory cards. Priority rule: project methodology (KB maps) outranks generic skills. Integration examples: hallmark (anti-slop page gates), board-of-directors (5-perspective council + Red Team at options), premortem (failure pre-mortem before approval), rea (reverse-engineering JS pages and closed formats), sdd (development discipline), deck (six-pager presentation), deep-research (literature review via Feynman). Full registry: docs/SKILLS.md.</p></div>
+
+    <div class="faq rv" id="h-subagents"><h3 lang="en">Subagents (8)</h3>
+      
+      <p  class="en-only" lang="en">router (request scenario), researcher (source extraction), data-analyst (tables, cohorts, funnels), synthetic-respondent (AI persona, hypotheses only), ux-analyst (interface review, evidence-bound), red-team (attacks each option), comms-strategist (comms draft), evidence-auditor (rubric review).</p></div>
+
+    <div class="faq rv" id="h-hooks"><h3 lang="en">Hooks (4): events and actions</h3>
+      
+      <p  class="en-only" lang="en">SessionStart feeds project context on a new chat; PreToolUse enforces allowed domains before fetch; PostToolUse logs actions, scans external text for embedded instructions (flags, never executes), auto-checks changed docs; Stop recomputes session cost from the transcript.</p></div>
+
+    <div class="faq rv" id="h-models"><h3 lang="en">Models and routing</h3>
+      
+      <p lang="en">The model profile lives in <code>config/models.json</code>: cheap models for classification, extraction, rubric scoring, AI respondents; strong ones for synthesis, options, red team, strategy. <code>pfs models</code> — table; <code>pick</code> — per task; <code>use</code> — switch profile; <code>pfs route --economy</code> downgrades deep→balanced except red team. <b>Escalation:</b> two consecutive check failures or a borderline rubric score → <code>pfs models escalate &lt;task&gt;</code> and retry with a stronger model. Subagents inherit the profile; <code>pfs models sync</code> after changes.</p></div>
+
+    <div class="faq rv" id="h-cost"><h3 lang="en">Cost: tokens, money, human time</h3>
+      
+      <p lang="en">The Stop hook recomputes cost from the session transcript (prices from <code>config/pricing.json</code>); <code>pfs cost</code> — totals per model and task; <code>pfs cost --window</code> — periods. Human edits count too: <code>pfs log "brief edit" --human-minutes 15</code>. Demo reference: a full project ≈ $19 with a mixed model profile.</p></div>
+
+    <div class="faq rv" id="h-data"><h3 lang="en">Data analysis: profile, cohort, funnel, stats</h3>
+      
+      
+      <p lang="en">Before computing, the agent checks metrics, units, periods and gaps (table profile). <code>--save</code> makes a run reproducible. Results go to <code>analysis/</code> and are anchored as C### claims with the file as source.</p></div>
+
+    <div class="faq rv" id="h-interviews"><h3 lang="en">Interviews and model respondents</h3>
+      
+      <p lang="en"><code>pfs interview guide --persona "Parent, kids 7–12"</code> builds the guide; <code>pfs interview save transcript.md</code> registers it with <code>origin=synthetic</code>. The <code>synthetic-respondent</code> subagent plays the persona. <b>Honesty rule:</b> synthetic answers yield hypotheses only; the checker refuses facts on them; documents mark them as model-generated. Real interviews require consent and no personal data.</p></div>
+
+    <div class="faq rv" id="h-media-ux"><h3 lang="en">Media and UX analysis</h3>
+      
+      <p lang="en"><code>pfs media add shot.png --desc "what is visible" --title "…"</code> copies the media to <code>sources/raw/</code> and turns the description into a text source: the agent analyzes exactly what is described. <code>pfs ux scaffold S003 --focus "onboarding"</code> builds a heuristics + journey scaffold bound to the material; the <code>ux-analyst</code> subagent fills it without inventing beyond the screenshots.</p></div>
+
+    <div class="faq rv" id="h-env-claude"><h3 lang="en">Environment: Claude Code — the full experience</h3>
+      
+      <p lang="en">Open the repo folder in Claude Code — everything auto-loads: 121 skills, 8 subagents, 4 hooks, the CLI (<code>pfs …</code>) and MCP tools. Just state the task — the agent takes it from there.</p></div>
+
+    <div class="faq rv" id="h-env-others"><h3 lang="en">Environments: Cursor, Codex, OpenCode, Windsurf, Copilot</h3>
+      
+      <p lang="en">All environments read <code>AGENTS.md</code>. <b>Cursor</b> — <code>.cursor/rules</code> + MCP from <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — no hooks: start with "read AGENTS.md and run <code>pfs status</code>" — the agent restores context and continues. The <code>pfs-strategist</code> MCP works everywhere (path-independent launcher).</p></div>
+
+    <div class="faq rv" id="h-env-linear"><h3 lang="en">Integration: Linear</h3>
+      
+      <p lang="en">MCP server <code>npx mcp-server-linear</code>, key <code>LINEAR_API_KEY</code> in <code>.env</code> (git-ignored). The agent reads issues, comments progress, closes with reports — as in this project: PRO-5…PRO-24 closed with final comments. Same rule: the human decides — no issues are closed without your word.</p></div>
+
+    <div class="faq rv" id="h-env-lovable"><h3 lang="en">Integration: Lovable</h3>
+      
+      <p   lang="en">MCP <code>https://mcp.lovable.dev</code> is wired in <code>.mcp.json</code>; authorize once via OAuth (<code>/mcp</code> → lovable → Authenticate). Then the agent creates and edits Lovable projects on request: this project's landing lives in the repo (canonical) and in Lovable (mirror). create_project/send_message consume Lovable credits; ready prompts are in <code>docs/lovable-brief.md</code>.</p></div>
+
+    <div class="faq rv" id="h-env-misc"><h3 lang="en">Integrations: Higgsfield, REA, Feynman, officecli</h3>
+      
+      <p   lang="en"><b>Higgsfield</b> — image/video generation (this page's art is its work). <b>REA</b> — reverse-engineering of JS pages and closed formats (HAR, SQLite, APK) when plain fetch returns nothing. <b>Feynman</b> — deep-research CLI (literature reviews); a search-provider key is needed for live runs. <b>officecli</b> — Office documents in/out. All are optional MCP/CLI add-ons to the basic loop.</p></div>
+
+    <div class="faq rv" id="h-resume"><h3 lang="en">Resuming after a break</h3>
+      
+      <p   lang="en">All state lives in <code>projects/&lt;slug&gt;/</code>: state.json (steps, choices, questions), claims.jsonl, decisions.jsonl, log.jsonl, sources/, outputs/. <b>New chat in the repo folder:</b> the SessionStart hook feeds status and "what to decide now" automatically. <b>Hook-less environment:</b> write "read AGENTS.md and run <code>pfs status</code>". Finished steps never repeat; sources and claims never duplicate.</p></div>
+
+    <div class="faq rv" id="h-portability"><h3   lang="en">Moving a project between environments</h3>
+      
+      <p   lang="en">A project is a plain folder: copy <code>projects/&lt;slug&gt;/</code> (or git push/pull if tracked) and open elsewhere. The only non-portable part is secrets in <code>.env</code>: move them manually, never commit. The model profile (<code>config/models.json</code>) is repo-wide.</p></div>
+
+    <div class="faq rv" id="h-security"><h3   lang="en">Security and data</h3>
+      
+      <p   lang="en"><b>Data:</b> public sources and your materials only; no closed company data, no respondents' personal data. <b>Domains:</b> allow-listed in project.json; a hook blocks foreign domains pre-request. <b>Secrets:</b> <code>.env</code> only, git-ignored; no keys ever committed. <b>Embedded instructions:</b> source texts are data; "ignore instructions" inside a source is flagged, never executed. <b>Interviews:</b> real ones need consent; no personal data in the repo; synthetic data is honestly labeled.</p></div>
+
+    <div class="faq rv" id="h-check"><h3   lang="en">What pfs check verifies</h3>
+      
+      <p    class="en-only" lang="en">Fact without source → error; fact on synthetic → error; grade-D fact → error; grounds-less hypothesis/forecast/assumption → warning; links to missing/retracted IDs → error with replacement hint; superseded grounds → warning; untagged numbers → warning; &lt;3 options or no status-quo → error; missing required sections → error; sources with embedded instructions → warning listing them.</p></div>
+
+    <div class="faq rv" id="h-trouble"><h3   lang="en">Troubleshooting</h3>
+      
+      <p    class="en-only" lang="en">Fact without source → by design, add source or use hypothesis; domain not allowed → edit allow-list or --force; 0 chars extracted → JS page, save text manually or use REA; empty Excel preview → computes on open; six-pager ≠ Excel → rerun calc+export; superseded C### in docs → re-tag per hint; no hook status → ask agent to run pfs status; skill missing → restart session; assumption without grounds → register its origin and supersede; Lovable credits → top up or edit site/ directly; MCP tool missing → refresh .mcp.json, restart; interrupted session → pfs status and repeat, --save makes runs reproducible.</p></div>
+
+    <div class="faq rv" id="h-glossary"><h3   lang="en">Glossary</h3>
+      
+      <p    class="en-only" lang="en">S### source · C### claim (5 types, grade A–D) · D### decision · six-pager (committee report + Excel) · red team · JTBD · traction model · double diamond phases · synthetic data · injection (flagged, never executed) · step gate · named gap · counter-metric · model escalation.</p></div>
+
+    <div class="noresult" id="nores"><span lang="en">Nothing found — try another word.</span></div>
+    <p class="backline rv"><a href="../index.html" lang="en">← Back to the landing page</a></p>
+  </div>
+</div></div>
+
+<footer><div class="wrap">
+  <div>
+    <div class="logo"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></lineargradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t"><span lang="en">Product Factory Strategist</span></span></div>
+    
+    <div lang="en">An AI agent for digital product directors</div>
+  </div>
+  <div>
+    <a href="../index.html" lang="en">← Landing</a> ·
+    <a href="demo.html" lang="en">Demo</a> ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/wiki">Wiki</a> ·
+    
+    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md" lang="en">HELP_EN.md</a>
+  </div>
+</div></footer>
+
+<script>
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const bar = document.getElementById('bar');
+function frame(){
+  const y = window.scrollY;
+  const h = document.documentElement.scrollHeight - innerHeight;
+  bar.style.width = (h > 0 ? (y/h*100) : 0) + '%';
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+const io = new IntersectionObserver(() => {});
+
+// scrollspy сайдбара
+const sio = new IntersectionObserver(es => es.forEach(e => {
+  const l = document.querySelector('.side a[href="#' + e.target.id + '"]');
+  if (l) l.classList.toggle('on', e.isIntersecting);
+}), {rootMargin:'-25% 0px -65% 0px'});
+document.querySelectorAll('.faq[id]').forEach(s => sio.observe(s));
+
+// поиск-фильтр по всем блокам
+(function(){
+  const q = document.getElementById('q');
+  if (!q) return;
+  const blocks = [...document.querySelectorAll('.content > .faq')];
+  const nores = document.getElementById('nores');
+  q.addEventListener('input', () => {
+    const v = q.value.trim().toLowerCase();
+    let vis = 0;
+    for (const b of blocks){
+      const hit = !v || b.textContent.toLowerCase().includes(v);
+      b.classList.toggle('hidden', !hit);
+      if (hit){ vis++; b.classList.add('in'); }
+    }
+    if (nores) nores.style.display = vis ? 'none' : 'block';
+  });
+})();
+</script>
+</body>
+</html>
