@@ -154,7 +154,13 @@ def status_text(pdir: Path, brief: bool = False) -> str:
     # PRO-27: вердикт review устарел после правок реестра; префикс — здесь, на месте вывода
     lines += [f"⚠ {w}" for w in review_mod.stale_warnings(pdir)]
     total = cost_mod.summary(pdir)
-    lines.append(f"Стоимость: ${total['usd']:.2f} (~{total['rub']:.0f} ₽), токенов {total['tokens']:,}".replace(",", " "))
+    if total.get("plan"):
+        # PRO-62: $0.00 при миллионах токенов выглядит как ошибка учёта — показываем эквивалент
+        lines.append(f"Стоимость: ${total['usd']:.2f} — подписочный план; эквивалент по API-ценам "
+                     f"${total['usd_equivalent']:.2f} (~{total['rub_equivalent']:.0f} ₽), "
+                     f"токенов {total['tokens']:,}".replace(",", " "))
+    else:
+        lines.append(f"Стоимость: ${total['usd']:.2f} (~{total['rub']:.0f} ₽), токенов {total['tokens']:,}".replace(",", " "))
     if not brief:
         logs = core.read_jsonl(pdir / "log.jsonl")[-8:]
         if logs:

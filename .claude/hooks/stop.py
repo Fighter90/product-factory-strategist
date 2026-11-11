@@ -16,7 +16,9 @@ def main():
     if tp and Path(tp).exists():
         s = cost.record_session(pdir, data.get("session_id") or Path(tp).stem, Path(tp))
         total = cost.summary(pdir)
-        parts.append(f"pfs: сессия ${s['usd']:.2f}, проект всего ${total['usd']:.2f} (~{total['rub']:.0f} ₽)")
+        # PRO-62: для план-сессий фактическая оплата $0 — показываем и эквивалент по API-ценам
+        eq = f" (эквивалент ${total['usd_equivalent']:.2f})" if total.get("plan") else ""
+        parts.append(f"pfs: сессия ${s['usd']:.2f}, проект всего ${total['usd']:.2f}{eq} (~{total['rub']:.0f} ₽)")
     if project.six_pager_due(pdir) and project.is_finished(pdir):
         parts.append("проект завершён, а outputs/SIX_PAGER.md нет — соберите комитет-пакет: "
                      "pfs calc scaffold → pfs calc all → pfs export --six-pager "
