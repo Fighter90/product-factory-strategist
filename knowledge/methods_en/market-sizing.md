@@ -1,20 +1,136 @@
 ---
 id: M-market-sizing
 lang: en
-title: Market sizing PAM/TAM/SAM/SOM — funnel formulas, top-down vs bottom-up, units, sanity checks
+title: Market sizing (PAM / TAM / SAM / SOM) — a reproducible market funnel with sources and sanity checks
 course: pm-approaches-en
-sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
+sources: ["EN mirror of the RU card; original sources listed there"]
 stages: [research, options, strategy, validation]
-tags: [en, summary]
+tags: [market-sizing, tam, sam, som, top-down, bottom-up, market-funnel, market-units]
 related: [M-traction-model, M-unit-economics, M-benchmarking, M-source-criticism, M-competitors, M-external-environment, M-business-models]
 ---
 
-# Market Sizing (PAM / TAM / SAM / SOM) (EN summary)
+# Market sizing (PAM / TAM / SAM / SOM)
 
-**When:** a product lead asks "how big is the potential?", "worth entering the segment / investing?", "is there enough market for the traction-model goals?" — the card gives a reproducible market-funnel calculation and the top-down check (a growth model cannot promise more than SOM).
+## When to apply
+Product leader questions: "how big is the potential?", "is it worth entering the segment / investing?", "is the market big enough to support the traction-model goals?". The card gives a reproducible calculation of the market funnel and the "top-down check" (a growth model cannot promise more than SOM).
 
-**Core:** Market volume = a quantitative estimate of actual or potential sales (money, people, or product units) computed from data, not assumed. Levels: PAM (Potential Available Market) — theoretical maximum without constraints, not used in calculations, an optional ceiling; TAM — the whole market with all segments covered, no geo/technology limits, ~10-year horizon, the headline number for venture investors; SAM — the part of TAM actually serviceable given business model, geography, technology, competitors, 3–5 years, the long-term target; SOM — the part of SAM obtainable in the near term by growth, price, resources, 1–3 years, the most conservative number, the one business plans are judged by. Count in the unit closest to the business model and show conversion to the others: people (audience, marketing), money (investment decisions, valuation), product units (production, logistics). Per-model formulas: subscription = users × ARPU; e-commerce = orders × average check; marketplace = deals × commission (or GMV × take rate); B2B SaaS = companies × license price. Two estimation approaches: top-down (world → region → country → city → segment; fast, less precise) and bottom-up (units — users/companies — × average price/frequency; more precise, needs data); compute both and compare: divergence over 3× means look for an error (definitions, units, period, geography). Top-down funnel formulas: PAM = potential users × ARPU; TAM = region population × % target audience × % ready to pay × ARPU; SAM = TAM × % accessible by business model × (1 − % held by inaccessible competitors) × adoption rate; SOM = SAM × target market share, or SOM = current base × (1 + growth rate)^period; alternative "physical" formula (rental, hotels, parking): volume = number of units (objects) × occupancy × period × price per unit. Levels defined in words through segments, e.g. travel: PAM — the whole travel market (lodging + transport + food + leisure); TAM — the "lodging" segment entirely, incl. offline; SAM — the same segments in the online channel (OTA); SOM — the product's estimated GMV: SOM = booked nights × average check; users = nights / trip length / trips per year. Always show the calculation with market dynamics: CAGR of the base market and a forecast of the channel's share ("the market will grow N× and the online channel will take most of that growth" is a separate argument for/against entry, beyond today's volume). Two SOM routes: through conversions (acquisition funnel) for scalable digital products; through capacity constraints for physical goods, hand production and capacity-limited services; marketplace = min of both.
+## Core idea
+**Market volume** — a quantitative estimate of actual or potential sales (money, people, or product units) obtained by calculation from data, not by assumption.
 
-**How:** (1) research passport: product/company, purpose ("market potential for X in segment Y"), date, geo, horizon, main unit; (2) market boundaries in writing — what belongs to the category and what doesn't ("AI market" = software? services? chips?); without it numbers from different sources aren't comparable; (3) top-down: segment market = higher-level market × geo share × segment share, same units and year at every step; every number with source, year, A–D evidence class; (4) bottom-up: B2C TAM = segment population × access % × frequency (per year) × average check → ₽/year; B2B TAM = number of companies in segment × contract value/year (decision-maker count and sales cycle feed SOM); (5) SAM = TAM × sequential constraints (geo, channel, platform, price segment, legal), each multiplier a separate line with a source; (6) SOM via conversions: downloads/leads × CR1 × CR2 × … = active buyers; SOM = active buyers × average check × frequency per year; (7) SOM via capacity: SOM = units/day × working days × price; (8) sanity checks: TAM ≥ SAM ≥ SOM (guideline: TAM 5–10× SAM; a ratio near 1 suggests TAM/SAM confusion); product of conversions ≤ 1; active buyers ≤ SAM in people; top-down vs bottom-up divergence ≤ 3×; units consistent (₽/year ≠ ₽/month; users ≠ orders); the traction model doesn't exceed SOM; (9) three scenarios (pessimistic/base/optimistic) on the most uncertain multipliers; (10) visualization first: concentric circles PAM→TAM→SAM→SOM or a waterfall (how TAM narrows to SOM), then calculation tables with the logic of each row. Calculation file format (course practice): part 1 — research passport including a conclusions paragraph (market share by segment, is the market growing — CAGR, is the channel share growing, what it means for the invest/not decision); part 2 — funnel table, each level a row: stage | calculation logic in words (segments and cuts) | volume in money | volume in users | sources for every number; "users" may be n/a where the source counts transactions rather than unique people — state it explicitly. Bottom-up verification: SOM computed from product or nearest-competitor data (events × conversions × check), then compared with SAM — the implied share must be plausible (not "22% for a player nobody knows") and consistent with capacities. B2C parameters: segment population, internet penetration/access, purchase frequency, average check, funnel conversions (benchmarks or own data). B2B parameters: number of companies, decision-makers, contract value, sales cycle, win rate. Investor reference points (no source = class D, verify before use): Russia Series A — investment $1M–$5M, TAM $100M–$1B, SAM $50M–$200M, revenue $10K–$50K/mo; international Series A — $5M–$20M, TAM from $1B, SAM $200M–$1B, revenue $50K–$200K/mo. Exit checklist: passport; visualization; TAM tables (both methods), SAM, SOM; comparison with thresholds; conclusions; every number with an in-text source.
+| Level | What it is | Horizon | Role |
+|---|---|---|---|
+| PAM (Potential Available Market) | the theoretical maximum without constraints; not used in calculations | — | an optional "ceiling" |
+| TAM (Total Addressable Market) | the entire market under full coverage of all segments, with no geographic/technological limits | an aspirational target, on the order of 10 years | the headline metric for venture investors |
+| SAM (Serviceable Available Market) | the part of TAM that can realistically be served given the business model, geography, technology, competitors | 3–5 years | the long-term goal |
+| SOM (Serviceable Obtainable Market) | the part of SAM reachable in the near term given growth, pricing, resources | 1–3 years | the most conservative metric; the one a business plan is judged by |
 
-**Pitfalls:** confusing TAM and SAM; presenting "TAM" as a 1–3-year target; SAM without the real competitor landscape and channel constraints; inflated SOM ("at least 1% of the market" instead of a conversion/capacity calculation); sources older than 2–3 years; numbers without citations; different market definitions in numerator and denominator; counting only money without people and product units; starting with tables instead of visualization; a static snapshot — today's volume without CAGR and channel-share forecast, though the entry decision depends on the future market; market share as an input parameter of the model — share is an outcome, not an input.
+**Market units** — count in whatever is closest to the business model, and show the conversion into the others:
+| Unit | When | Example |
+|---|---|---|
+| People | audience, marketing | 15 million potential users |
+| Money | investment decisions, business valuation | 2.5 bn RUB/year |
+| Product units | production, logistics | 50 million orders/year |
+
+By model: subscription = users × ARPU; e-commerce = orders × average check; marketplace = deals × commission (or GMV × take rate); B2B SaaS = companies × license price.
+
+**Two estimation approaches**
+- Top-down: world → region → country → city → segment; fast, less precise.
+- Bottom-up: units (users/companies) × average price/frequency; more precise, requires data.
+- Compute both and compare. The skill's rule: a divergence of more than 3× means look for an error (definitions, units, period, geography).
+
+**Top-down formulas by funnel level** (as in the course's calculation sheets):
+- `PAM = potential users × ARPU` (the global ceiling).
+- `TAM = region population × % target audience × % ready to pay × ARPU`.
+- `SAM = TAM × % accessible under the business model × (1 − % held by inaccessible competitors) × Adoption rate`.
+- `SOM = SAM × target market share` or `SOM = current base × (1 + growth coefficient)^period`.
+- An alternative "physical" formula (rental, hotels, parking): `Market volume = number of units (objects) × occupancy × period × price per unit`.
+- In money and in people, the levels are defined in words through segments, for example: PAM — the entire tourism market (lodging + transport + food + leisure); TAM — the "lodging" segment in its entirety, including offline; SAM — only the same segments in the online channel (OTA); SOM — the product's estimated GMV: `SOM = booked nights × average check`, users = `nights / trip duration / trips per year`.
+
+**The calculation is always presented together with market dynamics**: the CAGR of the base market and the forecast share of the channel (for example, the online channel's share grows from X% to Y% by the horizon) — "the market will grow N-fold, and the online channel will capture most of that growth" is a separate argument for or against entry, not just the current volume.
+
+**Two ways to compute SOM**
+| Situation | Approach |
+|---|---|
+| Digital scalable product | via conversions (the acquisition funnel) |
+| Physical goods, manual production | via production constraints |
+| A service with limited capacity | via production constraints |
+| Marketplace | conversions + supply constraints (the smaller of the two is taken) |
+
+## Procedure
+1. **Research passport:** product/company, purpose ("the market potential for X in segment Y"), date, geo, horizon, main unit.
+2. **Market boundaries.** Define in writing what belongs to the category and what does not ("the AI market" = software? services? chips?). Without the definition, numbers from different sources are not comparable (see [[M-source-criticism]]).
+3. **Top-down:** `Segment market = Higher-level market × Geo share × Segment share` (the same units and year at every step). For each number — source, year, evidence class.
+4. **Bottom-up:**
+   - B2C: `TAM = N_segment × Access (%) × Frequency (times/year) × Average check (RUB/time)` → RUB/year.
+   - B2B: `TAM = N_companies_in_segment × Contract value (RUB/year)`; the number of decision-makers and the sales cycle are needed for SOM.
+5. **SAM** = TAM × sequential constraints (geo, channel, platform, price segment, legal). Write out each multiplier on a separate line with its source.
+6. **SOM via conversions:** `Downloads/leads × CR1 × CR2 × … = active buyers`; `SOM = active buyers × Average check × Frequency (times/year)`.
+7. **SOM via constraints:** `SOM = Capacity units/day × Working days × Price`.
+8. **Reconciliation and sanity checks:**
+   - `TAM ≥ SAM ≥ SOM`; the skill's guideline: TAM is 5–10 times larger than SAM — if the ratio is close to 1, TAM and SAM were probably confused.
+   - The product of the conversions ≤ 1; the number of active buyers ≤ SAM in people.
+   - The divergence between top-down and bottom-up ≤ 3×; otherwise revisit the definitions.
+   - Units: RUB/year ≠ RUB/month; users ≠ orders.
+   - The traction model does not exceed SOM ([[M-traction-model]]).
+9. **Three scenarios** (pessimistic/base/optimistic) for the most uncertain multipliers.
+10. **Visualization first:** concentric circles PAM→TAM→SAM→SOM or a waterfall (how TAM narrows down to SOM); then tables with the calculation logic.
+
+### Examples from the skill (the numbers are illustrative)
+- A clothing app: 50,000 downloads/year × 40% register × 10% first order × 50% repeat = 1,000 active users; × 3,000 RUB × 4 times/year = **12 million RUB/year**.
+- Handmade bags: 2 artisans × 1 item/day × 365 days × 15,000 RUB = **10.95 million RUB/year** (check the actual number of working days: 365 is a simplification of the example).
+- Top-down (traction-modeling): the Russian pharmaceutical market ~3 trillion RUB → Moscow + Moscow region 21% × diabetes 2.3% ≈ 15 bn RUB (SAM) → SOM: the leader's 10% of SAM = 1.5 bn RUB — the ceiling of a realistic goal. The numbers have no source; they are taken to demonstrate the logic.
+
+## Template / checklist
+**Calculation file format (as in the course practice)** — one sheet, two parts:
+1. Research passport: the product, the purpose of the research (which decision it is computed for), the date, the list of sources, **the research conclusions** — a concluding paragraph: what market share the product has by segment, whether the market is growing (CAGR), whether the channel's share is growing, and what this means for the "invest / don't invest" decision.
+2. The funnel table (each level is a row):
+| Stage | Calculation logic (in words, via segments and cuts) | Volume in money | Volume in users | Sources (for each number) |
+|---|---|---|---|---|
+| PAM (opt.) | | | | |
+| TAM | | | | |
+| SAM | | | | |
+| SOM | | | | |
+
+The bottom-up check: SOM is computed from the product's own data or the closest competitor (events × conversions × check), then compared with SAM — this yields an estimated market share; it must be plausible (not "22% for a player nobody has heard of") and consistent with the capacities. In the "users" column a level may be `n/a` if the source counts transactions (travel), not unique people — this is recorded explicitly rather than glossed over.
+
+A table for every funnel level (the minimal version):
+| Stage | Calculation logic | Money | Users/units | Source (year, grade A–D) |
+|---|---|---|---|---|
+| PAM (opt.) | | | | |
+| TAM top-down | | | | |
+| TAM bottom-up | | | | |
+| SAM | | | | |
+| SOM | | | | |
+
+B2C parameters: the segment's population; internet penetration/access; purchase frequency; average check; funnel conversions (benchmarks via [[M-benchmarking]] or your own data).
+B2B parameters: the number of companies in the segment; the number of decision-makers; contract value; sales cycle; win rate.
+
+Investor guidelines from the skill (**no source — grade D; verify before use**):
+| Parameter | Russia, Series A | International, Series A |
+|---|---|---|
+| Investment | $1M–$5M | $5M–$20M |
+| TAM | $100M–$1B | from $1B |
+| SAM | $50M–$200M | $200M–$1B |
+| Revenue/MRR | $10K–$50K/month | $50K–$200K/month |
+
+The exit checklist: the passport; the visualization; the TAM tables (both methods), SAM, SOM; the comparison against the thresholds; the conclusions; every number with a reference to its source right in the text.
+
+## Typical mistakes
+- Confusing TAM and SAM; presenting "TAM" as a goal for 1–3 years.
+- SAM without accounting for the real competitive landscape and channel constraints.
+- An inflated SOM: taking "at least 1% of the market" instead of calculating it via conversions/capacity.
+- Sources older than 2–3 years; numbers without references; different market definitions in the numerator and the denominator.
+- Counting only in money without showing people and product units.
+- Starting with tables instead of the visualization.
+- A static "freeze-frame": today's volume without the market's CAGR and the forecast of the channel's share — the entry decision depends on the future market, not only on the current one.
+- Market share as an input parameter of the model (see [[M-traction-model]]): share is an outcome, not an input.
+
+## Questions that can change the decision
+- What is the unit that constrains the business: demand (the funnel) or capacity?
+- Does the product create a new category (no market statistics → only bottom-up and analogs)?
+- Which segments are inaccessible due to geography/regulation/platform?
+- What horizon does the decision need: 1–3 years (SOM) or 3–5 years (SAM)?
+- Which multipliers contribute >50% of the uncertainty in the result (in the scenarios they come first)?
+
+## Related maps
+[[M-traction-model]], [[M-unit-economics]], [[M-benchmarking]], [[M-source-criticism]], [[M-competitors]], [[M-external-environment]], [[M-business-models]]
