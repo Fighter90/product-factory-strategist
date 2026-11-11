@@ -102,6 +102,12 @@ class NoDanglingSkillPointersTests(unittest.TestCase):
         r"см\. {name}\b", r"see {name}\b",  # явный указатель
     )
 
+    # Не висячий указатель: полное имя пути в extras (файл объясняет, куда перенесён
+    # связанный навык, — место названо точно, модель не пойдёт искать в .claude/skills).
+    EXTRAS_PATH_POINTERS = {
+        ".claude/skills/premortem/SKILL.md": ("extras/skills/board-of-directors",),
+    }
+
     def _mentions(self, text, name):
         escaped = re.escape(name)
         pattern = (rf"\b{escaped}\b" if name not in self.AMBIGUOUS_WORDS
@@ -117,6 +123,8 @@ class NoDanglingSkillPointersTests(unittest.TestCase):
             if any(rel == p or rel.startswith(p) for p in LIBRARY_MENTION_ALLOWLIST):
                 continue
             text = path.read_text(encoding="utf-8", errors="replace")
+            for pointer in self.EXTRAS_PATH_POINTERS.get(rel, ()):
+                text = text.replace(pointer, "")
             for name in REMOVED:
                 if self._mentions(text, name):
                     offenders.append(f"{rel}: {name}")
@@ -657,6 +665,29 @@ class ReviewRound5Tests(unittest.TestCase):
             offenders, [],
             "literature-review ссылается на навыки, которых нет ни в реестре, "
             "ни в extras: " + "; ".join(offenders))
+
+
+class ReviewRound6Tests(unittest.TestCase):
+    """Правки ревью PRO-65 (раунд 6).
+
+    premortem: указатель на связанный навык «Совет директоров» называет точное
+    место переноса — `extras/skills/board-of-directors` (не безымянное
+    «extras/skills»), формулировка грамматически корректна.
+    """
+
+    def _premortem(self):
+        return (SKILLS_DIR / "premortem" / "SKILL.md").read_text(encoding="utf-8")
+
+    def test_premortem_names_exact_extras_path(self):
+        self.assertIn(
+            "extras/skills/board-of-directors", self._premortem(),
+            "premortem не называет точный путь переноса навыка совета директоров")
+
+    def test_premortem_vague_pointer_removed(self):
+        self.assertNotIn(
+            "вынесен в `extras/skills` и вне загрузки", self._premortem(),
+            "безымянный указатель «(навык вынесен в `extras/skills` и вне "
+            "загрузки …)» не заменён на точный путь")
 
 
 if __name__ == "__main__":
