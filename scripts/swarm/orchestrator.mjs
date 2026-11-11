@@ -219,6 +219,10 @@ async function main() {
         for (; round < MAX_ROUNDS; round++) {
           log(`-- round ${round + 1}/${MAX_ROUNDS}: develop`);
           await sh(`git checkout -q ${branch} 2>/dev/null || git checkout -q -B ${branch} origin/main`);
+          // rebase на свежий main: убирает дрейф merge-base — иначе дифф тащит
+          // уже смерженный объём и ревью вечно требует «разделить скоуп»
+          const rb = await sh(`git rebase origin/main 2>&1 || { git rebase --abort 2>/dev/null; echo rebase-skipped; }`, { timeoutMs: 120_000 });
+          log(`  rebase: ${short(rb.out, 80)}`);
           const dev = await worker('executor', {
             IDENTIFIER: issue.identifier, TITLE: issue.title, ROUND: String(round + 1),
             DESCRIPTION: issue.description || '(см. задачу в Linear)',
