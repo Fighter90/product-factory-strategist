@@ -3,18 +3,142 @@ id: M-genai-assistant-architecture
 lang: en
 title: GenAI assistant as a product system — components, LLM-limit mitigations, orchestration and agent patterns
 course: pm-approaches-en
-sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
+sources: ["EN mirror of the RU card; original sources listed there"]
 stages: [research, options, strategy, validation]
-tags: [en, summary]
+tags: [genai, llm, assistant, agent, orchestration, guardrails, rag, structured-output, memory, tools]
 related: [M-genai-product-development, M-genai-prototyping, M-ai-in-research, M-risks, M-solution-design, M-delivery, M-decision-daci, M-team]
 ---
 
-# GenAI Assistant as a Product System (EN summary)
+# GenAI assistant as a product system
 
-**When:** designing not "one prompt" but a working assistant or agent inside a product: which components make the system, how to neutralize LLM limitations, when a fixed workflow suffices and when an autonomous agent pays off. Course takeaway: the model handles reasoning; the result is decided by what is built around it — an assistant is a managed product system, not a prompt.
+## When to apply
+When you need to design not "a single prompt" but a working assistant or agent inside a product: which components
+make up the system, how to neutralize LLM limitations, when a fixed scenario (workflow) is enough and when an
+autonomous agent is justified. The course's main takeaway: the model is responsible for reasoning; the result is
+decided by what is built around it. An assistant is a managed product system, not a prompt.
 
-**Core:** a single model call is stateless: it doesn't act (text stays text), doesn't remember (each call starts fresh), doesn't know your product. An agent = LLM + harness able to solve a task with high autonomy: multiple steps and calls, session state and memory, tool calls, unknown upfront cost. Terminology: **context** — what goes to the model right now (instructions, tools, recent messages, retrieved documents, call results); **memory** — what persists between steps and sessions (task state, user facts, actions taken), stored outside the model in the service's database; **knowledge** — domain-wide information (regulations, catalog) with an owner and an update process; memory and knowledge reach the model by being placed into context. Components (composition follows the scenario — the more autonomous the agent, the costlier the harness): model; system prompt (role, rules, format, no leaving the data); programmatic harness (calls, retries, limits, error handling, agent loop); orchestrator (decomposition, routing, step order, result assembly); tools (read — safe; search — quality depends on the knowledge base; action — needs limits and confirmation); structured output by schema (the answer becomes data → branching, metrics, validation, less room for fiction); UI (shows what the system does and at which step; can be stopped or re-asked); control (spend and action limits, human confirmation on expensive steps, logs and incident review). LLM limits and origins: hallucinations (the model produces plausible, not true, text); stale knowledge (training cutoff); nondeterminism and prompt-sensitivity (sampling); instructions reduce but don't eliminate bad behavior (check output, not only input); sycophancy and verbosity (rewarded "agreeable" answers); version drift. Mitigations: hallucination → grounding via RAG retrieval, required citations, structured output with validation, the rule "no data in source — say so or refuse", automatic pre-release checks, human escalation in hard cases; stale knowledge → knowledge via context/tools with a KB owner; nondeterminism → deterministic rules for verdicts and sensitive decisions, the model only for wording; drift → a regression set (fixed sample, same measurement) re-run on every model/prompt change with blind pairwise comparison; data injection → separate instructions from data (block markup, standalone system prompt), treat external content as data not commands, restrict the action list; latency → streaming, short input, a reranker selecting 3–5 snippets of 200–400 tokens instead of whole documents, compressed dialogue history, key content at the edges of context; cost → caching, fewer calls per step, fast→strong model cascade, per-user limits. Workflow (a predefined multi-step order; orchestrator keeps state, nodes execute) vs agent (plans the next step as it goes): workflow for tasks decomposable into known stages — predictable, controllable, debuggable; agent for open tasks with unknown steps — flexible but costlier, slower, error-accumulating, needs limits and thorough testing. Five workflow patterns: Chain (sequential dependent steps; early errors propagate), Routing (input types to different branches; cheap fast branch for simple requests; misclassification risk), Parallelization (independent subtasks/attempts; pay for all branches, reconcile contradictions), Orchestrator-workers (subtask composition defined dynamically; unpredictable effort), Evaluator-optimizer (improvable against explicit criteria; each iteration costs calls and latency — needs stop conditions). Four agent patterns: ReAct (thought → action → observation loops; search and diagnostics where the path is unknown), Reflection + Reflexion (draft → check against criteria → revise within an attempt limit), Plan-and-Execute (planner builds the plan, executor runs it, plan is revised), multi-agent (a lead agent delegates to specialists). Autonomy boundaries: split developer rules / model decisions / human actions; limits (amounts, operation counts, allowed tools) and human confirmation on expensive steps; a healthy boundary closes part of cases automatically and escalates the rest with a ready analysis — 100% automation is not the goal; loops need termination conditions and attempt limits; control metrics: auto-close rate, escalations, repeat contacts, post-answer complaints, cost per answer.
+## Core idea
 
-**How:** (1) fill the 9-field assistant canvas top-down, model last: task (what work it takes from a human), boundaries (what it does alone vs with a human — amounts, topics, cases), orchestrator (steps, stop and escalation, step limit), tools (what it reads, what it changes), knowledge (domain knowledge, owner, updates), memory (what persists), UI (where the human sees and intervenes), control (limits, metrics, error cost, stop conditions), model (what the model must support); record missing data as a stated assumption; (2) pair every limitation with a specific mitigation (table above); (3) design the scenario — workflow vs agent via the checklist: steps known upfront → workflow; answer depends on data to be searched → ReAct; explicit quality criteria → Reflection; sequential subtasks → Plan-and-Execute; several large independent subtasks → multi-agent; none of these → one prompt; patterns can mix within one scenario — start from the task, not the patterns; (4) set autonomy boundaries and control metrics; (5) assembly checklist: every canvas field filled or assumed; verdicts deterministic; hallucination defenses present (grounding/citations/validation); retries and limits; structured output validated; UI shows steps; human confirmation on expensive actions; logs saved for incidents; regression set exists and runs on every model/prompt change.
+**A single model call** is stateless: it does not act (text stays text), does not remember (every call starts from
+scratch), does not know your product. An **agent** is a system of an LLM and a harness, able to solve a task with a
+high degree of autonomy: multiple steps and calls, session state and memory, tool calls, a cost unknown upfront.
 
-**Pitfalls:** treating the prompt as the product (the harness decides the result); believing an instruction will exclude unwanted answers (bans lower probability, don't eliminate — validate output); giving verdicts and sensitive decisions to the model ("flickering" behavior destroys trust); stuffing everything into context (whole regulations, full history) — cost grows, the important gets lost in the middle; one call where a scenario is needed, or an agent where a workflow suffices; evaluator-optimizer without criteria and stop conditions (infinite loops); no regression set on version change (users notice the drift first); action tools without limits and confirmations (irreversible actions); stale knowledge bases — the model confidently answers from a dead regulation.
+**Separating the terms:** *context* — what goes into the model right now (instructions, tools, recent messages,
+retrieved documents, call results); *memory* — what persists between steps and sessions (task state, facts about the
+user, actions taken) and is stored outside the model, in the service's database; *knowledge* — information shared by
+all users about the domain (regulations, a catalog), with an owner and an update process. Knowledge and memory are
+delivered to the model by placing the needed information into the context.
+
+**System components** (the composition is dictated by the scenario: the more autonomous the agent, the costlier the
+harness): model; system prompt (role, rules, format, a ban on leaving the data); programmatic harness (calls,
+retries, limits, error handling, the agent loop); orchestrator (decomposition, routing, step order, result
+assembly); tools (reading — safe; search — quality depends on the knowledge base; action — needs limits and
+confirmation); structured output by schema (structured output: the answer becomes data → branching, metrics,
+validation, less room for making things up); interface (you can see what the system is doing and at which step; you
+can stop it or ask again); control (limits on amounts and the number of actions, human confirmation on expensive
+steps, logs and incident review).
+
+**LLM limitations and where they come from:** the model produces plausible text, not truth → hallucinations;
+knowledge is frozen at the training date → obsolescence; sampling during generation → nondeterminism and sensitivity
+to wording; an instruction lowers the probability of an unwanted answer but does not exclude it → behavior is
+checked on the output, not only set on the input; rewarding "agreeable" answers during training → verbosity and
+sycophancy; a change of model version → behavior drift.
+
+## Procedure
+
+### 1. Fill in the assistant canvas (top-down, model last)
+| # | Field | Question |
+|---|---|---|
+| 01 | Task | What work does the system take away from a human? |
+| 02 | Boundaries | What does it do on its own and what only with a human (amounts, topics, cases)? |
+| 03 | Orchestrator | What steps does the work consist of, when to stop and escalate (step limit)? |
+| 04 | Tools | What does it read and what does it change in other systems? |
+| 05 | Knowledge | What domain knowledge is needed, who owns it and updates it? |
+| 06 | Memory | What to remember between steps and sessions? |
+| 07 | Interface | Where does the human see the work and can intervene? |
+| 08 | Control | Limits, metrics, error cost, stop conditions? |
+| 09 | Model | What is required of the model for all of this to work? |
+Record missing data in a field as a stated assumption, not a silent guess.
+
+### 2. Close every limitation with a specific mitigation
+| Limitation | How it shows up for the user | Mitigations |
+|---|---|---|
+| Hallucinations | a confident fact that does not exist | grounding: retrieval over a knowledge base (RAG) and passing fragments into the context; requiring quotes/links to a source; structured output with validation; the rule "no data in the source — say so directly or refuse"; automatic check of the answer before it is issued; escalation to a human in complex cases |
+| Limited knowledge | does not know your data or events after training | knowledge delivered via context/tools; an owner and a knowledge-base update process before assembly |
+| Nondeterminism | "flickering" verdicts, different selections | verdicts and sensitive decisions — with deterministic rules; the model — with wording; rerun on a regression set at every change |
+| Wording sensitivity / version drift | after a model update the behavior changed | regression set: a fixed sample, the same evaluation method, a run at every model/prompt change; comparison with the previous version (paired, blind) |
+| Injections via data | external content (a web page, a document, a message) tries to change the instructions | separating instructions and data (marking blocks, the system prompt kept apart); content from external sources is processed as data, not as commands; restrict the list of available actions |
+| Latency | "it hung", repeated clicks, leaving the chat | streaming; short input; a reranker picks 3–5 snippets of 200–400 tokens instead of whole documents; compressing the dialogue history instead of truncating it from the start; key content at the start and end of the context |
+| Cost | the feature fails unit economics after a pilot | caching of repeats and stable prefixes; fewer calls per step; a model cascade fast→strong ([[M-genai-product-development]]); per-user limits |
+
+### 3. Design the scenario: workflow or agent
+A **workflow** is a pre-described order of a multi-step scenario (the orchestrator keeps state and transitions,
+nodes perform operations). An **agent** plans the next step itself as the work proceeds. Workflow for tasks that
+decompose into clear stages: predictable, controllable, debuggable. Agent for open-ended tasks where the steps and
+their number are unknown upfront: flexible, but costlier, slower, errors accumulate — needs limits and thorough
+testing.
+
+**Five workflow patterns (and when each fits):**
+| Pattern | When to choose it | Costs / risks |
+|---|---|---|
+| Chain | sequential dependent steps with a known order | each step is a call and a wait; an error in an early step propagates further |
+| Routing | different input types need different branches; simple requests go to a cheap fast branch | a classification error sends the request to the wrong branch; the branches must be maintained |
+| Parallelization | independent subtasks or several independent attempts | all branches are paid for; the results may contradict each other — reconciliation is needed |
+| Orchestrator-workers | the subtask set is determined dynamically per request | the result depends on the quality of the decomposition; the amount of work is unpredictable; if the subtasks are known upfront, a fixed workflow is simpler |
+| Evaluator-optimizer | the result can be improved by clear criteria | every iteration is calls, latency, money; stop conditions are mandatory |
+
+The patterns do not exclude each other: different parts of one scenario can be built differently. Rule: if the task
+is solved by a single prompt — do not complicate; task first, patterns later.
+
+**Four agent patterns (and when they are justified):**
+| Pattern | Mechanics | When it is justified |
+|---|---|---|
+| ReAct (reasoning + acting) | alternating "thought → action → observation", the result of each step determines the next | search and diagnostics: the path to the answer is not known upfront |
+| Reflection (+ Reflexion with an error memory) | draft → check against criteria (the same model / a separate evaluator / an external tool) → refinement up to an attempt limit | the answer is verifiable and improvable by explicit criteria |
+| Plan-and-Execute | a planner builds a multi-step plan, an executor carries it out, the plan is revised | the task can be split into subtasks upfront |
+| Multi-agent | a lead agent delegates subtasks to specialized agents and assembles the result | several independent subtasks with different data/tools |
+
+### 4. Set the boundaries of autonomy
+1. Separate: rules set by developers / decisions of the model / actions of a human.
+2. For system actions — limits (amount, number of operations, available tools) and human confirmation on expensive
+   steps. A common healthy boundary: part of the cases closes automatically, the rest go to a human with a ready
+   analysis — there is no need to strive for 100% automation.
+3. For loops — completion conditions and an attempt limit, otherwise refinement may continue endlessly.
+4. Define control metrics: share of auto-closures, escalations, repeat requests, complaints after an answer, cost
+   per answer.
+
+## Template / checklist
+
+**"Do you need an agent" checklist:** are the steps and transitions known upfront? → workflow. Does the result
+depend on data that must be searched along the way? → ReAct. Are there explicit quality criteria for the answer? →
+Reflection. Does the task split into sequential subtasks? → Plan-and-Execute. Are there several large independent
+subtasks? → multi-agent. None of these — a single prompt.
+
+**Assembly checklist:** every canvas field has content or an assumption; verdicts are deterministic; hallucination
+defenses are in place (grounding/citations/validation); retries and limits exist; structured output is validated;
+the interface shows the steps; human confirmation on expensive actions; logs are saved for incident review; a
+regression set exists and is run on every model/prompt change.
+
+## Typical mistakes
+| Mistake | Why it is bad | How to avoid it |
+|---|---|---|
+| Treating the prompt as the product | The harness is responsible for the result, not the model | The 9-field canvas + components |
+| Believing an instruction will exclude the unwanted answer | A ban lowers the probability but does not eliminate it | Check the output: validation, filters, escalation |
+| Giving verdicts and sensitive decisions to the model | "Flickering" behavior undermines trust | Rules for verdicts, the model for wording |
+| Putting everything into the context (the whole regulation, the whole correspondence) | Cost and TTFT grow, the important is lost in the middle | Snippets, rerank, history compression, key content at the edges |
+| One call where a scenario is needed; an agent where a workflow suffices | Either it does not solve the task, or extra cost and risk | The "workflow vs agent" algorithm above |
+| Evaluator-optimizer without criteria and an attempt limit | Iterations without improvement, an endless loop | Criteria before launch; stop conditions |
+| No regression set when the model version changes | Users notice the behavior drift first | A fixed sample + the same measurement at every change |
+| Action tools without limits and confirmations | The system performs irreversible actions on its own | Limits, human confirmation, logs |
+| Letting it forget: outdated knowledge in the base | The model confidently answers from a dead regulation | Knowledge owner, an update process |
+
+## Questions that can change the decision
+- What is the cost of an error and which system actions are irreversible? This sets the boundaries of autonomy and
+  how mandatory control is.
+- Are the regulation/knowledge base the assistant is built on actually valid, and do they have an owner?
+- Can users try to "re-educate" the system via messages (injections) — and which actions are allowed to it?
+- Is a fixed workflow enough? Every extra step is time, money and a new source of error.
+- What must stay stable between runs (verdicts, amounts, links) and how do you verify that?
+
+## Related maps
+[[M-genai-product-development]], [[M-genai-prototyping]], [[M-ai-in-research]], [[M-risks]], [[M-solution-design]], [[M-delivery]], [[M-decision-daci]], [[M-team]]

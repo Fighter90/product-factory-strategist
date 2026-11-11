@@ -1,20 +1,46 @@
 ---
 id: M-wardley-mapping
 lang: en
-title: Wardley Mapping — component evolution and build/buy/rent
+title: Wardley Mapping — a map of component evolution and the build/buy/rent decision
 course: pm-approaches-en
-sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
+sources: ["EN mirror of the RU card; original sources listed there"]
 stages: [situation, options, strategy]
-tags: [en, summary]
+tags: [wardley-mapping, evolution, genesis, commodity, build-buy-rent, needs-chain, strategy]
 related: [M-strategy-growth, M-competitors, M-external-environment, M-platforms-types-criteria, M-solution-design]
 ---
 
-# Wardley Mapping (EN summary)
+# Wardley Mapping: strategy from a map, not from intuition
 
-**When:** you need to see which components of your product/market "do not exist yet" versus "became electricity", and decide what to build, buy or rent — and where to attack.
+## When to apply
+You need to understand where the components of a product/market "do not exist yet" and where they have already
+"become electricity"; decide what to build yourself, what to buy, and what to hand over to a provider; find the
+right moments to attack.
 
-**Core:** map = user need chain (top) against evolution axis (left→right): Genesis → Custom-built → Product (+rental) → Commodity. Components are nouns; links are "needed for". Evolution moves right over time regardless of any player's will; position defines the game (Genesis: explore; Custom: differentiate; Product: buy/rent; Commodity: consume). Climate signals show what is about to evolve — windows of opportunity and risk. Draw with the team in 1–2 hours; validate against the market.
+## Core idea
+- **The map**: the X axis is the evolution of a component (Genesis → Custom-built → Product (+rental) →
+  Commodity/utility), the Y axis is visibility to the user (the chain of needs runs from the top down). Components
+  are nouns; links between them mean "is needed for".
+- **Evolution = movement along X over time, regardless of any player's will** (standardization, competition). The
+  position on the map defines the game: Genesis — explore; Custom — build for yourself / a differentiator; Product —
+  buy or rent; Commodity — consume it like electricity.
+- **Climatic signals**: competition lowers prices, standardization is inevitable, "yesterday's success" and others —
+  the map shows what is about to evolve (a window of opportunity, or of risk).
+- **Games**: attack the components that are evolving out from under competitors (their differentiator has become a
+  commodity), build higher up the chain of needs, hand the non-differentiators over to a provider.
+- In practice: the map is drawn with the team on a whiteboard in 1–2 hours; it is checked against the market, it is
+  not "truth".
 
-**How:** user + need → components down the chain → place on evolution (suppliers, standards) → mark movement → strategy: build Custom differentiators, buy/rent Products, watch Genesis windows.
+## How to do it
+1. Define the user and their need (the top of the chain).
+2. Write out the components downward along the "is needed for" links; place them on the evolution axis (what does
+   the market say: how many suppliers are there, are there standards?).
+3. Mark the movement (what is evolving right now) and the hostile/friendly positions.
+4. Strategy: build for Custom differentiators, buy/rent for Product, watch for the Genesis windows.
 
-**Pitfalls:** one-time maps; evolution judged by wish instead of market; features instead of noun-components.
+## Pitfalls
+- A map drawn once and for all time — this is a process, keep it updated.
+- Judging the evolution stage "by wish" instead of by the market (the number of suppliers, standardization).
+- Features on the map instead of noun-components.
+
+## Connections
+Market and competitors — `M-competitors`, `M-external-environment`; platform decisions — `M-platforms-types-criteria`; the situation — 02_situation (the method as a complement to `M-product-context`).
