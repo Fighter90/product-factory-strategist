@@ -79,19 +79,31 @@ def demo_numbers() -> dict:
     if not claims:
         raise BuildError("Реестр утверждений демо-проекта пуст")
 
-    options_md = _read(DEMO / "outputs" / "03_options.md")
-    letters = re.findall(r"^## Вариант ([A-ZА-Я])\.", options_md, flags=re.M)
-    if not letters:
-        raise BuildError("В 03_options.md нет заголовков «## Вариант X.»")
+    options_path = DEMO / "outputs" / "03_options.md"
+    options_md = _read(options_path)
+    heads = list(re.finditer(r"^## Вариант ([A-ZА-Я])\.", options_md, flags=re.M))
+    if not heads:
+        raise BuildError(f"В {options_path} нет заголовков «## Вариант X.»")
+    letters = [m.group(1) for m in heads]
 
+    # Red team считается по секциям вариантов: у каждого варианта должна быть строка
+    # «Возражения red team» с нумерованными пунктами и строка «Скрытое допущение».
+    # Отсутствие или испорченный формат — BuildError, а не тихий ноль.
     objections = 0
     assumptions = 0
-    for line in options_md.splitlines():
-        if line.lstrip("- ").startswith("Возражения red team"):
-            nums = [int(x) for x in re.findall(r"\((\d)\)", line)]
-            objections += max(nums) if nums else 0
-        if "Скрытое допущение" in line:
-            assumptions += 1
+    for i, head in enumerate(heads):
+        end = heads[i + 1].start() if i + 1 < len(heads) else len(options_md)
+        sec = options_md[head.end():end]
+        red = _require(re.search(r"^(- Возражения red team:.*$)", sec, flags=re.M),
+                       "строка «Возражения red team»", options_path)
+        nums = [int(x) for x in re.findall(r"\((\d+)\)", red)]
+        if not nums:
+            raise BuildError(
+                f"В «Возражения red team» варианта {head.group(1)} нет нумерованных пунктов «(N)»")
+        objections += max(nums)
+        _require(re.search(r"^(- Скрытое допущени[ея])", sec, flags=re.M),
+                 "строка «Скрытое допущение»", options_path)
+        assumptions += 1
 
     d001 = next((d for d in _jsonl(DEMO / "decisions.jsonl") if d.get("id") == "D001"), None)
     if not d001:
@@ -104,7 +116,7 @@ def demo_numbers() -> dict:
         raise BuildError(f"Выбранный вариант {letter} отсутствует среди вариантов {letters}")
     heading = _require(
         re.search(rf"^## Вариант {letter}\. (.+)$", options_md, flags=re.M),
-        f"заголовок варианта {letter}", DEMO / "outputs" / "03_options.md")
+        f"заголовок варианта {letter}", options_path)
     label = heading.split(" — ")[0].split(" (")[0].strip()
     review = d001.get("review", {}).get("date", "")
     if not re.match(r"^\d{4}-\d{2}-\d{2}$", review):
@@ -157,6 +169,17 @@ def claim_facts() -> dict:
     if not text:
         raise BuildError(f"У {CLAIM_ID} пустой текст")
 
+    # Перевод утверждения для EN-страницы (в реестре только RU-текст) сверяется по числам:
+    # если утверждение в реестре изменилось, а перевод — нет, сборка падает громко,
+    # а не показывает на сайте расходящиеся числа.
+    text_en = ("Global online recruitment market: $37.97B in 2025 with a 7.1% CAGR to 2033; "
+               "Indeed — 60+ countries, 28 languages, 685M profiles; "
+               "Bayt (MENA) — 59M+ profiles")
+    if _num_tokens(text) != _num_tokens(text_en):
+        raise BuildError(
+            f"Числа перевода {CLAIM_ID} (TEXT_EN) расходятся с реестром: "
+            f"{_num_tokens(text)} != {_num_tokens(text_en)} — обновите перевод в scripts/build_site.py")
+
     return {
         "C_ID": claim["id"],
         "C_SRC": sid,
@@ -168,13 +191,16 @@ def claim_facts() -> dict:
         "GRADE": grade,
         "TEXT": text,
         "SEG_RU": text.split(";")[0].strip(),
-        # перевод реального утверждения для EN-страницы (в реестре только RU-текст)
-        "TEXT_EN": ("Global online recruitment market: $37.97B in 2025 with a 7.1% CAGR to 2033; "
-                    "Indeed — 60+ countries, 28 languages, 685M profiles; Bayt (MENA) — 59M+ profiles"),
-        "SEG_EN": "Global online recruitment market: $37.97B in 2025",
+        "TEXT_EN": text_en,
+        "SEG_EN": text_en.split(";")[0].strip(),
         "USAGE_RU": usage_ru,
         "USAGE_EN": usage_en,
     }
+
+
+def _num_tokens(s: str) -> list[str]:
+    """Числовые токены текста в нормализованном виде: «37,97 млрд» → 37.97, «685M» → 685."""
+    return sorted(t.replace(",", ".") for t in re.findall(r"\d[\d,.]*", s))
 
 
 def _sixpager_usage(path: Path) -> str:
@@ -308,7 +334,8 @@ section{padding:110px 0;border-bottom:1px solid var(--line)}
 .ph li{display:flex;align-items:center;gap:12px;font-size:15px}
 .ph .n{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
 .ph li.h .n{border:1.5px solid var(--accent);color:var(--accent)}
-.ph li.h::after{content:"вы";margin-left:auto;font-size:11px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+/* бейдж у шагов решения человека — текст задаётся пер-языковым токеном, чтобы не было утечек */
+.ph li.h::after{content:"{{YOU}}";margin-left:auto;font-size:11px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
 
 /* цепочка доказательств: терминал, утверждение, excel */
 .proof{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:24px;align-items:start}
@@ -444,7 +471,7 @@ def _page(lang_attrs: str, title: str, desc: str, canonical: str, og: str,
 <meta name="description" content="{desc}">
 <link rel="canonical" href="{canonical}">
 {HREFLANGS}
-<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="icon" href="{{{{A}}}}assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 {og}
@@ -1062,15 +1089,15 @@ def build(out: Path, ym_id: str | None) -> list[Path]:
                "every number, genuinely different options, a committee six-pager and follow-up "
                "after the decision.")
 
-    # Пер-языковые подстановки: KIND/TEXT/SEG/DATE/USAGE/REVIEW/префикс ассетов
+    # Пер-языковые подстановки: KIND/TEXT/SEG/DATE/USAGE/REVIEW/YOU/префикс ассетов
     ru = dict(tokens)
     ru.update({"KIND": tokens["KIND_RU"], "TEXT": tokens["TEXT"], "SEG": tokens["SEG_RU"],
                "DATE": tokens["DATE_RU"], "USAGE": tokens["USAGE_RU"], "REVIEW": tokens["REVIEW_RU"],
-               "DOM": tokens["C_DOM"], "A": "", "BRAND": BRAND_SVG})
+               "DOM": tokens["C_DOM"], "A": "", "BRAND": BRAND_SVG, "YOU": "вы"})
     en = dict(tokens)
     en.update({"KIND": tokens["KIND_EN"], "TEXT": tokens["TEXT_EN"], "SEG": tokens["SEG_EN"],
                "DATE": tokens["DATE_EN"], "USAGE": tokens["USAGE_EN"], "REVIEW": tokens["REVIEW_EN"],
-               "DOM": tokens["C_DOM"], "A": "../", "BRAND": BRAND_SVG})
+               "DOM": tokens["C_DOM"], "A": "../", "BRAND": BRAND_SVG, "YOU": "you"})
 
     ru_page = _page("ru", ru_title, ru_desc, f"{BASE}/", _og("ru", ru_title, ru_desc, f"{BASE}/"),
                     RU_BODY, ru)
