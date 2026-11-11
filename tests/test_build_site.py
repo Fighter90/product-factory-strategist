@@ -412,5 +412,54 @@ class TestEndToEndBuild(unittest.TestCase):
             self.assertIn("scroll-padding-top:96px", m.group(1), lang)
 
 
+# ---------- раунд ревью 3 (PRO-66): дословный запрос как токен сборки ----------
+
+class TestVerbatimRequestToken(unittest.TestCase):
+    """Дословный запрос руководителя — второй аргумент `pfs new`, он хранится в
+    project.json демо-проекта. Терминал и проза секции демо получают ОДИН токен
+    на язык, поэтому расхождение «с/без на весь мир» (замечание ревью) невозможно
+    по построению."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.mod = load_module()
+
+    def test_ru_matches_project_json(self):
+        pj = json.loads((ROOT / "projects" / "демо" / "project.json").read_text(encoding="utf-8"))
+        self.assertEqual(self.mod.demo_request()["RQ_RU"], pj["question"].strip())
+
+    def test_en_translation_numbers_match_repo(self):
+        req = self.mod.demo_request()
+
+        def nums(s):
+            return sorted(t.replace(",", ".") for t in re.findall(r"\d[\d,.]*", s))
+
+        self.assertEqual(nums(req["RQ_EN"]), nums(req["RQ_RU"]))
+
+    def test_en_translation_carries_urls_from_request(self):
+        en = self.mod.demo_request()["RQ_EN"]
+        self.assertIn("https://cvstart.org/", en)
+        self.assertIn("https://github.com/Fighter90/career-ops-ui", en)
+
+    def test_missing_project_is_loud(self):
+        tmp = Path(tempfile.mkdtemp(prefix="pfs-rq-loud-"))
+        self.mod.DEMO = tmp
+        try:
+            with self.assertRaisesRegex(self.mod.BuildError, "project.json"):
+                self.mod.demo_request()
+        finally:
+            self.mod.DEMO = ROOT / "projects" / "демо"
+
+    def test_empty_question_is_loud(self):
+        tmp = Path(tempfile.mkdtemp(prefix="pfs-rq-empty-"))
+        (tmp / "project.json").write_text(json.dumps({"question": "  "}), encoding="utf-8")
+        self.mod.DEMO = tmp
+        try:
+            with self.assertRaisesRegex(self.mod.BuildError, "пустой question"):
+                self.mod.demo_request()
+        finally:
+            self.mod.DEMO = ROOT / "projects" / "демо"
+
+
 if __name__ == "__main__":
     unittest.main()

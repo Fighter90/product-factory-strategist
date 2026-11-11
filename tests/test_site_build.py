@@ -177,6 +177,10 @@ class SiteBuildBase(unittest.TestCase):
         assert r.returncode == 0, f"build_site.py упал:\n{r.stdout}\n{r.stderr}"
         cls.built["ru"] = (tmp / "index.html").read_text(encoding="utf-8")
         cls.built["en"] = (tmp / "en" / "index.html").read_text(encoding="utf-8")
+        for key, rel in (("ru_demo", Path("demo.html")), (Path("en").name + "_demo", Path("en") / "demo.html"),
+                         ("ru_help", Path("help.html")), ("en_help", Path("en") / "help.html"),
+                         ("ru_mat", Path("materials.html")), ("en_mat", Path("en") / "materials.html")):
+            cls.built[key] = (tmp / rel).read_text(encoding="utf-8")
         cls.tmp = tmp
 
 
@@ -385,20 +389,26 @@ class TestAnalytics(SiteBuildBase):
 
 
 class TestCommittedOutput(SiteBuildBase):
+    PAGES = {  # ключ → относительный путь закоммиченной страницы
+        "ru": Path("index.html"), "en": Path("en") / "index.html",
+        "ru_demo": Path("demo.html"), "en_demo": Path("en") / "demo.html",
+        "ru_help": Path("help.html"), "en_help": Path("en") / "help.html",
+        "ru_mat": Path("materials.html"), "en_mat": Path("en") / "materials.html",
+    }
+
     def test_committed_pages_match_build(self):
-        committed_ru = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
-        committed_en = (ROOT / "site" / "en" / "index.html").read_text(encoding="utf-8")
-        self.assertEqual(self.built["ru"], committed_ru,
-                         "site/index.html не совпадает со сборкой — перезапустите scripts/build_site.py")
-        self.assertEqual(self.built["en"], committed_en,
-                         "site/en/index.html не совпадает со сборкой — перезапустите scripts/build_site.py")
+        for key, rel in self.PAGES.items():
+            committed = (ROOT / "site" / rel).read_text(encoding="utf-8")
+            self.assertEqual(self.built[key], committed,
+                             f"site/{rel} не совпадает со сборкой — перезапустите scripts/build_site.py")
 
     def test_referenced_assets_exist(self):
         for rel in ("assets/logo.svg", "assets/hero-poster.webp",
                     "assets/og/og-ru.jpg", "assets/og/og-en.jpg",
                     "assets/dark-double-diamond.webp",
                     "assets/dark-double-diamond.avif", "assets/dossier-dark.webp",
-                    "assets/dossier-dark.avif"):
+                    "assets/dossier-dark.avif", "assets/dark-hero-paper.webp",
+                    "assets/dark-hero-paper.avif"):
             self.assertTrue((ROOT / "site" / rel).exists(), rel)
         self.assertTrue((ROOT / "site" / "assets" / "hero-swarm-2.mp4").exists())
 
@@ -629,9 +639,14 @@ class TestOgPerLanguage(SiteBuildBase):
 
 
 class TestDarkAssetsUsed(SiteBuildBase):
-    """Тёмные фото подключены к генерируемым страницам: picture, avif/webp, размеры."""
+    """Тёмные фото подключены к генерируемым страницам: picture, avif/webp, размеры.
+
+    Раунд ревью 3: dark-hero-paper — обложка страницы demo (замечание ревью:
+    откладывать страницы demo/help/materials было нельзя), остальные — на лендинге.
+    """
 
     PAIRS = {"dark-double-diamond": (1800, 1350), "dossier-dark": (1800, 1012)}
+    DEMO_COVER = ("dark-hero-paper", 1800, 1012)
 
     def test_shipped(self):
         for name in self.PAIRS:
@@ -650,10 +665,22 @@ class TestDarkAssetsUsed(SiteBuildBase):
                 self.assertIn(f'width="{w}"', block, lang)
                 self.assertIn(f'height="{h}"', block, lang)
 
+    def test_demo_cover_referenced_with_dimensions(self):
+        for key in ("ru_demo", "en_demo"):
+            page = self.built[key]
+            name, w, h = self.DEMO_COVER
+            m = re.search(rf"<picture>.*?{name}.*?</picture>", page, flags=re.S)
+            self.assertIsNotNone(m, f"{key}: {name} не подключён")
+            block = m.group(0)
+            self.assertIn(f"{name}.avif", block, key)
+            self.assertIn(f"{name}.webp", block, key)
+            self.assertIn(f'width="{w}"', block, key)
+            self.assertIn(f'height="{h}"', block, key)
+
     def test_no_dead_dark_assets(self):
         for p in sorted((ROOT / "site" / "assets").glob("dark-*.webp")):
-            for lang, page in self.built.items():
-                self.assertIn(p.stem, page, f"{lang}: {p.name} лежит без использования")
+            used = [key for key, page in self.built.items() if p.stem in page]
+            self.assertTrue(used, f"{p.name} лежит без использования")
 
 
 class TestCommittedEnNoCyrillic(unittest.TestCase):
