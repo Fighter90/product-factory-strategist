@@ -1,20 +1,109 @@
 ---
 id: M-trends-scenarios
 lang: en
-title: Trend analysis and scenario planning — signals vs hype, three horizons, 2×2 scenarios, no-regret moves
+title: Trend analysis and scenario planning
 course: pm-approaches-en
-sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
+sources: ["EN mirror of the RU card; original sources listed there"]
 stages: [research, options, strategy]
-tags: [en, summary]
+tags: [trends, trend-watching, scenarios, delphi, backcasting, horizon-scanning, horizons, 2x2-matrix]
 related: [M-external-environment, M-source-criticism, M-strategy-growth, M-traction-model, M-risks, M-market-sizing]
 ---
 
-# Trend Analysis and Scenario Planning (EN summary)
+# Trend Analysis and Scenario Planning
 
-**When:** "where is the market heading?", "what happens in 3–5 years?", "is it hype or a trend?", "which scenarios should the strategy and growth model include?" — the method separates signals from hype and turns the future into a set of testable scenarios with signals and actions.
+## When to apply
+"Where is the market heading?", "what will happen in 3–5 years?", "is it hype or a trend?", "which scenarios should we build into the strategy and the growth model?" The method helps you separate signals from hype and turn the future into a set of testable scenarios with signals and actions.
 
-**Core:** Vocabulary: signal — an early indicator, anomaly, "seed" of a trend; hype — an interest spike without durability guarantee (NFT, metaverse); trend — a stable sequence with a clear direction; insight — the trend's impact on your product; megatrend/driver — a fundamental force moving many trends (digitalization, demographics, climate); image of the future — a view of the future under trend development. Types by PESTLE: political, economic, social, technological, legal, environmental. Three horizons of strategy (McKinsey): Run — 1–3 years (current profit, efficiency); Change — 2–5 years (future profit, adaptation); Disrupt — 3–10 years (breakthrough, new markets). When NOT to forecast: the result doesn't affect the decision; the cost of error is lower than the cost of delay; the speed of change exceeds the speed of planning; the solution space is too complex (more than 3 variables). Methods: horizon scanning (signals from papers, startups, patents, news — early trend detection, trend-map upkeep); Delphi (anonymous expert rounds, usually 2–3, results shown between rounds → consensus; little data, expert parameter estimation needed); scenario planning (2–4 images of the future, each with its own logic — "what could be", not "what will be"; high uncertainty, 3–10-year strategy); diffusion models (adoption speed: Bass, Logistic, Gompertz; S-curve start → acceleration → plateau); backcasting (from the desired future to the present: "if we lead in 2030, what do we do now?"; clear goal, path needed — Amazon's future press release); prediction markets / crowd forecasting (trading outcomes, collective estimates — Metaculus, PredictIt; cross-checking own probabilities); system dynamics (delays and feedback loops, Forrester; complex systems with lag).
+## Core idea
+| Concept | Definition |
+|---|---|
+| Signal | an early indicator, an anomaly, the "seed" of a trend |
+| Hype | an interest spike with no guarantee of durability (NFT, metaverse) |
+| Trend | a stable sequence with a clear direction |
+| Insight | the trend's impact on your product |
+| Megatrend / driver | a fundamental force moving many trends (digitalization, demographics, climate) |
+| Image of the future | a view of the future as the trends develop |
+Types by PESTLE: political, economic, social, technological, legal, environmental ([[M-external-environment]]).
 
-**How:** A. Simple scenario analysis, 10 steps: (1) specify trend, market, horizon; (2) express in a measurable quantity (%, millions, index); (3) baseline — current state and stability trajectory; (4) acceleration scenario (favorable conditions); (5) rollback/stall scenario (unfavorable); (6) drivers/triggers of each scenario; (7) signals — what to observe to tell which scenario is unfolding; (8) product and strategy adaptation; (9) split actions into no-regret moves (pay off under any outcome) and option bets (wagers on a specific outcome); (10) assess the product's current readiness. B. 2×2 matrix: pick the two most influential and least correlated trends; axes = extreme values (High/Low); four quadrants = four images of the future, each named with 3–5 signs; then steps 6–10 briefly for each quadrant. C. Trend vs hype: collect signals in a journal (source, date, evidence class) → cluster → check for several independent signals across different sources and periods, visible direction and real adoption (money, behavior, regulation), not just mentions; no → keep as signal/hype under observation; yes → record the product insight. D. Delphi in practice: formulate a concrete measurable question → recruit heterogeneous experts → round 1: anonymous estimates with rationale → summary (median, spread, arguments) → round 2 with the summary → round 3 if needed → fix the final range and dissenters; the result is a range for a model assumption, evidence class no higher than B. E. Backcasting: describe the desired state at a date measurably → derive required conditions and capabilities at intermediate stages → compare with today → list of gaps and first steps → tie to roadmap and risks. F. Integration: scenarios → the traction model's three scenarios (pessimistic/base/optimistic) and external factors of effects; signals → roadmap revision triggers; no-regret moves → next quarter; option bets → small bets with stop criteria. Diffusion (standard logistic form): N(t) = K / (1 + e^(−r(t−t0))), K = saturation ceiling, r = speed, t0 = inflection point; parameters from analogues with evidence class. Scenario quality criteria: plausibility (grounded in facts), internal consistency (no contradictions), distinctiveness (scenarios really differ), decision relevance (affect decisions), traceability (traceable to drivers and signals), testability (observable checkable signals exist). Discipline: forecast regularly in small portions (monthly), prioritize significant trends, document hypotheses and check them after 3–6 months, run forecast retrospectives. Passport per analysis: trend · horizon · market · measurable quantity · sources; trend map: signal | hype | trend | megatrend; scenario table: scenario | assumptions/drivers | measurable value (value, year) | indicator signals | no-regret actions | option bets | probability/evidence class; signal table: signal · source · date · meaning · reaction threshold.
+**The three horizons of strategy (McKinsey):** Run — 1–3 years (current profit, efficiency); Change — 2–5 years (future profit, adaptation); Disrupt — 3–10 years (breakthrough, new markets).
 
-**Pitfalls:** taking hype for a trend by mention count; a single "forecast" instead of a scenario set; scenarios differing only in optimism; too long a horizon (>10 years is unknowable) without intermediate signals; confirmation bias, overconfidence, survivorship bias, appeal to authority; ignored black swans; scenarios untied to decisions ("pictures of the future"); no signals and no revision dates.
+**When not to forecast:** the result will not affect any decision; the cost of an error is lower than the cost of delay; the speed of change exceeds the speed of planning; the solution space is too complex (more than 3 variables).
+
+### Six methods + a supplement
+| Method | Essence | When to choose it |
+|---|---|---|
+| Horizon scanning | hunting for signals: scientific papers, startups, patents, news | see trends early, keep the trend map fresh |
+| Delphi | anonymous rounds of expert surveys (usually 2–3), results shown between rounds → consensus | little data, an expert estimate of a parameter is needed |
+| Scenario planning | 2–4 images of the future, each with its own logic ("what could be," not "what will be") | high uncertainty, a 3–10-year strategy |
+| Diffusion models | the speed of adoption: Bass, Logistic, Gompertz; the S-curve "start → acceleration → plateau" | forecasting the adoption of a technology/product |
+| Backcasting | from the desired future back to the present ("if we are leaders in 2030, what do we do now?") | there is a clear goal and a path is needed (Amazon's future press release is an example) |
+| Prediction markets / crowd forecasting | trading on outcomes, collective estimates (Metaculus, PredictIt) | cross-checking your own probabilities |
+| System dynamics | delays and feedback loops (Forrester) | complex systems with lag |
+
+## Procedure
+### A. Scenario analysis, the simple method (10 steps)
+1. Specify the trend, the market, the horizon.
+2. Express it in a measurable quantity (%, millions, an index).
+3. Baseline: the current state and the stability trajectory.
+4. The acceleration scenario (favorable conditions).
+5. The rollback/stall scenario (unfavorable conditions).
+6. The drivers/triggers of each scenario.
+7. Signals: what to observe in order to tell which scenario is unfolding.
+8. The adaptation of the product and the strategy.
+9. Split the actions: **no-regret moves** (pay off under any outcome) and **option bets** (wagers on a specific outcome).
+10. Assess the product's current readiness.
+
+### B. The 2×2 matrix
+1. Pick two trends — the most influential and the least correlated with each other.
+2. The axes are the extreme values (High/Low) for each.
+3. Four quadrants = four images of the future; give each a name and 3–5 signs.
+4. Then steps 6–10 of the simple method for each quadrant (briefly).
+
+### C. Telling a trend from hype (based on the skill's definitions)
+Collect the signals in a journal (source, date, evidence class per [[M-source-criticism]]) → cluster them → check: are there several independent signals across different sources and periods, is a direction and real adoption visible (money, behavior, regulation), rather than just mentions. If not — keep it as a signal/hype under observation. If it is a trend → record the insight for the product.
+
+### D. Delphi (a practical scheme)
+Formulate a concrete measurable question → recruit heterogeneous experts → round 1: anonymous estimates with rationales → a summary (median, spread, arguments) → round 2 taking the summary into account → round 3 if necessary → fix the final range and the dissenters. The result — a range for a model assumption, with an evidence class no higher than B.
+
+### E. Backcasting
+Describe the desired state at a date in measurable terms → derive the required conditions and capabilities at the intermediate stages → compare with the current state → a list of gaps and first steps → tie it to the roadmap and the risks.
+
+### F. Integration with the model and the strategy
+Scenarios → the three scenarios of the traction model (pessimistic/base/optimistic) and the external factors of effects ([[M-traction-model]]); signals → triggers for revising the roadmap; no-regret moves → into the nearest quarter; option bets → small bets with a stop criterion ([[M-risks]]). Diffusion (the standard logistic form, not from the skill): `N(t) = K / (1 + e^{−r(t−t0)})`, where K is the saturation ceiling, r is the rate, t0 is the inflection point; take the parameters from analogs, with an evidence class.
+
+### Scenario quality criteria
+| Criterion | Meaning |
+|---|---|
+| Plausibility | plausible, grounded in facts |
+| Internal consistency | no internal contradictions |
+| Distinctiveness | the scenarios really do differ |
+| Decision relevance | they affect decisions |
+| Traceability | they can be traced back to drivers and signals |
+| Testability | there are observable, testable signals |
+
+## Template / checklist
+Passport: trend · horizon · market · measurable quantity · sources.
+Trend map: signal | hype | trend | megatrend.
+Scenarios:
+| Scenario | Assumptions/drivers | Measurable quantity (value, year) | Indicator signals | No-regret actions | Option bets | Probability/evidence class |
+|---|---|---|---|---|---|---|
+Signals table: signal · source · date · what it means · the reaction threshold.
+Discipline: forecast regularly, in small portions (monthly); prioritize the significant trends; document the hypotheses and re-check them after 3–6 months; run forecast retrospectives.
+
+## Typical mistakes
+- Taking hype for a trend based on the number of mentions.
+- A single "forecast" instead of a set of scenarios; scenarios that differ only in optimism.
+- Too long a horizon (too much is unknown 10 years out) without intermediate signals.
+- Confirmation bias, overconfidence, survivorship bias, deference to authority; ignoring black swans.
+- Scenarios untied to decisions ("pictures of the future").
+- No signals and no revision dates.
+
+## Questions that can change the decision
+- Which decision would change if scenario A unfolds rather than B? If none — no forecast is needed.
+- Which two factors determine the outcome most strongly, and how independent are they?
+- What is cheaper for us: adapting to the scenario or influencing it?
+- Which signals can we realistically track, and who is responsible?
+- Which horizon is needed: Run, Change or Disrupt?
+
+## Related maps
+[[M-external-environment]], [[M-source-criticism]], [[M-strategy-growth]], [[M-traction-model]], [[M-risks]], [[M-market-sizing]]
