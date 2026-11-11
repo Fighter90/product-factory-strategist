@@ -3,18 +3,111 @@ id: M-ux-heuristics
 lang: en
 title: Heuristic UI evaluation — visible-evidence-only findings, V/I/H confidence levels, 0–4 severity scale
 course: pm-approaches-en
-sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
+sources: ["EN mirror of the RU card; original sources listed there"]
 stages: [options, validation, after-decision]
-tags: [en, summary]
+tags: [heuristics, nielsen, shneiderman, norman, expert-review, severity, screenshot, ux-audit]
 related: [M-usability-testing, M-cjm, M-ux-backlog, M-design-thinking, M-solution-design, M-competitors, M-source-criticism]
 ---
 
-# Heuristic Evaluation of Interfaces (Visible Evidence Only) (EN summary)
+# Heuristic evaluation of an interface (visible evidence only)
 
-**When:** there is a screenshot, mockup, prototype or described flow but no users and no recruiting time: quickly remove "low-hanging" problems before testing, screen out weak options, or audit a competitor. The method yields hypotheses about problems with severity estimates — not proof of metric or behavior impact; that boundary is fundamental.
+## When to apply
+When you have a screenshot, a mockup, a prototype, or a described flow, but no users and no time to recruit: to quickly remove the "low-hanging" problems before a test, to screen out weak options, or to audit a competitor. The method yields **hypotheses about problems with a severity estimate**, not proof of impact on metrics or on people's behavior — that boundary is fundamental.
 
-**Core:** Heuristics are universal usability principles an expert applies without users. Three sets: Nielsen's 10 heuristics (the working set), Shneiderman's 8 golden rules, Norman's 7 principles. Nielsen's ten, with what to look for on a visible screen: (1) visibility of system status — loading/saving/success/error indicators, step progress, statuses ("Draft", "Unpublished"), action confirmation: is it visible that the action happened; (2) match with the real world — user language and metaphors: jargon ("invoice", "entities", "ticket"), unlabeled unclear icons; (3) user control and freedom — easy cancel/back/exit: Back/Cancel/Close buttons, undo of deletion (visible snackbar/button); (4) consistency and standards — internal (in-product), external (other services), metaphorical: different labels for one action ("Pay"/"Buy"), different primary-button colors, non-standard patterns; (5) error prevention — better to prevent than explain: disabled invalid actions, input masks/hints, confirmation of destructive actions; (6) recognition over recall — options and hints in view: format examples in fields, visible options instead of typing from memory; (7) flexibility and efficiency — accelerators for experts with clarity for novices: quick actions, autofill, saved data (if visible); (8) aesthetic and minimalist design — every element serves a purpose: several competing CTAs, visual noise, excess text; (9) help with errors — plain language, what happened and what to do: does the error text state the fix path; (10) help and documentation — short, contextual: hint next to the action, FAQ link. Shneiderman (reminder): consistency; accelerators; informative feedback; dialogs with closure; simple error handling; easy reversal; internal locus of control; reduce short-term memory load. Norman: knowledge in the world and in the head; simplify tasks; visibility; good mapping; constraints; design for error; standardize when all else fails. Effectiveness: one or two experts find ~80% of "basic" errors in an hour (lecturer's guideline, not a guarantee; outside practice suggests 3–5 independent evaluators). Drawbacks: subjectivity; real expectations and "why" invisible. Use before a UX test so respondents aren't wasted on the obvious. Evidence principle (mandatory): every finding rests on what is factually visible in the material — concrete screen/step, concrete element, verbatim text, position, state. Confidence levels: V — visible (the problem reads directly on the screenshot: text, position, a missing element where it's expected from the screen's context); I — inferred from the visible (follows from several visible signs but needs an assumption — state it); H — hypothesis (depends on what isn't visible: post-click behavior, other states, real users, metrics — mark explicitly and phrase as a testable assumption). Forbidden: attributing emotions and behavior to users as fact; claiming conversion effects; asserting a feature is "absent" when the screen may simply not show it; evaluating inaccessible states (loading, error, empty), animations, sound. Severity = task impact × frequency × business risk, normalized 0–4: 0 — not a problem/cosmetics (padding, font; as capacity allows); 1 — minor (slightly slows, doesn't break; nice-to-have backlog); 2 — friction/minor (a noticeable share of users distracted or misled; next sprint); 3 — major (some users won't finish the task or will err badly; urgent this sprint); 4 — blocker (task/revenue/release blocked; release blocker). Mapping to the course's reverse scale (1 Critical, 2 Major, 3 Minor, 4 Cosmetic): Critical → 4, Major → 3, Minor → 1–2, Cosmetic → 0. Static-material constraint: a 4 is allowed only if blocking is proven by flow, a test recording or a metric; from a single screenshot the maximum is 3, with the confidence mark.
+## Core idea
+Heuristics are universal usability principles against which an expert checks an interface without users. The course names three sets: Nielsen's 10 heuristics, Shneiderman's 8 golden rules, Norman's 7 principles; Nielsen's is the main working set.
 
-**How:** (1) frame: which flow/scenario, presumed user and goal (recorded as assumptions), which devices; (2) inventory of the visible: per screen list headings, button and field texts, statuses, icons, CTA position, colors/accents in words — no judgments; all later findings reference this inventory; (3) pass 1 per screen: run all 10 heuristics, answer "violated in a visible way?" → record; (4) pass 2 per flow: consistency across screens (terms, buttons, colors), step logic, way back, outcome/confirmation; (5) separate fact from assumption: set V/I/H; for I state the assumption, for H how to check; (6) severity per the scale; frequency unknown from one frame — judge by impact and cross-pass recurrence; (7) merge duplicates, pick top-5, propose a one-line fix each; (8) validation plan for each I/H finding: findability → first-click test; term meaning → interpretation test; first impression → 5-second test; status/flow understanding → moderated test; (9) hand over to the backlog: tag Heuristic-Review + heuristic number; severity ≥3 goes to UX debt. Finding record: ID | screen/step | visible element (verbatim/position) | heuristic # | what's wrong (fact) | consequence for the user (as hypothesis) | severity 0–4 | confidence V/I/H | assumption / what's not visible | proposal | how to check. Good finding example: "Payment screen, bottom button 'Download invoice' (heuristic 2). 'Invoice' is an anglicism on a Russian-language screen, neighboring elements in Russian. V. Severity 2. Proposal: 'Download receipt'. Check: interpretation test." Bad: "users will be annoyed, conversion will fall" — no element, no source, no check → reject or convert to H. Typical quick fixes: no loading/status indicator → spinner or skeleton, explicit status; different labels for one action → one verb; no undo after delete → snackbar "Deleted — Undo"; two primary CTAs → keep one; button active with empty required form → inactive until valid input; field without format example → placeholder and mask; "error 500" → "Couldn't upload the photo. Try again or choose another file."
+| # | Nielsen heuristic | Essence | What to look for on a visible screen |
+|---|---|---|---|
+| 1 | Visibility of system status | The system says what is going on: loading, saving, success, error | Step/progress indicators, statuses ("Draft", "Not published"), confirmation of an action; **is it visible that the action was performed** |
+| 2 | Match between the system and the real world | The user's language and metaphors | Jargon ("invoice", "entities", "ticket"), unclear icons without labels |
+| 3 | User control and freedom | Easy to undo, go back, exit | "Back / Cancel / Close" buttons, the ability to undo a deletion (if a snackbar/button is visible) |
+| 4 | Consistency and standards | Internal (within the product), external (in other services), metaphorical | Different labels for the same action ("Pay"/"Buy"), different colors of primary buttons, non-standard patterns |
+| 5 | Error prevention | Better to prevent than to explain | Invalid actions disabled, input masks/hints, confirmation of destructive actions |
+| 6 | Recognition rather than recall | Options and hints in plain view | Format examples in a field, hints, visible options instead of typing from memory |
+| 7 | Flexibility and efficiency of use | Accelerators for the experienced while staying clear for novices | Quick actions, autofill, saved data (if visible) |
+| 8 | Aesthetic and minimalist design | Every element serves a purpose | Several competing CTAs, visual noise, excess text |
+| 9 | Help with errors | In plain language: what happened and what to do | The error message text; whether a path to fix it is stated |
+| 10 | Help and documentation | Short, contextual | A hint next to the action, a link to the FAQ |
 
-**Pitfalls:** a finding without element/screen reference (unverifiable — always screen + element + verbatim text); presenting a hypothesis as fact ("users won't understand" — mark H with a check plan); evaluating the invisible (error, loading, empty states — write to "not visible", request the material); everything marked critical (no priority — apply the scale; maximum 3 from static material); one evaluator, one pass (subjectivity and misses — a second diagonal pass, ideally a second evaluator); heuristics instead of a test where meaning/motivation is needed (hand over to usability testing); substitution "this is ugly" (taste, not principle — tie to a heuristic and a consequence); comparing a competitor's screen with yours "by feel" (incomparable — same inventory and scenario for both).
+Shneiderman (reminder): consistency; accelerators; informative feedback; dialogs with a logical closure; simple error handling; easy reversal; internal locus of control; a reduced load on short-term memory. Norman: knowledge in the world and knowledge in the head; simplifying tasks; visibility; correct mappings; constraints; designing for error; standardization when all else fails.
+
+**What the course says about effectiveness:** one or two experts find roughly 80% of "basic" errors in an hour. This is the lecturer's guideline, not a guarantee; outside practitioners recommend 3–5 independent evaluators (knowledge beyond the course). Drawbacks of the method per the course: subjectivity; real expectations and the "why" are invisible. Apply it **before** a UX test, so you don't spend respondents on the obvious.
+
+## Procedure
+
+### The evidence principle (mandatory)
+Every finding rests on **what is actually visible in the material**: a specific screen/step, a specific element, the verbatim text, the position, the state. Confidence levels:
+- **V — visible:** the problem can be read directly from the screenshot (the text, the position, the absence of an element where it is expected given the screen's context).
+- **I — inferred from the visible:** follows from several visible signs but requires an assumption (state the assumption).
+- **H — hypothesis:** depends on what is not visible (behavior after the click, other states, real users, metrics).
+  Mark it explicitly and phrase it as a testable assumption.
+
+Forbidden: attributing emotions and behavior to users as fact; naming a conversion effect; asserting the "absence" of a feature when the screen may simply not have shown it; evaluating inaccessible states (loading, error, empty), animations, sound.
+
+### Steps
+1. **Frame:** which flow/scenario, which presumed user and goal (recorded as an assumption), on which devices.
+2. **Inventory of the visible:** for each screen, list the headings, the button and field texts, the statuses, the icons, the position of the CTAs,
+   the colors/accents (in words). No judgments. All subsequent findings refer back to this inventory.
+3. **Pass 1 — by screen:** for each screen, go through the 10 heuristics and answer, for each one, "is it violated in a visible way?"; a violation → a record.
+4. **Pass 2 — by flow:** consistency between screens (terms, buttons, colors), the logic of the steps, the way back, the outcome/confirmation.
+5. **Separate fact from assumption:** assign V/I/H; for I state the assumption, for H — how to check it.
+6. **Severity:** the scale below; frequency cannot be known from a single frame — judge by impact and "through-flow" (whether it shows up on every pass).
+7. **Merge duplicates**, pick the top-5, and propose a "one-line" fix for each.
+8. **Verification plan:** for every I/H finding, specify the method ([[M-usability-testing]]): findability → first click; the meaning
+   of a term → interpretation; first impression → 5-second; understanding of a status/flow → moderated.
+9. **Hand over to the backlog** ([[M-ux-backlog]]): tag Heuristic-Review + the heuristic number; severity ≥3 goes into UX debt.
+
+### Severity scale (unified)
+Severity = Impact on the task × Frequency × Business risk, normalized to 0–4.
+
+| Score | Name | Meaning | Action |
+|---|---|---|---|
+| 0 | Not a problem / cosmetics | Does not affect the task (a margin, a font) | When there is a chance |
+| 1 | Insignificant | Slightly slows the user down, does not break anything | Backlog, "nice-to-have" |
+| 2 | Friction (minor) | A noticeable share of people gets distracted or takes a wrong path | The nearest sprint |
+| 3 | Serious (major) | A share of users will not finish the task or will err badly | Urgently, in the current sprint |
+| 4 | Blocking | The task/money/release are blocked | A release blocker |
+
+Mapping to the course's scale from session 6 (there the order is reversed: 1 Critical, 2 Major, 3 Minor, 4 Cosmetic): Critical → 4, Major → 3, Minor → 1–2,
+Cosmetic → 0. **A limitation for static material:** a score of 4 is allowed only if the blocking is proven by a flow, a test recording,
+or a metric; from a single screenshot the maximum is 3, with a confidence mark attached.
+
+## Template / checklist
+
+**Finding record:**
+`ID | Screen/step | Visible element (verbatim/position) | Heuristic # | What is wrong (fact) | Consequence for the user (as a hypothesis) | Severity 0–4 | Confidence V/I/H | Assumption / what is not visible | Proposal | How to check`
+
+**Example of a good finding:** "Payment screen, the button at the bottom 'Download invoice' (heuristic 2). The word 'invoice' is an anglicism on a Russian-language
+screen; the neighboring elements are in Russian. V. Severity 2. Proposal: 'Download receipt'. Check: an interpretation test".
+**Example of a bad finding:** "Users will be annoyed, conversion will fall" — no element, no source, no check → reject it or convert it into an H.
+
+**Typical findings and quick fixes:** no loading/status indicator → a spinner or a skeleton, an explicit status; different labels for the same
+action → a single verb; no undo after a deletion → a snackbar "Deleted — Undo"; two primary CTAs on a screen → keep one primary;
+a button active while a required form is empty → inactive until the data are valid; a field without a format example → a placeholder and a mask; an error
+reading "code 500" → "We couldn't upload the photo. Try again, or choose another file".
+
+**Report checklist:** the frame and the assumptions; the inventory of the visible; findings with V/I/H; the scale applied according to the rules; the top-5; the list of "what is not visible";
+recommendations on how to verify; no statements about metrics or about people presented as fact.
+
+## Typical mistakes
+| Mistake | Consequence | Fix |
+|---|---|---|
+| A finding with no reference to an element/screen | It cannot be verified | Always: screen + element + verbatim text |
+| Presenting a hypothesis as fact ("users won't understand") | False confidence | An H mark and a verification plan |
+| Evaluating the invisible (errors, loading, empty states) | Invention | Write it into "not visible", request the material |
+| Everything is marked critical | No priority | Apply the scale; a maximum of 3 from static material |
+| One evaluator, one pass | Subjectivity and misses | A second "diagonal" pass; a second evaluator where possible |
+| Heuristics instead of a test where meaning/motivation is needed | No "why" | Hand it over to [[M-usability-testing]] |
+| Substitution: "this is ugly" | Taste, not principle | Tie it to a heuristic and to a consequence |
+| Comparing someone else's screen with yours "by feel" | Not comparable | The same inventory and scenario for both |
+
+## Questions that can change the decision
+- Which scenario and which user are the targets? Without them, assumptions about what is "superfluous" and "understandable" are arbitrary.
+- Which screen states are not shown (error, empty, loading, the mobile/desktop version)?
+- Is this an internal product for experts (many accelerators are appropriate) or a mass-market one (clarity is the priority)?
+- Is there data (metrics, support tickets) that confirms or refutes the problem you found?
+- Is an evaluation of a competitor ([[M-competitors]]) needed in the same format?
+
+## Related maps
+[[M-usability-testing]], [[M-cjm]], [[M-ux-backlog]], [[M-design-thinking]], [[M-solution-design]], [[M-competitors]], [[M-source-criticism]]
