@@ -118,16 +118,31 @@ def demo_numbers() -> dict:
         raise BuildError(f"В {options_path} нет заголовков «## Вариант X.»")
     letters = [m.group(1) for m in heads]
 
-    # Red team считается по секциям вариантов: у каждого варианта должна быть строка
-    # «Возражения red team» с нумерованными пунктами и строка «Скрытое допущение».
+    # Red team считается по секциям вариантов: у каждого варианта должен быть
+    # пункт списка «Возражения red team» с нумерованными подпунктами «(N)» и строка
+    # «Скрытое допущение». Пункт может быть жёстко перенесён: подпункты (2)…(N)
+    # оказываются на строках продолжения, поэтому захватываем весь блок до
+    # следующего пункта списка / пустой строки — иначе тихое занижение счёта.
     # Отсутствие или испорченный формат — BuildError, а не тихий ноль.
     objections = 0
     assumptions = 0
     for i, head in enumerate(heads):
         end = heads[i + 1].start() if i + 1 < len(heads) else len(options_md)
         sec = options_md[head.end():end]
-        red = _require(re.search(r"^(- Возражения red team:.*$)", sec, flags=re.M),
-                       "строка «Возражения red team»", options_path)
+        red_lines: list[str] = []
+        for ln in sec.splitlines():
+            if ln.startswith("- Возражения red team:"):
+                red_lines.append(ln)
+                continue
+            if red_lines:
+                # продолжение пункта — только строки с отступом; новый пункт
+                # списка, пустая строка или заголовок заканчивают блок
+                if not ln.strip() or not ln[:1].isspace() or ln.startswith("## "):
+                    break
+                red_lines.append(ln)
+        if not red_lines:
+            raise BuildError(f"Не найдено: строка «Возражения red team» в {options_path}")
+        red = "\n".join(red_lines)
         nums = [int(x) for x in re.findall(r"\((\d+)\)", red)]
         if not nums:
             raise BuildError(
