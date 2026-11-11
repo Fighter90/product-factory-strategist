@@ -44,9 +44,15 @@ def n_hooks() -> int:
 
 
 def n_tests() -> int:
+    """Число тестовых функций по AST — тот же способ, что в build_site._count_tests."""
+    import ast
+
     total = 0
     for p in (ROOT / "tests").glob("test_*.py"):
-        total += len(re.findall(r"\bdef test_", p.read_text(encoding="utf-8")))
+        tree = ast.parse(p.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test"):
+                total += 1
     return total
 
 
@@ -193,11 +199,13 @@ class TestGeneration(SiteBuildBase):
             self.assertIn('hreflang="x-default" href="https://strategyproduct.ru/"', page, lang)
 
     def test_og_per_language(self):
-        # og-ru.jpg и og-en.jpg были побайтово одинаковы — один файл og.jpg на оба языка
+        # ТЗ PRO-66: OG-картинки по языкам, каждая — своё фото и размеры
         for lang, page in (("ru", self.built["ru"]), ("en", self.built["en"])):
-            self.assertIn('property="og:image" content="https://strategyproduct.ru/assets/og/og.jpg"', page, lang)
+            self.assertIn(f'property="og:image" content="https://strategyproduct.ru/assets/og/og-{lang}.jpg"',
+                          page, lang)
             self.assertIn('property="og:title"', page, lang)
-            self.assertIn('property="og:image:width" content="1200"', page, lang)
+            self.assertIn('property="og:image:width" content="1800"', page, lang)
+            self.assertIn('property="og:image:height" content="1012"', page, lang)
             self.assertIn('name="twitter:card" content="summary_large_image"', page, lang)
 
     def test_structure_sections(self):
@@ -387,7 +395,8 @@ class TestCommittedOutput(SiteBuildBase):
 
     def test_referenced_assets_exist(self):
         for rel in ("assets/logo.svg", "assets/hero-poster.webp",
-                    "assets/og/og.jpg", "assets/dark-double-diamond.webp",
+                    "assets/og/og-ru.jpg", "assets/og/og-en.jpg",
+                    "assets/dark-double-diamond.webp",
                     "assets/dark-double-diamond.avif", "assets/dossier-dark.webp",
                     "assets/dossier-dark.avif"):
             self.assertTrue((ROOT / "site" / rel).exists(), rel)
@@ -404,6 +413,20 @@ def _load_build_module():
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
+
+
+def write_unit_economics_xlsx(path: Path, values: list[str]) -> None:
+    """Минимальный xlsx: worksheets с <v>-значениями — достаточно для сверки excel_numbers()."""
+    import zipfile
+
+    with zipfile.ZipFile(path, "w") as z:
+        cells = "".join(f'<c r="B{i}"><v>{v}</v></c>' for i, v in enumerate(values, 2))
+        z.writestr("xl/worksheets/sheet1.xml",
+                   f"<worksheet><sheetData>{cells}</sheetData></worksheet>")
+
+
+# значения книги соответствуют экономике из OPT_RU_LABEL: «$272» ↔ 271.88 в книге
+XLSX_OK = ["29", "0.25", "21.75", "271.88", "4.53"]
 
 
 def _fixture_demo(tmp: Path, *, options_md: str, claims: list[dict],
@@ -427,6 +450,9 @@ def _fixture_demo(tmp: Path, *, options_md: str, claims: list[dict],
     for name in ("SIX_PAGER.md", "SIX_PAGER_EN.md"):
         (demo / "outputs" / name).write_text("## FAQ-1. Market\nMention of [C011] here.\n",
                                              encoding="utf-8")
+    att = demo / "outputs" / "attachments"
+    att.mkdir(parents=True, exist_ok=True)
+    write_unit_economics_xlsx(att / "unit_economics.xlsx", XLSX_OK)
     return demo
 
 
@@ -453,8 +479,10 @@ class TestExcelNumbers(unittest.TestCase):
     def _demo(self, md: str) -> None:
         tmp = Path(tempfile.mkdtemp(prefix="pfs-excel-"))
         demo = tmp / "demo"
-        (demo / "outputs").mkdir(parents=True)
+        (demo / "outputs" / "attachments").mkdir(parents=True)
         (demo / "outputs" / "03_options.md").write_text(md, encoding="utf-8")
+        write_unit_economics_xlsx(demo / "outputs" / "attachments" / "unit_economics.xlsx",
+                                  XLSX_OK)
         self.mod.DEMO = demo
 
     def test_extracts_unit_economics(self):
@@ -571,23 +599,33 @@ class TestMobileMenu(SiteBuildBase):
             self.assertRegex(mobile, r"\.mlink\{display:(block|inline-block)", lang)
 
 
-class TestOgSingleFile(SiteBuildBase):
-    """og-ru.jpg и og-en.jpg были побайтово одинаковы — один файл og.jpg на оба языка."""
+class TestOgPerLanguage(SiteBuildBase):
+    """ТЗ PRO-66: OG-картинки по языкам. og-ru и og-en — разные фото, не байтовые дубли.
 
-    def test_pages_point_to_single_og(self):
+    Раунд ревью 2: один общий og.jpg заменён на пару по языкам (замечание ревью):
+    og-ru — фото-частицы из hero (dark-hero-paper), og-en — стопка документов из
+    финального CTA (dossier-dark). Текста на фото нет, язык карточки даёт og:title.
+    """
+
+    def test_pages_point_to_own_og(self):
         for lang, page in self.built.items():
             refs = set(re.findall(r'property="og:image" content="([^"]+)"', page))
-            self.assertEqual(refs, {"https://strategyproduct.ru/assets/og/og.jpg"}, lang)
-            self.assertNotIn("og-ru.jpg", page, lang)
-            self.assertNotIn("og-en.jpg", page, lang)
+            self.assertEqual(refs, {f"https://strategyproduct.ru/assets/og/og-{lang}.jpg"}, lang)
 
-    def test_committed_single_file(self):
+    def test_og_files_exist_are_jpeg_and_differ(self):
         og_dir = ROOT / "site" / "assets" / "og"
-        self.assertTrue((og_dir / "og.jpg").exists(), "нет site/assets/og/og.jpg")
-        for gone in ("og-ru.jpg", "og-en.jpg"):
-            self.assertFalse((og_dir / gone).exists(), f"дубль {gone} должен быть удалён")
-        self.assertEqual((og_dir / "og.jpg").read_bytes()[:3], b"\xff\xd8\xff",
-                         "og.jpg — не JPEG")
+        blobs = {}
+        for lang in ("ru", "en"):
+            p = og_dir / f"og-{lang}.jpg"
+            self.assertTrue(p.exists(), f"нет {p.name}")
+            blobs[lang] = p.read_bytes()
+            self.assertEqual(blobs[lang][:3], b"\xff\xd8\xff", f"{p.name} — не JPEG")
+        self.assertNotEqual(blobs["ru"], blobs["en"],
+                            "og-ru и og-en — одинаковые файлы, дубликат не нужен")
+
+    def test_no_shared_og_left(self):
+        self.assertFalse((ROOT / "site" / "assets" / "og" / "og.jpg").exists(),
+                         "общий og.jpg заменён парой og-ru/og-en")
 
 
 class TestDarkAssetsUsed(SiteBuildBase):

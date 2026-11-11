@@ -10,11 +10,11 @@ OG-картинки по языкам, числа — из репозитори�
 подключается флагом `--ym-id` (см. site/ANALYTICS.md).
 
 Скоуп PRO-66: эта система генерирует `/` (RU) и `/en/` (EN). Страницы site/demo.html,
-site/help.html и site/materials.html остаются в прежней вёрстке — их перевод в новую
-систему вынесен в отдельную задачу; тёмные фото, относящиеся к ним (обложка demo
-на основе dark-hero-paper), подключаются вместе с конвертацией. Сейчас dark-hero-paper
-используется как OG-картинка site/assets/og/og.jpg, dark-double-diamond и dossier-dark —
-в разделах «Процесс» и финальном CTA лендинга.
+site/help.html и site/materials.html остаются на прежней двуязычной вёрстке; перенос
+в новую систему — отдельная задача, предложенная на подтверждение владельцу. Замер
+раунда ревью 2: в EN-режиме этих страниц ноль языковых утечек — ни в тексте, ни в
+атрибутах, а заголовок, meta description и html@lang переключает setLang
+(I18N); это закреплено регрессионным тестом tests/test_legacy_pages.py.
 
 Запуск: python3 scripts/build_site.py [--out site] [--ym-id 12345678]
 """
@@ -83,18 +83,54 @@ def _jsonl(path: Path) -> list[dict]:
 
 # ---------------- данные репозитория ----------------
 
+# Ревью PRO-66: отсутствующий или пустой каталог — это тихий ноль на сайте
+# («0 карт», «0 навыков»), поэтому каждый источник чисел проверяется громко.
+_COUNTED_DIRS = (
+    ("knowledge/methods", "*.md", "карт методик", "N_MAPS"),
+    ("knowledge/methods_en", "*.md", "EN-зеркал карт", "N_MAPS_EN"),
+    (".claude/skills", "*/SKILL.md", "навыков", "N_SKILLS"),
+    (".claude/agents", "*.md", "субагентов", "N_AGENTS"),
+    (".claude/hooks", "*.py", "хуков", "N_HOOKS"),
+)
+
+
+def _count_dir(rel: str, pattern: str, what: str) -> int:
+    d = ROOT / rel
+    if not d.is_dir():
+        raise BuildError(f"Нет каталога {rel} — {what} не посчитать")
+    n = len(list(d.glob(pattern)))
+    if n == 0:
+        raise BuildError(f"В {rel} пусто: нет {what}")
+    return n
+
+
 def repo_numbers() -> dict:
-    return {
-        "N_MAPS": len(list((ROOT / "knowledge" / "methods").glob("*.md"))),
-        "N_MAPS_EN": len(list((ROOT / "knowledge" / "methods_en").glob("*.md"))),
-        "N_SKILLS": len(list((ROOT / ".claude" / "skills").glob("*/SKILL.md"))),
-        "N_AGENTS": len(list((ROOT / ".claude" / "agents").glob("*.md"))),
-        "N_HOOKS": len(list((ROOT / ".claude" / "hooks").glob("*.py"))),
-        "N_TESTS": sum(
-            len(re.findall(r"\bdef test_", p.read_text(encoding="utf-8")))
-            for p in (ROOT / "tests").glob("test_*.py")
-        ),
-    }
+    out = {key: _count_dir(rel, pattern, what)
+           for rel, pattern, what, key in _COUNTED_DIRS}
+    tests_dir = ROOT / "tests"
+    if not tests_dir.is_dir():
+        raise BuildError("Нет каталога tests — автотесты не посчитать")
+    out["N_TESTS"] = _count_tests(tests_dir)
+    return out
+
+
+def _count_tests(tests_dir: Path) -> int:
+    """Число тестовых функций по AST: строковый поиск «def test_» ловит и
+    фикстуры-строки в самих тестах (как test_x в test_build_site.py)."""
+    import ast
+
+    n = 0
+    for p in sorted(tests_dir.glob("test_*.py")):
+        try:
+            tree = ast.parse(p.read_text(encoding="utf-8"))
+        except SyntaxError as e:
+            raise BuildError(f"{p}: не парсится — автотесты не посчитать: {e}") from e
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test"):
+                n += 1
+    if n == 0:
+        raise BuildError("В tests пусто: нет автотестов")
+    return n
 
 
 def _require(m: "re.Match | None", what: str, where: Path) -> str:
@@ -264,13 +300,72 @@ def _sixpager_usage(path: Path) -> str:
     raise BuildError(f"{CLAIM_ID} не найден под заголовком FAQ в {path}")
 
 
+# Число в тексте 03_options.md: цифры, пробельные разделители тысяч («$1 234»)
+# и десятичная запятая/точка. Ревью PRO-66: прежний `[\d,]+` молча обрезал
+# «$1 234» до «1», поэтому захват идёт целиком и якорится на явный ограничитель
+# («/мес», «;», конец строки) — не на «первую не-цифру».
+_NUM = r"([0-9][0-9\u00A0\u202F ]*(?:[.,][0-9]+)?)"
+
+
+def _num_float(raw: str, what: str) -> float:
+    """«1 234,50» → 1234.5; непонятный формат — громкий BuildError, не тихая порча."""
+    s = raw.strip().replace("\u00A0", "").replace("\u202F", "").replace(" ", "")
+    if "," in s:
+        if s.count(",") != 1 or "." in s:
+            raise BuildError(f"Непонятный формат числа «{what}»: {raw!r}")
+        s = s.replace(",", ".")
+    if not re.fullmatch(r"[0-9]+(?:\.[0-9]+)?", s):
+        raise BuildError(f"Непонятный формат числа «{what}»: {raw!r}")
+    return float(s)
+
+
+def _num_decimals(raw: str) -> int:
+    m = re.search(r"[.,]([0-9]+)\s*$", raw.strip())
+    return len(m.group(1)) if m else 0
+
+
+def _xlsx_values(path: Path) -> list[float]:
+    """Все числа кэша значений Excel-приложения (числа считываются из <v> узлов)."""
+    if not path.exists():
+        raise BuildError(f"Нет Excel-приложения для сверки: {path}")
+    import zipfile
+
+    vals: list[float] = []
+    with zipfile.ZipFile(path) as z:
+        for name in z.namelist():
+            if not name.startswith("xl/worksheets/"):
+                continue
+            for v in re.findall(r"<v>([^<]+)</v>", z.read(name).decode("utf-8")):
+                try:
+                    vals.append(float(v.replace(",", ".")))
+                except ValueError:
+                    continue
+    if not vals:
+        raise BuildError(f"В {path.name} нет чисел для сверки")
+    return vals
+
+
 def excel_numbers() -> dict:
-    md = _read(DEMO / "outputs" / "03_options.md")
-    price = _require(re.search(r"paid \$([\d]+)/мес", md), "цена Pro", DEMO / "outputs" / "03_options.md")
-    cm = _require(re.search(r"CM \$([\d,]+)", md), "вклад на покрытие", DEMO / "outputs" / "03_options.md")
-    ltv = _require(re.search(r"LTV ≈ \$([\d,]+)", md), "LTV", DEMO / "outputs" / "03_options.md")
-    ratio = _require(re.search(r"LTV/CAC ≈ ([\d,]+)", md), "LTV/CAC", DEMO / "outputs" / "03_options.md")
-    return {"XL_PRICE": price, "XL_CM": cm, "XL_LTV": ltv, "XL_RATIO": ratio}
+    md_path = DEMO / "outputs" / "03_options.md"
+    md = _read(md_path)
+    price = _require(re.search(r"paid \$" + _NUM + r"\s*/мес", md), "цена Pro", md_path)
+    cm = _require(re.search(r"CM \$" + _NUM + r"\s*(?:;|$)", md), "вклад на покрытие", md_path)
+    ltv = _require(re.search(r"LTV ≈ \$" + _NUM + r"\s*(?:;|$)", md), "LTV", md_path)
+    ratio = _require(re.search(r"LTV/CAC ≈ " + _NUM + r"\s*(?:;|$)", md), "LTV/CAC", md_path)
+    # Числа на сайте — витрина приложения «Ввод»: сверяем каждое с книгой по
+    # точности документа («$272» ↔ 271.88). Расхождение = BuildError (PRO-63),
+    # а не тихое расхождение сайта и Excel.
+    pairs = (("цена Pro", price), ("вклад на покрытие", cm), ("LTV", ltv), ("LTV/CAC", ratio))
+    xl_vals = _xlsx_values(DEMO / "outputs" / "attachments" / "unit_economics.xlsx")
+    for what, raw in pairs:
+        v = _num_float(raw, what)
+        k = _num_decimals(raw)
+        if not any(abs(round(x, k) - v) < 1e-9 for x in xl_vals):
+            raise BuildError(
+                f"«{what}» = {raw.strip()} из 03_options.md не найдено в unit_economics.xlsx "
+                f"с точностью {k} знаков — обновите документ или Excel-приложение")
+    return {"XL_PRICE": price.strip(), "XL_CM": cm.strip(),
+            "XL_LTV": ltv.strip(), "XL_RATIO": ratio.strip()}
 
 
 # ---------------- шаблоны ----------------
@@ -1187,18 +1282,26 @@ EN_BODY = f"""
 """
 
 
-# OG-картинка одна на оба языка: og-ru.jpg и og-en.jpg были побайтово одинаковы
-# (ревью PRO-66), а сама картинка — языконезависимое фото. Текст расшаривающейся
-# ссылки подставляет соцсеть из og:title/og:description, а не из картинки.
+# OG-картинки по языкам (ТЗ PRO-66, замечание ревью раунда 2): og-ru — фото-частицы
+# из hero (dark-hero-paper), og-en — стопка документов из финального CTA
+# (dossier-dark). Файлы реально разные, текста на фото нет: язык расшаренной
+# ссылки соцсеть подписывает из og:title/og:description.
+OG_IMAGES = {
+    "ru": ("assets/og/og-ru.jpg", 1800, 1012),
+    "en": ("assets/og/og-en.jpg", 1800, 1012),
+}
+
+
 def _og(lang: str, title: str, desc: str, canonical: str) -> str:
+    rel, w, h = OG_IMAGES[lang]
     return f"""<meta property="og:type" content="website">
 <meta property="og:site_name" content="{'Стратег Фабрики продуктов' if lang == 'ru' else 'Product Factory Strategist'}">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:url" content="{canonical}">
-<meta property="og:image" content="{BASE}/assets/og/og.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image" content="{BASE}/{rel}">
+<meta property="og:image:width" content="{w}">
+<meta property="og:image:height" content="{h}">
 <meta name="twitter:card" content="summary_large_image">"""
 
 

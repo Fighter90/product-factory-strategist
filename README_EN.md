@@ -316,5 +316,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/ (103) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/ (420) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```
