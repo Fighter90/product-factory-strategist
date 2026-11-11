@@ -94,6 +94,7 @@
 - [GenAI prototype — problem statement, minimal build, golden-set regression testing, develop/iterate/kill decision](methods_en/genai-prototyping.md) `M-genai-prototyping` — en, summary
 - [Goals, growth drivers, streams, focuses, product bets and the initiative portfolio](methods_en/goals-drivers-bets.md) `M-goals-drivers-bets` — en, summary
 - [Growth frameworks — AARRR, HEART, Flywheel, Growth Loops, Growth Model Canvas; choosing and checking the loop math (K = i × c)](methods_en/growth-frameworks.md) `M-growth-frameworks` — en, summary
+- [Entering a new market — GTM by country as a checklist of questions](methods_en/gtm-new-market.md) `M-gtm-new-market` — gtm, new-market, localization, vat, mor
 - [Analyzing and presenting in-depth interview results — coding, categories, evidence strength, reporting](methods_en/interview-analysis.md) `M-interview-analysis` — en, summary
 - [JTBD and Advanced JTBD — job statements, job graphs, value = benefit − investments, superdiscovery, expert interviews, barriers, aha-moment](methods_en/jtbd.md) `M-jtbd` — en, summary
 - [Adjacent landscapes — marketing, tech, sales, business models and the three lenses of innovation](methods_en/landscapes.md) `M-landscapes` — en, summary
@@ -116,6 +117,8 @@
 - [Product frameworks map — which framework for which phase, prioritization methods and metric families](methods_en/product-frameworks.md) `M-product-frameworks` — en, summary
 - [Research types and method choice — Double Diamond, CustDev, qual vs quant, desk research, benchmark](methods_en/research-types.md) `M-research-types` — en, summary
 - [Strategy risks — eight types, risk matrix, AATM responses, mitigation (fake door, +20% reserve), plan B with triggers, seasonality, DACI](methods_en/risks.md) `M-risks` — en, summary
+- [Scenario modeling of impact — pessimistic, base and optimistic scenarios, sensitivity](methods_en/scenario-modeling.md) `M-scenario-modeling` — scenarios, sensitivity, modeling, forecast, risk
+- [Six-pager etalon — structure walkthrough with "good and bad" for every FAQ](methods_en/six-pager-etalon.md) `M-six-pager-etalon` — six-pager, committee, document-structure, report, quality
 - [Six-pager — six-FAQ strategic report with Excel appendices for committee defense](methods_en/six-pager.md) `M-six-pager` — en, summary
 - [Methods map — PM question → which cards to read and in what order; routes by task type, agent process phase, and product stage](methods_en/skills-map.md) `M-skills-map` — en, summary
 - [Solution design — solution hypotheses, RICE scoring, five risk types, cheapest-validation chain, post-mortem](methods_en/solution-design.md) `M-solution-design` — en, summary
@@ -125,12 +128,13 @@
 - [Traction model (growth model) — 4 hypothesis layers, top-down vs bottom-up, baseline, effects (discounting, elasticity, cannibalization), validation](methods_en/traction-model.md) `M-traction-model` — en, summary
 - [Trend analysis and scenario planning — signals vs hype, three horizons, 2×2 scenarios, no-regret moves](methods_en/trends-scenarios.md) `M-trends-scenarios` — en, summary
 - [Unit economics — LTV, CAC, payback, contribution margin, seven LTV methods, cohort accounting](methods_en/unit-economics.md) `M-unit-economics` — en, summary
-- [Usability testing — prototypes, moderated and unmoderated tests, method selection, metrics (success, time, SEQ, SUS), severity, one-slide report](methods_en/usability-testing.md) `M-usability-testing` — en, summary
+- [Usability testing — prototypes, moderated and unmoderated tests, metrics](methods_en/usability-testing.md) `M-usability-testing` — usability, ux-testing, prototype, moderated, unmoderated
 - [USP and value proposition — Job Story + Value Proposition Canvas, copyability filter, Value × Effort bet](methods_en/usp.md) `M-usp` — en, summary
 - [UX research frameworks — star brief, JTBD, Job Stories and choosing the right artifact](methods_en/ux-frameworks.md) `M-ux-frameworks` — en, summary
 - [Heuristic UI evaluation — visible-evidence-only findings, V/I/H confidence levels, 0–4 severity scale](methods_en/ux-heuristics.md) `M-ux-heuristics` — en, summary
 - [Van Westendorp Price Sensitivity Meter — price perception research](methods_en/van-westendorp.md) `M-van-westendorp` — en, summary
 - [Wardley Mapping — component evolution and build/buy/rent](methods_en/wardley-mapping.md) `M-wardley-mapping` — en, summary
+- [Weighted scoring of options and filters — a transparent comparison of alternatives](methods_en/weighted-scoring.md) `M-weighted-scoring` — scoring, prioritization, criteria, weights, filters
 - [Workshops and facilitation — brief, participants, minute-by-minute scenario, divergence→convergence tools, difficult participants, protocol and follow-up](methods_en/workshops.md) `M-workshops` — en, summary
 
 ## Strategy (`strategy`)
@@ -154,12 +158,14 @@
 - [Goals, growth drivers, streams, focuses, product bets and the initiative portfolio](methods_en/goals-drivers-bets.md) `M-goals-drivers-bets` — en, summary
 - [Growth frameworks — AARRR, HEART, Flywheel, Growth Loops, Growth Model Canvas; choosing and checking the loop math (K = i × c)](methods_en/growth-frameworks.md) `M-growth-frameworks` — en, summary
 - [Go-to-Market — launch tiers (T1/T2/T3), launch audience segmentation, channels, launch metrics and checklist](methods_en/gtm-launch.md) `M-gtm-launch` — en, summary
+- [Entering a new market — GTM by country as a checklist of questions](methods_en/gtm-new-market.md) `M-gtm-new-market` — gtm, new-market, localization, vat, mor
 - [JTBD and Advanced JTBD — job statements, job graphs, value = benefit − investments, superdiscovery, expert interviews, barriers, aha-moment](methods_en/jtbd.md) `M-jtbd` — en, summary
 - [Landing page design — typography with personality, bold colour systems, atmospheric backgrounds, animation patterns, anti-patterns](methods_en/landing-design.md) `M-landing-design` — en, summary
 - [Adjacent landscapes — marketing, tech, sales, business models and the three lenses of innovation](methods_en/landscapes.md) `M-landscapes` — en, summary
 - [Lean Canvas — business hypotheses on one page, the riskiest cell and its cheapest test](methods_en/lean-canvas.md) `M-lean-canvas` — en, summary
 - [Market sizing PAM/TAM/SAM/SOM — funnel formulas, top-down vs bottom-up, units, sanity checks](methods_en/market-sizing.md) `M-market-sizing` — en, summary
 - [Marketing research — brand health tracking, U&A, Kano, MaxDiff, TURF for attribute prioritization](methods_en/marketing-research.md) `M-marketing-research` — en, summary
+- [Communication strategy — message house, proof behind promises, the comprehension barrier](methods_en/message-house.md) `M-message-house` — communication, message-house, promises, positioning, channels
 - [ML for PMs — where ML is justified, 7-step ML hypothesis, model metrics vs business metrics, CUPED/uplift in A/B tests, drift and risks](methods_en/ml-for-product.md) `M-ml-for-product` — en, summary
 - [Top-down and bottom-up modeling — three projections, baseline vs growth, cohort drivers, gap interpretation](methods_en/model-topdown-bottomup.md) `M-model-topdown-bottomup` — en, summary
 - [Model validation — backtest, benchmarks, sensitivity analysis, scenarios and bias control](methods_en/model-validation.md) `M-model-validation` — en, summary
@@ -183,6 +189,7 @@
 - [Source criticism for analytical reports — evidence grades A–D, triangulation, red flags, evidence log](methods_en/source-criticism.md) `M-source-criticism` — en, summary
 - [Product strategy, growth models and types — five components, unfair advantage, goal cascade, document skeleton](methods_en/strategy-growth.md) `M-strategy-growth` — en, summary
 - [Success metrics — North Star Metric (8 criteria), metric pyramid NSM→Outcome→Output→Input, metric tree, AARRR blocks, OKR with proven links](methods_en/success-metrics.md) `M-success-metrics` — en, summary
+- [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder-pricing.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
 - [Team and people — composition by stage, hiring vs outsourcing, org structure, stakeholders, neighbors](methods_en/team.md) `M-team` — en, summary
 - [Traction model (growth model) — 4 hypothesis layers, top-down vs bottom-up, baseline, effects (discounting, elasticity, cannibalization), validation](methods_en/traction-model.md) `M-traction-model` — en, summary
 - [Trend analysis and scenario planning — signals vs hype, three horizons, 2×2 scenarios, no-regret moves](methods_en/trends-scenarios.md) `M-trends-scenarios` — en, summary
@@ -224,7 +231,7 @@
 - [Adjacent landscapes — marketing, tech, sales, business models and the three lenses of innovation](methods_en/landscapes.md) `M-landscapes` — en, summary
 - [Lean Canvas — business hypotheses on one page, the riskiest cell and its cheapest test](methods_en/lean-canvas.md) `M-lean-canvas` — en, summary
 - [Lean Startup — Build-Measure-Learn, validated learning, pivots](methods_en/lean-startup.md) `M-lean-startup` — en, summary
-- [Loyalty and experience metrics — NPS, CSAT, CES, SUS, UMUX(-LITE), SUPR-Q: formulas, benchmarks, trigger surveys, sampling and survey health](methods_en/loyalty-metrics.md) `M-loyalty-metrics` — en, summary
+- [Loyalty research and customer metrics (NPS, CSAT, CES, SUS, UMUX, SUPR-Q)](methods_en/loyalty-metrics.md) `M-loyalty-metrics` — nps, csat, ces, sus, umux
 - [Market sizing PAM/TAM/SAM/SOM — funnel formulas, top-down vs bottom-up, units, sanity checks](methods_en/market-sizing.md) `M-market-sizing` — en, summary
 - [ML for PMs — where ML is justified, 7-step ML hypothesis, model metrics vs business metrics, CUPED/uplift in A/B tests, drift and risks](methods_en/ml-for-product.md) `M-ml-for-product` — en, summary
 - [Top-down and bottom-up modeling — three projections, baseline vs growth, cohort drivers, gap interpretation](methods_en/model-topdown-bottomup.md) `M-model-topdown-bottomup` — en, summary
@@ -233,6 +240,7 @@
 - [MVP, MLP and pilots — choosing the validation format, input/output metrics, pre-registered success criteria](methods_en/mvp-pilots.md) `M-mvp-pilots` — en, summary
 - [North Star Playbook — one value metric and an input-metric tree](methods_en/north-star-playbook.md) `M-north-star-playbook` — en, summary
 - [Strategy timing and outcome roadmap — phases, gate criteria, stop signals, resources and hiring](methods_en/outcome-roadmap.md) `M-outcome-roadmap` — en, summary
+- [Paid subscription retention and win-back — renewals, dunning, save offers, winning back churned users](methods_en/paid-retention-winback.md) `M-paid-retention` — retention, subscriptions, churn, win-back, dunning
 - [Platform economics — TCO, six effect sources, financial model (ΔFCF, break-even, ROI/IRR/NPV), incremental effect, adoption metrics](methods_en/platform-economics.md) `M-platform-economics` — en, summary
 - [Platform risks, concept review, pilot, scaling and adoption, investor case](methods_en/platform-risks-rollout.md) `M-platform-risks-rollout` — en, summary
 - [Scaling and Product-Market Fit — go/wait/fix gates, Superhuman PMF engine, traffic-light metrics](methods_en/pmf-scaling.md) `M-pmf-scaling` — en, summary
@@ -246,6 +254,7 @@
 - [Retention curves — smile curve, plateau, decay; how to read them, cohort curves and industry benchmarks](methods_en/retention-curves.md) `M-retention-curves` — en, summary
 - [Strategy risks — eight types, risk matrix, AATM responses, mitigation (fake door, +20% reserve), plan B with triggers, seasonality, DACI](methods_en/risks.md) `M-risks` — en, summary
 - [Roadmap — structure, outcome-based rows, OKR link, capacity, decision points, quality rubric](methods_en/roadmap.md) `M-roadmap` — en, summary
+- [Scenario modeling of impact — pessimistic, base and optimistic scenarios, sensitivity](methods_en/scenario-modeling.md) `M-scenario-modeling` — scenarios, sensitivity, modeling, forecast, risk
 - [Six-pager — six-FAQ strategic report with Excel appendices for committee defense](methods_en/six-pager.md) `M-six-pager` — en, summary
 - [Methods map — PM question → which cards to read and in what order; routes by task type, agent process phase, and product stage](methods_en/skills-map.md) `M-skills-map` — en, summary
 - [Solution design — solution hypotheses, RICE scoring, five risk types, cheapest-validation chain, post-mortem](methods_en/solution-design.md) `M-solution-design` — en, summary
@@ -254,10 +263,11 @@
 - [Product strategy, growth models and types — five components, unfair advantage, goal cascade, document skeleton](methods_en/strategy-growth.md) `M-strategy-growth` — en, summary
 - [Success metrics — North Star Metric (8 criteria), metric pyramid NSM→Outcome→Output→Input, metric tree, AARRR blocks, OKR with proven links](methods_en/success-metrics.md) `M-success-metrics` — en, summary
 - [Synthetic respondents (AI simulation) — permitted uses, persona spec, mandatory labeling, evidence rules](methods_en/synthetic-respondents.md) `M-synthetic-respondents` — en, summary
+- [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder-pricing.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
 - [Team and people — composition by stage, hiring vs outsourcing, org structure, stakeholders, neighbors](methods_en/team.md) `M-team` — en, summary
 - [Traction model (growth model) — 4 hypothesis layers, top-down vs bottom-up, baseline, effects (discounting, elasticity, cannibalization), validation](methods_en/traction-model.md) `M-traction-model` — en, summary
 - [Unit economics — LTV, CAC, payback, contribution margin, seven LTV methods, cohort accounting](methods_en/unit-economics.md) `M-unit-economics` — en, summary
-- [Usability testing — prototypes, moderated and unmoderated tests, method selection, metrics (success, time, SEQ, SUS), severity, one-slide report](methods_en/usability-testing.md) `M-usability-testing` — en, summary
+- [Usability testing — prototypes, moderated and unmoderated tests, metrics](methods_en/usability-testing.md) `M-usability-testing` — usability, ux-testing, prototype, moderated, unmoderated
 - [USP and value proposition — Job Story + Value Proposition Canvas, copyability filter, Value × Effort bet](methods_en/usp.md) `M-usp` — en, summary
 - [UX backlog and research knowledge base — atomic research, triage, metric links, retracting insights](methods_en/ux-backlog.md) `M-ux-backlog` — en, summary
 - [Heuristic UI evaluation — visible-evidence-only findings, V/I/H confidence levels, 0–4 severity scale](methods_en/ux-heuristics.md) `M-ux-heuristics` — en, summary
@@ -272,12 +282,13 @@
 - [DACI roles and the decision journal — drivers, approvers, contributors, revision conditions](methods_en/decision-daci.md) `M-decision-daci` — en, summary
 - [Delivery — from scope to release: MoSCoW/RICE, acceptance criteria, feature flags, canary, alerts, DORA, release trains, security](methods_en/delivery.md) `M-delivery` — en, summary
 - [Forecasting and traction analytics — baseline with seasonality, driver model, rollout, MAPE, forecast boundaries](methods_en/forecasting-product.md) `M-forecasting-product` — en, summary
-- [Loyalty and experience metrics — NPS, CSAT, CES, SUS, UMUX(-LITE), SUPR-Q: formulas, benchmarks, trigger surveys, sampling and survey health](methods_en/loyalty-metrics.md) `M-loyalty-metrics` — en, summary
+- [Loyalty research and customer metrics (NPS, CSAT, CES, SUS, UMUX, SUPR-Q)](methods_en/loyalty-metrics.md) `M-loyalty-metrics` — nps, csat, ces, sus, umux
 - [Marketing research — brand health tracking, U&A, Kano, MaxDiff, TURF for attribute prioritization](methods_en/marketing-research.md) `M-marketing-research` — en, summary
 - [Model validation — backtest, benchmarks, sensitivity analysis, scenarios and bias control](methods_en/model-validation.md) `M-model-validation` — en, summary
 - [Monetization models, value metric and pricing — maturity ladder, distributions vs averages, implicit take rate, pricing types, loyalty, auctions](methods_en/monetization.md) `M-monetization` — en, summary
 - [MVP, MLP and pilots — choosing the validation format, input/output metrics, pre-registered success criteria](methods_en/mvp-pilots.md) `M-mvp-pilots` — en, summary
 - [Strategy timing and outcome roadmap — phases, gate criteria, stop signals, resources and hiring](methods_en/outcome-roadmap.md) `M-outcome-roadmap` — en, summary
+- [Paid subscription retention and win-back — renewals, dunning, save offers, winning back churned users](methods_en/paid-retention-winback.md) `M-paid-retention` — retention, subscriptions, churn, win-back, dunning
 - [Platform risks, concept review, pilot, scaling and adoption, investor case](methods_en/platform-risks-rollout.md) `M-platform-risks-rollout` — en, summary
 - [Scaling and Product-Market Fit — go/wait/fix gates, Superhuman PMF engine, traffic-light metrics](methods_en/pmf-scaling.md) `M-pmf-scaling` — en, summary
 - [Product communication and defense — decision memo, traction doc, gates, MECE, traffic-light dashboard, 10-slide pitch, stakeholders, post-mortem](methods_en/product-communication.md) `M-product-communication` — en, summary
@@ -286,14 +297,16 @@
 - [Quantitative methods — survey methodology, sampling and power, validity, statistical analysis, visualization](methods_en/quant-methods.md) `M-quant-methods` — en, summary
 - [Strategy risks — eight types, risk matrix, AATM responses, mitigation (fake door, +20% reserve), plan B with triggers, seasonality, DACI](methods_en/risks.md) `M-risks` — en, summary
 - [Roadmap — structure, outcome-based rows, OKR link, capacity, decision points, quality rubric](methods_en/roadmap.md) `M-roadmap` — en, summary
+- [Scenario modeling of impact — pessimistic, base and optimistic scenarios, sensitivity](methods_en/scenario-modeling.md) `M-scenario-modeling` — scenarios, sensitivity, modeling, forecast, risk
 - [Methods map — PM question → which cards to read and in what order; routes by task type, agent process phase, and product stage](methods_en/skills-map.md) `M-skills-map` — en, summary
 - [Solution design — solution hypotheses, RICE scoring, five risk types, cheapest-validation chain, post-mortem](methods_en/solution-design.md) `M-solution-design` — en, summary
 - [SQL for product analytics — DAU/funnel/cohort/ARPU queries, joins and window functions (ROW_NUMBER, LAG), CTE, data-quality checklist](methods_en/sql-for-pm.md) `M-sql-for-pm` — en, summary
 - [Success metrics — North Star Metric (8 criteria), metric pyramid NSM→Outcome→Output→Input, metric tree, AARRR blocks, OKR with proven links](methods_en/success-metrics.md) `M-success-metrics` — en, summary
+- [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder-pricing.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
 - [Team and people — composition by stage, hiring vs outsourcing, org structure, stakeholders, neighbors](methods_en/team.md) `M-team` — en, summary
 - [Traction model (growth model) — 4 hypothesis layers, top-down vs bottom-up, baseline, effects (discounting, elasticity, cannibalization), validation](methods_en/traction-model.md) `M-traction-model` — en, summary
 - [Unit economics — LTV, CAC, payback, contribution margin, seven LTV methods, cohort accounting](methods_en/unit-economics.md) `M-unit-economics` — en, summary
-- [Usability testing — prototypes, moderated and unmoderated tests, method selection, metrics (success, time, SEQ, SUS), severity, one-slide report](methods_en/usability-testing.md) `M-usability-testing` — en, summary
+- [Usability testing — prototypes, moderated and unmoderated tests, metrics](methods_en/usability-testing.md) `M-usability-testing` — usability, ux-testing, prototype, moderated, unmoderated
 - [UX backlog and research knowledge base — atomic research, triage, metric links, retracting insights](methods_en/ux-backlog.md) `M-ux-backlog` — en, summary
 - [Heuristic UI evaluation — visible-evidence-only findings, V/I/H confidence levels, 0–4 severity scale](methods_en/ux-heuristics.md) `M-ux-heuristics` — en, summary
 - [Workshops and facilitation — brief, participants, minute-by-minute scenario, divergence→convergence tools, difficult participants, protocol and follow-up](methods_en/workshops.md) `M-workshops` — en, summary

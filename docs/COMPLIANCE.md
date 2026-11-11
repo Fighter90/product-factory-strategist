@@ -8,7 +8,7 @@
 | Счётчик | Значение | Проверка |
 |---|---|---|
 | Тесты | 115 (`OK`) | `python3 -m unittest discover -s tests` |
-| Карты знаний | 89 RU (`knowledge/methods/`) + 89 EN-зеркал — полная двуязычная база (`knowledge/methods_en/`) + `knowledge/INDEX_EN.md` | `ls knowledge/methods \| wc -l` → 89; `ls knowledge/methods_en \| wc -l` → 89 |
+| Карты знаний | 97 RU (`knowledge/methods/`) + 97 EN-зеркал — полная двуязычная база (`knowledge/methods_en/`, `lang: en`) + `knowledge/INDEX_EN.md`; PRO-60: единая схема имён (имя = id без `M-`), `pfs kb lint` проверяет ссылки, теги, разделы и паритет RU/EN (объём ≥ 80%) | `ls knowledge/methods \| wc -l` → 97; `ls knowledge/methods_en \| wc -l` → 97; `python3 -m tools.pfs kb lint` → 0 проблем |
 | Навыки | 121 | `ls .claude/skills \| wc -l` → 121 |
 | Субагенты | 8 | `ls .claude/agents \| wc -l` → 8 |
 | Хуки | 5 (`session_start`, `pre_web`, `post_tool`, `stop`, `_common`) | `ls .claude/hooks \| wc -l` → 5 |
@@ -48,7 +48,7 @@
 | Маршрутизация сценариев и моделей | `pfs route` (сценарий → карты → план моделей), `config/models.json` (fast/balanced/deep, эскалация, `--economy`) | `python3 -m tools.pfs route "запрос"` |
 | Навыки / хуки / субагенты | `.claude/skills/` (121), `.claude/hooks/` (4 события + `_common.py`), `.claude/agents/` (8) | `ls`-команды из шапки файла |
 | MCP + CLI | CLI `python3 -m tools.pfs` (25+ подкоманд); MCP `tools/pfs/mcp_server.py` — 18 инструментов (stdio JSON-RPC) | `python3 -m tools.pfs --help`; `.mcp.json` → pfs-strategist |
-| База знаний с поиском | 89 карт RU + 89 EN-зеркал — полная двуязычная база + `INDEX_EN.md`; BM25 с русским стеммингом (`pfs kb search`), связи `related` проверяет `pfs kb index` | `python3 -m tools.pfs doctor` — число карт |
+| База знаний с поиском | 89 карт RU + 89 EN-зеркал — полная двуязычная база + `INDEX_EN.md`; BM25 с русским стеммингом (`pfs kb search`), связи `related`, разделы и паритет RU/EN проверяет `pfs kb lint` | `python3 -m tools.pfs doctor` — число карт |
 | Excel-приложения на формулах | `pfs calc all` → 4 книги (лист «Ввод» + формулы, пересчёт при открытии) | `projects/демо/outputs/attachments/` — 4 файла xlsx |
 | Six-pager для комитета | `pfs export --six-pager` (FAQ-1…6) | демо: SIX_PAGER_RU и SIX_PAGER_EN, каждый в трёх форматах (MD/PDF/DOCX) |
 | Отчёты и конвертация | `pfs export` (REPORT.md), `pfs export --deck`, `pfs docx` (Markdown → Word, без зависимостей) | `projects/демо/outputs/REPORT.md`, `docs/docx/` |

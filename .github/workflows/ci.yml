@@ -1,0 +1,23 @@
+name: CI
+
+# PRO-60: юнит-тесты + целостность базы знаний (pfs kb lint) на каждый push и PR.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests
+      - name: Knowledge base lint (PRO-60)
+        run: python3 -m tools.pfs kb lint
+      - name: Doctor
+        run: python3 -m tools.pfs doctor

@@ -259,7 +259,8 @@ Full evidence — REPORT.md.
 ```bash
 pfs kb search "cohort retention analysis"      # BM25 search over method cards
 pfs kb show M-unit-economics                   # show a card
-pfs kb index                                   # rebuild INDEX.md, validate links
+pfs kb index                                   # rebuild INDEX.md and INDEX_EN.md, validate links
+pfs kb lint                                    # knowledge-base integrity: links, tags, sections, RU/EN parity
 ```
 
 ### Models and cost
