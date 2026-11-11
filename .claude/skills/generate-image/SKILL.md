@@ -1,6 +1,6 @@
 ---
 name: generate-image
-description: Generate or edit images using AI models (FLUX, Nano Banana 2). Use for general-purpose image generation including photos, illustrations, artwork, visual assets, concept art, and any image that is not a technical diagram or schematic. For flowcharts, circuits, pathways, and technical diagrams, use the scientific-schematics skill instead.
+description: Generate or edit images using AI models (FLUX, Nano Banana 2). Use for general-purpose image generation including photos, illustrations, artwork, visual assets, concept art, and any image that is not a technical diagram or schematic.
 license: MIT license
 compatibility: Requires an OpenRouter API key
 metadata:
@@ -20,14 +20,6 @@ Generate and edit high-quality images using OpenRouter's image generation models
 - Visual assets for presentations or documents
 - Image editing and modifications
 - Any general-purpose image generation needs
-
-**Use scientific-schematics instead for:**
-- Flowcharts and process diagrams
-- Circuit diagrams and electrical schematics
-- Biological pathways and signaling cascades
-- System architecture diagrams
-- CONSORT diagrams and methodology flowcharts
-- Any technical/schematic diagrams
 
 ## Quick Start
 
@@ -176,8 +168,5 @@ If the script fails, read the error message and address the issue before retryin
 
 ## Integration with Other Skills
 
-- **scientific-schematics**: Use for technical diagrams, flowcharts, circuits, pathways
 - **generate-image**: Use for photos, illustrations, artwork, visual concepts
-- **scientific-slides**: Combine with generate-image for visually rich presentations
-- **latex-posters**: Use generate-image for poster visuals and hero images
 

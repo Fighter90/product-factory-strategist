@@ -28,21 +28,19 @@ Use this skill when:
 
 ## Visual Enhancement with Scientific Schematics
 
-**⚠️ MANDATORY: Every literature review MUST include at least 1-2 AI-generated figures using the scientific-schematics skill.**
+**⚠️ MANDATORY: Every literature review MUST include at least 1-2 AI-generated figures using the generate-image skill.**
 
 This is not optional. Literature reviews without visual elements are incomplete. Before finalizing any document:
 1. Generate at minimum ONE schematic or diagram (e.g., PRISMA flow diagram for systematic reviews)
 2. Prefer 2-3 figures for comprehensive reviews (search strategy flowchart, thematic synthesis diagram, conceptual framework)
 
 **How to generate figures:**
-- Use the **scientific-schematics** skill to generate AI-powered publication-quality diagrams
+- Use the **generate-image** skill to generate AI-powered publication-quality diagrams
 - Simply describe your desired diagram in natural language
 - Nano Banana Pro will automatically generate, review, and refine the schematic
 
 **How to generate schematics:**
-```bash
-python scripts/generate_schematic.py "your diagram description" -o figures/output.png
-```
+Ask the generate-image skill for the diagram and save the result to `figures/output.png`.
 
 The AI will automatically:
 - Create publication-quality images with proper formatting
@@ -59,7 +57,7 @@ The AI will automatically:
 - Conceptual framework illustrations
 - Any complex concept that benefits from visualization
 
-For detailed guidance on creating schematics, refer to the scientific-schematics skill documentation.
+For detailed guidance on creating schematics, refer to the generate-image skill documentation.
 
 ---
 
@@ -605,14 +603,11 @@ This skill works seamlessly with other scientific skills:
 - **datacommons-client**: Demographics, economics, health statistics
 
 ### Analysis Skills
-- **pydeseq2**: RNA-seq differential expression (for methods sections)
 - **scanpy**: Single-cell analysis (for methods sections)
 - **anndata**: Single-cell data (for methods sections)
-- **biopython**: Sequence analysis (for background sections)
 
 ### Visualization Skills
 - **matplotlib**: Generate figures and plots for review
-- **seaborn**: Statistical visualizations
 
 ### Writing Skills
 - **brand-guidelines**: Apply institutional branding to PDF

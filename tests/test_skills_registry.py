@@ -35,6 +35,18 @@ def load_counts_script():
     return mod
 
 
+# Упоминания этих имён в оставшихся навыках допустимы только как библиотеки pip
+# (импорты, `pip install`, имена стилей matplotlib), а не как указатели на навык.
+# Файлы и каталоги, где такие упоминания легитимны:
+LIBRARY_MENTION_ALLOWLIST = (
+    ".claude/skills/exploratory-data-analysis/",
+    ".claude/skills/statistical-analysis/",
+    ".claude/skills/matplotlib/",
+    ".claude/skills/scientific-visualization/",
+    ".claude/skills/scientific-writing/references/figures_tables.md",
+)
+
+
 class RemovedSkillsTests(unittest.TestCase):
     def test_removed_skills_not_loaded_but_kept_in_extras(self):
         loaded = loaded_skills()
@@ -71,6 +83,46 @@ class RemovedSkillsTests(unittest.TestCase):
                 if re.search(rf"\b{re.escape(name)}\b", text):
                     offenders.append(f"{path.relative_to(REPO)}: {name}")
         self.assertEqual(offenders, [], "упоминания удалённых навыков: " + "; ".join(offenders))
+
+
+class NoDanglingSkillPointersTests(unittest.TestCase):
+    """Оставшиеся навыки не ссылаются на удалённые: «см. X», «навык X» — висячие указатели.
+
+    Исключения: упоминания как библиотек pip (импорты, pip install, имена стилей) —
+    LIBRARY_MENTION_ALLOWLIST; неоднозначные слова («hallmark», «rea») — только в
+    контексте указателя на навык («см. X», «X skill», `X`), обычное слово допустимо.
+    """
+
+    AMBIGUOUS_WORDS = {"hallmark", "rea"}
+    POINTER_CONTEXT = (
+        r"`{name}`",            # `имя`
+        r"\*\*{name}\*\*",      # **имя**
+        r"{name} skill",        # «имя skill»
+        r"skills/{name}\b",     # путь внутрь навыка
+        r"см\. {name}\b", r"see {name}\b",  # явный указатель
+    )
+
+    def _mentions(self, text, name):
+        escaped = re.escape(name)
+        pattern = (rf"\b{escaped}\b" if name not in self.AMBIGUOUS_WORDS
+                   else "|".join(p.format(name=escaped) for p in self.POINTER_CONTEXT))
+        return re.findall(pattern, text, re.IGNORECASE)
+
+    def test_no_skill_pointers_to_removed_skills(self):
+        offenders = []
+        for path in sorted(SKILLS_DIR.rglob("*")):
+            if not path.is_file() or path.suffix not in (".md", ".json", ".py"):
+                continue
+            rel = path.relative_to(REPO).as_posix()
+            if any(rel == p or rel.startswith(p) for p in LIBRARY_MENTION_ALLOWLIST):
+                continue
+            text = path.read_text(encoding="utf-8", errors="replace")
+            for name in REMOVED:
+                if self._mentions(text, name):
+                    offenders.append(f"{rel}: {name}")
+        self.assertEqual(
+            offenders, [],
+            "оставшиеся навыки ссылаются на удалённые: " + "; ".join(offenders))
 
 
 class SkillsDocTests(unittest.TestCase):

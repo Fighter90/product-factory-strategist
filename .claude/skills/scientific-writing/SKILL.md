@@ -33,11 +33,11 @@ This skill should be used when:
 
 ## Visual Enhancement with Scientific Schematics
 
-**⚠️ MANDATORY: Every scientific paper MUST include a graphical abstract plus 1-2 additional AI-generated figures using the scientific-schematics skill.**
+**⚠️ MANDATORY: Every scientific paper MUST include a graphical abstract plus 1-2 additional AI-generated figures using the generate-image skill.**
 
 This is not optional. Scientific papers without visual elements are incomplete. Before finalizing any document:
 1. **ALWAYS generate a graphical abstract** as the first visual element
-2. Generate at minimum ONE additional schematic or diagram using scientific-schematics
+2. Generate at minimum ONE additional schematic or diagram using generate-image
 3. Prefer 3-4 total figures for comprehensive papers (graphical abstract + methods flowchart + results visualization + conceptual diagram)
 
 ### Graphical Abstract (REQUIRED)
@@ -62,7 +62,7 @@ python scripts/generate_schematic.py "Graphical abstract for [paper title]: [bri
 
 ### Additional Figures (GENERATE EXTENSIVELY)
 
-**⚠️ CRITICAL: Use BOTH scientific-schematics AND generate-image EXTENSIVELY throughout all documents.**
+**⚠️ CRITICAL: Use generate-image EXTENSIVELY throughout all documents.**
 
 Every document should be richly illustrated. Generate figures liberally - when in doubt, add a visual.
 
@@ -78,10 +78,8 @@ Every document should be richly illustrated. Generate figures liberally - when i
 | Grants | 4 | 5-7 |
 | Clinical Reports | 3 | 4-6 |
 
-**Use scientific-schematics EXTENSIVELY for technical diagrams:**
-```bash
-python scripts/generate_schematic.py "your diagram description" -o figures/output.png
-```
+**Use generate-image EXTENSIVELY for technical diagrams:**
+Describe the diagram to the generate-image skill and save the result to `figures/output.png`.
 
 - Study design and methodology flowcharts (CONSORT, PRISMA, STROBE)
 - Conceptual framework diagrams
@@ -121,7 +119,7 @@ The AI will automatically:
 - Comparison → generate a comparison diagram
 - Reader benefit → generate a visual
 
-For detailed guidance, refer to the scientific-schematics and generate-image skill documentation.
+For detailed guidance, refer to the generate-image skill documentation.
 
 ---
 
