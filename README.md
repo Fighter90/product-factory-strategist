@@ -221,7 +221,7 @@ flowchart TB
 flowchart TB
   SK["100 навыков"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: процедуры методов<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
-  SK --> L["Личная библиотека 75<br/>дизайн · маркетинг · наука · документы/медиа · режимы мышления · мета"]
+  SK --> L["Личная библиотека 57<br/>дизайн · маркетинг · наука · документы/медиа · мета"]
   SK --> INT["Интеграции 3<br/>premortem · sdd · deck"]
   B & P & L & INT --> INV["Вызов: авто по триггерам · явно «используй skill X» · по шагам процесса"]
 ```

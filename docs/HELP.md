@@ -305,7 +305,7 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
 
 - **Базовые (13)** — по шагам процесса: intake, research, situation, options, strategy, validation-plan, decision-support и др.
 - **Product-skills (27)** — продуктовые методики (маркет-сайзинг, юнит-экономика, трекшн-модели, роадмапы…).
-- **Личная библиотека (75):**
+- **Личная библиотека (57):**
   - *дизайн*: `design-ui`, `refero-design`, `frontend-design`, `claudable-landing`, `make-interfaces-feel-better`, `emil-design-eng`, `web-design-guidelines`
   - *маркетинг*: `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `emails`, `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`, `customer-research`, `marketing-psychology`, `prospecting` и др.
   - *наука и данные*: `research-lookup`, `literature-review`, `scientific-writing`, `scientific-critical-thinking`, `peer-review`, `statistical-analysis`, `hypothesis-generation`, `exploratory-data-analysis`, `scientific-visualization`

@@ -156,7 +156,7 @@ every place referencing it.
 flowchart TB
   SK["100 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: method procedures<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
-  SK --> L["Personal library 75<br/>design · marketing · science · docs/media · thinking modes · meta"]
+  SK --> L["Personal library 57<br/>design · marketing · science · docs/media · meta"]
   SK --> INT["Integrations 3<br/>premortem · sdd · deck"]
   B & P & L & INT --> INV["Invocation: automatic by triggers · explicit 'use skill X' · via process steps"]
 ```

@@ -94,6 +94,57 @@ class SkillsDocTests(unittest.TestCase):
             self.assertIn(name, doc, f"docs/SKILLS.md не объясняет судьбу {name}")
 
 
+# Каноничная схема шагов процесса AGENTS.md (`pfs step`): 0 intake · 1 sources ·
+# 2 research · 3 discovery · 4 situation · 5 options · 6 choice · 7 strategy ·
+# 8 validation · 9 review · 10 decision · 11 monitoring.
+STEP_NUMBERS = {
+    "intake": 0, "sources": 1, "research": 2, "discovery": 3, "situation": 4,
+    "options": 5, "choice": 6, "strategy": 7, "validation": 8, "review": 9,
+    "decision": 10, "monitoring": 11,
+}
+
+# Базовые навыки → каноничные шаги (таблица «Шаг (`pfs step`)» из AGENTS.md).
+CANONICAL_BASE_STEPS = {
+    "strategist": "все",
+    "intake": "0",
+    "research": "1–2",
+    "data-analysis": "2",
+    "interviews": "2",
+    "ux-review": "2",
+    "deep-research": "2",
+    "situation": "4",
+    "options": "5",
+    "strategy": "7",
+    "validation-plan": "8",
+    "six-pager": "9",
+    "decision-support": "10–11",
+}
+
+
+def doc_rows(text, section_prefix):
+    """Строки таблиц раздела «## <section_prefix>…»: (имя, колонка шагов, кто вызывает)."""
+    rows = []
+    in_section = False
+    for line in text.splitlines():
+        if line.startswith("## "):
+            in_section = line.startswith(f"## {section_prefix}")
+            continue
+        if in_section and line.startswith("| `"):
+            cols = [c.strip() for c in line.split("|")]
+            rows.append((cols[1].strip("`"), cols[2], cols[4]))
+    return rows
+
+
+def step_numbers(text):
+    """Числа шагов из ссылки: «2», «1–2», «7, 9–11», «10 (decision)», «8+», «реклама (7–8)»."""
+    nums = set()
+    for m in re.finditer(r"(\d+)\s*[–—]\s*(\d+)", text):
+        nums.update(range(int(m.group(1)), int(m.group(2)) + 1))
+    without_ranges = re.sub(r"\d+\s*[–—]\s*\d+", " ", text)
+    nums.update(int(m.group()) for m in re.finditer(r"\d+", without_ranges))
+    return nums
+
+
 class SkillCountersTests(unittest.TestCase):
     """Счётчики в README/HELP/SUBMISSION/COMPLIANCE/help.html обновлены скриптом."""
 
@@ -101,6 +152,22 @@ class SkillCountersTests(unittest.TestCase):
         script = load_counts_script()
         findings = script.stale_findings()
         self.assertEqual(findings, [], "устаревшие счётчики навыков: " + "; ".join(findings))
+
+    def test_spaced_group_counters_recognized(self):
+        """Счётчики с пробелом перед числом («Личная библиотека 75») скрипт распознаёт."""
+        script = load_counts_script()
+        c = script.counts()
+        rules = script.build_rules(c)
+        stale_value = c["personal"] + 18
+        new_text, findings = script._process_text(
+            f'SK --> L["Личная библиотека {stale_value}<br/>дизайн · мета"]', rules)
+        self.assertIn(f"Личная библиотека {c['personal']}", new_text,
+                      "скрипт не обновляет счётчик группы с пробелом перед числом")
+        self.assertTrue(findings, "скрипт не сообщает об устаревшем счётчике с пробелом")
+        ok_text, ok_findings = script._process_text(
+            f'Личная библиотека {c["personal"]}<br/>', rules)
+        self.assertEqual(ok_text, f'Личная библиотека {c["personal"]}<br/>')
+        self.assertEqual(ok_findings, [], "актуальный счётчик помечен как устаревший")
 
     def test_ru_plural_forms(self):
         script = load_counts_script()
@@ -117,6 +184,111 @@ class SkillCountersTests(unittest.TestCase):
         n = len(loaded_skills())
         self.assertIn(f"навыков: {n}", site_ru)
         self.assertIn(f"skills: {n}", site_en)
+
+
+class MermaidGroupTests(unittest.TestCase):
+    """Mermaid-схема «Навыки»: суммы групп = фактическое число, убранные категории отсутствуют."""
+
+    def _block(self, path):
+        text = (REPO / path).read_text(encoding="utf-8")
+        m = re.search(r'SK\["100 (?:навыков|skills)"\]', text)
+        self.assertIsNotNone(m, f"в {path} нет узла SK[\"100 …\"] второго mermaid-блока")
+        end = text.find("```", m.end())
+        self.assertNotEqual(end, -1, f"в {path} не найдено закрытие mermaid-блока")
+        return text[m.start():end]
+
+    def test_group_numbers_sum_to_actual_total(self):
+        c = load_counts_script().counts()
+        ru = self._block("README.md")
+        en = self._block("README_EN.md")
+        for block, groups in (
+            (ru, [("Базовые", c["base"]), ("Product-skills", c["product"]),
+                  ("Личная библиотека", c["personal"]), ("Интеграции", c["integrations"])]),
+            (en, [("Base", c["base"]), ("Product-skills", c["product"]),
+                  ("Personal library", c["personal"]), ("Integrations", c["integrations"])]),
+        ):
+            found = {}
+            for name, expected in groups:
+                m = re.search(rf"{name} (\d+)", block)
+                self.assertIsNotNone(m, f"в mermaid-блоке нет группы «{name} N»")
+                found[name] = int(m.group(1))
+                self.assertEqual(
+                    found[name], expected,
+                    f"группа «{name}»: в mermaid {found[name]}, фактически {expected}")
+            self.assertEqual(
+                sum(found.values()), c["total"],
+                f"сумма групп в mermaid-блоке ({sum(found.values())}) ≠ числу навыков ({c['total']})")
+
+    def test_no_thinking_modes_category(self):
+        self.assertNotIn("режимы мышления", self._block("README.md"),
+                         "категория «режимы мышления» удалена (слилась с «мета»)")
+        self.assertNotIn("thinking modes", self._block("README_EN.md"),
+                         "категория «thinking modes» удалена (merged into «meta»)")
+
+
+class HelpGroupHeaderTests(unittest.TestCase):
+    """«Личная библиотека» в HELP — самостоятельная группа-родитель с актуальным числом."""
+
+    def test_ru_header_is_own_group_with_actual_count(self):
+        text = (REPO / "docs" / "HELP.md").read_text(encoding="utf-8")
+        m = re.search(r"^- \*\*Личная библиотека \((\d+)\):\*\*\s*$", text, re.M)
+        self.assertIsNotNone(
+            m, "в docs/HELP.md нет заголовка группы «- **Личная библиотека (N):**» — "
+               "подкатегории висят без родителя")
+        self.assertEqual(int(m.group(1)), load_counts_script().counts()["personal"])
+
+    def test_en_header_is_own_group_with_actual_count(self):
+        text = (REPO / "docs" / "HELP_EN.md").read_text(encoding="utf-8")
+        m = re.search(r"^- \*\*Personal library \((\d+)\)\*\* — imported packs by category:",
+                      text, re.M)
+        self.assertIsNotNone(
+            m, "в docs/HELP_EN.md нет заголовка группы «Personal library (N)»")
+        self.assertEqual(int(m.group(1)), load_counts_script().counts()["personal"])
+
+
+class StepSchemeTests(unittest.TestCase):
+    """Колонка шагов docs/SKILLS.md соответствует одной каноничной схеме AGENTS.md (`pfs step`)."""
+
+    def setUp(self):
+        self.doc = (REPO / "docs" / "SKILLS.md").read_text(encoding="utf-8")
+
+    def test_base_table_matches_canonical_scheme(self):
+        rows = doc_rows(self.doc, "Базовые — шаги процесса")
+        actual = {name: step for name, step, _ in rows}
+        self.assertEqual(actual, CANONICAL_BASE_STEPS)
+
+    def test_named_step_invokers_point_to_declared_steps(self):
+        """«навык шага `X`» в «Кто вызывает» согласован с числами колонки шагов."""
+        rows = []
+        for prefix in ("Базовые — шаги процесса", "Product-skills", "Интеграции"):
+            rows.extend(doc_rows(self.doc, prefix))
+        offenders = []
+        for name, step, invoker in rows:
+            m = re.search(r"навык шага `([\w-]+)`", invoker)
+            if not m:
+                continue
+            expected = STEP_NUMBERS.get(m.group(1))
+            if expected is None:
+                offenders.append(f"`{name}`: «{m.group(1)}» — не шаг схемы AGENTS.md")
+            elif expected not in step_numbers(step):
+                offenders.append(
+                    f"`{name}`: колонка «{step}» не содержит шаг {expected} ({m.group(1)})")
+        self.assertEqual(
+            offenders, [],
+            "«навык шага `X`» расходится с колонкой шагов: " + "; ".join(offenders))
+
+    def test_all_step_references_within_canonical_range(self):
+        rows = []
+        for prefix in ("Базовые — шаги процесса", "Product-skills", "Интеграции",
+                       "Личная библиотека"):
+            rows.extend(doc_rows(self.doc, prefix))
+        offenders = [
+            f"`{name}`: «{step}»" for name, step, _ in rows
+            if not step_numbers(step) <= set(STEP_NUMBERS.values())
+        ]
+        self.assertEqual(
+            offenders, [],
+            "числа вне каноничной схемы шагов 0–11 (AGENTS.md): " + "; ".join(offenders))
 
 
 if __name__ == "__main__":

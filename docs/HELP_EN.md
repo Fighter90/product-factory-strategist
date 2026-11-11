@@ -303,7 +303,7 @@ groups plus integrations):
 - **Base (13)** — one per process step: `intake`, `research`, `situation`, `options`, `strategy`,
   `validation-plan`, `decision-support`, `six-pager`, `deck`, etc.
 - **Product-skills (27)** — domain packs around the process: segments, JTBD, unit economics, growth, risks.
-- **Personal library (75)** — imported packs by category:
+- **Personal library (57)** — imported packs by category:
   - **Design** — `design-ui`, `refero-design`, `frontend-design`, `claudable-landing`, `make-interfaces-feel-better`,
     `emil-design-eng`, `web-design-guidelines`;
   - **Marketing** — `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`,

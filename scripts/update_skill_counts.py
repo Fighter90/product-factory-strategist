@@ -108,10 +108,11 @@ def build_rules(c):
     # README_EN.md: "(121 in total, in three groups…)" — «skills — … (N in total»
     add(r"(skills — packaged instruction sets \()(\d+)( in total)", lambda m: f"{m.group(1)}{N}{m.group(3)}")
 
-    # --- группы: пары «название + число» (с круглыми скобками или без) ---
+    # --- группы: пары «название + число» (с круглыми скобками, вплотную или через пробел) ---
     def group(name, value):
         add(rf"({name})\((\d+)\)", lambda m: f"{m.group(1)}({value})")
         add(rf"({name})(\d+)(?![\d.)])", lambda m: f"{m.group(1)}{value}")
+        add(rf"({name}) (\d+)(?![\d.)])", lambda m: f"{m.group(1)} {value}")
 
     group("Базовые", B)
     group("Base", B)
