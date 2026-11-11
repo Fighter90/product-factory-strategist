@@ -231,7 +231,9 @@ def doc_commands(path: Path):
                 for variant in _expand_alternatives(cmd):
                     toks = [t.strip('"') for t in _tokens(variant)]
                     tail = toks[3:] if toks[0] == "python3" else toks[1:]
-                    argv = ["python3", "-m", "tools.pfs"] + tail
+                    # тот же интерпретатор, что гоняет тест: на 3.9 argparse не глотает
+                    # позиционный аргумент после опций — тест обязан это ловить (PRO-63)
+                    argv = [sys.executable, "-m", "tools.pfs"] + tail
                     reason = _skipped(argv)
                     argvs.append((argv, reason))
                 argvs = [a for a in argvs if a[1] is None] or \
@@ -358,7 +360,7 @@ class DocsCommandsTests(unittest.TestCase):
 
     def test_interview_guide_topic_optional(self):
         """HELP/AGENTS: `--topic` у interview guide необязателен (PRO-63 п.1)."""
-        res = _run(["python3", "-m", "tools.pfs", "--project", "демо",
+        res = _run([sys.executable, "-m", "tools.pfs", "--project", "демо",
                     "interview", "guide", "--persona", "Родитель 7–12"])
         self.assertNotIn("Traceback", res.stderr, res.stderr)
         self.assertEqual(res.returncode, 0, f"rc={res.returncode}: {res.stdout} {res.stderr}")

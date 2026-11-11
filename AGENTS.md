@@ -143,7 +143,7 @@ pfs source list                               # реестр; pfs source show S0
 pfs source refresh S001                       # перезагрузить web-источник; изменился sha256 — impact по утверждениям
 pfs claim add "текст" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "вывод" --kind inference --from C001,C004
-pfs claim supersede --id C001 "новый текст" --reason "…" [--from C001]   # замещение, не удаление
+pfs claim supersede "новый текст" --id C001 --reason "…" [--from C001]   # замещение, не удаление
 pfs claim retract --id C001 --reason "…"      # отзыв: пометка «отозвано», строка остаётся
 pfs claim rebase [--id C001]                  # перенаправить выводы с замещённых оснований на замены
 pfs impact C001                               # что затронет изменение; pfs impact S001 — то же для источника

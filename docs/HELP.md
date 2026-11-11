@@ -147,7 +147,7 @@ pfs claim add-batch claims.jsonl        # пачка из JSONL (text/kind/sourc
                                         # отменяет весь батч; дубликаты по тексту пропускаются
 pfs claim list [--kind fact] [--all]
 pfs claim retract --id C005 --reason "ошибка в методике"
-pfs claim supersede --id C005 "Рынок 45 млрд" --reason "новый отчёт" [--source S009]
+pfs claim supersede "Рынок 45 млрд" --id C005 --reason "новый отчёт" [--source S009]
 pfs claim rebase [--id C012]            # перенаправить выводы на замены оснований
 ```
 Типы: `fact` (есть источник; синтетика фактами не считается), `hypothesis`, `forecast`,
@@ -372,7 +372,7 @@ scripts/e2e_opencode.sh ru qa/tasks/antispam-ru.md    # 3 задачи × ru/en 
 ## 9. Пересмотр после новых данных
 
 1. Добавьте источник: `pfs source add <url|файл>`.
-2. Если данные меняют утверждение: `pfs claim supersede --id C005 "…" --reason "…" --source S012`
+2. Если данные меняют утверждение: `pfs claim supersede "…" --id C005 --reason "…" --source S012`
    (старое не удаляется — видна история) или `pfs claim retract --id C005 --reason "…"`.
 3. `pfs impact C005` — какие выводы, строки документов и решения затронуты.
 4. `pfs claim rebase` — перенаправить выводы на замены; отозванные основания требуют пересмотра по существу.

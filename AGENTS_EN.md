@@ -150,7 +150,7 @@ pfs source list                               # the registry; pfs source show S0
 pfs source refresh S001                       # reload a web source; if sha256 changed — run impact on claims
 pfs claim add "text" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "inference" --kind inference --from C001,C004
-pfs claim supersede --id C001 "new text" --reason "…" [--from C001]   # supersede, not delete
+pfs claim supersede "new text" --id C001 --reason "…" [--from C001]   # supersede, not delete
 pfs claim retract --id C001 --reason "…"      # retract: marked as retracted, the row stays
 pfs claim rebase [--id C001]                  # point conclusions from superseded grounds at the replacements
 pfs impact C001                               # what a change affects; pfs impact S001 — same for a source
