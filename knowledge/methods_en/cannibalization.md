@@ -1,24 +1,104 @@
 ---
 id: M-cannibalization
 lang: en
-title: Cannibalization of products, features, plans and channels — increment vs gross effect, transfer matrix, baseline calculation, modeling
+title: Cannibalization of products, features, plans and channels
 course: pm-approaches-en
-sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
+sources: ["EN mirror of the RU card; original sources listed there"]
 stages: [options, strategy, validation, after-decision]
-tags: [en, summary]
+tags: [cannibalization, flow-over, increment, metric-tradeoffs, plans, price, ab-testing, marketplace, baseline]
 related: [M-traction-model, M-unit-economics, M-monetization, M-cjm, M-jtbd, M-quant-methods, M-product-metrics]
 ---
 
-# Cannibalization (EN summary)
+# Cannibalization of products, features, plans and channels
 
-**When:** launching a new product, feature, plan or channel onto an existing base; changing prices or free-tier limits; needing to say how much of the "growth" is net increment and how much is flow from a sibling product.
+## When to apply
+A new product, feature, plan or channel is being launched onto an existing base; prices or free-version limits are changing; you need to say how much of the "growth" is net increment and how much is flow over from a neighboring product.
 
-**Core:** cannibalization = a change (new product, feature, channel) pulls users, revenue or metrics from an existing product instead of pure growth. Causes: the same or adjacent user job is solved another way; shared base; limited demand/attention; positioning mistakes. Principle: **count increment, not gross effect**: `Launch effect = New growth − Cannibalization losses`. Likely conditions: saturated mature market (new telco plans — clients move to the cheaper one); fast technological progress; price differentiation (luxury sub-brand takes buyers from top models); shifting preferences; competitive pressure (discounting clients who would have renewed anyway); channel expansion (online store of an offline chain). Good vs bad cannibalization: bad — flow without total growth, lower margin on the new item, downward migration to cheaper plans, blurred positioning; good — new customers arrive and total revenue grows, upward migration to pricier products, strategically cannibalizing your own obsolete product before competitors do. Criterion: the sign of net increment in both revenue and margin. Types: product (new plan takes share of the old), price (discount lifts volume, cuts margin), channel, feature (free delivery devalues paid express), segment. Parallel taxonomy: direct (product replaces product — easy to model), indirect (partially solves several jobs — hard), horizontal (same-level competition), vertical (migration down/up a price-feature funnel).
+## Core idea
+**Cannibalization** is the effect where a change (a new product, feature, channel) pulls users, revenue or metrics away from an existing product instead of adding pure growth. Causes: the same or an adjacent user job gets solved in a different way; a shared base; limited demand/attention; positioning mistakes. Principle: **count the increment, not the gross effect:** `Launch effect = New growth − Cannibalization losses`.
 
-Two-sided marketplace cascade: switching business model (listing → transactional "deal done for you") cannibalizes **both sides simultaneously and self-reinforces** — seller stops paying for listing → less content → buyer also moves to the new format → transaction even more attractive to the seller. Model both sides. "One budget" principle: the client has one wallet per job — a dealer pays either for the listing or the deal commission, never both; a new monetization product always competes with the old for the same budget. Interface cascade: showing both options on one card ("done-for-you deal" next to "message the seller") itself steers the flow balance — button placement, benefit copy, commission visibility are levers, not accidents. Does commission fully replace listing? No — it's either/or per deal, but total old revenue falls: model the listing decline as an explicit block. Baseline method ("look at the total"): baseline listing 1,000 ₽/mo → after launch 800 (listing) + 300 (transaction); cannibalization = 200; net effect = +100 — and only because baseline was computed. Build baseline by trend extrapolation, YoY to an analogous period, a control group without the launch (A/B), or a competitor benchmark. Judging only the new product (+300) is the error — evaluate total revenue against baseline. Strategic options: don't launch (keep revenue); launch (lose part, earn commission); launch both and steer the balance via interface and pricing (hardest; barrier pricing on the old model).
+**Conditions under which it is likely:** a saturated mature market (a telco launches new plans — clients move to a cheaper one); fast technological progress; price differentiation (a luxury sub-brand takes buyers from the top models); a shift in preferences (a non-alcoholic line takes share from the regular one); competitive pressure (a discount to clients who would have renewed anyway); channel expansion (an online store for an offline chain).
 
-Key math: transfer matrix (rows = from, columns = to, cells = share of clients; add a "churn" column and a "new clients" row); increment `ΔRevenue = N_new × ARPU_new + Σ M_ij × (ARPU_j − ARPU_i)` where M_ij = number migrated from i to j; `ΔMargin` — same with per-client margin; plan ladder: `Net effect = Revenue(TO BE) − Revenue(AS IS)`, then check margin. Price/base trade: `Revenue = ARPPU × PU`; if ARPPU rises by p, payers may fall by at most `d = p / (1 + p)` without revenue loss (p = 10% → d ≈ 9.1%); plan retention and rollout mechanics for price hikes.
+**Good and bad:**
+| Bad | Good |
+|---|---|
+| flow over with no total growth | new customers arrive, some flow in, total revenue grows |
+| the new item's margin is lower than the old one's | migration "upward" to a more expensive product |
+| migration "down" to cheaper plans | we cannibalize our own obsolete offering before competitors do (strategically) |
+| positioning gets blurred | |
+Criterion: the sign of the net increment (in revenue and in margin alike).
 
-**How:** 1) diagnose: are the conditions present, which type is likely, do user jobs overlap (JTBD, CJM); 2) estimate scale pre-launch: CJM/JTBD analysis, quantitative research on switch probability (surveys, conjoint), "new vs current" concept tests, migration history, portfolio map, each product's contribution to revenue and costs; 3) build the transfer matrix (min/base/max); 4) compute increment for revenue and margin; 5) embed in the traction model as an explicit block, per segment, across **all** model metrics — including indirect chains ("sell without publishing" reduces content → fewer orders); two equivalent forms: `(Was − Cann) × K_growth` before hypotheses or `(Was × K_growth) × (1 − K_cann)` after, with `K_cann = Cann / Was`; 6) monitor post-launch: A/B measured separately on old and new bases, pre/post, cohort analysis old vs new, geo/segment isolation, switchback, spillover check (test and control may compete for the same buyers, producing a false effect); 7) mitigate: positioning and value boundaries between plans, retention mechanics, price-hike plays; removing a feature from the paid tier = churn risk.
+**Types:** product (a new plan takes share from the old one); price (a discount raises volume and cuts margin); channel (a new channel takes from the old one); feature (free delivery devalues paid express); segment (an economy line attracts the mid segment). The course's parallel taxonomy (session 7): **direct** (a product replaces a product: a new smartphone version — easy to model), **indirect** (partially solves the functions of several: a smartphone vs cameras/navigators — hard), **horizontal** (competition between products of the same level: Coca-Cola vs Cherry Coke), **vertical** (migration along a price/feature "funnel": budget → premium).
 
-**Pitfalls:** "we'll look at it when we scale" — inflated expectations; showing gross launch effect instead of increment; assessing cannibalization only at the top level of metrics; forgetting downward flow cuts margin even when clients grow; reading an A/B result without a spillover check; summing this effect with other hypotheses on the same base without a discount.
+### Two-sided (cascading) cannibalization in a marketplace
+When the business model changes (listing → a transactional "done-for-you deal"), cannibalization runs **on both sides at once** and reinforces itself: the seller stops paying for the listing → there is less content → the buyer, too, moves to the new format → the transaction becomes even more attractive to the seller. Model both sides.
+- **The "one budget" principle:** the client has one wallet for one job — "you cannot take it twice": the dealer pays either for the listing or the deal commission, but not both. A new monetization product always competes with the old one for the same budget.
+- **The cascade through the interface:** showing both options on one card ("done-for-you deal" next to "message the seller") steers the flow balance by itself — button placement, the description of the benefits, the visibility of the commission. This is a control lever for cannibalization, not an accident.
+- **Does the commission replace the listing completely?** No — it is "either-or" at the level of each individual deal, but in total the old revenue falls: plan the listing revenue decline as a separate block in the model.
+
+### Baseline calculation method ("look at the total")
+```
+Baseline (listing):         1000 ₽/mo
+After launch:               800 ₽ (listing) + 300 ₽ (transaction)
+Cannibalization:            200 ₽ (listing decline)
+Net effect:                 +100 ₽ — and only because the baseline was computed
+```
+Build the baseline in one of these ways: extrapolation of the trend; YoY against an analogous period; a control group without the launch (A/B); a market benchmark of a competitor without the new model. Looking only at the new product (+300) is the mistake: the total revenue is evaluated against the baseline. Strategic choice: not launch (keep the revenue), launch (lose a part, earn on the commission), launch both and steer the balance with the interface and prices (the hardest path; barrier pricing on the old model — see [[M-monetization]]).
+
+**Risks of ignoring it:** loss of revenue, margin, clients; brand dilution; growing operational complexity of the portfolio; internal competition for resources; channel conflict (several managers approaching one client).
+
+## Procedure
+1. **Diagnostics:** are the conditions present (the list above), which type is likely, do the users' jobs overlap (JTBD, CJM — [[M-jtbd]], [[M-cjm]]).
+2. **Estimate the scale before launch:** CJM/JTBD analysis; quantitative research on the probability of switching (surveys, conjoint); "new versus current" concept tests; a survey of current clients about their willingness to switch products; a portfolio map by criteria; each product's contribution to revenue and costs ([[M-quant-methods]]).
+3. **Transfer matrix** (for plans/a portfolio): rows — from where, columns — to where, cells — share of clients; add a "churn" column and a "new clients" row.
+4. **Increment calculation** (a derivative form of the definition):
+   - `ΔRevenue = N_new × ARPU_new + Σ M_ij × (ARPU_j − ARPU_i)`, where `M_ij` is the number who migrated from i to j;
+   - `ΔMargin` — the same with per-client margin instead of ARPU;
+   - plan ladder: `Net effect = Revenue(TO BE) − Revenue(AS IS)`; check whether the margin grew.
+5. **Price/base trade:** `Revenue = ARPPU × PU`. If ARPPU grows by p, the share of payers may fall by no more than `d = p / (1 + p)` without losing revenue (p = 10% → d ≈ 9.1%). You need to plan retention and the rollout mechanics for the price increase.
+6. **Embedding in the traction model** ([[M-traction-model]]): as a separate explicit block; by segments; onto **all** the model's metrics, not only the top level; account for the indirect trade (a product "sell without publishing a listing" reduces content → the number of orders falls). Two ways: before the hypotheses `(Was − Cann) × K_growth`; after the total effect `(Was × K_growth) × (1 − K_cann)`; the formulas are equivalent at `K_cann = Cann/Was`.
+7. **Monitoring after launch:** A/B with measurements in the cuts (old and new base separately); pre/post; cohort analysis of old versus new; group isolation (geo/segment), switchback, a spillover check — the test and control groups may compete for the same buyers and produce a false effect.
+8. **Mitigation:** positioning and value boundaries between the plans; retention; special mechanics for price increases; disabling a feature in the paid version is to be evaluated as a churn risk.
+
+### Should cannibalization be modeled in?
+| Question | If "yes" |
+|---|---|
+| Raising prices / changing monetization? | the paying base shrinks, possibly an inflow of new clients |
+| Limiting the paid version's functionality? | some users churn |
+| A new product on the current base for the same job? | flow over, the "old" product's metrics fall |
+| Can the trade be indirect? | model the chain of effects |
+
+### Case (skill): a telco's plan ladder
+The goal — how much value to put into each plan so as to minimize churn and downward flow and grow the margin: AS IS (revenue, markup by plans) → TO BE → flow up/down → net effect → margin check. The key: plan not only ARPPU growth but also the decline of the paying base.
+
+## Template / checklist
+| Field | Fill in |
+|---|---|
+| Change (what we launch) | |
+| Cannibalization type | product / price / channel / feature / segment |
+| Victim (product/segment/metric) | |
+| Scale estimation method, confidence class | |
+| Transfer matrix (min/base/max) | |
+| Increment: revenue, margin | |
+| Where in the model (block, formula, K_cann) | |
+| Monitoring metrics, reaction thresholds | |
+Verification questions: what would have happened without the launch? where did the users/revenue come from? how did the total result change?
+Exit path: diagnostics → scale estimation → increment calculation → a block in the model → mitigation → monitoring.
+
+## Typical mistakes
+- "We'll look at it later, when we scale" — inflated expectations.
+- Showing the gross launch effect instead of the increment.
+- Estimating cannibalization only at the top level of the metrics.
+- Forgetting that downward flow cuts the margin even when the client count grows.
+- Reading an A/B result without a spillover check.
+- Summing the new product's effect with the effects of other hypotheses on the same base without a discount ([[M-traction-model]]).
+
+## Questions that can change the decision
+- Does the new one solve the same JTBD as the existing one?
+- Is there data on the base's willingness to switch products (a survey, the history of migrations)?
+- Is the new product's margin higher or lower?
+- Can the groups be isolated for an honest test?
+- What happens if we don't launch but a competitor does (strategic cannibalization)?
+
+## Related maps
+[[M-traction-model]], [[M-unit-economics]], [[M-monetization]], [[M-cjm]], [[M-jtbd]], [[M-quant-methods]], [[M-product-metrics]]
