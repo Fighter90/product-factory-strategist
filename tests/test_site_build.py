@@ -722,6 +722,82 @@ class TestRound2DemoNumbers(unittest.TestCase):
         self.assertEqual(facts["SEG_EN"], facts["TEXT_EN"].split(";")[0].strip())
 
 
+# ---------- раунд ревью: EN-метка выбранного варианта (D_LABEL) ----------
+
+# Вариант с русской меткой + экономика для excel_numbers(): имитирует выбор
+# кириллического варианта A — ровно тот случай, когда RU-текст утекал бы на EN.
+OPT_RU_LABEL = ("## Вариант A. Оставить как есть — бесплатный OSS\n"
+                "- Возражения red team: (1) первое; (2) второе; (3) третье\n"
+                "- Скрытое допущение: что-то предполагается\n"
+                "- Экономика: paid $29/мес; переменные 25% → CM $21,75; "
+                "LTV ≈ $272; LTV/CAC ≈ 4,5\n")
+
+REAL_C011_TEXT = ("Мировой рынок онлайн-рекрутинга: $37,97 млрд (2025), CAGR 7,1% до 2033; "
+                  "Indeed — 60+ стран, 28 языков, 685 млн профилей; "
+                  "Bayt (MENA) — 59+ млн профилей")
+
+
+class TestDLabelEn(unittest.TestCase):
+    """Метка выбранного варианта из русского 03_options.md не утекает на EN-страницу.
+
+    Ревью PRO-66: D_LABEL берётся из русскоязычного документа; на EN-странице
+    должна подставляться EN-метка из карты с громкой сверкой.
+    """
+
+    def setUp(self):
+        self.mod = _load_build_module()
+
+    def _demo(self, options_md: str, letter: str = "A",
+              claims: list[dict] | None = None) -> None:
+        tmp = Path(tempfile.mkdtemp(prefix="pfs-dlabel-"))
+        self.mod.DEMO = _fixture_demo(tmp, options_md=options_md, letter=letter,
+                                      claims=claims or [{"id": "C001", "kind": "fact",
+                                                         "grade": "B", "text": "т",
+                                                         "sources": ["S001"]}])
+
+    def test_returns_en_label_for_cyrillic_choice(self):
+        self._demo(OPT_RU_LABEL)
+        nums = self.mod.demo_numbers()
+        self.assertEqual(nums["D_LABEL"], "Оставить как есть")
+        self.assertEqual(nums["D_LABEL_EN"], "Keep as is")
+
+    def test_unknown_label_is_loud(self):
+        self._demo(OPT_RU_LABEL.replace("Оставить как есть", "Продавать приложение"))
+        with self.assertRaisesRegex(self.mod.BuildError, "EN-перевода"):
+            self.mod.demo_numbers()
+
+    def test_en_label_must_be_cyrillic_free(self):
+        # защита от самой карты: RU-значение в ней не должно пройти на EN-страницу
+        self.mod.D_LABEL_EN_MAP = {"Метка": "Метка по-русски"}
+        self._demo(OPT_RU_LABEL.replace("Оставить как есть", "Метка"))
+        with self.assertRaisesRegex(self.mod.BuildError, "кириллиц"):
+            self.mod.demo_numbers()
+
+    def test_build_puts_en_label_on_en_page_and_ru_on_ru(self):
+        claims = [{"id": "C011", "kind": "fact", "grade": "B",
+                   "text": REAL_C011_TEXT, "sources": ["S001"]}]
+        tmp = Path(tempfile.mkdtemp(prefix="pfs-dlabel-build-"))
+        self.mod.DEMO = _fixture_demo(tmp, options_md=OPT_RU_LABEL, letter="A",
+                                      claims=claims)
+        out = tmp / "out"
+        self.mod.build(out, None)
+        en = _visible_text((out / "en" / "index.html").read_text(encoding="utf-8"))
+        ru = _visible_text((out / "index.html").read_text(encoding="utf-8"))
+        self.assertIn("chosen: Keep as is", en)
+        self.assertNotIn("Оставить как есть", en, "RU-метка утекла на EN-страницу")
+        self.assertIn("выбор: Оставить как есть", ru)
+
+
+class TestDLabelOnLivePages(SiteBuildBase):
+    """На живых данных демо-проекта EN-плитка показывает EN-метку из карты."""
+
+    def test_en_demo_tile_uses_en_label(self):
+        mod = _load_build_module()
+        nums = mod.demo_numbers()
+        self.assertIn(f"chosen: {nums['D_LABEL_EN']}", self.built["en"])
+        self.assertIn(f"выбор: {nums['D_LABEL']}", self.built["ru"])
+
+
 class TestRound3Review(SiteBuildBase):
     """Правки ревью раунда 3: мобильная шапка, бенто без пустых колонок,
     faq_open только у FAQ-аккордеона, зоны нажатия 44 px у навигации и футера."""

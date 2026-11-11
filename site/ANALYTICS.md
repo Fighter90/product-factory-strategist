@@ -26,7 +26,7 @@ python3 scripts/build_site.py --ym-id <ID счётчика>
 | `github_click` | переходы на репозиторий GitHub | `data-goal="github_click"` — финальный CTA |
 | `lang_switch` | переключение языка RU ↔ EN | `data-goal="lang_switch"` на ссылках `.lang a` (на каждой странице ведёт на парную) |
 | `copy_command` | копирование команды установки | кнопки `.copy` в секции «Установка»; JS отправляет `copy_command` с параметром `i` — индекс команды (`0` clone, `1` install, `2` doctor, `3` opencode) |
-| `faq_open` | открытие вопроса в FAQ | JS-обработчик `toggle` на `<details>`; параметр `q` — первые 60 символов вопроса |
+| `faq_open` | открытие вопроса в FAQ | JS-обработчик `toggle` на `<details>`; параметр `q` — первые 60 символов вопроса. Меню-бургер в шапке (`<details class="mlink">`) исключён — он не вопрос и цель с пустым `q` не отправляется |
 
 ## Как работает разметка
 
@@ -34,6 +34,8 @@ python3 scripts/build_site.py --ym-id <ID счётчика>
   отправляет `ym(ID, 'reachGoal', <цель>)` по клику.
 - `copy_command` и `faq_open` вешаются не через `data-goal`, а отдельными обработчиками
   (кнопки копирования и `<details>` соответственно) — тем же общим скриптом.
+  `faq_open` вешается селектором `details:not(.mlink)`: `<details>` мобильного меню
+  не считается раскрытием вопроса.
 - Событие отправляется только если счётчик подключён: скрипт проверяет
   `window.ym && window.YM_ID`. Без `--ym-id` страницы работают без JS-ошибок.
 - Без JS (или до загрузки скрипта) весь текст, числа и навигация доступны: аккордеон
@@ -57,5 +59,6 @@ ID is **not** stored in the repository: pass it at build time via
 pages build with no loader; goals are wired via `data-goal` attributes (`cta_install_click`,
 `cta_demo_click`, `github_click`, `lang_switch`) and two dedicated handlers
 (`copy_command` with an `i` parameter for the copied command index, `faq_open` with a `q`
-parameter holding the question text). Events fire only when the counter is connected
+parameter holding the question text; the header burger menu `<details class="mlink">`
+is excluded from `faq_open`). Events fire only when the counter is connected
 (`window.ym && window.YM_ID`); everything works without JavaScript.
