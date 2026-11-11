@@ -4,6 +4,45 @@
 
 
 
+## 1.3.0 — 2026-11-11 · swarm PRO-65: в навыках только продуктовая стратегия (100 вместо 121)
+
+### Removed
+- 21 навык вне рамок агент-стратега удалён из `.claude/skills/` (121 → 100): биоинформатика и химия
+  (biopython, pydeseq2, rdkit), ML-инструментарий (scikit-learn, shap, statsmodels, seaborn),
+  научные постеры/слайды/схемы (latex-posters, scientific-slides, scientific-schematics),
+  научные базы (paper-lookup, citation-management), ИИ-советы общего назначения (consciousness-council,
+  dhdna-profiler, what-if-oracle, board-of-directors, hallmark), reverse-engineering (rea, включая
+  одноимённый MCP-сервер из .mcp.json — сервер существовал только под этот навык), холодные письма
+  и директории (cold-email, directory-submissions, event-prospecting). Число компонентов само по себе
+  не преимущество: жюри не должно видеть химию в агенте стратега, а длинный список описаний тратил
+  контекст и мешал выбору нужного навыка.
+
+### Changed
+- `docs/SKILLS.md` переписан в полный реестр: таблица «Навык · Шаг/сценарий · Зачем · Кто вызывает»
+  для всех 100 навыков (13 базовых по шагам процесса · 27 product-skills · 57 личной библиотеки ·
+  3 интеграции: premortem · sdd · deck). Навык без привязки к шагу/сценарию — кандидат на удаление.
+- README×2 и HELP×2: каталог навыков и mermaid-схемы приведены к новым группам (13+27+57+3),
+  упоминания удалённых навыков убраны (options → red-team без совета; интеграции — premortem/sdd/deck).
+- Сайт (site/index.html, site/help.html) и docs/SUBMISSION.md: счётчики «121 навык» → 100, примеры
+  интеграций без hallmark/board-of-directors/rea.
+- `scripts/update_counters.py` (расширение PRO-63): FILES дополнилены site/index.html, site/help.html,
+  docs/SUBMISSION.md; новые форматы — трио `data-target="N"` в строке статистики сайта, «голые»
+  «Навыки (N)»/«Skills (N)», число ПОСЛЕ якоря («>skills N<» SVG, mermaid «skills: N»/«subagents: N»).
+  Якорь обязателен: «product-skills 27» (число группы) не задевается как счётчик навыков.
+- Задокументированные числа групп (личная 75/74, интеграции 6) заменены на фактические (57 и 3) —
+  прежние расходились между mermaid и текстом ещё с PRO-63.
+
+### Added
+- tests/test_skills_cleanup.py (13 тестов): каталоги удалённых навыков отсутствуют и осталось ровно
+  100; документация и сайт не упоминают удалённые; docs/SKILLS.md покрывает каждый оставшийся навык
+  с колонками «Шаг/сценарий/Зачем/Кто вызывает»; скрипт счётчиков контролирует сайт и SUBMISSION
+  (подстановка на образцах + гейт `--check` на реальных файлах).
+
+### Verified
+- Полная сюита: **411 тестов — OK**; `pfs doctor` — ok; `python3 -m tools.pfs --help` — ok;
+  `update_counters.py --check` — 0 (README×2, HELP×2, сайт×2, SUBMISSION).
+
+
 ## 1.2.20 — 2026-11-11 · swarm PRO-63: команды из документации работают как написано + автотест документации
 
 ### Fixed

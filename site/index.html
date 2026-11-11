@@ -299,7 +299,7 @@ body[data-lang=ru] [lang=en]{display:none}
 <div class="strip"><div class="wrap">
   <div class="stat"><b><span class="cnt" data-target="12">0</span></b><span lang="ru">шагов процесса, 3 паузы для человека</span><span lang="en">process steps, 3 human checkpoints</span></div>
   <div class="stat"><b><span class="cnt" data-target="89">0</span></b><span lang="ru">карт методик (RU + 89 EN)</span><span lang="en">method cards across categories</span></div>
-  <div class="stat"><b><span class="cnt" data-target="121">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
+  <div class="stat"><b><span class="cnt" data-target="100">0</span>/<span class="cnt" data-target="8">0</span>/<span class="cnt" data-target="4">0</span></b><span lang="ru">навыков / субагентов / хуков</span><span lang="en">skills / subagents / hooks</span></div>
   <div class="stat"><b>0</b><span lang="ru">зависимостей — только stdlib Python</span><span lang="en">dependencies — Python stdlib only</span></div>
   <div class="stat"><b><span class="cnt" data-target="100">0</span>%</b><span lang="ru">чисел подтверждены источниками · у обычного чата 0%</span><span lang="en">of numbers verifiable — plain chat: 0%</span></div>
 </div></div>
@@ -503,8 +503,8 @@ body[data-lang=ru] [lang=en]{display:none}
   <div class="sec-head">
     <span class="overline" lang="ru">05 · Архитектура</span><span class="overline" lang="en">05 · Architecture</span>
     <h2 class="rv" lang="ru">Архитектура: как устроен агент</h2><h2 class="rv" lang="en">Architecture: how the agent works</h2>
-    <p class="lead rv d1" lang="ru">Слои агента: среда (AGENTS.md, 121 skills, 8 субагентов, 4 хука) → CLI+MCP-ядро <code>tools/pfs</code> → база из 89 карт методик (RU + EN-индекс) и интеграции. Гарантии — не в промптах, а в коде pfs; состояние — в файлах проекта, поэтому работа переживает перерывы и переезды между средами.</p>
-    <p class="lead rv d1" lang="en">The agent's layers: environment (AGENTS.md, 121 skills, 8 subagents, 4 hooks) → the <code>tools/pfs</code> CLI+MCP core → a knowledge base of 89 method cards and integrations. Guarantees live in pfs code, not in prompts; state lives in project files, so work survives breaks and moves between environments.</p>
+    <p class="lead rv d1" lang="ru">Слои агента: среда (AGENTS.md, 100 skills, 8 субагентов, 4 хука) → CLI+MCP-ядро <code>tools/pfs</code> → база из 89 карт методик (RU + EN-индекс) и интеграции. Гарантии — не в промптах, а в коде pfs; состояние — в файлах проекта, поэтому работа переживает перерывы и переезды между средами.</p>
+    <p class="lead rv d1" lang="en">The agent's layers: environment (AGENTS.md, 100 skills, 8 subagents, 4 hooks) → the <code>tools/pfs</code> CLI+MCP core → a knowledge base of 89 method cards and integrations. Guarantees live in pfs code, not in prompts; state lives in project files, so work survives breaks and moves between environments.</p>
   </div>
   <div class="arch-scroll rv d2"><svg viewBox="0 0 1200 640" width="100%" role="img">
       <title>Архитектура агента / Agent architecture</title>
@@ -526,7 +526,7 @@ body[data-lang=ru] [lang=en]{display:none}
       <rect x="350" y="76" width="350" height="32" rx="7" fill="rgba(5,9,18,.7)" stroke="rgba(129,140,248,.45)"/>
       <text x="525" y="97" text-anchor="middle" font-size="12" fill="#eef2ff">AGENTS.md · 12 шагов / steps</text>
       <rect x="350" y="116" width="350" height="32" rx="7" fill="rgba(5,9,18,.7)" stroke="rgba(129,140,248,.45)"/>
-      <text x="525" y="137" text-anchor="middle" font-size="12" fill="#eef2ff">skills 121</text>
+      <text x="525" y="137" text-anchor="middle" font-size="12" fill="#eef2ff">skills 100</text>
       <rect x="350" y="156" width="350" height="32" rx="7" fill="rgba(5,9,18,.7)" stroke="rgba(129,140,248,.45)"/>
       <text x="525" y="177" text-anchor="middle" font-size="12" fill="#eef2ff">subagents 8 · hooks 4</text>
       <path d="M520 240V300" fill="none" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#ar-a)"/>

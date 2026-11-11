@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Подстановка счётчиков документации при релизе (PRO-63).
+"""Подстановка счётчиков документации при релизе (PRO-63, расширение PRO-65).
 
 Считает фактические числа (автотесты, навыки, карты знаний, субагенты) и
 подставляет их вместо устаревших в README.md, README_EN.md, docs/HELP.md,
-docs/HELP_EN.md. Запуск вручную перед релизом или в release-скрипте:
+docs/HELP_EN.md, site/index.html, site/help.html, docs/SUBMISSION.md.
+Запуск вручную перед релизом или в release-скрипте:
 
     python3 scripts/update_counters.py           # обновить файлы
     python3 scripts/update_counters.py --check   # только проверить: 0 — актуально, 1 — разъехалось
@@ -11,11 +12,13 @@ docs/HELP_EN.md. Запуск вручную перед релизом или в
 Что подставляется:
 - число тестов (`python3 -m unittest discover -s tests`) — строки с `unittest discover`
   и «голый» счётчик `tests/ (N)` в таблице структуры репозитория;
-- число навыков — каталоги `.claude/skills`: словесные («121 навык», «121 skills in»)
-  и «голые» `skills/ (N` / `**Структура (N)**`;
+- число навыков — каталоги `.claude/skills`: словесные («121 навык», «121 skills in»),
+  «голые» `skills/ (N` / `**Структура (N)** / «Навыки (N)» / «Skills (N)»,
+  число ПОСЛЕ токена с якорем — SVG «>skills N<» и mermaid «skills: N»,
+  трио `data-target="N"` в строке статистики сайта «навыков / субагентов / хуков»;
 - число карт знаний — `knowledge/methods/*.md` (RU) и `knowledge/methods_en/*.md` (EN-зеркала),
   рядом с словами «карт/карта» и «EN-зеркал/EN mirrors»;
-- число субагентов — `.claude/agents/*.md`.
+- число субагентов — `.claude/agents/*.md` (словесные и mermaid «subagents: N»).
 
 Родительный падеж подставляется по правилам русского языка (тест/теста/тестов).
 Словоформы перебираются от длинных к коротким и матчатся с границей слова (`\b`):
@@ -25,6 +28,8 @@ docs/HELP_EN.md. Запуск вручную перед релизом или в
 Единственное число «тест» тоже в переборе: без него счётчик замирал на значениях,
 оканчивающихся на 1 («391 тест» не матчился ни «тестом», ни «теста» на следующем
 прогоне), а --check сообщал OK по устаревшему документу (PRO-63, ревью круг 2).
+Число ПОСЛЕ токена матчится только с якорем («>»/«:»): «>skills 121<» и «skills: 120»
+обновляются, а «product-skills 27» (число группы) не задевается (PRO-65).
 stdlib only.
 """
 from __future__ import annotations
@@ -35,7 +40,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-FILES = ["README.md", "README_EN.md", "docs/HELP.md", "docs/HELP_EN.md"]
+FILES = ["README.md", "README_EN.md", "docs/HELP.md", "docs/HELP_EN.md",
+         "site/index.html", "site/help.html", "docs/SUBMISSION.md"]
 
 
 def count_tests() -> int:
@@ -123,6 +129,47 @@ def sub_bare(text: str, token: str, value: int) -> tuple[str, int]:
     return pattern.sub(repl, text), changed
 
 
+def sub_after_anchored(text: str, anchor: str, value: int) -> tuple[str, int]:
+    r"""Число ПОСЛЕ токена-якоря → value: SVG «>skills 121<», mermaid «skills: 120».
+
+    Якорь («>» или «:») обязателен: без него «product-skills 27» и «Базовые 13»
+    (числа групп внутри перечислений) задевались бы как счётчики навыков (PRO-65)."""
+    pattern = re.compile(r"(" + re.escape(anchor) + r"\s*)(\d+)")
+    changed = 0
+
+    def repl(m: re.Match) -> str:
+        nonlocal changed
+        if m.group(2) != str(value):
+            changed += 1
+        return f"{m.group(1)}{value}"
+
+    return pattern.sub(repl, text), changed
+
+
+def sub_data_targets(text: str, values: dict[str, int]) -> tuple[str, int]:
+    """Трио счётчиков сайта: `data-target="N"` в строке статистики
+    «навыков / субагентов / хуков» → skills, subagents (хуки не считаются).
+
+    Только эта строка: соседние data-target (шаги, карты, проценты) не трогаются."""
+    if not ("навыков / субагентов" in text or "skills / subagents" in text):
+        return text, 0
+    pattern = re.compile(r'data-target="(\d+)"')
+    order = [values.get("skills"), values.get("subagents")]
+    state = {"i": 0, "changed": 0}
+
+    def repl(m: re.Match) -> str:
+        i = state["i"]
+        state["i"] = i + 1
+        if i >= len(order):
+            return m.group(0)
+        new = str(order[i])
+        if m.group(1) != new:
+            state["changed"] += 1
+        return f'data-target="{new}"'
+
+    return pattern.sub(repl, text), state["changed"]
+
+
 def update_file(path: Path, c: dict, write: bool = True) -> tuple[str, int]:
     """Подстановка счётчиков в один файл. Возвращает (новый текст, число замен).
 
@@ -156,12 +203,22 @@ def update_file(path: Path, c: dict, write: bool = True) -> tuple[str, int]:
             if re.search(r"\d+\s+" + re.escape(word) + r"\b", line):
                 line, n = sub_number(line, word, val)
                 total += n
-        # «Голые» счётчики структуры: tests/ (N) · skills/ (N… · **Структура (N)**.
+        # «Голые» счётчики структуры: tests/ (N) · skills/ (N… · **Структура (N)** · «Навыки (N)».
         for token, val in (("tests/", c["tests"]), ("skills/", c["skills"]),
-                           ("Структура", c["skills"])):
+                           ("Структура", c["skills"]), ("Навыки", c["skills"]),
+                           ("Skills", c["skills"])):
             if re.search(re.escape(token) + r"\s*\(\d+", line):
                 line, n = sub_bare(line, token, val)
                 total += n
+        # Число ПОСЛЕ якоря: SVG «>skills 121<», mermaid «skills: 120» / «subagents: 8».
+        for anchor, val in ((">skills", c["skills"]), ("skills:", c["skills"]),
+                            ("subagents:", c["subagents"])):
+            if re.search(re.escape(anchor) + r"\s*\d+", line):
+                line, n = sub_after_anchored(line, anchor, val)
+                total += n
+        # Трио data-target на строке статистики сайта («навыков / субагентов / хуков»).
+        line, n = sub_data_targets(line, {"skills": c["skills"], "subagents": c["subagents"]})
+        total += n
         lines[i] = line
     new_text = "".join(lines)
     if write and new_text != text:

@@ -37,7 +37,7 @@ You need: Python 3.9+ (no packages), git, any environment above. Optional: `pdft
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # self-check (398 tests)
+python3 -m unittest discover -s tests          # self-check (411 tests)
 ```
 
 `doctor` reports install mode (editable/venv/source), package version, `pfs` path (which), PATH health, projects dir location, Python version, pdftotext/pypdf availability, number of knowledge cards, active project.
@@ -297,40 +297,36 @@ the report itself is origin agent — hypotheses only. Telemetry: `FEYNMAN_TELEM
 
 ## Skills: structure and invocation
 
-Alongside the process the environment loads **skills** — packaged instruction sets (121 in total, in three
+Alongside the process the environment loads **skills** — packaged instruction sets (100 in total, in three
 groups plus integrations):
 
 - **Base (13)** — one per process step: `intake`, `research`, `situation`, `options`, `strategy`,
   `validation-plan`, `decision-support`, `six-pager`, `deck`, etc.
 - **Product-skills (27)** — domain packs around the process: segments, JTBD, unit economics, growth, risks.
-- **Personal library (75)** — imported packs by category:
+- **Personal library (57)** — domain expertise:
   - **Design** — `design-ui`, `refero-design`, `frontend-design`, `claudable-landing`, `make-interfaces-feel-better`,
     `emil-design-eng`, `web-design-guidelines`;
-  - **Marketing** — `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `cold-email`,
-    `emails`, `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`,
-    `directory-submissions`, `customer-research`, `marketing-psychology`, `prospecting`…;
-  - **Science** — `paper-lookup`, `research-lookup`, `literature-review`, `scientific-writing`,
-    `scientific-critical-thinking`, `peer-review`, `statistical-analysis`, `statsmodels`, `scikit-learn`,
-    `hypothesis-generation`, `pydeseq2`, `biopython`, `rdkit`;
+  - **Marketing & comms** — `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `emails`,
+    `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`, `customer-research`,
+    `marketing-psychology`, `prospecting`…;
+  - **Research & science** — `research-lookup`, `literature-review`, `scientific-writing`,
+    `scientific-critical-thinking`, `peer-review`, `hypothesis-generation`, `defuddle`;
+  - **Data** — `statistical-analysis`, `exploratory-data-analysis`, `matplotlib`, `scientific-visualization`;
   - **Docs/media** — `pdf`, `docx`, `pptx`, `xlsx`, `markitdown`, `officecli`, `generate-image`, `video`,
-    `infographics`, `scientific-slides`/`scientific-schematics`/`scientific-visualization`, `latex-posters`,
-    `matplotlib`, `seaborn`;
-  - **Thinking modes** — `consciousness-council`, `balanced`, `what-if-oracle`,
-    `dhdna-profiler`;
-  - **Meta** — `find-skills`, `shap`, `watch`, `transcribe`.
-- **Integrations** — cross-process behaviors: `hallmark` (anti-slop gates for pages), `board-of-directors`
-  (5-perspective council + Red Team), `premortem` (failure pre-mortem), `rea` (reverse engineering of pages
-  and closed formats), `sdd`, `deck`.
+    `infographics`, `watch`, `transcribe`;
+  - **Thinking modes/meta** — `balanced`, `find-skills`.
+- **Integrations** — cross-process behaviors: `premortem` (failure pre-mortem), `sdd` (development
+  discipline), `deck` (six-pager presentation).
 
 How skills are invoked:
 
 - **Automatically** — by description trigger: the task matches, the skill loads.
-- **Explicitly** — say `use skill <name>: <task>` (example: `use skill hallmark: build the landing`).
-- **In-process, by step** — `pfs step` prints the step's knowledge cards; at `options` expensive decisions
-  additionally get `board-of-directors`; at `decision` — `decision-support` plus `premortem` AFTER the D###
-  draft and BEFORE your approval; at `research` — `deep-research` and `rea` for JS-rendered pages.
+- **Explicitly** — say `use skill <name>: <task>` (example: `use skill design-ui: build the landing`).
+- **In-process, by step** — `pfs step` prints the step's knowledge cards; at `options` the `red-team`
+  subagent attacks each variant; at `decision` — `decision-support` plus `premortem` AFTER the D###
+  draft and BEFORE your approval; at `research` — `deep-research` for literature reviews.
 
-Examples of requests: "run a premortem on D001", "use skill hallmark: build the landing".
+Examples of requests: "run a premortem on D001", "use skill design-ui: build the landing".
 
 Precedence rule: on conflict, the `knowledge/` methodology wins over a skill's own procedure.
 Full registry of skills — [`SKILLS.md`](SKILLS.md).
