@@ -42,6 +42,10 @@ python3 scripts/swarm/prep_linear.py   # метка swarm на PRO-26…PRO-40 +
 
 - single-instance lock: `.task-board/lock` (эксклюзивное создание)
 - грязное дерево (кроме untracked и `projects/.active`) → аборт до выбора задачи
+  (auto-stash не используется: он молча уносил бы WIP человека — решение review PRO-64 round 3)
+- две проваленные попытки (gates/review) → задача паркуется в Backlog; счётчик
+  `.task-board/attempts.json` переживает перезапуски роя, но затухает через 7 дней
+  (TTL), а старый формат записей (число без ts) считается истёкшим; успех сбрасывает счётчик
 - работа на detached `origin/main`, ветки `swarm/<identifier>`
 - reflog-спасение потерянных коммитов исполнителя (уроки run-5/run-6 career-ops)
 - фейл на любом шаге → комментарий в задаче; Life-cycle Linear принадлежит оркестратору
