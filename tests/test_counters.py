@@ -138,6 +138,47 @@ class WordFormBoundary(unittest.TestCase):
                 self.assertEqual((out, n), (src, 0), f"{src!r}")
 
 
+class SingularTestForm(unittest.TestCase):
+    """Ревью PRO-63 (круг 2 возврат): в переборе словоформ (`update_file`) и в известных
+    словах (`ru_form`, `sub_number`) нет единственного числа «тест». Когда счётчик
+    тестов оканчивается на 1 (387 → 391), документ получает форму «391 тест» — и на
+    следующем прогоне ни «тестов», ни «теста» не матчятся: счётчик молча замирает,
+    а `--check` сообщает OK по устаревшему документу."""
+
+    def setUp(self):
+        self.mod = _load()
+
+    @staticmethod
+    def _counts(tests: int) -> dict:
+        return {"tests": tests, "skills": 122, "cards_ru": 40,
+                "cards_en": 40, "subagents": 9}
+
+    def test_sequence_387_391_392_tracks_the_count(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "README.md"
+            p.write_text("python3 -m unittest discover -s tests — 387 тестов\n",
+                         encoding="utf-8")
+            text, _ = self.mod.update_file(p, self._counts(391))
+            self.assertIn("391 тест\n", text)  # 391 → единственное число
+            text, _ = self.mod.update_file(p, self._counts(392))
+            self.assertIn("392 теста\n", text)  # без фикса счётчик замирает на 391
+            self.assertNotIn("391", text)
+
+    def test_check_fails_on_stale_singular_form(self):
+        # Счётчик 392, документ говорит «391 тест»: гейт обязан бить тревогу,
+        # а не сообщать OK (без «тест» в переборе замена не находится вовсе).
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "README.md").write_text(
+                "python3 -m unittest discover -s tests — 391 тест\n", encoding="utf-8")
+            saved = self.mod.FILES
+            self.mod.FILES = ["README.md"]
+            try:
+                rc = self.mod.main(["--check"], root=Path(d))
+            finally:
+                self.mod.FILES = saved
+            self.assertEqual(rc, 1)
+
+
 class CheckModeIsDryRun(unittest.TestCase):
     """Ревью PRO-63 (круг 2): --check описан как «только проверить», но update_file
     писал файлы на диск и в check-режиме — гейт молча правил README/HELP при запуске

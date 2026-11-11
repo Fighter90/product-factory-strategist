@@ -44,12 +44,12 @@ pfs                                       # без аргументов — шп
 ```
 
 Папка проектов: `<репо>/projects` по умолчанию; переопределяется `PFS_PROJECTS_DIR`.
+Paths (knowledge, config) резолвятся от расположения пакета — cwd не важен.
 
 **Outside the repository folder only the installed `pfs` works.** `python3 -m tools.pfs` runs the
 `tools` module from the repository folder: outside it Python cannot find the module
 (`ModuleNotFoundError: No module named 'tools'`). Once installed (`./scripts/install.sh`), the `pfs`
 command works from any directory — agents in client projects should call `pfs`.
-Paths (knowledge, config) резолвятся от расположения пакета — cwd не важен.
 
 ## Обновление
 
