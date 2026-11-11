@@ -4,6 +4,8 @@
 «тёплый тёмный» без градиентного текста, контраст WCAG AA, подстановка чисел из
 репозитория (карты/навыки/тесты/демо-проект), отсутствие языковых утечек в EN,
 цели Метрики, видимость без JS, постер и prefers-reduced-motion у видео.
+Раунд 2 ревью: сравнение с чатом на мобильном — карточки с подписями колонок,
+под reduced motion виден статичный кадр постера, каталог демо — projects/демо.
 """
 from __future__ import annotations
 
@@ -162,6 +164,13 @@ def _visible_text(page: str) -> str:
     body = re.sub(r"<style\b.*?</style>", " ", body, flags=re.S)
     body = re.sub(r"<[^>]+>", " ", body)
     return html_mod.unescape(body)
+
+
+def media_block(page: str, header: str) -> str:
+    """Тело @media-блока по заголовку в скобках, напр. 'max-width:640px'."""
+    m = re.search(re.escape("@media (" + header + "){") + r"(.*?)}}", page, flags=re.S)
+    assert m, f"нет @media ({header})"
+    return m.group(1)
 
 
 # ---------- сборка ----------
@@ -1042,6 +1051,77 @@ class TestRound3Review(SiteBuildBase):
         for lang, page in self.built.items():
             self.assertIn("min-height:44px", self._rule(page, ".links a"), lang)
             self.assertIn("min-height:44px", self._rule(page, "footer nav a"), lang)
+
+
+class TestRound2ReviewFixes(SiteBuildBase):
+    """Правки раунда 2 ревью PRO-66: (1) секция «Чем отличается от обычного чата»
+    на мобильном — карточки с inline-подписями колонок (data-label), а не скрытая
+    шапка без семантики; (2) при prefers-reduced-motion hero не пустеет — виден
+    статичный кадр постера (display:none у видео прячет и его постер); (3) в
+    комментарии сборки каталог демо-проекта назван как в репозитории — projects/демо."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        pages = (("ru", cls.built["ru"]), ("en", cls.built["en"]))
+        cls.mobile = {lang: media_block(page, "max-width:640px") for lang, page in pages}
+        cls.reduced = {lang: media_block(page, "prefers-reduced-motion:reduce")
+                       for lang, page in pages}
+
+    # --- 1: сравнение с чатом превращается в карточки с подписями колонок ---
+
+    def test_comparison_cells_carry_inline_labels(self):
+        labels = {"ru": ("Обычный чат", "Стратег"), "en": ("Plain chat", "Strategist")}
+        for lang, page in self.landing():
+            chat, agent = labels[lang]
+            # 6 строк × 2 колонки с подписью; шапка таблицы остаётся для десктопа
+            self.assertEqual(page.count('data-label="'), 12, lang)
+            self.assertEqual(page.count(f'data-label="{chat}"'), 6, lang)
+            self.assertEqual(page.count(f'data-label="{agent}"'), 6, lang)
+            block = page.split('<div class="cmp">')[1].split("</section>")[0]
+            # ни одна колонка данных не осталась без подписи
+            self.assertNotIn('<span class="muted">', block, lang)
+            self.assertNotIn('<span class="yes">', block, lang)
+
+    def test_comparison_rows_are_cards_on_mobile(self):
+        for lang in ("ru", "en"):
+            m = self.mobile[lang]
+            # строка — карточка, а не однострочный обрывок
+            self.assertIn(".cmp .row{display:block", m, lang)
+            self.assertIn("border:1px solid var(--line2)", m, lang)
+            self.assertIn("border-radius", m, lang)
+            # обе колонки получают inline-подпись вместо потерянной шапки
+            self.assertIn(".cmp .muted::before{content:attr(data-label)", m, lang)
+            self.assertIn(".cmp .yes::before{content:attr(data-label)", m, lang)
+            # шапка на мобильном скрыта: её роль берут подписи ячеек
+            self.assertIn(".cmp .row.hd{display:none}", m, lang)
+
+    # --- 2: reduced motion показывает статичный кадр, а не пустой hero ---
+
+    def test_reduced_motion_shows_poster(self):
+        for lang, page in self.landing():
+            m = re.search(r'<img class="poster"[^>]*>', page)
+            self.assertIsNotNone(m, f"{lang}: нет статичного кадра постера")
+            tag = m.group(0)
+            self.assertIn("assets/hero-poster.webp", tag, lang)
+            self.assertIn('width="1600"', tag, lang)
+            self.assertIn('height="900"', tag, lang)
+            self.assertIn('alt=""', tag, lang)
+            # по умолчанию кадр скрыт — играет видео
+            self.assertIn(".hero.poster{display:none}", page.replace(" ", ""), lang)
+            rm = self.reduced[lang]
+            self.assertIn(".hero video{display:none}", rm, lang)
+            # видео спрятано вместе со своим постером — кадр показываем отдельным img
+            self.assertIn(".hero .poster{display:block}", rm, lang)
+
+    # --- 3: комментарий сборки называет каталог как в репозитории ---
+
+    def test_build_comment_names_demo_dir(self):
+        # каталог демо-проекта — projects/демо (кириллицей), а не projects/demo
+        self.assertIn("из projects/демо", self.built["ru"])
+        for lang, page in self.built.items():
+            self.assertNotIn("projects/demo", page, lang)
+        # EN-исходник запрещено писать кириллицей (PRO-61) — там путь не упомянут
 
 
 if __name__ == "__main__":

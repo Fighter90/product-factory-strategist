@@ -78,7 +78,9 @@ h3{font-size:20px;line-height:1.3}
 
 /* hero */
 .hero{position:relative;overflow:hidden;min-height:760px;display:flex;align-items:center;padding:150px 0 110px;text-align:center;border-bottom:1px solid var(--line)}
-.hero video{position:absolute;left:50%;top:50%;width:min(1100px,140%);transform:translate(-50%,-48%);opacity:.85;mix-blend-mode:screen;pointer-events:none}
+/* poster frame mirrors the video so prefers-reduced-motion can show it instead */
+.hero video,.hero .poster{position:absolute;left:50%;top:50%;width:min(1100px,140%);height:auto;transform:translate(-50%,-48%);opacity:.85;mix-blend-mode:screen;pointer-events:none}
+.hero .poster{display:none}
 .hero .tint{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#F6C089 0%,#EE8A3C 38%,#8C4A1E 75%);mix-blend-mode:multiply;pointer-events:none}
 .hero .fade{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(11,10,9,.25) 0%,rgba(11,10,9,.7) 55%,var(--bg) 85%);pointer-events:none}
 .hero .inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:26px}
@@ -245,13 +247,21 @@ p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono
   .hero{min-height:640px;padding:130px 0 80px}
   .subhero{padding:140px 0 56px}
   .phases,.faqlist,.mgrid,.shots{grid-template-columns:minmax(0,1fr)}
-  .cmp .row,.rows .row{grid-template-columns:minmax(0,1fr);gap:4px}.cmp .row.hd{display:none}
+  .rows .row{grid-template-columns:minmax(0,1fr);gap:6px;padding:16px;border:1px solid var(--line2);border-radius:14px;background:var(--card);margin-bottom:10px}
+  .rows .row:last-child{margin-bottom:0}
+  .cmp .row{display:block;padding:16px 18px;border:1px solid var(--line2);border-radius:14px;background:var(--card);margin-bottom:10px}
+  .cmp .row:last-child{margin-bottom:0}
+  .cmp .row.hd{display:none}
+  .cmp .what{display:block;margin-bottom:10px}
+  .cmp .muted,.cmp .yes{display:block}
+  .cmp .muted::before{content:attr(data-label);display:block;width:auto;height:auto;border-radius:0;background:none;transform:none;margin:0 0 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .cmp .yes::before{content:attr(data-label);display:block;width:auto;height:auto;border-radius:0;background:none;transform:none;margin:0 0 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .facts span{border-left:0;padding:2px 10px}
   .nav .bar{gap:8px}
   .bar .pill{display:none}
 }
-@media (prefers-reduced-motion:reduce){.hero video{display:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){.hero video{display:none}.hero .poster{display:block}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>

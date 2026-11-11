@@ -110,7 +110,7 @@ Stricter than CAN-SPAM. Cold B2B outreach requires:
 
 ## Quick Audit Checklist
 
-Before shipping a list to the user (or downstream to cold-email):
+Before shipping a list to the user (or downstream to outreach):
 
 - [ ] Every contact has a source URL + collection date
 - [ ] No contacts sourced from scraped LinkedIn data
@@ -120,4 +120,4 @@ Before shipping a list to the user (or downstream to cold-email):
 - [ ] Personal addresses (Gmail, etc.) flagged or excluded
 - [ ] Source provider contracts permit the intended use case
 - [ ] Retention plan documented (when to delete)
-- [ ] First outreach will include unsubscribe + privacy notice (downstream concern for cold-email skill, but mention it now)
+- [ ] First outreach will include unsubscribe + privacy notice (downstream outreach concern, but mention it now)

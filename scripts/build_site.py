@@ -628,7 +628,9 @@ h3{font-size:20px;line-height:1.3}
 
 /* hero */
 .hero{position:relative;overflow:hidden;min-height:760px;display:flex;align-items:center;padding:150px 0 110px;text-align:center;border-bottom:1px solid var(--line)}
-.hero video{position:absolute;left:50%;top:50%;width:min(1100px,140%);transform:translate(-50%,-48%);opacity:.85;mix-blend-mode:screen;pointer-events:none}
+/* poster frame mirrors the video so prefers-reduced-motion can show it instead */
+.hero video,.hero .poster{position:absolute;left:50%;top:50%;width:min(1100px,140%);height:auto;transform:translate(-50%,-48%);opacity:.85;mix-blend-mode:screen;pointer-events:none}
+.hero .poster{display:none}
 .hero .tint{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#F6C089 0%,#EE8A3C 38%,#8C4A1E 75%);mix-blend-mode:multiply;pointer-events:none}
 .hero .fade{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(11,10,9,.25) 0%,rgba(11,10,9,.7) 55%,var(--bg) 85%);pointer-events:none}
 .hero .inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:26px}
@@ -795,13 +797,21 @@ p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono
   .hero{min-height:640px;padding:130px 0 80px}
   .subhero{padding:140px 0 56px}
   .phases,.faqlist,.mgrid,.shots{grid-template-columns:minmax(0,1fr)}
-  .cmp .row,.rows .row{grid-template-columns:minmax(0,1fr);gap:4px}.cmp .row.hd{display:none}
+  .rows .row{grid-template-columns:minmax(0,1fr);gap:6px;padding:16px;border:1px solid var(--line2);border-radius:14px;background:var(--card);margin-bottom:10px}
+  .rows .row:last-child{margin-bottom:0}
+  .cmp .row{display:block;padding:16px 18px;border:1px solid var(--line2);border-radius:14px;background:var(--card);margin-bottom:10px}
+  .cmp .row:last-child{margin-bottom:0}
+  .cmp .row.hd{display:none}
+  .cmp .what{display:block;margin-bottom:10px}
+  .cmp .muted,.cmp .yes{display:block}
+  .cmp .muted::before{content:attr(data-label);display:block;width:auto;height:auto;border-radius:0;background:none;transform:none;margin:0 0 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .cmp .yes::before{content:attr(data-label);display:block;width:auto;height:auto;border-radius:0;background:none;transform:none;margin:0 0 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .facts span{border-left:0;padding:2px 10px}
   .nav .bar{gap:8px}
   .bar .pill{display:none}
 }
-@media (prefers-reduced-motion:reduce){.hero video{display:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){.hero video{display:none}.hero .poster{display:block}html{scroll-behavior:auto}}
 """
 
 JS = """
@@ -931,6 +941,7 @@ RU_BODY = f"""
 
 <section class="hero" id="top" aria-labelledby="h1">
   <video src="{{{{A}}}}assets/hero-swarm-2.mp4" poster="{{{{A}}}}assets/hero-poster.webp" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+  <img class="poster" src="{{{{A}}}}assets/hero-poster.webp" width="1600" height="900" alt="" aria-hidden="true">
   <div class="tint" aria-hidden="true"></div><div class="fade" aria-hidden="true"></div>
   <div class="wrap inner">
     <div class="eyebrow">Исследование, а не текст про стратегию</div>
@@ -980,12 +991,12 @@ RU_BODY = f"""
     </div>
     <div class="cmp">
       <div class="row hd label"><span>Что важно для решения</span><span>Обычный чат</span><span style="color:var(--accent)">Стратег</span></div>
-      <div class="row"><span class="what">Источник у каждого числа</span><span class="muted">по просьбе, ссылки не проверяются</span><span class="yes">утверждение C### ведёт к источнику S### с цитатой</span></div>
-      <div class="row"><span class="what">Факты отдельно от гипотез</span><span class="muted">смешаны в одном ответе</span><span class="yes">тип утверждения и сила доказательства A–D</span></div>
-      <div class="row"><span class="what">Варианты, включая «оставить» и «закрыть»</span><span class="muted">обычно один ответ</span><span class="yes">не меньше трёх, red team атакует каждый</span></div>
-      <div class="row"><span class="what">Расчёты</span><span class="muted">числа внутри текста</span><span class="yes">Excel с формулами и листом «Ввод»</span></div>
-      <div class="row"><span class="what">Продолжение после перерыва</span><span class="muted">контекст теряется</span><span class="yes">состояние в файлах, новый чат продолжает с того же шага</span></div>
-      <div class="row"><span class="what">Сколько стоил результат</span><span class="muted">неизвестно</span><span class="yes">токены по моделям и минуты человека</span></div>
+      <div class="row"><span class="what">Источник у каждого числа</span><span class="muted" data-label="Обычный чат">по просьбе, ссылки не проверяются</span><span class="yes" data-label="Стратег">утверждение C### ведёт к источнику S### с цитатой</span></div>
+      <div class="row"><span class="what">Факты отдельно от гипотез</span><span class="muted" data-label="Обычный чат">смешаны в одном ответе</span><span class="yes" data-label="Стратег">тип утверждения и сила доказательства A–D</span></div>
+      <div class="row"><span class="what">Варианты, включая «оставить» и «закрыть»</span><span class="muted" data-label="Обычный чат">обычно один ответ</span><span class="yes" data-label="Стратег">не меньше трёх, red team атакует каждый</span></div>
+      <div class="row"><span class="what">Расчёты</span><span class="muted" data-label="Обычный чат">числа внутри текста</span><span class="yes" data-label="Стратег">Excel с формулами и листом «Ввод»</span></div>
+      <div class="row"><span class="what">Продолжение после перерыва</span><span class="muted" data-label="Обычный чат">контекст теряется</span><span class="yes" data-label="Стратег">состояние в файлах, новый чат продолжает с того же шага</span></div>
+      <div class="row"><span class="what">Сколько стоил результат</span><span class="muted" data-label="Обычный чат">неизвестно</span><span class="yes" data-label="Стратег">токены по моделям и минуты человека</span></div>
     </div>
   </div>
 </section>
@@ -1115,7 +1126,7 @@ RU_BODY = f"""
       <div><a class="pill pill-b pill-sm" href="demo.html" data-goal="cta_demo_click">Открыть разбор{ARROW}</a></div>
     </div>
     <div>
-      <!-- числа подставляет scripts/build_site.py из projects/demo -->
+      <!-- числа подставляет scripts/build_site.py из projects/демо -->
       <dl class="stats">
         <div><dt><span>источников</span></dt><dd style="margin:0"><b>{{{{D_SOURCES}}}}</b></dd></div>
         <div><dt><span>утверждений, из них факты — {{{{D_FACTS}}}}</span></dt><dd style="margin:0"><b>{{{{D_CLAIMS}}}}</b></dd></div>
@@ -1234,6 +1245,7 @@ EN_BODY = f"""
 
 <section class="hero" id="top" aria-labelledby="h1">
   <video src="{{{{A}}}}assets/hero-swarm-2.mp4" poster="{{{{A}}}}assets/hero-poster.webp" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+  <img class="poster" src="{{{{A}}}}assets/hero-poster.webp" width="1600" height="900" alt="" aria-hidden="true">
   <div class="tint" aria-hidden="true"></div><div class="fade" aria-hidden="true"></div>
   <div class="wrap inner">
     <div class="eyebrow">Research, not prose about strategy</div>
@@ -1283,12 +1295,12 @@ EN_BODY = f"""
     </div>
     <div class="cmp">
       <div class="row hd label"><span>What the decision needs</span><span>Plain chat</span><span style="color:var(--accent)">Strategist</span></div>
-      <div class="row"><span class="what">A source for every number</span><span class="muted">on request, links unchecked</span><span class="yes">claim C### links to source S### with a quote</span></div>
-      <div class="row"><span class="what">Facts kept apart from guesses</span><span class="muted">mixed into one answer</span><span class="yes">claim type plus evidence grade A–D</span></div>
-      <div class="row"><span class="what">Options that include “keep” and “shut down”</span><span class="muted">usually a single answer</span><span class="yes">at least three, each attacked by a red team</span></div>
-      <div class="row"><span class="what">Calculations</span><span class="muted">numbers inside prose</span><span class="yes">Excel with formulas and an input sheet</span></div>
-      <div class="row"><span class="what">Picking up after a break</span><span class="muted">context is lost</span><span class="yes">state lives in files, a new chat resumes at the same step</span></div>
-      <div class="row"><span class="what">What the result cost</span><span class="muted">unknown</span><span class="yes">tokens per model and human minutes</span></div>
+      <div class="row"><span class="what">A source for every number</span><span class="muted" data-label="Plain chat">on request, links unchecked</span><span class="yes" data-label="Strategist">claim C### links to source S### with a quote</span></div>
+      <div class="row"><span class="what">Facts kept apart from guesses</span><span class="muted" data-label="Plain chat">mixed into one answer</span><span class="yes" data-label="Strategist">claim type plus evidence grade A–D</span></div>
+      <div class="row"><span class="what">Options that include “keep” and “shut down”</span><span class="muted" data-label="Plain chat">usually a single answer</span><span class="yes" data-label="Strategist">at least three, each attacked by a red team</span></div>
+      <div class="row"><span class="what">Calculations</span><span class="muted" data-label="Plain chat">numbers inside prose</span><span class="yes" data-label="Strategist">Excel with formulas and an input sheet</span></div>
+      <div class="row"><span class="what">Picking up after a break</span><span class="muted" data-label="Plain chat">context is lost</span><span class="yes" data-label="Strategist">state lives in files, a new chat resumes at the same step</span></div>
+      <div class="row"><span class="what">What the result cost</span><span class="muted" data-label="Plain chat">unknown</span><span class="yes" data-label="Strategist">tokens per model and human minutes</span></div>
     </div>
   </div>
 </section>
@@ -1418,7 +1430,7 @@ EN_BODY = f"""
       <div><a class="pill pill-b pill-sm" href="demo.html" data-goal="cta_demo_click">Open the walkthrough{ARROW}</a></div>
     </div>
     <div>
-      <!-- numbers are substituted by scripts/build_site.py from the demo project -->
+      <!-- numbers are substituted by scripts/build_site.py from the repository demo project (its directory name is Cyrillic) -->
       <dl class="stats">
         <div><dt><span>sources</span></dt><dd style="margin:0"><b>{{{{D_SOURCES}}}}</b></dd></div>
         <div><dt><span>claims, of them facts — {{{{D_FACTS}}}}</span></dt><dd style="margin:0"><b>{{{{D_CLAIMS}}}}</b></dd></div>

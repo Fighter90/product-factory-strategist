@@ -134,7 +134,7 @@ Choose colors that match your topic — don't default to generic blue. Use these
 - **Don't create text-only slides** — add images, icons, charts, or visual elements; avoid plain title + bullets
 - **Don't forget text box padding** — when aligning lines or shapes with text edges, set `margin: 0` on the text box or offset the shape to account for padding
 - **Don't use low-contrast elements** — icons AND text need strong contrast against the background; avoid light text on light backgrounds or dark text on dark backgrounds
-- **NEVER use accent lines under titles** — these are a hallmark of AI-generated slides; use whitespace or background color instead
+- **NEVER use accent lines under titles** — these are a tell-tale sign of AI-generated slides; use whitespace or background color instead
 
 ---
 

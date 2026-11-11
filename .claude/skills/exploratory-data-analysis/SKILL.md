@@ -354,8 +354,6 @@ except ImportError:
 ```
 
 Common requirements by category:
-- **Bioinformatics:** `biopython`, `pysam`, `pyBigWig`
-- **Chemistry:** `rdkit`, `mdanalysis`, `cclib`
 - **Microscopy:** `tifffile`, `nd2reader`, `aicsimageio`, `pydicom`
 - **Spectroscopy:** `nmrglue`, `pymzml`, `pyteomics`
 - **General:** `pandas`, `numpy`, `h5py`, `scipy`
