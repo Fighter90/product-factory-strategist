@@ -110,10 +110,11 @@ class CalcAndSixPagerTests(unittest.TestCase):
         self.assertIn("21,75", text)
         self.assertIn("271,88", text)
         # чувствительность к LTV/CAC ≥ 3: churn 21,75/(3·60) = 12,08 %; CAC 271,875/3 = 90,62;
-        # доля переменных 1 − 180/271,875 = 33,79 %
+        # доля переменных 1 − 3·60·0,08/29 = 50,34 % (модель демо — долларовая [C016])
         self.assertIn("держится до churn ≈ 12,08 %/мес", text)
-        self.assertIn("до CAC ≈ €90,62", text)
-        self.assertIn("до доли переменных расходов ≈ 33,79 %", text)
+        self.assertIn("до CAC ≈ $90,62", text)
+        self.assertNotIn("CAC ≈ €", text)   # чужая валюта в долларовой модели — регресс
+        self.assertIn("до доли переменных расходов ≈ 50,34 %", text)
         # note в calcs.json нет — плейсхолдер допущений сохранён
         self.assertIn("Допущения [укажите теги]", text)
         # без дублей секций и маркеров обрезки

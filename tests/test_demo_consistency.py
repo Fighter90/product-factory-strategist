@@ -71,5 +71,33 @@ class FreshnessSnapshotMatchesFiles(unittest.TestCase):
         self.assertEqual(export.freshness_warnings(DEMO), [])
 
 
+class ReportCurrencyMatchesModel(unittest.TestCase):
+    """FAQ-3 юнит-экономики демо — пороги ДОЛЛАРОВОЙ модели (C016: paid $29, CAC $60).
+    Ревью PRO-63 круг 5: в строке «Вывод (умозаключение)» был евро «CAC ≈ €90,62» —
+    чужая валюта против «$» в том же абзаце. Порог — в самом тексте, не в файле:
+    генератор (export._unit_econ_block) и пересборка обязаны держать валюту модели."""
+
+    def test_threshold_line_uses_model_currency(self):
+        text = (DEMO / "outputs" / "REPORT.md").read_text(encoding="utf-8")
+        self.assertIn("CAC ≈ $", text,
+                      "порог CAC в юнит-экономике демо должен быть в валюте модели ($)")
+        self.assertNotIn("CAC ≈ €", text,
+                         "евро в долларовой модели демо — чужая валюта (регресс генератора)")
+
+
+class SixPagerEnSynced(unittest.TestCase):
+    """Предупреждение «SIX_PAGER_EN.md отстал от RU» на демо отсутствует — механика:
+    чек (check.en_sync_warnings) сравнивает множество тегов RU минус EN и не менялся
+    с PRO-29; предупреждение исчезло не ослаблением чека, а состоянием файлов: 10-теговый
+    разрыв закрыт ещё на main (PRO-43, коммит e62379c), а [C013], появившийся в RU при
+    пересборке демо (круг 1), добавлен в EN в круге 2. Инвариант закреплён тестом."""
+
+    def test_en_six_pager_covers_all_ru_tags(self):
+        from tools.pfs import check
+        self.assertEqual(check.en_sync_warnings(DEMO), [],
+                         "EN-six-pager демо отстал от RU по тегам — чистый клон покажет "
+                         "«SIX_PAGER_EN.md отстал от RU»")
+
+
 if __name__ == "__main__":
     unittest.main()

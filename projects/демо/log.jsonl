@@ -185,3 +185,12 @@
 {"ts": "2026-11-11T16:58:53+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
 {"ts": "2026-11-11T16:58:53+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
 {"ts": "2026-11-11T16:58:53+03:00", "kind": "action", "msg": "Собран финальный пакет (без деки: --no-deck): unit_economics.xlsx, growth_model.xlsx, cohort_retention.xlsx, market_sizing.xlsx, REPORT.md, SIX_PAGER.md, REPORT.docx, SIX_PAGER.docx", "tool": "pfs finish"}
+{"ts": "2026-11-11T19:37:52+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-11T19:37:52+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-11T19:37:52+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-11T19:37:52+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-11T19:37:52+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-11T19:37:52+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-11T19:37:52+03:00", "kind": "action", "msg": "Собран финальный пакет (без деки: --no-deck): unit_economics.xlsx, growth_model.xlsx, cohort_retention.xlsx, market_sizing.xlsx, REPORT.md, SIX_PAGER.md, REPORT.docx, SIX_PAGER.docx", "tool": "pfs finish"}
+{"ts": "2026-11-11T19:37:52+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-11T19:37:53+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}

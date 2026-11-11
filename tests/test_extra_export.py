@@ -216,10 +216,11 @@ class SixPagerAssemblyTests(unittest.TestCase):
     def test_unit_econ_note_and_sensitivity(self):
         self.assertIn("Допущения: ARPU по коридору конкурентов [C057]", self.text)
         # пороги LTV/CAC ≥ 3: churn 21,75/(3·60) = 12,08 %/мес; CAC 271,875/3 = 90,62;
-        # доля переменных 1 − 180/271,875 = 33,79 %
+        # доля переменных 1 − 3·60·0,08/29 = 50,34 % (все прочие равны)
         self.assertIn("держится до churn ≈ 12,08 %/мес", self.text)
-        self.assertIn("до CAC ≈ €90,62", self.text)
-        self.assertIn("до доли переменных расходов ≈ 33,79 %", self.text)
+        self.assertIn("до CAC ≈ $90,62", self.text)
+        self.assertNotIn("CAC ≈ €", self.text)   # чужая валюта в долларовой модели — регресс
+        self.assertIn("до доли переменных расходов ≈ 50,34 %", self.text)
         self.assertNotIn("укажите теги", self.text)  # note есть — плейсхолдер не нужен
 
     def test_tactics_matrix_from_roadmap(self):

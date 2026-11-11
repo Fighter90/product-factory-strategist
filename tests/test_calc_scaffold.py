@@ -362,5 +362,48 @@ class ConvBaselineGuardTests(unittest.TestCase):
         self.assertNotIn("conv_order", cfg["growth"].get("_notes") or {})  # и note у него нет
 
 
+class SensitivityGridMatchesCriterion(unittest.TestCase):
+    """Лист «Чувствительность LTV/CAC» — сетка критерия ≥ 3 (ревью PRO-63 круг 5):
+   cached-значения каждой ячейки обязаны равняться ARPU·(1−VC)/(churn·CAC), и на
+    допущениях демо (29 / 0.25 / 60 / 0.08) порог по доле переменных ≈ 50,34 %
+    (1 − 3·60·0,08/29) должен подтверждаться сеткой: в столбце VC 50% при churn 8%
+    LTV/CAC ≥ 3. Прежняя строка вывода («33,79 %») сетке противоречила — это был
+    порог критерия ≥ 4, а не заявленного ≥ 3."""
+
+    DEMO = {"arpu": 29, "vc_share": 0.25, "cac": 60, "churn_month": 0.08}
+
+    def _grid(self):
+        wb = calc.unit_econ(dict(self.DEMO))
+        sheet = next(s for s in wb.sheets if s.name.startswith("Чувствительность"))
+        header = sheet.rows[0]
+        vcs = [c["v"] for c in header[1:]]
+        grid = {}
+        for row in sheet.rows[1:]:
+            churn = row[0]["v"]
+            for i, cell in enumerate(row[1:]):
+                grid[(churn, vcs[i])] = cell["cached"]
+        return vcs, grid
+
+    def test_cached_values_match_ltv_cac_formula(self):
+        arpu, cac = self.DEMO["arpu"], self.DEMO["cac"]
+        vcs, grid = self._grid()
+        for (churn, vc), cached in grid.items():
+            self.assertAlmostEqual(cached, arpu * (1 - vc) / (churn * cac), places=2,
+                                   msg=f"сетка {(churn, vc)} не равна ARPU·(1−VC)/(churn·CAC)")
+
+    def test_declared_vc_threshold_agrees_with_grid(self):
+        # порог критерия ≥ 3 при прочих равных: VC ≤ 1 − 3·CAC·churn/ARPU = 50,34 %
+        threshold = 1 - 3 * self.DEMO["cac"] * self.DEMO["churn_month"] / self.DEMO["arpu"]
+        self.assertAlmostEqual(threshold, 0.5034, places=4)
+        vcs, grid = self._grid()
+        below = max(vc for vc in vcs if vc <= threshold)
+        above = min((vc for vc in vcs if vc > threshold), default=None)
+        self.assertGreaterEqual(grid[(self.DEMO["churn_month"], below)], 3.0,
+                                "в сетке при VC ниже порога LTV/CAC < 3 — сетка против вывода")
+        if above is not None:
+            self.assertLess(grid[(self.DEMO["churn_month"], above)], 3.0,
+                            "в сетке при VC выше порога LTV/CAC ≥ 3 — сетка против вывода")
+
+
 if __name__ == "__main__":
     unittest.main()
