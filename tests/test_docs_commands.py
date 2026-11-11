@@ -16,6 +16,8 @@ docs/HELP.md, docs/HELP_EN.md, docs/INSTALL.md, docs/INSTALL_EN.md) парсит
 
 Запуск: python3 -m unittest tests.test_docs_commands -v
 """
+from __future__ import annotations
+
 import os
 import re
 import shutil
