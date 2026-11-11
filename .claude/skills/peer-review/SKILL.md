@@ -29,7 +29,7 @@ This skill should be used when:
 **When creating documents with this skill, always consider adding scientific diagrams and schematics to enhance visual communication.**
 
 If your document does not already contain schematics or diagrams:
-- Use the **generate-image** skill to generate AI-powered diagrams
+- Use the **scientific-schematics** skill to generate AI-powered publication-quality diagrams
 - Simply describe your desired diagram in natural language
 - Nano Banana Pro will automatically generate, review, and refine the schematic
 
@@ -55,7 +55,7 @@ The AI will automatically:
 - Reporting guidelines compliance diagrams
 - Any complex concept that benefits from visualization
 
-For detailed guidance on AI-generated figures, refer to the generate-image skill documentation.
+For detailed guidance on creating schematics, refer to the scientific-schematics skill documentation.
 
 ---
 
@@ -399,7 +399,7 @@ When reviewing scientific presentations (PowerPoint, Beamer, slide decks):
 **Required Process:**
 1. Convert PDF to images using Python:
    ```bash
-   pdftoppm -jpeg -r 150 presentation.pdf review/slide
+   python skills/scientific-slides/scripts/pdf_to_images.py presentation.pdf review/slide --dpi 150
    # Creates: review/slide-001.jpg, review/slide-002.jpg, etc.
    ```
 2. Read and inspect EACH slide image file sequentially

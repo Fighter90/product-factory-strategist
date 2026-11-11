@@ -1,6 +1,6 @@
 ---
 name: prospecting
-description: When the user wants to find, qualify, and build a list of prospects to reach out to — across B2B SaaS, general B2B, or local small businesses. Also use when the user mentions "prospecting," "build a prospect list," "find prospects," "find leads," "lead gen list," "find SaaS companies that," "find B2B companies," "find local businesses," "ICP-fit accounts," "who should we go after," "outbound list," "target account list," "find clients near me," "businesses without websites," "prospect research," "qualified leads," "find my first customers," "early adopters," "design partners," "beta users," or "who has this problem." Use this for the list-building and qualification phase. For deep competitive research on specific accounts, see competitor-profiling.
+description: When the user wants to find, qualify, and build a list of prospects to reach out to — across B2B SaaS, general B2B, or local small businesses. Also use when the user mentions "prospecting," "build a prospect list," "find prospects," "find leads," "lead gen list," "find SaaS companies that," "find B2B companies," "find local businesses," "ICP-fit accounts," "who should we go after," "outbound list," "target account list," "find clients near me," "businesses without websites," "prospect research," "qualified leads," "find my first customers," "early adopters," "design partners," "beta users," or "who has this problem." Use this for the list-building and qualification phase. For writing the outbound copy after the list is built, see cold-email. For deep competitive research on specific accounts, see competitor-profiling.
 metadata:
   version: 1.1.0
 ---
@@ -213,7 +213,7 @@ score,business,category,area,distance_km,website_status,website_url,social_urls,
 5. **Mixing branches**. Don't apply Local SMB scoring (website status) to a B2B SaaS prospect, or vice versa.
 6. **"Hot" labels without buying signals**. ICP fit alone is not enough — the signal is what makes the timing right.
 7. **No source URLs**. Every claim should be traceable to a public source. Future outreach depends on this lineage.
-8. **Ignoring quiet hours / time zone** when scheduling the downstream outreach (handoff to the outreach step).
+8. **Ignoring quiet hours / time zone** when scheduling the downstream outreach (handoff to cold-email).
 9. **Forgetting to retain consent / lineage records**. Required for GDPR DSARs and CAN-SPAM audits.
 
 ---
@@ -253,8 +253,10 @@ For implementation, see the [tools registry](../../tools/REGISTRY.md). Key prosp
 
 ## Related Skills
 
+- **cold-email**: For writing outbound sequences against the qualified list (the natural next step after prospecting)
 - **customer-research**: For understanding why current customers buy — informs the ICP definition
 - **competitor-profiling**: For deeper research on individual accounts (different from list-building qualification)
 - **revops**: For lead routing, lifecycle, and CRM handoff after prospecting
 - **sales-enablement**: For battle cards and one-pagers used in the outreach
+- **directory-submissions**: For inbound discovery surfaces (the prospects might find you back)
 - **product-marketing**: For the ICP definition that anchors every prospecting engagement

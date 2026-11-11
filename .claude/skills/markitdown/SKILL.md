@@ -26,7 +26,7 @@ MarkItDown is a Python tool developed by Microsoft for converting various file f
 **When creating documents with this skill, always consider adding scientific diagrams and schematics to enhance visual communication.**
 
 If your document does not already contain schematics or diagrams:
-- Use the **generate-image** skill to generate AI-powered diagrams
+- Use the **scientific-schematics** skill to generate AI-powered publication-quality diagrams
 - Simply describe your desired diagram in natural language
 - Nano Banana Pro will automatically generate, review, and refine the schematic
 
@@ -52,7 +52,7 @@ The AI will automatically:
 - Data flow diagrams
 - Any complex concept that benefits from visualization
 
-For detailed guidance on AI-generated figures, refer to the generate-image skill documentation.
+For detailed guidance on creating schematics, refer to the scientific-schematics skill documentation.
 
 ---
 

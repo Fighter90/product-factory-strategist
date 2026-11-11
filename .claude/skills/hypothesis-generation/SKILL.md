@@ -25,14 +25,14 @@ This skill should be used when:
 
 ## Visual Enhancement with Scientific Schematics
 
-**⚠️ MANDATORY: Every hypothesis generation report MUST include at least 1-2 AI-generated figures using the generate-image skill.**
+**⚠️ MANDATORY: Every hypothesis generation report MUST include at least 1-2 AI-generated figures using the scientific-schematics skill.**
 
 This is not optional. Hypothesis reports without visual elements are incomplete. Before finalizing any document:
 1. Generate at minimum ONE schematic or diagram (e.g., hypothesis framework showing competing explanations)
 2. Prefer 2-3 figures for comprehensive reports (mechanistic pathway, experimental design flowchart, prediction decision tree)
 
 **How to generate figures:**
-- Use the **generate-image** skill to generate AI-powered diagrams
+- Use the **scientific-schematics** skill to generate AI-powered publication-quality diagrams
 - Simply describe your desired diagram in natural language
 - Nano Banana Pro will automatically generate, review, and refine the schematic
 
@@ -56,7 +56,7 @@ The AI will automatically:
 - Theoretical model visualizations
 - Any complex concept that benefits from visualization
 
-For detailed guidance on AI-generated figures, refer to the generate-image skill documentation.
+For detailed guidance on creating schematics, refer to the scientific-schematics skill documentation.
 
 ---
 

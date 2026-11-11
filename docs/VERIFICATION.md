@@ -72,7 +72,7 @@
 | `pfs kb index` | ✅ INDEX.md обновлён; **72 карты, 0 битых связей** |
 | HTML-парс `site/index.html` | ✅ 523 строки, **0 незакрытых/лишних тегов** (stdlib `html.parser`, стек тегов) |
 | MCP | ✅ сессия: pfs-strategist · linear · lovable · higgsfield · officecli (CLI); `tools/list` pfs-сервера — **18 инструментов** (было 10: + pfs_next, pfs_source_refresh, pfs_data_funnel, pfs_data_stats, pfs_interview_guide, pfs_interview_save, pfs_media_add, pfs_ux_scaffold); неизвестный метод → -32601, неизвестный инструмент → -32602 |
-| Функциональная волна | ✅ data funnel/stats · source refresh (sha-дельта + impact) · interview guide/save · media add · ux scaffold · pfs next · export --deck (HTML 16:9) · officecli pptx-дека kids-guard (`outputs/presentations/deck_kids_guard.pptx`) · premortem · REA (MCP) · Lovable-лендинг опубликован ([strategyproduct.lovable.app](https://strategyproduct.lovable.app), HTTP 200) |
+| Функциональная волна | ✅ data funnel/stats · source refresh (sha-дельта + impact) · interview guide/save · media add · ux scaffold · pfs next · export --deck (HTML 16:9) · officecli pptx-дека kids-guard (`outputs/presentations/deck_kids_guard.pptx`) · hallmark skill (sloplint-гейты) · board-of-directors · premortem · REA (MCP) · Lovable-лендинг опубликован ([strategyproduct.lovable.app](https://strategyproduct.lovable.app), HTTP 200) |
 | Домен strategyproduct.ru | ✅ DNS через API Timeweb: апекс A → 185.199.108.153, www → CNAME fighter90.github.io; cname на Pages установлен; HTTPS-сертификат выпускается GitHub автоматически |
 
 Сайт по домену откроется после DNS-настройки у регистратора (проверка повторяется `dig strategyproduct.ru A` — ждём 185.199.108–111.153); рабочая ссылка сейчас — strategyproduct.lovable.app.

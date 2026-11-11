@@ -37,7 +37,7 @@ Use this skill when you need:
 **When creating documents with this skill, always consider adding scientific diagrams and schematics to enhance visual communication.**
 
 If your document does not already contain schematics or diagrams:
-- Use the **generate-image** skill to generate AI-powered diagrams
+- Use the **scientific-schematics** skill to generate AI-powered publication-quality diagrams
 - Simply describe your desired diagram in natural language
 
 ```bash
@@ -456,9 +456,9 @@ This skill enhances scientific writing by providing:
 | URL content extraction | `parallel-cli extract` (parallel-web skill) |
 | Deep research (exhaustive) | `research-lookup` via Parallel Chat API or `parallel-web` deep research |
 | Academic paper search | `research-lookup` (auto-routes to Perplexity) |
-| Google Scholar search | `research-lookup` (auto-routes to Perplexity) |
-| PubMed search | `research-lookup` (auto-routes to Perplexity) |
-| DOI to BibTeX | BibTeX export on the publisher page |
+| Google Scholar search | `citation-management` skill |
+| PubMed search | `citation-management` skill |
+| DOI to BibTeX | `citation-management` skill |
 | Metadata verification | `parallel-cli extract` (parallel-web skill) |
 
 ---

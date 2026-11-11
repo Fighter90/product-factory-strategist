@@ -91,7 +91,7 @@ Use the **infographics** skill when:
 - Building hierarchical or organizational charts
 - Designing social media content or marketing materials
 
-**Not for technical diagrams — use a dedicated diagram tool for:**
+**Use scientific-schematics instead for:**
 - Technical flowcharts and circuit diagrams
 - Biological pathways and molecular diagrams
 - Neural network architecture diagrams
@@ -537,7 +537,9 @@ For detailed guidance, load these reference files:
 
 This skill works synergistically with:
 
+- **scientific-schematics**: For technical diagrams and flowcharts
 - **market-research-reports**: Infographics for business reports
+- **scientific-slides**: Infographic elements for presentations
 - **generate-image**: For non-infographic visual content
 
 ---
