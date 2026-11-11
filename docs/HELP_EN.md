@@ -372,8 +372,9 @@ The script does everything itself: a fresh clone into a temp directory → `open
 --format json` in autopilot mode (the agent answers its own `pfs ask` questions, works until
 `pfs finish`, no "continue" nudges) → log parsing → report `qa/E2E-<date>-<task>-<lang>.md`: steps,
 tool calls, errors, tokens and cost, time, `pfs check --strict` and six-pager build results,
-number of stops. A run takes 20–40 minutes. Comparison with plain chat and sample-size caveats:
-`docs/demo/comparison.md`.
+number of stops, reply language consistency ("Язык реплик" row with ⚠️ when a noticeable share
+of the agent's replies is not in the run language). A run takes 20–40 minutes.
+Comparison with plain chat and sample-size caveats: `docs/demo/comparison.md`.
 
 ---
 

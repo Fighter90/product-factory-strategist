@@ -7,7 +7,8 @@ step-finish (там же токены: input / output / reasoning / cache), ре
 вызовы инструментов — tool (state.status, state.input, state.output).
 
 Метрики отчёта: шаги, вызовы инструментов по типам, ошибки инструментов (статус ≠ completed
-или маркеры Ошибка/Error/Traceback в выводе), остановки (pfs ask) и их автоответы (pfs answer),
+или маркеры Ошибка/Error/Traceback по границе слова — только в shell-выводах), остановки
+(pfs ask) и их автоответы (pfs answer) — по факту вызова pfs в shell-команде,
 дошёл ли до финального пакета (pfs finish), токены, время. Результаты ворот — pfs check --strict
 и сборка six-pager — build() снимает в клоне после прогона.
 
@@ -19,13 +20,84 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
-ERR_MARKERS = ("Ошибка", "Error", "Traceback")
-FINISH_MARK = "pfs finish"
+# Маркеры ошибки — по границе слова (PfsError/ValueError в выводе — данные,
+# не сбой выполнения) и только к shell-выводам (ревью PRO-64, раунд 3):
+# в budget-app-en 2026-11-11 вывод read/grep/sed с «PfsError(…)» внутри
+# завышал «Ошибок инструментов» (8 вместо 5).
+ERR_MARKER_RE = re.compile(r"\b(?:Ошибка|Error|Traceback)\b")
+SHELL_TOOLS = ("shell", "bash")
+# Фактический вызов pfs: сегмент shell-команды, начинающийся с
+# `python3 -m tools.pfs ask|answer|finish` (ревью PRO-64, раунд 3).
+# Раньше матч был подстрокой в любом вводе инструмента — cat SKILL.md
+# с текстом «pfs answer» и payload edit'а с «pfs finish» считались вызовами.
+PFS_CALL_RE = re.compile(
+    r"^(?:[A-Za-z_][A-Za-z0-9_]*=\S*\s+)*python3\s+-m\s+tools\.pfs\s+(ask|answer|finish)\b")
+SEG_SPLIT_RE = re.compile(r"&&|\|\||;|\||\n")
+
+# Языковая консистентность реплик (ревью PRO-64): в EN-прогоне финальные реплики
+# агента были на русском — «порог срабатывания» по доле букв/реплик не на языке
+# прогона + любая чужая реплика среди финальных трёх (итоговая сводка весит больше).
+LANG_WARN = 0.20
+_CYR = "абвгдежзийклмнопрстуфхцчшщъыьэюяёіїєґў"
+_LAT = "abcdefghijklmnopqrstuvwxyz"
+
+
+def lang_of(text: str) -> str:
+    """Язык реплики по буквам: кириллица ≥30% от кириллица+латиница → 'ru', иначе 'en'.
+    Текст без тех и других букв (код, ссылки) — 'en' (нейтральное не считается русским)."""
+    low = text.lower()
+    cyr = sum(1 for ch in low if ch in _CYR)
+    lat = sum(1 for ch in low if ch in _LAT)
+    total = cyr + lat
+    if total == 0:
+        return "en"
+    return "ru" if cyr / total >= 0.3 else "en"
+
+
+def lang_mix(texts: list[str], run_lang: str, final_n: int = 3) -> dict:
+    """Расклад реплик по языкам и доля букв не на языке прогона (0..1).
+    Взвешивание по буквам, а не по числу реплик: длинная итоговая сводка весит
+    больше, чем однословная интермедия. total = 0 → foreign_share = 0.
+    final_foreign — чужой язык среди последних final_n реплик (финальная сводка):
+    её смешение и ловили в бюджет-app-en/antispam-en 2026-11-11."""
+    letters = {"ru": 0, "en": 0}
+    counts = {"ru": 0, "en": 0}
+    for t in texts:
+        low = t.lower()
+        cyr = sum(1 for ch in low if ch in _CYR)
+        lat = sum(1 for ch in low if ch in _LAT)
+        letters[lang_of(t)] += cyr + lat
+        counts[lang_of(t)] += 1
+    total = letters["ru"] + letters["en"]
+    foreign_lang = "ru" if run_lang == "en" else "en"
+    share = (letters[foreign_lang] / total) if total else 0.0
+    n_texts = counts["ru"] + counts["en"]
+    final_foreign = any(lang_of(t) == foreign_lang for t in texts[-final_n:]) if texts else False
+    return {"ru": counts["ru"], "en": counts["en"], "total": total,
+            "foreign_share": share, "foreign_lang": foreign_lang,
+            "final_foreign": final_foreign}
+
+
+def lang_breach(mix: dict) -> bool:
+    """Языковой регресс: доля букв или доля реплик не на языке прогона ≥ LANG_WARN
+    либо чужая финальная реплика."""
+    n_texts = mix["ru"] + mix["en"]
+    return bool(mix["total"] and n_texts and (
+        mix["foreign_share"] >= LANG_WARN
+        or (mix["ru"] + mix["en"] and _text_share(mix) >= LANG_WARN)
+        or mix["final_foreign"]))
+
+
+def _text_share(mix: dict) -> float:
+    n = mix["ru"] + mix["en"]
+    foreign_texts = mix[mix["foreign_lang"]]
+    return foreign_texts / n if n else 0.0
 
 
 def task_stem(task_file: str | Path) -> str:
@@ -52,8 +124,24 @@ def _num(n: int | float) -> str:
     return f"{n:,}".replace(",", " ")
 
 
-def _min(ms: int) -> str:
+def _min(ms: int | None) -> str:
+    if ms is None:
+        return "н/д (в логе нет тайстампов)"
     return (f"{ms / 60_000:.1f}").replace(".", ",") + " мин"
+
+
+def pfs_calls(tool: str, cmd: str) -> set[str]:
+    """Подкоманды pfs, фактически вызванные в shell-команде: сегменты, разделённые
+    операторами `&& || ; |` и переводом строки, начинаются с `python3 -m tools.pfs …`.
+    Не-shell инструменты и команды без поля command — пустое множество."""
+    if tool not in SHELL_TOOLS or not cmd:
+        return set()
+    found: set[str] = set()
+    for seg in SEG_SPLIT_RE.split(cmd):
+        m = PFS_CALL_RE.match(seg.strip())
+        if m:
+            found.add(m.group(1))
+    return found
 
 
 def _tool_summary(tools: Counter) -> str:
@@ -63,8 +151,10 @@ def _tool_summary(tools: Counter) -> str:
 
 
 def parse_log(path: Path) -> dict:
-    """Разобрать лог прогона. Не-JSON строки пропускаются; ошибки — статус ≠ completed
-    или маркер в выводе. Токены: output + reasoning (reasoning тарифицируется как output)."""
+    """Разобрать лог прогона. Не-JSON строки пропускаются. Ошибки: статус ≠ completed
+    или маркер Ошибка/Error/Traceback по границе слова — но только в shell-выводах.
+    ask/answer/finish — по факту вызова pfs в shell-команде. Токены: output + reasoning
+    (reasoning тарифицируется как output). Без тайстампов duration_ms = None."""
     path = Path(path)
     if not path.is_file():
         raise FileNotFoundError(f"лог прогона не найден: {path}")
@@ -104,21 +194,22 @@ def parse_log(path: Path) -> dict:
             st = part.get("state") if isinstance(part.get("state"), dict) else {}
             inp = st.get("input") if isinstance(st.get("input"), dict) else {}
             out = str(st.get("output") or "")
-            cmd = str(inp.get("command") or "") or str(inp)[:160]
-            if "pfs ask " in cmd:
-                asks += 1
-            if "pfs answer " in cmd:
-                answers += 1
-            if FINISH_MARK in cmd:
-                finished = True
+            raw_cmd = str(inp.get("command") or "")
+            cmd = raw_cmd or str(inp)[:160]
+            calls = pfs_calls(tool, raw_cmd)
+            asks += "ask" in calls
+            answers += "answer" in calls
+            finished = finished or "finish" in calls
             bad_status = st.get("status") not in (None, "completed", "pending", "running")
-            if bad_status or any(m in out for m in ERR_MARKERS):
+            marker_hit = tool in SHELL_TOOLS and bool(ERR_MARKER_RE.search(out))
+            if bad_status or marker_hit:
                 errors.append({"tool": tool, "cmd": cmd[:160].replace("\n", " | "),
                                "out": out[:240].replace("\n", " | ")})
     return {"steps": steps, "tools": dict(tools), "errors": errors, "texts": texts,
             "asks": asks, "answers": answers, "finished": finished,
             "tokens_in": tok_in, "tokens_out": tok_out,
-            "duration_ms": int((t1 - t0) or 0), "events": steps + sum(tools.values())}
+            "duration_ms": int(t1 - t0) if (t0 is not None and t1 is not None) else None,
+            "events": steps + sum(tools.values())}
 
 
 def _verdict(s: dict, check_ok: bool, six_ok: bool) -> str:
@@ -130,12 +221,37 @@ def _verdict(s: dict, check_ok: bool, six_ok: bool) -> str:
     return "❌ Ворота не пройдены: " + ", ".join(problems) + ". Детали ниже."
 
 
+def _lang_summary(mix: dict, lang: str) -> str:
+    """Строка «Язык реплик» для сводки: расклад и ⚠️, если регресс по языку."""
+    if not mix["total"]:
+        return "нет текстовых реплик"
+    own_pct = round(100 * (1 - mix["foreign_share"]))
+    other_pct = 100 - own_pct
+    row = f"{lang} {own_pct}% · {mix['foreign_lang']} {other_pct}%"
+    if lang_breach(mix):
+        row += " ⚠️"
+    return row
+
+
+def _lang_warning(mix: dict) -> str:
+    """Предупреждение у вердикта, если заметная доля реплик не на языке прогона."""
+    if not lang_breach(mix):
+        return ""
+    pct = round(100 * mix["foreign_share"])
+    reason = (f"{pct}% букв реплик агента не на языке прогона ({mix['foreign_lang']})"
+              if pct >= 100 * LANG_WARN
+              else f"финальные реплики агента на {mix['foreign_lang']}")
+    return (f"⚠️ Языковая консистентность: {reason} — регресс «русский текст в EN-режиме» "
+            f"/ «language mix», см. «Финальные реплики агента». Ворота по пакету это не отменяет.")
+
+
 def render_report(s: dict, lang: str, task: str, date: str, model: str = "", plan: bool = True,
                   check_ok: bool = False, check_tail: str = "",
                   six_ok: bool = False, six_tail: str = "") -> str:
     """Markdown-отчёт qa/E2E-<дата>-<задача>-<lang>.md: сводка, остановки, ошибки, финальные реплики, вердикт."""
     cost = "$0.00 (подписка, план)" if plan else "не считалась (укажите --model с прайсом)"
     model_s = model or "по умолчанию среды"
+    mix = lang_mix(s["texts"], lang)
     lines = [
         f"# E2E-прогон OpenCode — {date} ({lang.upper()})",
         "",
@@ -154,6 +270,7 @@ def render_report(s: dict, lang: str, task: str, date: str, model: str = "", pla
         f"| Стоимость | {cost} |",
         f"| Время | {_min(s['duration_ms'])} |",
         f"| Финальный пакет (`pfs finish`) | {'да' if s['finished'] else 'нет'} |",
+        f"| Язык реплик | {_lang_summary(mix, lang)} |",
         f"| `pfs check --strict` | {'✅ ' if check_ok else '❌ '}{check_tail.strip() or ('OK' if check_ok else 'падение')} |",
         f"| six-pager (сборка/линтер) | {'✅ ' if six_ok else '❌ '}{six_tail.strip() or ('собран' if six_ok else 'не собран')} |",
         "",
@@ -177,7 +294,11 @@ def render_report(s: dict, lang: str, task: str, date: str, model: str = "", pla
         lines.append(">")
     if lines[-1] == ">":
         lines.pop()
-    lines += ["", "## Вердикт", "", _verdict(s, check_ok, six_ok), ""]
+    lines += ["", "## Вердикт", "", _verdict(s, check_ok, six_ok)]
+    warn = _lang_warning(mix)
+    if warn:
+        lines += ["", warn]
+    lines.append("")
     return "\n".join(lines)
 
 

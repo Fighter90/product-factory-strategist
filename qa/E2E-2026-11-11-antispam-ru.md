@@ -15,6 +15,7 @@
 | Стоимость | $0.00 (подписка, план) |
 | Время | 25,9 мин |
 | Финальный пакет (`pfs finish`) | да |
+| Язык реплик | ru 100% · en 0% |
 | `pfs check --strict` | ✅ Контроль качества: 22/100 · ошибок 0, предупреждений 39 / ✔ Без ошибок: 02_situation.md, 03_options.md, 04_product_strategy.md, 05_comms_strategy.md, 06_validation_plan.md |
 | six-pager (сборка/линтер) | ✅ Six-pager: /Users/sergejemelanov/Projects/pfs-e2e-ru/projects/спам-звонки-что-делать-с-продуктом/outputs/SIX_PAGER.md |
 
