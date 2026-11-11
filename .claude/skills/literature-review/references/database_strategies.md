@@ -7,14 +7,14 @@ This document provides comprehensive guidance for searching multiple literature 
 ### Biomedical & Life Sciences
 
 #### PubMed / PubMed Central
-- **Access**: Use `gget` skill or WebFetch tool
+- **Access**: NCBI E-utilities API or WebFetch tool
 - **Coverage**: 35M+ citations in biomedical literature
 - **Best for**: Clinical studies, biomedical research, genetics, molecular biology
 - **Search tips**: Use MeSH terms, Boolean operators (AND, OR, NOT), field tags [Title], [Author]
 - **Example**: `"CRISPR"[Title] AND "gene editing"[Title/Abstract] AND 2020:2024[Publication Date]`
 
 #### bioRxiv / medRxiv
-- **Access**: Use `gget` skill or direct API
+- **Access**: bioRxiv API or Europe PMC (`SRC:PPR`)
 - **Coverage**: Preprints in biology and medicine
 - **Best for**: Latest unpublished research, cutting-edge findings
 - **Note**: Not peer-reviewed; verify findings with caution
@@ -46,35 +46,35 @@ This document provides comprehensive guidance for searching multiple literature 
 ### Specialized Databases
 
 #### ChEMBL / PubChem
-- **Access**: Use `gget` skill or `bioservices` skill
+- **Access**: Direct REST APIs (www.ebi.ac.uk/chembl, pubchem.ncbi.nlm.nih.gov)
 - **Coverage**: Chemical compounds, bioactivity data, drug molecules
 - **Best for**: Drug discovery, chemical biology, medicinal chemistry
 - **ChEMBL**: 2M+ compounds, bioactivity data
 - **PubChem**: 110M+ compounds, assay data
 
 #### UniProt
-- **Access**: Use `gget` skill or `bioservices` skill
+- **Access**: REST API (rest.uniprot.org)
 - **Coverage**: Protein sequence and functional information
 - **Best for**: Protein research, sequence analysis, functional annotations
 - **Search by**: Protein name, gene name, organism, function
 
 #### KEGG (Kyoto Encyclopedia of Genes and Genomes)
-- **Access**: Use `bioservices` skill
+- **Access**: REST API (rest.kegg.jp)
 - **Coverage**: Pathways, diseases, drugs, genes
 - **Best for**: Pathway analysis, systems biology, metabolic research
 
 #### COSMIC (Catalogue of Somatic Mutations in Cancer)
-- **Access**: Use `gget` skill or direct download
+- **Access**: Web portal (cancer.sanger.ac.uk) or direct download
 - **Coverage**: Cancer genomics, somatic mutations
 - **Best for**: Cancer research, mutation analysis
 
 #### AlphaFold Database
-- **Access**: Use `gget` skill with `alphafold` command
+- **Access**: DB API (alphafold.ebi.ac.uk)
 - **Coverage**: 200M+ protein structure predictions
 - **Best for**: Structural biology, protein modeling
 
 #### PDB (Protein Data Bank)
-- **Access**: Use `gget` or direct API
+- **Access**: RCSB REST API (search.rcsb.org)
 - **Coverage**: Experimental 3D structures of proteins, nucleic acids
 - **Best for**: Structural biology, drug design, molecular modeling
 
@@ -412,14 +412,14 @@ Many databases suggest related articles:
 ## Example Multi-Database Search Workflow
 
 ```python
-# Example workflow using available skills
+# Example workflow using direct REST APIs
 
-# 1. Search PubMed via gget
+# 1. Search PubMed via NCBI E-utilities
 search_term = "CRISPR AND sickle cell disease"
-# Use gget search pubmed search_term
+# curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=..."
 
 # 2. Search bioRxiv
-# Use gget search biorxiv search_term
+# curl "https://api.biorxiv.org/details/biorxiv/<from>/<to>/<cursor>/<size>"
 
 # 3. Search arXiv for computational papers
 # Search arXiv with: cat:q-bio AND "CRISPR" AND "sickle cell"

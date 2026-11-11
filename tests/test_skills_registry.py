@@ -352,11 +352,12 @@ README_LIST_LABELS = [
     ("Мета", "мета", "Meta"),
 ]
 
-# Указатели «X skill» на инструменты вне набора репозитория: pip-библиотеки и навыки
-# личной библиотеки автора, которых в .claude/skills нет сознательно. venue-templates
-# здесь нет: его упоминания убиты (см. KeptSkillPointerTests).
+# Указатели «X skill» на инструменты вне набора репозитория: навыки личной
+# библиотеки автора, которых в .claude/skills нет сознательно. venue-templates
+# здесь нет: его упоминания убиты (см. KeptSkillPointerTests). gget/bioservices
+# здесь тоже нет: ни в реестре docs/SKILLS.md, ни в extras — их указатели убиты
+# (см. ReviewRound5Tests).
 EXTERNAL_SKILL_POINTERS = {
-    "gget", "bioservices",         # pip-библиотеки (literature-review)
     "ab-testing", "copy-editing",  # личная библиотека автора вне набора
     "parallel-web", "social", "scraping", "competitor-profiling", "schema",
 }
@@ -603,6 +604,59 @@ class ReviewRound4Tests(unittest.TestCase):
             offenders, [],
             "указатели на не поставляемый venue-templates остались в .claude/skills: "
             + "; ".join(offenders))
+
+
+class ReviewRound5Tests(unittest.TestCase):
+    """Правки ревью PRO-65 (раунд 5).
+
+    1. scientific-visualization / matplotlib / statistical-analysis: указатели на
+       перемещённые навыки (seaborn, statsmodels → extras/skills, не загружаются)
+       заменены на оставшиеся аналоги (matplotlib / scientific-visualization /
+       `pfs data`). В этих файлах имя перемещённого навыка допустимо только
+       внутри блоков кода (импорт pip-библиотеки, имя стиля matplotlib) — не в
+       описаниях, рекомендациях и списках инструментов.
+    2. literature-review: без gget/bioservices — таких навыков нет ни в реестре
+       docs/SKILLS.md, ни в extras; поиск по базам описан через прямые REST API
+       (NCBI E-utilities, Europe PMC, bioRxiv и т.д.).
+    """
+
+    # Файлы, названные ревью: проза не должна рекомендовать перемещённые навыки.
+    LIBRARY_AS_CODE_FILES = (
+        ".claude/skills/scientific-visualization/SKILL.md",
+        ".claude/skills/matplotlib/SKILL.md",
+        ".claude/skills/statistical-analysis/SKILL.md",
+    )
+
+    def _prose_without_code_blocks(self, text):
+        """Текст без ```-блоков: внутри кода упоминания pip-библиотек легитимны."""
+        return re.sub(r"```.*?```", "", text, flags=re.S)
+
+    def test_moved_skill_names_only_inside_code_blocks(self):
+        offenders = []
+        for rel in self.LIBRARY_AS_CODE_FILES:
+            prose = self._prose_without_code_blocks(
+                (REPO / rel).read_text(encoding="utf-8"))
+            for name in ("seaborn", "statsmodels"):
+                if re.search(rf"\b{name}\b", prose, re.IGNORECASE):
+                    offenders.append(f"{rel}: {name}")
+        self.assertEqual(
+            offenders, [],
+            "указатели на перемещённые навыки (seaborn/statsmodels) вне блоков кода: "
+            + "; ".join(offenders))
+
+    def test_literature_review_has_no_gget_bioservices(self):
+        offenders = []
+        for path in sorted((SKILLS_DIR / "literature-review").rglob("*")):
+            if not path.is_file() or path.suffix not in (".md", ".py"):
+                continue
+            text = path.read_text(encoding="utf-8", errors="replace")
+            for name in ("gget", "bioservices"):
+                if re.search(rf"\b{name}\b", text, re.IGNORECASE):
+                    offenders.append(f"{path.relative_to(REPO)}: {name}")
+        self.assertEqual(
+            offenders, [],
+            "literature-review ссылается на навыки, которых нет ни в реестре, "
+            "ни в extras: " + "; ".join(offenders))
 
 
 if __name__ == "__main__":

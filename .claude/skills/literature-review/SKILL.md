@@ -13,7 +13,7 @@ metadata:
 
 Conduct systematic, comprehensive literature reviews following rigorous academic methodology. Search multiple literature databases, synthesize findings thematically, verify all citations for accuracy, and generate professional output documents in markdown and PDF formats.
 
-This skill uses the **parallel-web skill** (`parallel-cli search`) as the primary web search tool for broad academic literature discovery, supplemented by specialized database access skills (gget, bioservices). It provides specialized tools for citation verification, result aggregation, and document generation.
+This skill uses the **parallel-web skill** (`parallel-cli search`) as the primary web search tool for broad academic literature discovery, supplemented by direct REST APIs of the literature databases (NCBI E-utilities, Europe PMC, bioRxiv, and others). It provides specialized tools for citation verification, result aggregation, and document generation.
 
 ## When to Use This Skill
 
@@ -116,9 +116,9 @@ Literature reviews follow a structured, multi-phase workflow:
    ```
 
    **Biomedical & Life Sciences:**
-   - Use `gget` skill: `gget search pubmed "search terms"` for PubMed/PMC
-   - Use `gget` skill: `gget search biorxiv "search terms"` for preprints
-   - Use `bioservices` skill for ChEMBL, KEGG, UniProt, etc.
+   - Search PubMed/PMC via NCBI E-utilities API (`esearch`/`efetch`)
+   - Search preprints via the bioRxiv/medRxiv API or Europe PMC (`SRC:PPR`)
+   - Use database REST APIs directly for ChEMBL, KEGG, UniProt, etc.
 
    **General Scientific Literature:**
    - Search arXiv via direct API (preprints in physics, math, CS, q-bio)
@@ -126,8 +126,8 @@ Literature reviews follow a structured, multi-phase workflow:
    - Use Google Scholar for comprehensive coverage (manual or careful scraping)
 
    **Specialized Databases:**
-   - Use `gget alphafold` for protein structures
-   - Use `gget cosmic` for cancer genomics
+   - Use the AlphaFold DB API for protein structures
+   - Use COSMIC (cancer.sanger.ac.uk) for cancer genomics
    - Use specialized databases as appropriate for the domain
 
 2. **Document Search Parameters**:
@@ -319,14 +319,13 @@ Literature reviews follow a structured, multi-phase workflow:
 
 ### PubMed / PubMed Central
 
-Access via `gget` skill:
+Access via NCBI E-utilities (Entrez) API:
 ```bash
 # Search PubMed
-gget search pubmed "CRISPR gene editing" -l 100
+curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=CRISPR+gene+editing&retmax=100"
 
-# Search with filters
-# Use PubMed Advanced Search Builder to construct complex queries
-# Then execute via gget or direct Entrez API
+# Fetch records by PMID list
+curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=35168455,34048910&rettype=abstract&retmode=xml"
 ```
 
 **Search tips**:
@@ -338,9 +337,13 @@ gget search pubmed "CRISPR gene editing" -l 100
 
 ### bioRxiv / medRxiv
 
-Access via `gget` skill:
+Access via the bioRxiv API or Europe PMC preprint search:
 ```bash
-gget search biorxiv "CRISPR sickle cell" -l 50
+# bioRxiv: articles by date range
+curl "https://api.biorxiv.org/details/biorxiv/2020-01-01/2024-12-31/0/50"
+
+# Europe PMC: preprints matching a query (SRC:PPR = preprints)
+curl "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=CRISPR%20AND%20(SRC:PPR)&format=json"
 ```
 
 **Important considerations**:
@@ -374,13 +377,13 @@ Access via direct API (requires API key, or use free tier):
 
 ### Specialized Biomedical Databases
 
-Use appropriate skills:
-- **ChEMBL**: `bioservices` skill for chemical bioactivity
-- **UniProt**: `gget` or `bioservices` skill for protein information
-- **KEGG**: `bioservices` skill for pathways and genes
-- **COSMIC**: `gget` skill for cancer mutations
-- **AlphaFold**: `gget alphafold` for protein structures
-- **PDB**: `gget` or direct API for experimental structures
+Use direct API access:
+- **ChEMBL**: REST API (www.ebi.ac.uk/chembl) for chemical bioactivity
+- **UniProt**: REST API (rest.uniprot.org) for protein information
+- **KEGG**: REST API (rest.kegg.jp) for pathways and genes
+- **COSMIC**: web portal (cancer.sanger.ac.uk) for cancer mutations
+- **AlphaFold**: DB API (alphafold.ebi.ac.uk) for predicted structures
+- **PDB**: RCSB REST API (search.rcsb.org) for experimental structures
 
 ### Citation Chaining
 
@@ -542,8 +545,8 @@ parallel-cli search "CRISPR sickle cell disease clinical trials treatment" \
   --json --max-results 10 --excerpt-max-chars-total 27000 \
   -o sources/litreview_crispr_scd-general.json
 
-# 3. Search specialized databases using appropriate skills
-# - Use gget skill for PubMed, bioRxiv
+# 3. Search specialized databases using direct REST APIs
+# - Use NCBI E-utilities for PubMed, bioRxiv/medRxiv API for preprints
 # - Use direct API access for arXiv, Semantic Scholar
 # - Export results in JSON format
 
@@ -596,9 +599,10 @@ This skill works seamlessly with other scientific skills:
 - **parallel-cli extract**: Fetch full content from paper URLs, journal websites, and preprint servers — use for reading abstracts, extracting reference lists, and verifying paper details
 - **parallel-cli search --include-domains**: Academic-focused search across scholarly domains (arxiv.org, pubmed, nature.com, etc.)
 
-### Database Access Skills
-- **gget**: PubMed, bioRxiv, COSMIC, AlphaFold, Ensembl, UniProt
-- **bioservices**: ChEMBL, KEGG, Reactome, UniProt, PubChem
+### Database Access (direct REST APIs)
+- **PubMed/PMC**: NCBI E-utilities (`esearch`/`efetch`)
+- **Europe PMC**: REST search, incl. preprints (`SRC:PPR`)
+- **bioRxiv/medRxiv**: api.biorxiv.org
 
 ### Visualization Skills
 - **matplotlib**: Generate figures and plots for review
@@ -673,7 +677,7 @@ This literature-review skill provides:
 
 1. **Systematic methodology** following academic best practices
 2. **Parallel-web powered search** using `parallel-cli search` for fast, broad academic literature discovery with scholarly domain filtering
-3. **Multi-database integration** via existing scientific skills (gget, bioservices)
+3. **Multi-database integration** via direct REST APIs (E-utilities, Europe PMC, bioRxiv)
 4. **Citation verification** ensuring accuracy and credibility
 5. **Professional output** in markdown and PDF formats
 6. **Comprehensive guidance** covering the entire review process
