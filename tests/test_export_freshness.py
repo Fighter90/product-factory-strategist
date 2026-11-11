@@ -126,6 +126,30 @@ class FreshnessTests(unittest.TestCase):
         self.assertIn("sources.jsonl", warns[0])
         self.assertNotIn("+1 sources", warns[0])
 
+    def test_fresh_clone_shifted_mtimes_no_warning(self):
+        # PRO-63 п.3: свежий клон — git выставляет файлам новые mtime при неизменном
+        # содержимом. Сверка по mtimes давала ложное «⚠ Реестр изменился» на чистом клоне:
+        # свежесть определяется снимком СОДЕРЖИМОГО (sha256), а не временем файлов.
+        pdir = self.pdir
+        sources.add(pdir, text="Отчёт о рынке", title="Рынок")
+        claims.add(pdir, "Рынок 40 млрд", "fact", ["S001"], grade="B")
+        export.build(pdir)
+        att = pdir / "outputs" / "attachments"  # Excel-книга есть (как после pfs calc all)
+        att.mkdir(parents=True, exist_ok=True)
+        (att / "unit_economics.xlsx").write_bytes(b"PK\x03\x04 workbook")
+        export.save_state(pdir)
+        self.assertEqual(export.freshness_warnings(pdir), [])
+        stamp = (1700000000, 1700000000)  # сильно отличается от mtimes на момент снимка
+        for name in ("calcs.json", "claims.jsonl", "sources.jsonl"):
+            f = pdir / name
+            if f.exists():
+                os.utime(f, stamp)
+        for f in att.glob("*.xlsx"):
+            os.utime(f, stamp)
+        os.utime(pdir / "outputs" / "REPORT.md", stamp)
+        self.assertEqual(export.freshness_warnings(pdir), [])
+        self.assertNotIn("⚠", project.status_text(pdir))
+
     def test_combined_changes_in_one_warning(self):
         pdir = self.pdir
         export.build(pdir)

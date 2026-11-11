@@ -14,6 +14,30 @@ from tools.pfs import data, extract  # noqa: E402
 from tools.pfs.core import PfsError  # noqa: E402
 
 
+class MissingFileTests(unittest.TestCase):
+    """PRO-63 п.2: нет файла — понятная PfsError, а не Python-Traceback."""
+
+    def test_profile_missing_file_is_pfserror(self):
+        with self.assertRaises(PfsError) as cm:
+            data.profile(Path(TMP) / "нет-такого-файла.csv")
+        self.assertIn("Файл не найден", str(cm.exception))
+
+    def test_cohort_missing_file_is_pfserror(self):
+        with self.assertRaises(PfsError) as cm:
+            data.cohort_retention(Path(TMP) / "нет-такого-файла.csv", "user_id", "dt")
+        self.assertIn("Файл не найден", str(cm.exception))
+
+    def test_funnel_missing_file_is_pfserror(self):
+        with self.assertRaises(PfsError) as cm:
+            data.funnel(Path(TMP) / "нет-такого-файла.csv", "visit,signup,pay")
+        self.assertIn("Файл не найден", str(cm.exception))
+
+    def test_stats_missing_file_is_pfserror(self):
+        with self.assertRaises(PfsError) as cm:
+            data.stats(Path(TMP) / "нет-такого-файла.csv", "revenue")
+        self.assertIn("Файл не найден", str(cm.exception))
+
+
 class FunnelTests(unittest.TestCase):
     def test_funnel_by_event_column(self):
         f = Path(TMP) / "funnel_events.csv"

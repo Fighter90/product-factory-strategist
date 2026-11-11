@@ -85,6 +85,20 @@ class FinishTests(unittest.TestCase):
         entries = core.read_jsonl(self.pdir / "log.jsonl")
         self.assertEqual(sum(1 for e in entries if e.get("tool") == "pfs finish"), 2)
 
+    def test_summary_of_rebuild_does_not_advise_rebuild(self):
+        # PRO-63 п.3: сводка finish говорит «снято свежей пересборкой» и в том же
+        # предложении не может требовать «Пересоберите» — сообщения противоречат друг другу.
+        export.build(self.pdir)
+        export.save_state(self.pdir)
+        claims.add(self.pdir, "Ещё основание", "hypothesis", [], grade="D")  # реестр устарел
+        res = finish.run(self.pdir)
+        summary = finish.summary_text(res)
+        self.assertIn("снято свежей пересборкой", summary)
+        self.assertNotIn("Пересоберите", summary)
+        self.assertNotIn("⚠", summary)
+        # и после сборки предупреждений больше нет
+        self.assertEqual(export.freshness_warnings(self.pdir), [])
+
     def test_no_deck_flag_skips_deck_only(self):
         res = finish.run(self.pdir, no_deck=True)
         self.assertFalse((self.pdir / "outputs" / "presentations" / "deck.html").exists())
