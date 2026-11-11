@@ -496,5 +496,114 @@ class KeptSkillPointerTests(unittest.TestCase):
             "оставшиеся вызовы локальных generate-скриптов: " + "; ".join(offenders))
 
 
+class ReviewRound4Tests(unittest.TestCase):
+    """Правки ревью PRO-65 (раунд 4).
+
+    1. literature-review: без scanpy/anndata (биоинформатика вне замысла PRO-65)
+       и без висячих datacommons-client/brand-guidelines/internal-comms.
+    2. venue-templates: судьба задокументирована в extras/README.md, указателей
+       в .claude/skills нет (папки навыка нет нигде в репозитории).
+    3. infographics: без указателя на незарегистрированный market-research-reports.
+    4. Категории transcribe/watch/scientific-visualization в HELP.md и HELP_EN.md
+       совпадают с реестром docs/SKILLS.md и README; в «Base (13)» HELP_EN нет deck.
+    5. generate-image: без секции «Integration with Other Skills» (ссылалась сама на себя).
+    """
+
+    # Биоинформатика/документы вне реестра: ни одного упоминания в литобзоре не остаётся.
+    LIT_REVIEW_FORBIDDEN = (
+        "scanpy", "anndata",              # биоинформатика — вне замысла PRO-65
+        "datacommons-client",             # навыка нет ни в реестре, ни в extras
+        "brand-guidelines", "internal-comms",  # навыки оформления вне реестра
+    )
+
+    def _text(self, relpath):
+        return (REPO / relpath).read_text(encoding="utf-8")
+
+    def test_literature_review_has_no_unregistered_skill_mentions(self):
+        text = self._text(".claude/skills/literature-review/SKILL.md")
+        offenders = [
+            name for name in self.LIT_REVIEW_FORBIDDEN
+            if re.search(rf"\b{re.escape(name)}\b", text, re.IGNORECASE)
+        ]
+        self.assertEqual(
+            offenders, [],
+            "literature-review ссылается на навыки вне реестра (см. docs/SKILLS.md): "
+            + "; ".join(offenders))
+
+    def test_infographics_has_no_unregistered_report_skill(self):
+        text = self._text(".claude/skills/infographics/SKILL.md")
+        self.assertNotIn(
+            "market-research-reports", text,
+            "infographics ссылается на незарегистрированный market-research-reports")
+
+    def test_generate_image_has_no_self_integration_section(self):
+        text = self._text(".claude/skills/generate-image/SKILL.md")
+        self.assertNotIn(
+            "Integration with Other Skills", text,
+            "generate-image: секция интеграции ссылается только на сам generate-image")
+
+    def _help_category_names(self, text, label):
+        """Имена в буллете категории личной библиотеки HELP: «- *label*: …» / «- **label** — …».
+
+        Буллет может занимать несколько физических строк — берём блок до следующего буллета.
+        """
+        m = re.search(
+            rf"^\s+- \*{{1,2}}{re.escape(label)}\*{{1,2}}\s*[:—-]\s*", text, re.M)
+        self.assertIsNotNone(m, f"в HELP нет строки категории «{label}»")
+        nxt = re.search(r"^\s*- ", text[m.end():], re.M)
+        block = text[m.end():m.end() + nxt.start()] if nxt else text[m.end():]
+        return set(re.findall(r"`([\w-]+)`", block))
+
+    def test_help_categories_match_registry_for_moved_skills(self):
+        cases = [
+            ("docs/HELP.md", {"science": "наука и данные", "docs": "документы/медиа",
+                              "meta": "мета"}),
+            ("docs/HELP_EN.md", {"science": "Science and data", "docs": "Docs/media",
+                                 "meta": "Meta"}),
+        ]
+        for relpath, labels in cases:
+            text = self._text(relpath)
+            science = self._help_category_names(text, labels["science"])
+            docs = self._help_category_names(text, labels["docs"])
+            meta = self._help_category_names(text, labels["meta"])
+            for name in ("transcribe", "watch"):
+                self.assertIn(name, science,
+                              f"{relpath}: «{name}» нет в «{labels['science']}» (как в реестре)")
+                self.assertNotIn(name, meta,
+                                 f"{relpath}: «{name}» остался в «{labels['meta']}»")
+            self.assertIn("scientific-visualization", docs,
+                          f"{relpath}: «scientific-visualization» нет в «{labels['docs']}»")
+            self.assertNotIn(
+                "scientific-visualization", science,
+                f"{relpath}: «scientific-visualization» остался в «{labels['science']}»")
+
+    def test_base_group_lists_no_deck(self):
+        for relpath, marker in (("docs/HELP.md", "Базовые (13)"),
+                                ("docs/HELP_EN.md", "Base (13)")):
+            text = self._text(relpath)
+            m = re.search(
+                rf"^- \*\*{re.escape(marker)}\*\*.*?(?=^- \*\*Product-skills)",
+                text, re.M | re.S)
+            self.assertIsNotNone(m, f"{relpath}: нет буллета «{marker}»")
+            self.assertNotIn("`deck`", m.group(0),
+                             f"{relpath}: deck не базовый навык, а интеграция")
+
+    def test_venue_templates_fate_documented_and_no_pointers(self):
+        readme = self._text("extras/README.md")
+        self.assertIn(
+            "venue-templates", readme,
+            "судьба venue-templates (перенос/удаление) не задокументирована в extras/README.md")
+        offenders = [
+            p.relative_to(REPO).as_posix()
+            for p in SKILLS_DIR.rglob("*")
+            if p.is_file() and "venue-templates" in p.read_text(encoding="utf-8",
+                                                                errors="replace")
+        ]
+        self.assertEqual(
+            offenders, [],
+            "указатели на не поставляемый venue-templates остались в .claude/skills: "
+            + "; ".join(offenders))
+
+
 if __name__ == "__main__":
     unittest.main()

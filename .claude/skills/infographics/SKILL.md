@@ -531,7 +531,6 @@ For detailed guidance, load these reference files:
 
 This skill works synergistically with:
 
-- **market-research-reports**: Infographics for business reports
 - **generate-image**: For non-infographic visual content
 
 ---

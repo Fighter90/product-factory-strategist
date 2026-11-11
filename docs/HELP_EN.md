@@ -301,7 +301,7 @@ Alongside the process the environment loads **skills** — packaged instruction 
 groups plus integrations):
 
 - **Base (13)** — one per process step: `intake`, `research`, `situation`, `options`, `strategy`,
-  `validation-plan`, `decision-support`, `six-pager`, `deck`, etc.
+  `validation-plan`, `decision-support`, `six-pager`, etc.
 - **Product-skills (27)** — domain packs around the process: segments, JTBD, unit economics, growth, risks.
 - **Personal library (57)** — imported packs by category:
   - **Design** — `design-ui`, `refero-design`, `frontend-design`, `claudable-landing`, `make-interfaces-feel-better`,
@@ -311,10 +311,10 @@ groups plus integrations):
     `customer-research`, `marketing-psychology`, `prospecting`…;
   - **Science and data** — `research-lookup`, `literature-review`, `scientific-writing`,
     `scientific-critical-thinking`, `peer-review`, `statistical-analysis`,
-    `hypothesis-generation`, `exploratory-data-analysis`, `scientific-visualization`;
+    `hypothesis-generation`, `exploratory-data-analysis`, `transcribe`, `watch`;
   - **Docs/media** — `pdf`, `docx`, `pptx`, `xlsx`, `markitdown`, `officecli`, `generate-image`, `video`,
-    `infographics`, `matplotlib`;
-  - **Meta** — `balanced`, `find-skills`, `watch`, `transcribe`.
+    `infographics`, `matplotlib`, `scientific-visualization`;
+  - **Meta** — `balanced`, `find-skills`.
 - **Integrations** — cross-process behaviors: `premortem` (failure pre-mortem),
   `sdd` (development discipline), `deck` (six-pager presentation).
 
