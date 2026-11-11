@@ -18,6 +18,10 @@ docs/HELP_EN.md. Запуск вручную перед релизом или в
 - число субагентов — `.claude/agents/*.md`.
 
 Родительный падеж подставляется по правилам русского языка (тест/теста/тестов).
+Словоформы перебираются от длинных к коротким и матчатся с границей слова (`\b`):
+«навык» не матчит префикс «навыков», иначе дрифт счётчика через класс склонения
+(«120 навыков» → 122) портил файл («122 навыкаов») навсегда, а --check после порчи
+сообщал OK — преобразование было идемпотентным (PRO-63, ревью круг 3).
 stdlib only.
 """
 from __future__ import annotations
@@ -79,8 +83,11 @@ def ru_form(n: int, base: str) -> str:
 
 
 def sub_number(text: str, lookbehind: str, value: int) -> tuple[str, int]:
-    r"""`\d+` сразу ПЕРЕД lookbehind → value (со словоформой для известных существительных)."""
-    pattern = re.compile(r"(?P<n>\d+)(?P<ws>\s+)(?P<word>" + re.escape(lookbehind) + r")")
+    r"""`\d+` сразу ПЕРЕД lookbehind → value (со словоформой для известных существительных).
+
+    `\b` после словоформы: «навык» не матчится внутри «навыков» — подмена по префиксу
+    оставляла хвост («122 навыкаов») и накапливалась при повторных прогонах."""
+    pattern = re.compile(r"(?P<n>\d+)(?P<ws>\s+)(?P<word>" + re.escape(lookbehind) + r")\b")
     changed = 0
 
     def repl(m: re.Match) -> str:
@@ -131,17 +138,19 @@ def update_file(path: Path, c: dict, write: bool = True) -> tuple[str, int]:
                 total += n
             else:
                 for w in ("тестов", "теста"):
-                    if re.search(r"\d+\s+" + w, line):
+                    if re.search(r"\d+\s+" + re.escape(w) + r"\b", line):
                         line, n = sub_number(line, w, c["tests"])
                         total += n
                         break
-        for word, val in (("навык", c["skills"]), ("навыка", c["skills"]), ("навыков", c["skills"]),
-                          ("skills", c["skills"]),
-                          ("карт", c["cards_ru"]), ("карты", c["cards_ru"]), ("карта", c["cards_ru"]),
-                          ("EN-зеркал", c["cards_en"]), ("EN mirrors", c["cards_en"]),
+        # Словоформы — от длинных к коротким: с границей слова (\b) порядок страхует от
+        # подмены по префиксу («навыков» до «навык», «карты»/«карта» до «карт»).
+        for word, val in (("навыков", c["skills"]), ("навыка", c["skills"]), ("навык", c["skills"]),
                           ("субагентов", c["subagents"]), ("субагента", c["subagents"]),
-                          ("subagents", c["subagents"])):
-            if re.search(r"\d+\s+" + re.escape(word), line):
+                          ("subagents", c["subagents"]),
+                          ("карты", c["cards_ru"]), ("карта", c["cards_ru"]), ("карт", c["cards_ru"]),
+                          ("EN-зеркал", c["cards_en"]), ("EN mirrors", c["cards_en"]),
+                          ("skills", c["skills"])):
+            if re.search(r"\d+\s+" + re.escape(word) + r"\b", line):
                 line, n = sub_number(line, word, val)
                 total += n
         # «Голые» счётчики структуры: tests/ (N) · skills/ (N… · **Структура (N)**.

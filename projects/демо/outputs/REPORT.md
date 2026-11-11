@@ -1,6 +1,6 @@
 # CVStart: стратегия и обоснование
 
-> Собрано 2026-11-11T12:05 командой `pfs export`. Теги [C###] — утверждения, [S###] — источники, [D###] — решения (см. приложения).
+> Собрано 2026-11-11T13:30 командой `pfs export`. Теги [C###] — утверждения, [S###] — источники, [D###] — решения (см. приложения).
 
 ## 00 · Бриф — CVStart: коммерческая версия и глобальный GTM
 
@@ -600,7 +600,7 @@ Key trends in the job-search tools market:
 - **Generative AI drove the cost of text generation to zero.** Bare "AI writes text" is no longer a
   differentiator — value shifted to data (scanning real vacancies), context (resume against a
   specific JD) and process (scoring → tuning → application → tracking in one pipeline).
-- **The multilingual gap.** Direct competitors' language coverage is EN+5 (Kickresume — 6
+- **The multilingual gap [C013].** Direct competitors' language coverage is EN+5 (Kickresume — 6
   languages)⁵, while the global labor market is multilingual; local resume conventions (EU, JA, ZH)
   are ignored by mass tools.
 - **Privacy and data sovereignty.** A resume is a concentrated PII package; part of the audience
@@ -1120,9 +1120,8 @@ SaaS, B2B white-label, dual-license, закрытие коммерции — а�
 
 ```
 Итого: $0.00 (~0 ₽) | сессий 0 | токенов 0 | время человека 0 мин
-Контроль качества: 92/100 | ошибок 0, предупреждений 4
+Контроль качества: 94/100 | ошибок 0, предупреждений 3
 ✔ Без ошибок: 02_situation.md, 03_options.md, 04_product_strategy.md, 05_comms_strategy.md, 06_validation_plan.md
-⚠ SIX_PAGER_EN.md отстал от RU: нет тегов C013 — пересоберите пару: pfs export --six-pager --en
 ⚠ C004/S002: числа заголовка источника (7602) не совпадают с числами утверждения (19); число подтверждено текстом sources/S002.md — возможно, разные показатели
 ⚠ C008/S007: числа заголовка источника (2,5, 3,3, 37,97) не совпадают с числами утверждения (98, 500); число подтверждено текстом sources/S007.md — возможно, разные показатели
 ⚠ C012/S007: числа заголовка источника (2,5, 3,3, 37,97) не совпадают с числами утверждения (1, 36, 39,99, 200); число подтверждено текстом sources/S007.md — возможно, разные показатели

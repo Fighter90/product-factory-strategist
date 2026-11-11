@@ -73,6 +73,71 @@ class RealDocsCurrent(unittest.TestCase):
         self.assertEqual(_load().main(["--check"]), 0)
 
 
+class WordFormBoundary(unittest.TestCase):
+    """Ревью PRO-63 (круг 3): `\d+\s+навык` без границы слова матчит ПРЕФИКС «навыков» —
+    дрифт счётчика через класс склонения («120 навыков» → 122) портил файл («122 навыкаов»),
+    а повторный прогон не чинил и `--check` после порчи сообщал OK. Граница слова
+    (`\\b`) и перебор словоформ от длинных к коротким это исключают."""
+
+    C = {"tests": 383, "skills": 122, "cards_ru": 40, "cards_en": 40, "subagents": 9}
+
+    def _sub(self, text: str) -> str:
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "README.md"
+            p.write_text(text, encoding="utf-8")
+            out, _n = self.mod.update_file(p, self.C, write=False)
+            return out
+
+    def setUp(self):
+        self.mod = _load()
+
+    def test_declension_drift_does_not_corrupt_suffix(self):
+        # «120 навыков» при навыках=122: не «122 навыкаов», а честная словоформа «122 навыка».
+        out = self._sub("120 навыков\n")
+        self.assertEqual(out, "122 навыка\n")
+
+    def test_all_declension_classes(self):
+        cases = [("120 навыков\n", 121, "121 навык\n"),   # many → one
+                 ("120 навыков\n", 125, "125 навыков\n"),  # many → many (без порчи)
+                 ("10 карт\n", 1, "1 карта\n"),            # many → one
+                 ("10 карт\n", 24, "24 карты\n"),          # many → few
+                 ("8 субагентов\n", 9, "9 субагентов\n"),  # many → many
+                 ("8 субагентов\n", 2, "2 субагента\n")]   # many → few
+        for src, val, want in cases:
+            with tempfile.TemporaryDirectory() as d:
+                p = Path(d) / "README.md"
+                p.write_text(src, encoding="utf-8")
+                c = dict(self.C)
+                key = ("skills" if "навык" in src else
+                       "cards_ru" if "карт" in src else "subagents")
+                c[key] = val
+                out, _n = self.mod.update_file(p, c, write=False)
+                self.assertEqual(out, want, f"{src!r} при {key}={val}")
+
+    def test_substitution_idempotent_after_drift(self):
+        # Второй прогон по уже подставленному тексту ничего не меняет и не портит
+        # (префикс «навыка» внутри «навыкаов» больше не матчится).
+        out1 = self._sub("120 навыков\n10 карт\n")
+        out2 = self._sub(out1)
+        self.assertEqual(out2, out1)
+        self.assertNotIn("аов", out2)
+
+    def test_word_prefix_inside_longer_form_not_matched(self):
+        # Значение уже актуально и словоформа ему соответствует: подстановок ровно 0,
+        # текст не тронут. Без границы слова «навык» матчил префикс «навыков» и портил
+        # текст («125 навыков» → «125 навыковов») даже без дрифта значения.
+        cases = [("125 навыков\n", "skills"), ("40 карт\n", "cards_ru"),
+                 ("9 субагентов\n", "subagents")]
+        for src, key in cases:
+            with tempfile.TemporaryDirectory() as d:
+                p = Path(d) / "README.md"
+                p.write_text(src, encoding="utf-8")
+                c = dict(self.C)
+                c[key] = int(src.split()[0])  # счётчик равен числу в тексте — замен не нужно
+                out, n = self.mod.update_file(p, c, write=False)
+                self.assertEqual((out, n), (src, 0), f"{src!r}")
+
+
 class CheckModeIsDryRun(unittest.TestCase):
     """Ревью PRO-63 (круг 2): --check описан как «только проверить», но update_file
     писал файлы на диск и в check-режиме — гейт молча правил README/HELP при запуске
