@@ -9,11 +9,19 @@ OG-картинки по языкам, числа — из репозитори�
 Только стандартная библиотека. Счётчик Метрики в репозиторий не пишется:
 подключается флагом `--ym-id` (см. site/ANALYTICS.md).
 
+Скоуп PRO-66: эта система генерирует `/` (RU) и `/en/` (EN). Страницы site/demo.html,
+site/help.html и site/materials.html остаются в прежней вёрстке — их перевод в новую
+систему вынесен в отдельную задачу; тёмные фото, относящиеся к ним (обложка demo
+на основе dark-hero-paper), подключаются вместе с конвертацией. Сейчас dark-hero-paper
+используется как OG-картинка site/assets/og/og.jpg, dark-double-diamond и dossier-dark —
+в разделах «Процесс» и финальном CTA лендинга.
+
 Запуск: python3 scripts/build_site.py [--out site] [--ym-id 12345678]
 """
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import re
 import sys
@@ -270,6 +278,18 @@ h3{font-size:20px;line-height:1.3}
 .lang{display:flex;gap:2px;font-size:12px;font-weight:500}
 .lang a,.lang b{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border-radius:10px;text-decoration:none;color:var(--muted)}
 .lang b{color:var(--strong);font-weight:500}
+.mlink{display:none;position:relative}
+.mlink summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--line2);border-radius:999px;color:var(--strong)}
+.mlink summary::-webkit-details-marker{display:none}
+.mlink .b{display:block;width:16px;height:2px;border-radius:1px;background:currentColor;position:relative}
+.mlink .b::before,.mlink .b::after{content:"";position:absolute;left:0;width:16px;height:2px;border-radius:1px;background:currentColor}
+.mlink .b::before{top:-5px}.mlink .b::after{top:5px}
+.mlink[open] .b{background:transparent}
+.mlink[open] .b::before{transform:translateY(5px) rotate(45deg)}
+.mlink[open] .b::after{transform:translateY(-5px) rotate(-45deg)}
+.mlink-panel{position:absolute;top:calc(100% + 10px);left:0;right:0;display:flex;flex-direction:column;padding:8px;border:1px solid var(--line2);border-radius:18px;background:var(--card);box-shadow:0 18px 44px rgba(0,0,0,.45)}
+.mlink-panel a{display:flex;align-items:center;min-height:44px;padding:0 14px;border-radius:12px;text-decoration:none;color:var(--strong);font-weight:500;font-size:15px}
+.mlink-panel a:hover{background:var(--bg2)}
 
 /* кнопки-капсулы */
 .pill{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 6px 0 20px;border-radius:999px;font-size:16px;font-weight:500;text-decoration:none;border:0;cursor:pointer;font-family:inherit;transition:filter .2s,background .2s}
@@ -397,12 +417,17 @@ details p{margin:0 0 22px;color:var(--muted);max-width:44em}
 /* финал и футер */
 .final{position:relative;overflow:hidden;text-align:center;border-bottom:0}
 .final .box{position:relative;margin:0 auto;max-width:980px;padding:80px 28px;border:1px solid rgba(238,138,60,.4);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,rgba(238,138,60,.16),rgba(11,10,9,0) 60%),var(--bg2);display:flex;flex-direction:column;align-items:center;gap:22px}
+.procfig{margin:44px auto 0;max-width:760px}
+.dosfig{margin:0 auto;width:100%;max-width:520px}
+.procfig img,.dosfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
 footer{border-top:1px solid var(--line);padding:36px 0 calc(36px + env(safe-area-inset-bottom,0px));font-size:14px;color:var(--muted)}
 footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
 footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}footer a:hover{color:var(--strong)}
 
 @media (max-width:980px){
   .links{display:none}
+  .mlink{display:block}
+  .nav .bar{padding-right:6px}
   .flow{grid-template-columns:minmax(0,1fr);gap:14px}.core{margin:6px 0}
   .col.in .node::after,.col.out .node::before{display:none}
   .card,.card.w6,.card.w8{grid-column:1/-1}
@@ -433,6 +458,11 @@ JS = """
       var done=function(){var o=b.textContent;b.textContent=b.dataset.ok||'OK';setTimeout(function(){b.textContent=o},1600)};
       try{navigator.clipboard.writeText(t).then(done,done)}catch(e){done()}
       goal('copy_command',{i:b.dataset.copy});
+    });
+  });
+  document.querySelectorAll('.mlink').forEach(function(d){
+    d.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click',function(){d.removeAttribute('open')});
     });
   });
   document.querySelectorAll('details').forEach(function(d){
@@ -489,10 +519,19 @@ def _page(lang_attrs: str, title: str, desc: str, canonical: str, og: str,
     return render(full, mapping)
 
 
+# Ключи, значения которых — уже готовая разметка/скрипты и не подлежат экранированию.
+# Всё остальное (числа, TEXT/SEG, C_DOM/path, D_LABEL, USAGE, даты, KIND, A…) —
+# пользовательские данные репозитория: экранируются html.escape.
+RAW_KEYS = frozenset({"CSS", "JS", "YM", "BRAND"})
+
+
 def render(template: str, mapping: dict) -> str:
     out = template
     for key, val in mapping.items():
-        out = out.replace("{{" + key + "}}", val if isinstance(val, str) else str(val))
+        text = val if isinstance(val, str) else str(val)
+        if key not in RAW_KEYS:
+            text = html.escape(text, quote=True)
+        out = out.replace("{{" + key + "}}", text)
     if "{{" in out:
         left = re.findall(r"\{\{(\w+)\}\}", out)
         raise BuildError(f"Остались незаполненные токены: {sorted(set(left))}")
@@ -514,6 +553,12 @@ RU_BODY = f"""
       </nav>
       <div class="lang"><b aria-current="true">RU</b><a href="en/" hreflang="en" data-goal="lang_switch">EN</a></div>
       <a class="pill pill-a pill-sm" href="#install" data-goal="cta_install_click">Запустить{ARROW}</a>
+      <details class="mlink">
+        <summary aria-label="Меню разделов"><span class="b" aria-hidden="true"></span></summary>
+        <nav class="mlink-panel" aria-label="Разделы">
+          <a href="#how">Как работает</a><a href="#features">Возможности</a><a href="#demo">Демо</a><a href="#install">Установка</a><a href="#faq">Вопросы</a>
+        </nav>
+      </details>
     </div>
   </div>
 </header>
@@ -640,6 +685,12 @@ RU_BODY = f"""
       <div class="ph"><h3>Разработать</h3><ol><li><span class="n">8</span>Стратегии</li><li><span class="n">9</span>План проверки</li><li><span class="n">10</span>Ревью качества</li></ol></div>
       <div class="ph"><h3>Довести</h3><ol><li class="h"><span class="n">11</span>Решение</li><li><span class="n">12</span>Мониторинг</li></ol></div>
     </div>
+    <figure class="procfig">
+      <picture>
+        <source type="image/avif" srcset="{{{{A}}}}assets/dark-double-diamond.avif">
+        <img src="{{{{A}}}}assets/dark-double-diamond.webp" width="1800" height="1350" alt="Двойной алмаз процесса: расходящиеся и сходящиеся линии, выложенные нитью на тёмной бумаге" loading="lazy" decoding="async">
+      </picture>
+    </figure>
   </div>
 </section>
 
@@ -757,6 +808,12 @@ RU_BODY = f"""
 <section class="final" aria-labelledby="fin-h">
   <div class="wrap">
     <div class="box">
+      <figure class="dosfig">
+        <picture>
+          <source type="image/avif" srcset="{{{{A}}}}assets/dossier-dark.avif">
+          <img src="{{{{A}}}}assets/dossier-dark.webp" width="1800" height="1012" alt="Пакет решения: документы, собранные нитью в стопку, на тёмном фоне" loading="lazy" decoding="async">
+        </picture>
+      </figure>
       <div class="eyebrow">Открытый код · MIT</div>
       <h2 id="fin-h">Проверьте агента <span class="acc">на своей задаче</span></h2>
       <p class="muted" style="margin:0;max-width:34em">Откройте папку в своей среде и опишите задачу как есть. Агент задаст до трёх вопросов и начнёт исследование.</p>
@@ -794,6 +851,12 @@ EN_BODY = f"""
       </nav>
       <div class="lang"><a href="../" hreflang="ru" data-goal="lang_switch">RU</a><b aria-current="true">EN</b></div>
       <a class="pill pill-a pill-sm" href="#install" data-goal="cta_install_click">Start{ARROW}</a>
+      <details class="mlink">
+        <summary aria-label="Sections menu"><span class="b" aria-hidden="true"></span></summary>
+        <nav class="mlink-panel" aria-label="Sections">
+          <a href="#how">How it works</a><a href="#features">Features</a><a href="#demo">Demo</a><a href="#install">Install</a><a href="#faq">FAQ</a>
+        </nav>
+      </details>
     </div>
   </div>
 </header>
@@ -920,6 +983,12 @@ EN_BODY = f"""
       <div class="ph"><h3>Develop</h3><ol><li><span class="n">8</span>Strategies</li><li><span class="n">9</span>Validation plan</li><li><span class="n">10</span>Quality review</li></ol></div>
       <div class="ph"><h3>Deliver</h3><ol><li class="h"><span class="n">11</span>Decision</li><li><span class="n">12</span>Monitoring</li></ol></div>
     </div>
+    <figure class="procfig">
+      <picture>
+        <source type="image/avif" srcset="{{{{A}}}}assets/dark-double-diamond.avif">
+        <img src="{{{{A}}}}assets/dark-double-diamond.webp" width="1800" height="1350" alt="Double-diamond process: diverging and converging lines laid out with thread on dark paper" loading="lazy" decoding="async">
+      </picture>
+    </figure>
   </div>
 </section>
 
@@ -1037,6 +1106,12 @@ EN_BODY = f"""
 <section class="final" aria-labelledby="fin-h">
   <div class="wrap">
     <div class="box">
+      <figure class="dosfig">
+        <picture>
+          <source type="image/avif" srcset="{{{{A}}}}assets/dossier-dark.avif">
+          <img src="{{{{A}}}}assets/dossier-dark.webp" width="1800" height="1012" alt="Decision package: documents bundled with thread on a dark background" loading="lazy" decoding="async">
+        </picture>
+      </figure>
       <div class="eyebrow">Open source · MIT</div>
       <h2 id="fin-h">Try the agent <span class="acc">on your own problem</span></h2>
       <p class="muted" style="margin:0;max-width:34em">Open the folder in your tool and describe the task as it is. The agent asks up to three questions and starts the research.</p>
@@ -1060,13 +1135,16 @@ EN_BODY = f"""
 """
 
 
+# OG-картинка одна на оба языка: og-ru.jpg и og-en.jpg были побайтово одинаковы
+# (ревью PRO-66), а сама картинка — языконезависимое фото. Текст расшаривающейся
+# ссылки подставляет соцсеть из og:title/og:description, а не из картинки.
 def _og(lang: str, title: str, desc: str, canonical: str) -> str:
     return f"""<meta property="og:type" content="website">
 <meta property="og:site_name" content="{'Стратег Фабрики продуктов' if lang == 'ru' else 'Product Factory Strategist'}">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:url" content="{canonical}">
-<meta property="og:image" content="{BASE}/assets/og/og-{lang}.jpg">
+<meta property="og:image" content="{BASE}/assets/og/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">"""
