@@ -269,7 +269,7 @@ pfs models                     # таблица: какая модель на к
 pfs models pick red_team       # план на задачу
 pfs models use cursor-mixed    # профиль для другой среды
 pfs models sync                # прописать модели в субагентов Claude Code
-pfs cost [--transcript session.jsonl] [--session ses_e43_session.json] [--window]   # стоимость по транскриптам Claude Code или сессии OpenCode (session.json; для план-провайдеров типа zai-coding-plan — токены с $0 и пометкой «plan»); --session <файл> без --transcript — алиас с авто-детектом формата в корне проекта (*_session.json / *.jsonl; без значения — самый свежий, реестровые claims/sources/decisions/log.jsonl не считаются); в других средах:
+pfs cost [--transcript session.jsonl] [--session ses_e43_session.json] [--window] [--plan-month 18]   # стоимость по транскриптам Claude Code или сессии OpenCode (session.json; для план-провайдеров типа zai-coding-plan — фактическая оплата $0 и пометка «подписочный план» с ненулевым эквивалентом по API-ценам из config/pricing.json; разбивка по шагам процесса, моделям с кэшем, время сессий, повторы); --plan-month <USD/мес> — ваш тариф подписки, отдельно покажет долю подписки проекта; --session <файл> без --transcript — алиас с авто-детектом формата в корне проекта (*_session.json / *.jsonl; без значения — самый свежий, реестровые claims/sources/decisions/log.jsonl не считаются); в других средах:
 pfs log "Ручная правка" --usd 0.8 --human-minutes 15
 ```
 

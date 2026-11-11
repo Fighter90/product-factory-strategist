@@ -233,19 +233,30 @@ def cmd_log(a):
 
 def cmd_cost(a):
     pdir = _p(a)
+    if getattr(a, "plan_month", None):
+        cost.set_plan_tariff(pdir, a.plan_month)  # PRO-62: тариф подписки → доля подписки в отчёте
+        print(f"Тариф подписки: ${a.plan_month:g}/мес")
     if a.window:
         print(f"Окно учёта: {cost.set_window(pdir, a.since, a.until)}")
     if a.transcript:
         s = cost.record_session(pdir, a.session or Path(a.transcript).stem, Path(a.transcript), a.since, a.until)
-        mark = " (plan)" if any(t.get("plan") for t in s["models"].values()) else ""
-        print(f"Сессия учтена{mark}: ${s['usd']:.4f}")
+        print(_session_line(s))
     elif a.session is not None:  # алиас --transcript с авто-детектом транскрипта в корне проекта (PRO-30)
         path = cost.find_transcript(pdir, a.session)
         s = cost.record_session(pdir, path.stem, path, a.since, a.until)
-        mark = " (plan)" if any(t.get("plan") for t in s["models"].values()) else ""
         print(f"Транскрипт: {path.name}")
-        print(f"Сессия учтена{mark}: ${s['usd']:.4f}")
+        print(_session_line(s))
     print(cost.summary_text(pdir))
+
+
+def _session_line(s: dict) -> str:
+    """«Сессия учтена…»: фактическая оплата; для план-сессий — и эквивалент по API-ценам,
+    когда он отличается от факта (у обычных сессий он равен факту — хвост не дублируем) (PRO-62)."""
+    mark = " (plan)" if any(t.get("plan") for t in s["models"].values()) else ""
+    line = f"Сессия учтена{mark}: ${s['usd']:.4f}"
+    if mark or s.get("usd_equivalent") != s.get("usd"):
+        line += f" · эквивалент по API-ценам ${s['usd_equivalent']:.2f}"
+    return line
 
 
 def cmd_kb(a):
@@ -552,6 +563,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--kind", default="action"); s.add_argument("--step"); s.add_argument("--usd", type=float, default=0.0)
     s.add_argument("--human-minutes", type=float, default=0.0); s.set_defaults(f=cmd_log)
     s = sp.add_parser("cost", help="стоимость"); s.add_argument("--transcript", help="транскрипт Claude Code (jsonl) или сессия OpenCode (session.json)")
+    s.add_argument("--plan-month", type=float, help="фактический тариф подписки, USD/мес — отдельно показать долю подписки проекта (PRO-62)")
     s.add_argument("--session", nargs="?", const="", default=None,
                    help="ID сессии (при --transcript) или транскрипт: путь/часть имени "
                         "(*_session.json / *.jsonl в корне проекта; без --transcript — алиас с авто-детектом, "
