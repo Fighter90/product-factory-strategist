@@ -379,11 +379,6 @@ p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono
         <div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 3h8l2 3v11H4V6l2-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
         <h3>Документ для комитета</h3>
         <p>Six-pager из шести ответов, которых ждёт комитет. RU и EN, MD, PDF, DOCX и четыре книги Excel.</p>
-        <ul class="faqlist" style="margin:0;padding:0">
-          <li><b>1</b>Рынок, тренды, конкуренты</li><li><b>2</b>Кто пользователи и что мешает</li>
-          <li><b>3</b>Инициативы и обоснование</li><li><b>4</b>Тактики под потребности</li>
-          <li><b>5</b>План, вклад, сезонность</li><li><b>6</b>KPI бизнеса и продукта</li>
-        </ul>
       </article>
       <article class="card">
         <div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 8.5h13M9.5 8.5v7" stroke="currentColor" stroke-width="1.6"/></svg></div>
@@ -469,6 +464,30 @@ p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono
   </div>
 </section>
 
+<section id="sixpager" aria-labelledby="six-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Документ для комитета</div>
+      <h2 id="six-h">Six-pager: шесть ответов, <span class="acc">которых ждёт комитет</span></h2>
+      <p>Итог прогона — отчёт, где ответы идут в порядке FAQ-1…6 и каждое число прослеживается до утверждения реестра. Формат под задачу: MD для чтения и правок, PDF для комитета, DOCX для правок руководителя, четыре книги Excel с живыми формулами.</p>
+    </div>
+    <ul class="sixlist">
+      <li><b>FAQ-1</b><span>рынок, тренды и конкуренты</span></li>
+      <li><b>FAQ-2</b><span>кто пользователи и что им мешает</span></li>
+      <li><b>FAQ-3</b><span>варианты, инициативы и обоснование каждого</span></li>
+      <li><b>FAQ-4</b><span>тактики, привязанные к потребностям</span></li>
+      <li><b>FAQ-5</b><span>план, вклад и сезонность</span></li>
+      <li><b>FAQ-6</b><span>KPI бизнеса и продукта</span></li>
+    </ul>
+    <div class="chain" style="margin:24px auto 0;max-width:760px">
+      <span class="chip">MD · читать и править</span>
+      <span class="chip">PDF · для комитета</span>
+      <span class="chip">DOCX · для руководителя</span>
+      <span class="chip">Excel · 4 книги с формулами</span>
+    </div>
+  </div>
+</section>
+
 <section id="demo" aria-labelledby="demo-h">
   <div class="wrap demo">
     <div class="head" style="margin:0">
@@ -496,7 +515,7 @@ p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono
     <div class="head" style="margin:0 auto 48px;text-align:center;align-items:center">
       <div class="label">Архитектура</div>
       <h2 id="arch-h">Гарантии — не в промптах, <span class="acc">а в коде и файлах</span></h2>
-      <p>Автотесты CLI (463) проверяют ядро после каждого изменения. Состояние проекта лежит в файлах рядом с кодом — работа переживает перерыв и переезд между средами.</p>
+      <p>Автотесты CLI (475) проверяют ядро после каждого изменения. Состояние проекта лежит в файлах рядом с кодом — работа переживает перерыв и переезд между средами.</p>
     </div>
     <div class="stack">
       <div class="layer"><span class="n">1</span><div><b>Среда · AGENTS.md</b><small>правила: источник у каждого числа, синтетика — только гипотезы, существенное решает человек · навыков: 121 · субагентов: 8 · хуков: 5</small></div></div>
@@ -516,10 +535,10 @@ p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono
       <blockquote>«Платная защита от спам-звонков теряет подписчиков. Что делать с продуктом и что говорить абонентам?»</blockquote>
     </div>
     <ol class="steps">
-      <li><span class="label">1 · Скачайте репозиторий</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Скопировано">Копировать</button></div></li>
-      <li><span class="label">2 · Установите pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Скопировано">Копировать</button></div></li>
-      <li><span class="label">3 · Проверьте окружение</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Скопировано">Копировать</button></div></li>
-      <li><span class="label">4 · Откройте папку в своей среде</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Скопировано">Копировать</button></div></li>
+      <li><span class="label">1 · Скачайте репозиторий</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
+      <li><span class="label">2 · Установите pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
+      <li><span class="label">3 · Проверьте окружение</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
+      <li><span class="label">4 · Откройте папку в своей среде</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
     </ol>
   </div>
 </section>
@@ -575,9 +594,16 @@ p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono
   });
   document.querySelectorAll('.copy').forEach(function(b){
     b.addEventListener('click',function(){
-      var t=b.parentNode.querySelector('code').textContent;
-      var done=function(){var o=b.textContent;b.textContent=b.dataset.ok||'OK';setTimeout(function(){b.textContent=o},1600)};
-      try{navigator.clipboard.writeText(t).then(done,done)}catch(e){done()}
+      var code=b.parentNode.querySelector('code');
+      var t=code.textContent;
+      var flash=function(txt,select){
+        var o=b.textContent;b.textContent=txt;setTimeout(function(){b.textContent=o},1600);
+        if(select){try{var r=document.createRange();r.selectNodeContents(code);
+          var s=window.getSelection();s.removeAllRanges();s.addRange(r)}catch(e){}}
+      };
+      var ok=function(){flash(b.dataset.ok||'OK',false)};
+      var fail=function(){flash(b.dataset.fail||'Error',true)};
+      try{navigator.clipboard.writeText(t).then(ok,fail)}catch(e){fail()}
       goal('copy_command',{i:b.dataset.copy});
     });
   });

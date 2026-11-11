@@ -462,6 +462,9 @@ def claim_facts() -> dict:
         "C_DOM": dom,
         "DATE_RU": ".".join(reversed(retrieved.split("-"))) if retrieved else "",
         "DATE_EN": retrieved,
+        # CKIND — сырой тип из реестра (fact/hypothesis/…): команда в терминальном
+        # фрагменте повторяет его, чтобы не разойтись с карточкой при смене типа.
+        "CKIND": kind,
         "KIND_RU": kind_ru,
         "KIND_EN": kind_en,
         "GRADE": grade,
@@ -822,9 +825,16 @@ JS = """
   });
   document.querySelectorAll('.copy').forEach(function(b){
     b.addEventListener('click',function(){
-      var t=b.parentNode.querySelector('code').textContent;
-      var done=function(){var o=b.textContent;b.textContent=b.dataset.ok||'OK';setTimeout(function(){b.textContent=o},1600)};
-      try{navigator.clipboard.writeText(t).then(done,done)}catch(e){done()}
+      var code=b.parentNode.querySelector('code');
+      var t=code.textContent;
+      var flash=function(txt,select){
+        var o=b.textContent;b.textContent=txt;setTimeout(function(){b.textContent=o},1600);
+        if(select){try{var r=document.createRange();r.selectNodeContents(code);
+          var s=window.getSelection();s.removeAllRanges();s.addRange(r)}catch(e){}}
+      };
+      var ok=function(){flash(b.dataset.ok||'OK',false)};
+      var fail=function(){flash(b.dataset.fail||'Error',true)};
+      try{navigator.clipboard.writeText(t).then(ok,fail)}catch(e){fail()}
       goal('copy_command',{i:b.dataset.copy});
     });
   });
@@ -1027,11 +1037,6 @@ RU_BODY = f"""
         <div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 3h8l2 3v11H4V6l2-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
         <h3>Документ для комитета</h3>
         <p>Six-pager из шести ответов, которых ждёт комитет. RU и EN, MD, PDF, DOCX и четыре книги Excel.</p>
-        <ul class="faqlist" style="margin:0;padding:0">
-          <li><b>1</b>Рынок, тренды, конкуренты</li><li><b>2</b>Кто пользователи и что мешает</li>
-          <li><b>3</b>Инициативы и обоснование</li><li><b>4</b>Тактики под потребности</li>
-          <li><b>5</b>План, вклад, сезонность</li><li><b>6</b>KPI бизнеса и продукта</li>
-        </ul>
       </article>
       <article class="card">
         <div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 8.5h13M9.5 8.5v7" stroke="currentColor" stroke-width="1.6"/></svg></div>
@@ -1087,7 +1092,7 @@ RU_BODY = f"""
         <pre><span class="p">$</span> pfs new "CVStart: платная версия" "{{{{RQ}}}}"
 <span class="a">Шаг 1/12 · intake</span> · бриф подтверждён · дальше: sources
 <span class="a">Шаг 2/12 · sources</span> · {{{{D_SOURCES}}}} источников · 0 запрещённых доменов · дальше: research
-<span class="p">$</span> pfs claim add "{{{{SEG}}}}" --kind fact --source {{{{C_SRC}}}} --grade {{{{GRADE}}}}
+<span class="p">$</span> pfs claim add "{{{{SEG}}}}" --kind {{{{CKIND}}}} --source {{{{C_SRC}}}} --grade {{{{GRADE}}}}
 <span class="hi">{{{{C_ID}}}} · {{{{KIND}}}} · сила {{{{GRADE}}}} · цитата сохранена</span>
 <span class="a">Шаг 3/12 · research</span> · {{{{D_CLAIMS}}}} утверждений в реестре · дальше: discovery
 <span class="p">&gt;</span> стоп — пауза: состояние в файлах, новый чат продолжит с шага 3</pre>
@@ -1113,6 +1118,30 @@ RU_BODY = f"""
           <p class="muted" style="margin:10px 0 0;font-size:13px">Значения можно поменять — формулы пересчитаются.</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section id="sixpager" aria-labelledby="six-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Документ для комитета</div>
+      <h2 id="six-h">Six-pager: шесть ответов, <span class="acc">которых ждёт комитет</span></h2>
+      <p>Итог прогона — отчёт, где ответы идут в порядке FAQ-1…6 и каждое число прослеживается до утверждения реестра. Формат под задачу: MD для чтения и правок, PDF для комитета, DOCX для правок руководителя, четыре книги Excel с живыми формулами.</p>
+    </div>
+    <ul class="sixlist">
+      <li><b>FAQ-1</b><span>рынок, тренды и конкуренты</span></li>
+      <li><b>FAQ-2</b><span>кто пользователи и что им мешает</span></li>
+      <li><b>FAQ-3</b><span>варианты, инициативы и обоснование каждого</span></li>
+      <li><b>FAQ-4</b><span>тактики, привязанные к потребностям</span></li>
+      <li><b>FAQ-5</b><span>план, вклад и сезонность</span></li>
+      <li><b>FAQ-6</b><span>KPI бизнеса и продукта</span></li>
+    </ul>
+    <div class="chain" style="margin:24px auto 0;max-width:760px">
+      <span class="chip">MD · читать и править</span>
+      <span class="chip">PDF · для комитета</span>
+      <span class="chip">DOCX · для руководителя</span>
+      <span class="chip">Excel · 4 книги с формулами</span>
     </div>
   </div>
 </section>
@@ -1164,10 +1193,10 @@ RU_BODY = f"""
       <blockquote>«Платная защита от спам-звонков теряет подписчиков. Что делать с продуктом и что говорить абонентам?»</blockquote>
     </div>
     <ol class="steps">
-      <li><span class="label">1 · Скачайте репозиторий</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Скопировано">Копировать</button></div></li>
-      <li><span class="label">2 · Установите pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Скопировано">Копировать</button></div></li>
-      <li><span class="label">3 · Проверьте окружение</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Скопировано">Копировать</button></div></li>
-      <li><span class="label">4 · Откройте папку в своей среде</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Скопировано">Копировать</button></div></li>
+      <li><span class="label">1 · Скачайте репозиторий</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
+      <li><span class="label">2 · Установите pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
+      <li><span class="label">3 · Проверьте окружение</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
+      <li><span class="label">4 · Откройте папку в своей среде</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
     </ol>
   </div>
 </section>
@@ -1331,11 +1360,6 @@ EN_BODY = f"""
         <div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 3h8l2 3v11H4V6l2-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
         <h3>A document for the committee</h3>
         <p>A six-pager built on the six answers a committee expects. RU and EN, MD, PDF, DOCX and four Excel workbooks.</p>
-        <ul class="faqlist" style="margin:0;padding:0">
-          <li><b>1</b>Market, trends, competitors</li><li><b>2</b>Who the users are, what blocks them</li>
-          <li><b>3</b>Initiatives and the case for each</li><li><b>4</b>Tactics mapped to needs</li>
-          <li><b>5</b>Plan, contribution, seasonality</li><li><b>6</b>Business and product KPIs</li>
-        </ul>
       </article>
       <article class="card">
         <div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 8.5h13M9.5 8.5v7" stroke="currentColor" stroke-width="1.6"/></svg></div>
@@ -1391,7 +1415,7 @@ EN_BODY = f"""
         <pre><span class="p">$</span> pfs new "CVStart: paid version" "{{{{RQ}}}}"
 <span class="a">Step 1/12 · intake</span> · brief confirmed · next: sources
 <span class="a">Step 2/12 · sources</span> · {{{{D_SOURCES}}}} sources · 0 blocked domains · next: research
-<span class="p">$</span> pfs claim add "{{{{SEG}}}}" --kind fact --source {{{{C_SRC}}}} --grade {{{{GRADE}}}}
+<span class="p">$</span> pfs claim add "{{{{SEG}}}}" --kind {{{{CKIND}}}} --source {{{{C_SRC}}}} --grade {{{{GRADE}}}}
 <span class="hi">{{{{C_ID}}}} · {{{{KIND}}}} · grade {{{{GRADE}}}} · quote saved</span>
 <span class="a">Step 3/12 · research</span> · {{{{D_CLAIMS}}}} claims in the registry · next: discovery
 <span class="p">&gt;</span> stop — pause: the state lives in files, a new chat resumes at step 3</pre>
@@ -1417,6 +1441,30 @@ EN_BODY = f"""
           <p class="muted" style="margin:10px 0 0;font-size:13px">Change the inputs and the formulas recalculate.</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section id="sixpager" aria-labelledby="six-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">A document for the committee</div>
+      <h2 id="six-h">A six-pager with the six answers <span class="acc">a committee expects</span></h2>
+      <p>The outcome of a run is a report where the answers follow FAQ-1…6 and every number traces back to a registry claim. The format matches the task: MD for reading and editing, PDF for the committee, DOCX for the lead’s edits, and four Excel workbooks with live formulas.</p>
+    </div>
+    <ul class="sixlist">
+      <li><b>FAQ-1</b><span>market, trends and competitors</span></li>
+      <li><b>FAQ-2</b><span>who the users are and what blocks them</span></li>
+      <li><b>FAQ-3</b><span>options, initiatives and the case for each</span></li>
+      <li><b>FAQ-4</b><span>tactics mapped to needs</span></li>
+      <li><b>FAQ-5</b><span>plan, contribution and seasonality</span></li>
+      <li><b>FAQ-6</b><span>business and product KPIs</span></li>
+    </ul>
+    <div class="chain" style="margin:24px auto 0;max-width:760px">
+      <span class="chip">MD · read and edit</span>
+      <span class="chip">PDF · for the committee</span>
+      <span class="chip">DOCX · for the lead</span>
+      <span class="chip">Excel · 4 workbooks with formulas</span>
     </div>
   </div>
 </section>
@@ -1468,10 +1516,10 @@ EN_BODY = f"""
       <blockquote>“Our paid spam-call protection keeps losing subscribers. What should we do with the product, and what should we tell customers?”</blockquote>
     </div>
     <ol class="steps">
-      <li><span class="label">1 · Clone the repository</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Copied">Copy</button></div></li>
-      <li><span class="label">2 · Install pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Copied">Copy</button></div></li>
-      <li><span class="label">3 · Check your setup</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Copied">Copy</button></div></li>
-      <li><span class="label">4 · Open the folder in your tool</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Copied">Copy</button></div></li>
+      <li><span class="label">1 · Clone the repository</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Copied" data-fail="Copy failed">Copy</button></div></li>
+      <li><span class="label">2 · Install pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Copied" data-fail="Copy failed">Copy</button></div></li>
+      <li><span class="label">3 · Check your setup</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Copied" data-fail="Copy failed">Copy</button></div></li>
+      <li><span class="label">4 · Open the folder in your tool</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Copied" data-fail="Copy failed">Copy</button></div></li>
     </ol>
   </div>
 </section>
@@ -2098,10 +2146,10 @@ HELP_BODY_RU = f"""
       <p>Нужны Python 3.9+ и одна из сред. Пакеты не устанавливаются — только стандартная библиотека. Секреты (ключи MCP) кладутся в <code>.env</code> — он не коммитится и не обязателен для базового цикла.</p>
     </div>
     <ol class="steps">
-      <li><span class="label">1 · Скачайте репозиторий</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Скопировано">Копировать</button></div></li>
-      <li><span class="label">2 · Установите pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Скопировано">Копировать</button></div></li>
-      <li><span class="label">3 · Проверьте окружение</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Скопировано">Копировать</button></div></li>
-      <li><span class="label">4 · Откройте папку в своей среде</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Скопировано">Копировать</button></div></li>
+      <li><span class="label">1 · Скачайте репозиторий</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
+      <li><span class="label">2 · Установите pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
+      <li><span class="label">3 · Проверьте окружение</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
+      <li><span class="label">4 · Откройте папку в своей среде</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
     </ol>
   </div>
 </section>
@@ -2298,10 +2346,10 @@ HELP_BODY_EN = f"""
       <p>You need Python 3.9+ and one of the supported tools. No packages to install — the standard library only. Secrets (MCP keys) go to <code>.env</code> — it is git-ignored and not required for the basic loop.</p>
     </div>
     <ol class="steps">
-      <li><span class="label">1 · Clone the repository</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Copied">Copy</button></div></li>
-      <li><span class="label">2 · Install pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Copied">Copy</button></div></li>
-      <li><span class="label">3 · Check your setup</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Copied">Copy</button></div></li>
-      <li><span class="label">4 · Open the folder in your tool</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Copied">Copy</button></div></li>
+      <li><span class="label">1 · Clone the repository</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Copied" data-fail="Copy failed">Copy</button></div></li>
+      <li><span class="label">2 · Install pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Copied" data-fail="Copy failed">Copy</button></div></li>
+      <li><span class="label">3 · Check your setup</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Copied" data-fail="Copy failed">Copy</button></div></li>
+      <li><span class="label">4 · Open the folder in your tool</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Copied" data-fail="Copy failed">Copy</button></div></li>
     </ol>
   </div>
 </section>
