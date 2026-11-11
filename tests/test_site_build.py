@@ -722,6 +722,62 @@ class TestRound2DemoNumbers(unittest.TestCase):
         self.assertEqual(facts["SEG_EN"], facts["TEXT_EN"].split(";")[0].strip())
 
 
+# ---------- раунд ревью: перенесённые строки «Возражения red team» ----------
+
+OPT_WRAPPED = ("## Вариант A. Оставить как есть — бесплатный OSS\n"
+               "- Возражения red team: (1) первое возражение\n"
+               "  продолжается на строке переноса; (2) второе возражение\n"
+               "  тоже перенесено; (3) третье — целиком на строке переноса\n"
+               "- Скрытое допущение: что-то предполагается\n")
+
+
+class TestWrappedObjections(unittest.TestCase):
+    """«Возражения red team» — пункт списка, а не одна строка.
+
+    Ревью PRO-66: жёсткий перенос длинной строки кладёт пункты (2)…(N) на строки
+    продолжения; захват только первой строки молча занижал D_OBJ (max() по
+    сопоставленной строке), а сборка оставалась зелёной.
+    """
+
+    def setUp(self):
+        self.mod = _load_build_module()
+
+    def _demo(self, md: str) -> None:
+        tmp = Path(tempfile.mkdtemp(prefix="pfs-wrap-"))
+        self.mod.DEMO = _fixture_demo(tmp, options_md=md, claims=[{"id": "C001",
+                                                                   "kind": "fact",
+                                                                   "grade": "B",
+                                                                   "text": "т",
+                                                                   "sources": ["S001"]}])
+
+    def test_wrapped_objections_counted(self):
+        self._demo(OPT_WRAPPED)
+        nums = self.mod.demo_numbers()
+        self.assertEqual(nums["D_OBJ"], 3,
+                         "пункты (2) и (3) на строках продолжения должны считаться")
+        self.assertEqual(nums["D_ASM"], 1)
+
+    def test_capture_stops_at_next_bullet(self):
+        # числа в скобках в следующих пунктах не приписываются возражениям
+        md = ("## Вариант A. Оставить как есть — бесплатный OSS\n"
+              "- Возражения red team: (1) первое возражение\n"
+              "  продолжение первого пункта без пометок\n"
+              "- Скрытое допущение: срок пересмотра (2027-02-10) помечен в скобках\n")
+        self._demo(md)
+        nums = self.mod.demo_numbers()
+        self.assertEqual(nums["D_OBJ"], 1, "(2027…) из «Скрытого допущения» — не возражение")
+        self.assertEqual(nums["D_ASM"], 1)
+
+    def test_wrapped_without_numbers_is_loud(self):
+        md = ("## Вариант A. Оставить как есть — бесплатный OSS\n"
+              "- Возражения red team: возражения есть,\n"
+              "  но нумерации нет ни на одной строке переноса\n"
+              "- Скрытое допущение: что-то\n")
+        self._demo(md)
+        with self.assertRaisesRegex(self.mod.BuildError, "нумерованных"):
+            self.mod.demo_numbers()
+
+
 # ---------- раунд ревью: EN-метка выбранного варианта (D_LABEL) ----------
 
 # Вариант с русской меткой + экономика для excel_numbers(): имитирует выбор
