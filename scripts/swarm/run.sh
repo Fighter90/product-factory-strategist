@@ -14,7 +14,17 @@ if [ -e .task-board/lock ]; then
   exit 2
 fi
 
+# незакоммиченные хвосты убитых executor'ов (timeout-kill / SIGTERM) упаковываем
+# в stash — восстановимо. ДО checkout: грязные tracked-файлы ломают сам
+# переключение («локальные изменения будут перезаписаны»), а оркестратор по
+# решению ревью (round 3 PRO-64) отказывается работать на грязном дереве.
+if ! git diff --quiet || ! git diff --cached --quiet || [ -n "$(git ls-files --others --exclude-standard | head -1)" ]; then
+  git stash push --include-untracked -q -m "run.sh: auto-stash leftovers before orchestrator start" || true
+  echo "run.sh: грязное дерево упаковано в stash (git stash list — восстановление)" >&2
+fi
+
 git fetch origin -q
 git checkout -q --detach origin/main
 chmod +x scripts/swarm/run.sh 2>/dev/null || true
+
 exec node scripts/swarm/orchestrator.mjs "$@"
