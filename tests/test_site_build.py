@@ -193,9 +193,9 @@ class TestGeneration(SiteBuildBase):
             self.assertIn('hreflang="x-default" href="https://strategyproduct.ru/"', page, lang)
 
     def test_og_per_language(self):
-        self.assertIn('property="og:image" content="https://strategyproduct.ru/assets/og/og-ru.jpg"', self.built["ru"])
-        self.assertIn('property="og:image" content="https://strategyproduct.ru/assets/og/og-en.jpg"', self.built["en"])
+        # og-ru.jpg и og-en.jpg были побайтово одинаковы — один файл og.jpg на оба языка
         for lang, page in (("ru", self.built["ru"]), ("en", self.built["en"])):
+            self.assertIn('property="og:image" content="https://strategyproduct.ru/assets/og/og.jpg"', page, lang)
             self.assertIn('property="og:title"', page, lang)
             self.assertIn('property="og:image:width" content="1200"', page, lang)
             self.assertIn('name="twitter:card" content="summary_large_image"', page, lang)
@@ -387,7 +387,9 @@ class TestCommittedOutput(SiteBuildBase):
 
     def test_referenced_assets_exist(self):
         for rel in ("assets/logo.svg", "assets/hero-poster.webp",
-                    "assets/og/og-ru.jpg", "assets/og/og-en.jpg"):
+                    "assets/og/og.jpg", "assets/dark-double-diamond.webp",
+                    "assets/dark-double-diamond.avif", "assets/dossier-dark.webp",
+                    "assets/dossier-dark.avif"):
             self.assertTrue((ROOT / "site" / rel).exists(), rel)
         self.assertTrue((ROOT / "site" / "assets" / "hero-swarm-2.mp4").exists())
 
@@ -433,6 +435,196 @@ OPT_OK = ("## Вариант A. Оставить как есть — беспл�
           "- Скрытое допущение: что-то предполагается\n"
           "## Сравнение по оси ARR\n"
           "- Проза: здесь видно Скрытое допущение варианта B — но это не строка опции.\n")
+
+
+# ---------- раунд ревью: юнит-тесты excel_numbers/_sixpager_usage/render ----------
+
+OPT_XL = ("## Вариант B. Hosted freemium SaaS\n"
+          "- Экономика: paid $29/мес; переменные 25% → CM $21,75; "
+          "LTV ≈ $272; LTV/CAC ≈ 4,5\n")
+
+
+class TestExcelNumbers(unittest.TestCase):
+    """Юнит-тесты excel_numbers: извлечение экономики варианта, громкий отказ."""
+
+    def setUp(self):
+        self.mod = _load_build_module()
+
+    def _demo(self, md: str) -> None:
+        tmp = Path(tempfile.mkdtemp(prefix="pfs-excel-"))
+        demo = tmp / "demo"
+        (demo / "outputs").mkdir(parents=True)
+        (demo / "outputs" / "03_options.md").write_text(md, encoding="utf-8")
+        self.mod.DEMO = demo
+
+    def test_extracts_unit_economics(self):
+        self._demo(OPT_XL)
+        self.assertEqual(self.mod.excel_numbers(),
+                         {"XL_PRICE": "29", "XL_CM": "21,75",
+                          "XL_LTV": "272", "XL_RATIO": "4,5"})
+
+    def test_missing_price_is_loud(self):
+        self._demo("## Вариант B. Hosted freemium SaaS\n"
+                   "- CM $21,75; LTV ≈ $272; LTV/CAC ≈ 4,5\n")
+        with self.assertRaisesRegex(self.mod.BuildError, "цена Pro"):
+            self.mod.excel_numbers()
+
+    def test_missing_cm_is_loud(self):
+        self._demo("## Вариант B. Hosted freemium SaaS\n"
+                   "- paid $29/мес; LTV ≈ $272; LTV/CAC ≈ 4,5\n")
+        with self.assertRaisesRegex(self.mod.BuildError, "вклад на покрытие"):
+            self.mod.excel_numbers()
+
+    def test_missing_ltv_ratio_is_loud(self):
+        self._demo("## Вариант B. Hosted freemium SaaS\n- paid $29/мес; CM $21,75\n")
+        with self.assertRaisesRegex(self.mod.BuildError, "LTV"):
+            self.mod.excel_numbers()
+
+
+class TestSixpagerUsage(unittest.TestCase):
+    """Юнит-тесты _sixpager_usage: ближайший FAQ-заголовок над упоминанием C011."""
+
+    def setUp(self):
+        self.mod = _load_build_module()
+
+    def _page(self, md: str) -> Path:
+        tmp = Path(tempfile.mkdtemp(prefix="pfs-usage-"))
+        p = tmp / "SIX_PAGER.md"
+        p.write_text(md, encoding="utf-8")
+        return p
+
+    def test_nearest_header_wins(self):
+        p = self._page("## FAQ-1. Рынок\nтекст\n## FAQ-5. План реализации\nупоминание [C011]\n")
+        self.assertEqual(self.mod._sixpager_usage(p), "FAQ-5 · План реализации")
+
+    def test_title_cut_on_colon(self):
+        p = self._page("## FAQ-2. Юнит-экономика: сходится\n[C011] в тексте\n")
+        self.assertEqual(self.mod._sixpager_usage(p), "FAQ-2 · Юнит-экономика")
+
+    def test_no_faq_header_is_loud(self):
+        p = self._page("Проза без заголовков, [C011]\n")
+        with self.assertRaisesRegex(self.mod.BuildError, "FAQ"):
+            self.mod._sixpager_usage(p)
+
+    def test_mention_without_header_above_is_loud(self):
+        p = self._page("[C011] до заголовка\n## FAQ-1. Рынок\n")
+        with self.assertRaisesRegex(self.mod.BuildError, "не найден под заголовком FAQ"):
+            self.mod._sixpager_usage(p)
+
+
+class TestRenderEscaping(unittest.TestCase):
+    """render(): динамические подстановки экранируются html.escape;
+    без экранирования — только служебные сырые ключи (CSS/JS/YM/BRAND)."""
+
+    def setUp(self):
+        self.mod = _load_build_module()
+
+    def test_dynamic_tokens_escaped(self):
+        out = self.mod.render(
+            "a{{TEXT}}b{{SEG}}c{{C_DOM}}d{{D_LABEL}}e{{USAGE}}f{{REVIEW}}g{{KIND}}",
+            {"TEXT": "<b>&\"x", "SEG": "<i>", "C_DOM": "<script>alert(1)</script>",
+             "D_LABEL": "a&b", "USAGE": "FAQ-5 · План", "REVIEW": "10.02.27",
+             "KIND": "факт"})
+        self.assertNotIn("<b>", out)
+        self.assertNotIn("<i>", out)
+        self.assertNotIn("<script>", out)
+        self.assertIn("&lt;b&gt;&amp;&quot;x", out)
+        self.assertIn("&lt;i&gt;", out)
+        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", out)
+        self.assertIn("a&amp;b", out)
+        # простой текст без спецсимволов проходит без изменений
+        self.assertIn("FAQ-5 · План", out)
+        self.assertIn("10.02.27", out)
+        self.assertIn("факт", out)
+
+    def test_raw_keys_pass_through(self):
+        raw = {"CSS": "<style>a{b:c}</style>", "JS": "<script>1<2</script>",
+               "YM": "<noscript><img></noscript>", "BRAND": "<svg></svg>"}
+        out = self.mod.render("{{CSS}}{{JS}}{{YM}}{{BRAND}}", dict(raw))
+        self.assertEqual(out, raw["CSS"] + raw["JS"] + raw["YM"] + raw["BRAND"])
+
+
+# ---------- раунд ревью: мобильное меню, один OG-файл, тёмные ассеты ----------
+
+class TestMobileMenu(SiteBuildBase):
+    """≤980px .links скрыты — нужна доступная с клавиатуры замена (details/summary)."""
+
+    def test_details_menu_with_links(self):
+        for lang, page in self.built.items():
+            m = re.search(r'<details class="mlink">.*?</details>', page, flags=re.S)
+            self.assertIsNotNone(m, f"{lang}: нет мобильного меню")
+            block = m.group(0)
+            self.assertIn("<summary", block, lang)
+            for anchor in ("#how", "#features", "#demo", "#install", "#faq"):
+                self.assertIn(f'href="{anchor}"', block, f"{lang}: {anchor}")
+
+    def test_menu_labelled_per_language(self):
+        self.assertIn('aria-label="Меню разделов"', self.built["ru"])
+        self.assertIn('aria-label="Sections menu"', self.built["en"])
+
+    def test_menu_hidden_on_desktop_shown_on_mobile(self):
+        for lang, page in self.built.items():
+            css = _strip_css_comments(page)
+            self.assertRegex(css, r"\.mlink\{display:none", lang)
+            mobile = css.split("@media (max-width:980px){")[1].split("@media")[0]
+            self.assertIn(".links{display:none}", mobile, lang)
+            self.assertRegex(mobile, r"\.mlink\{display:(block|inline-block)", lang)
+
+
+class TestOgSingleFile(SiteBuildBase):
+    """og-ru.jpg и og-en.jpg были побайтово одинаковы — один файл og.jpg на оба языка."""
+
+    def test_pages_point_to_single_og(self):
+        for lang, page in self.built.items():
+            refs = set(re.findall(r'property="og:image" content="([^"]+)"', page))
+            self.assertEqual(refs, {"https://strategyproduct.ru/assets/og/og.jpg"}, lang)
+            self.assertNotIn("og-ru.jpg", page, lang)
+            self.assertNotIn("og-en.jpg", page, lang)
+
+    def test_committed_single_file(self):
+        og_dir = ROOT / "site" / "assets" / "og"
+        self.assertTrue((og_dir / "og.jpg").exists(), "нет site/assets/og/og.jpg")
+        for gone in ("og-ru.jpg", "og-en.jpg"):
+            self.assertFalse((og_dir / gone).exists(), f"дубль {gone} должен быть удалён")
+        self.assertEqual((og_dir / "og.jpg").read_bytes()[:3], b"\xff\xd8\xff",
+                         "og.jpg — не JPEG")
+
+
+class TestDarkAssetsUsed(SiteBuildBase):
+    """Тёмные фото подключены к генерируемым страницам: picture, avif/webp, размеры."""
+
+    PAIRS = {"dark-double-diamond": (1800, 1350), "dossier-dark": (1800, 1012)}
+
+    def test_shipped(self):
+        for name in self.PAIRS:
+            for ext in (".webp", ".avif"):
+                self.assertTrue((ROOT / "site" / "assets" / f"{name}{ext}").exists(),
+                                name + ext)
+
+    def test_referenced_with_dimensions(self):
+        for lang, page in self.built.items():
+            for name, (w, h) in self.PAIRS.items():
+                m = re.search(rf"<picture>.*?{name}.*?</picture>", page, flags=re.S)
+                self.assertIsNotNone(m, f"{lang}: {name} не подключён")
+                block = m.group(0)
+                self.assertIn(f"{name}.avif", block, lang)
+                self.assertIn(f"{name}.webp", block, lang)
+                self.assertIn(f'width="{w}"', block, lang)
+                self.assertIn(f'height="{h}"', block, lang)
+
+    def test_no_dead_dark_assets(self):
+        for p in sorted((ROOT / "site" / "assets").glob("dark-*.webp")):
+            for lang, page in self.built.items():
+                self.assertIn(p.stem, page, f"{lang}: {p.name} лежит без использования")
+
+
+class TestCommittedEnNoCyrillic(unittest.TestCase):
+    """Критерий PRO-61/PRO-66: в закоммиченном site/en/index.html — ноль кириллицы."""
+
+    def test_zero_cyrillic_in_committed_en(self):
+        page = (ROOT / "site" / "en" / "index.html").read_text(encoding="utf-8")
+        leaks = CYR.findall(_visible_text(page))
+        self.assertEqual(leaks, [], f"кириллица в закоммиченной EN-странице: {''.join(leaks[:20])}")
 
 
 class TestRound2Pages(SiteBuildBase):
