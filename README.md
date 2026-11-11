@@ -35,7 +35,7 @@ pfs --help
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 260 тестов
+python3 -m unittest discover -s tests          # 419 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -231,14 +231,15 @@ flowchart TB
   decision-support, data-analysis, interviews, ux-review, six-pager, deep-research, strategist.
 - **Product-skills 27** — процедуры методов: market-sizing, unit-economics, traction-modeling,
   solution-design, mvp-pilot-launch, problem-design…
-- **Личная библиотека 57** — дизайн: design-ui, refero-design, frontend-design, claudable-landing, make-interfaces-feel-better,
-  emil-design-eng, web-design-guidelines; маркетинг: ads, ad-creative, seo-audit, ai-seo, cro, pricing,
-  offers, emails, launch, content-strategy, competitors, analytics, programmatic-seo,
-  customer-research, marketing-psychology, prospecting, sales-enablement, signup, onboarding, paywalls, revops; наука и данные: research-lookup,
-  literature-review, scientific-writing, scientific-critical-thinking, peer-review,
-  statistical-analysis, hypothesis-generation, exploratory-data-analysis, scientific-visualization;
-  документы/медиа: pdf, docx, pptx, xlsx, markitdown, officecli, generate-image, video, infographics, matplotlib;
-  мета: balanced, find-skills, watch, transcribe.
+- **Личная библиотека 57** — дизайн: refero-design, design-ui, claudable-landing, frontend-design,
+  make-interfaces-feel-better, emil-design-eng, web-design-guidelines; маркетинг: ad-creative, ads,
+  ai-seo, analytics, churn-prevention, co-marketing, competitors, content-strategy, copywriting, cro,
+  customer-research, emails, launch, marketing-psychology, offers, onboarding, paywalls, pricing,
+  programmatic-seo, prospecting, revops, sales-enablement, seo-audit, signup, site-architecture;
+  наука и данные: company-research, research-lookup, defuddle, literature-review, hypothesis-generation,
+  statistical-analysis, exploratory-data-analysis, scientific-critical-thinking, peer-review,
+  scientific-writing, transcribe, watch; документы/медиа: markitdown, docx, pdf, xlsx, pptx, officecli,
+  matplotlib, scientific-visualization, generate-image, infographics, video; мета: balanced, find-skills.
 - **Интеграции 3** — premortem, sdd, deck.
 
 **Как вызывать — три способа:**
@@ -383,5 +384,5 @@ site/                index.html · en/index.html — генератор scripts/
                      materials.html · help.html (RU/EN)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
-tests/               (405)
+tests/               (419)
 ```

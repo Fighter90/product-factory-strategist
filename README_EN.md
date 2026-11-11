@@ -34,7 +34,7 @@ Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INST
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 260 tests
+python3 -m unittest discover -s tests          # 419 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -167,18 +167,18 @@ flowchart TB
 - **product-skills 27** — method procedures (problem and solution design, traction modeling, unit economics,
   market sizing, interviews, UX review, …).
 - **personal library 57** — domain expertise:
-  - Design: design-ui, refero-design, frontend-design, claudable-landing, make-interfaces-feel-better,
+  - Design: refero-design, design-ui, claudable-landing, frontend-design, make-interfaces-feel-better,
     emil-design-eng, web-design-guidelines.
-  - Marketing: ads, ad-creative, seo-audit, ai-seo, cro, pricing, offers, emails, launch,
-    content-strategy, competitors, analytics, programmatic-seo, customer-research,
-    marketing-psychology, prospecting, copywriting, onboarding, signup, paywalls, churn-prevention,
-    site-architecture, sales-enablement.
-  - Science and data: research-lookup, literature-review, scientific-writing, scientific-critical-thinking,
-    peer-review, statistical-analysis, hypothesis-generation, exploratory-data-analysis,
-    scientific-visualization.
-  - Docs/media: pdf, docx, pptx, xlsx, markitdown, officecli, generate-image, video, infographics,
-    matplotlib.
-  - Meta: balanced, find-skills, watch, transcribe.
+  - Marketing: ad-creative, ads, ai-seo, analytics, churn-prevention, co-marketing, competitors,
+    content-strategy, copywriting, cro, customer-research, emails, launch, marketing-psychology,
+    offers, onboarding, paywalls, pricing, programmatic-seo, prospecting, revops, sales-enablement,
+    seo-audit, signup, site-architecture.
+  - Science and data: company-research, research-lookup, defuddle, literature-review,
+    hypothesis-generation, statistical-analysis, exploratory-data-analysis,
+    scientific-critical-thinking, peer-review, scientific-writing, transcribe, watch.
+  - Docs/media: markitdown, docx, pdf, xlsx, pptx, officecli, matplotlib, scientific-visualization,
+    generate-image, infographics, video.
+  - Meta: balanced, find-skills.
 - **integrations 3** — premortem, sdd, deck.
 
 **How to invoke — three ways:**
@@ -315,5 +315,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/ (405) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/ (419) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```

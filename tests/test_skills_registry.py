@@ -343,5 +343,158 @@ class StepSchemeTests(unittest.TestCase):
             "числа вне каноничной схемы шагов 0–11 (AGENTS.md): " + "; ".join(offenders))
 
 
+# Подраздел реестра docs/SKILLS.md → метка категории в README.md (RU) / README_EN.md (EN).
+README_LIST_LABELS = [
+    ("UX и дизайн", "дизайн", "Design"),
+    ("Маркетинг и рост", "маркетинг", "Marketing"),
+    ("Ресёрч и данные", "наука и данные", "Science and data"),
+    ("Документы и медиа", "документы/медиа", "Docs/media"),
+    ("Мета", "мета", "Meta"),
+]
+
+# Указатели «X skill» на инструменты вне набора репозитория: pip-библиотеки и навыки
+# личной библиотеки автора, которых в .claude/skills нет сознательно. venue-templates
+# здесь нет: его упоминания убиты (см. KeptSkillPointerTests).
+EXTERNAL_SKILL_POINTERS = {
+    "gget", "bioservices",         # pip-библиотеки (literature-review)
+    "ab-testing", "copy-editing",  # личная библиотека автора вне набора
+    "parallel-web", "social", "scraping", "competitor-profiling", "schema",
+}
+
+# Обычные слова, совпадающие с формой указателя («load **one** skill per artifact»).
+SKILL_POINTER_STOPWORDS = {"one"}
+
+# Формы указателя «используй навык X» в текстах навыков.
+SKILL_POINTER_PATTERNS = (
+    r"`([\w-]+)` skill",
+    r"skill `([\w-]+)`",
+    r"\*\*([\w-]+)\*\* skill",
+    r"\*\*([\w-]+) skill\*\*",
+)
+
+
+def registry_personal_library_groups():
+    """docs/SKILLS.md, раздел «Личная библиотека»: {подраздел: [имена навыков]}."""
+    doc = (REPO / "docs" / "SKILLS.md").read_text(encoding="utf-8")
+    section = doc.split("## Личная библиотека", 1)[1].split("\n## ", 1)[0]
+    groups, current = {}, None
+    for line in section.splitlines():
+        m = re.match(r"### (.+?) \(\d+\)\s*$", line)
+        if m:
+            current = m.group(1)
+            groups[current] = []
+        elif current and line.startswith("| `"):
+            groups[current].append(line.split("|")[1].strip().strip("`"))
+    return groups
+
+
+def readme_personal_library_groups(relpath):
+    """Списки имён по категориям из буллета «Личная библиотека» в README: {метка: [имена]}."""
+    text = (REPO / relpath).read_text(encoding="utf-8")
+    lines = text.splitlines()
+    start = next(i for i, l in enumerate(lines)
+                 if re.search(r"\*\*(Личная библиотека|personal library) \d+\*\*", l))
+    chunk = [lines[start]]
+    for line in lines[start + 1:]:
+        if not line.startswith((" ", "\t")):
+            break
+        chunk.append(line)
+    joined = " ".join(chunk)
+    labels = [ru if relpath.endswith("README.md") else en for _, ru, en in README_LIST_LABELS]
+    matches = list(re.finditer("(" + "|".join(re.escape(l) for l in labels) + "):", joined))
+    groups = {}
+    for i, m in enumerate(matches):
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(joined)
+        groups[m.group(1)] = re.findall(r"[a-z0-9][a-z0-9-]+", joined[m.end():end])
+    return groups
+
+
+class PersonalLibraryListSyncTests(unittest.TestCase):
+    """Списки личной библиотеки в README/README_EN соответствуют реестру docs/SKILLS.md (ревью PRO-65)."""
+
+    def test_readme_lists_match_registry(self):
+        registry = registry_personal_library_groups()
+        self.assertIn("Маркетинг и рост", registry, "в docs/SKILLS.md нет подраздела маркетинга")
+        for relpath in ("README.md", "README_EN.md"):
+            readme = readme_personal_library_groups(relpath)
+            for section, ru_label, en_label in README_LIST_LABELS:
+                label = ru_label if relpath.endswith("README.md") else en_label
+                self.assertIn(label, readme, f"{relpath}: нет категории «{label}»")
+                self.assertEqual(
+                    sorted(readme[label]), sorted(registry.get(section, [])),
+                    f"{relpath}: категория «{label}» расходится с реестром «{section}» docs/SKILLS.md")
+
+
+class TestCountersTests(unittest.TestCase):
+    """Счётчик тестов в README/SUBMISSION/COMPLIANCE/help.html ведёт скрипт счётчиков (ревью PRO-65).
+
+    Один источник: статический подсчёт тестовых методов по tests/test_*.py — тот же
+    метод, что в scripts/build_site.py (тут и в docstring ниже нельзя писать
+    сигнатуру дословно: статический счётчик считает и строки документации).
+    """
+
+    def test_script_counts_tests(self):
+        script = load_counts_script()
+        self.assertGreater(script.counts()["tests"], 0, "скрипт счётчиков не считает тесты")
+
+    def test_stale_test_counters_recognized(self):
+        script = load_counts_script()
+        actual = script.counts()["tests"]
+        rules = script.build_rules(script.counts())
+        stale = str(actual + 7)
+        samples = [
+            f"tests/               ({stale})",
+            f"tests/ ({stale})",
+            f"| Тесты | {stale} (`OK`) |",
+            f"# 1. Тесты инструментов ({stale}, без установки пакетов)",
+            f"| unittest | {stale} тестов инструментов | tests/ |",
+            f"$ python3 -m unittest discover -s tests   # {stale} тестов, опционально",
+            f"$ python3 -m unittest discover -s tests   # {stale} tests, optional",
+        ]
+        for sample in samples:
+            new_text, findings = script._process_text(sample, rules)
+            self.assertIn(str(actual), new_text,
+                          f"скрипт не обновляет счётчик тестов: {sample!r}")
+            self.assertTrue(findings, f"скрипт не сообщает об устаревшем счётчике: {sample!r}")
+            _, ok_findings = script._process_text(sample.replace(stale, str(actual)), rules)
+            self.assertEqual(ok_findings, [],
+                             f"актуальный счётчик помечен как устаревший: {sample!r}")
+
+
+class KeptSkillPointerTests(unittest.TestCase):
+    """«Use `X` skill» в оставшихся навыках указывает на существующий навык или известный внешний инструмент.
+
+    Ревью PRO-65 (раунд 3): научные навыки ссылались на venue-templates, которого нет ни в
+    .claude/skills, ни в extras, а описываемые им файлы (venue_writing_styles.md и др.) не
+    поставляются — указатели убиты.
+    """
+
+    def test_named_skill_pointers_target_known_skills(self):
+        loaded = {s.lower() for s in loaded_skills()}
+        offenders = []
+        for path in sorted(SKILLS_DIR.rglob("*.md")):
+            text = path.read_text(encoding="utf-8", errors="replace")
+            for pat in SKILL_POINTER_PATTERNS:
+                for name in re.findall(pat, text, re.IGNORECASE):
+                    if name.lower() in SKILL_POINTER_STOPWORDS:
+                        continue
+                    if name.lower() not in loaded and name.lower() not in EXTERNAL_SKILL_POINTERS:
+                        offenders.append(f"{path.relative_to(REPO)}: {name}")
+        self.assertEqual(
+            offenders, [],
+            "указатели на несуществующие в наборе навыки: " + "; ".join(offenders))
+
+    def test_scientific_writing_has_no_local_generate_script_calls(self):
+        """scientific-writing получает фигуры формулировкой generate-image, а не вызовом локального скрипта."""
+        offenders = [
+            p.relative_to(REPO).as_posix()
+            for p in (SKILLS_DIR / "scientific-writing").rglob("*.md")
+            if re.search(r"python scripts/generate_", p.read_text(encoding="utf-8", errors="replace"))
+        ]
+        self.assertEqual(
+            offenders, [],
+            "оставшиеся вызовы локальных generate-скриптов: " + "; ".join(offenders))
+
+
 if __name__ == "__main__":
     unittest.main()

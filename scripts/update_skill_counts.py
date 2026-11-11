@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Счётчики навыков в документах — единое число из .claude/skills (PRO-65).
+"""Счётчики навыков и тестов в документах — единые числа (PRO-65, ревью раунд 3).
 
 Обновляет общее число навыков и размеры групп (базовые / product-skills /
-личная библиотека / интеграции) в README, HELP, SUBMISSION, COMPLIANCE и
-статическом site/help.html. Лендинг (site/index.html, site/en/index.html)
-считает числа сам — scripts/build_site.py, запускать отдельно.
+личная библиотека / интеграции), а также счётчик автотестов («tests/ (N)»,
+«| Тесты | N |», help.html) в README, HELP, SUBMISSION, COMPLIANCE и
+статическом site/help.html. Тесты считаются статически — `def test_` по
+tests/test_*.py, тот же метод, что в scripts/build_site.py. Лендинг
+(site/index.html, site/en/index.html) считает числа сам —
+scripts/build_site.py, запускать отдельно.
 
 Числа, которые паттерн не знает (списки имён), скрипт не трогает: их правит
 человек вместе с составом навыков.
@@ -56,6 +59,14 @@ def loaded_skills():
     return sorted(p.parent.name for p in SKILLS_DIR.glob("*/SKILL.md"))
 
 
+def count_tests():
+    """Число автотестов: `def test_` по tests/test_*.py (как в scripts/build_site.py)."""
+    return sum(
+        len(re.findall(r"\bdef test_", p.read_text(encoding="utf-8")))
+        for p in sorted((ROOT / "tests").glob("test_*.py"))
+    )
+
+
 def counts():
     loaded = set(loaded_skills())
     base = len([s for s in BASE if s in loaded])
@@ -64,7 +75,7 @@ def counts():
     total = len(loaded)
     personal = total - base - product - integr
     return {"total": total, "base": base, "product": product,
-            "personal": personal, "integrations": integr}
+            "personal": personal, "integrations": integr, "tests": count_tests()}
 
 
 def ru_plural(n, one, few, many):
@@ -82,7 +93,8 @@ def ru_plural(n, one, few, many):
 
 def build_rules(c):
     """(regex, replace-функция) для каждого числового счётчика."""
-    N, B, P, L, I = c["total"], c["base"], c["product"], c["personal"], c["integrations"]
+    N, B, P, L, I, T = (c["total"], c["base"], c["product"], c["personal"],
+                        c["integrations"], c["tests"])
     rules = []
 
     def add(pattern, repl):
@@ -134,6 +146,14 @@ def build_rules(c):
     # site/help.html: «личная библиотека ~59» / «a personal library of ~59»
     add(r"(личная библиотека ~)(\d+)", lambda m: f"{m.group(1)}{L}")
     add(r"(personal library of ~)(\d+)", lambda m: f"{m.group(1)}{L}")
+
+    # --- счётчик автотестов (README, COMPLIANCE, SUBMISSION, help.html) ---
+    add(r"(tests/\s+)\((\d+)\)", lambda m: f"{m.group(1)}({T})")
+    add(r"(\| Тесты \| )(\d+)", lambda m: f"{m.group(1)}{T}")
+    add(r"(Тесты инструментов \()(\d+)", lambda m: f"{m.group(1)}{T}")
+    add(r"(\| unittest \| )(\d+)( тестов инструментов)", lambda m: f"{m.group(1)}{T}{m.group(3)}")
+    add(r"(discover -s tests\s+# )(\d+)( тестов)", lambda m: f"{m.group(1)}{T}{m.group(3)}")
+    add(r"(discover -s tests\s+# )(\d+)( tests)", lambda m: f"{m.group(1)}{T}{m.group(3)}")
     return rules
 
 
@@ -187,7 +207,8 @@ def main(argv=None):
     args = ap.parse_args(argv)
     c = counts()
     print(f".claude/skills: всего {c['total']} = базовые {c['base']} + product-skills "
-          f"{c['product']} + личная {c['personal']} + интеграции {c['integrations']}")
+          f"{c['product']} + личная {c['personal']} + интеграции {c['integrations']} "
+          f"· автотесты: {c['tests']}")
     if args.check:
         findings = stale_findings()
         if findings:
