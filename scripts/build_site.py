@@ -270,15 +270,15 @@ h3{font-size:20px;line-height:1.3}
 
 /* шапка-капсула */
 .nav{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:0;right:0;z-index:50}
-.nav .bar{display:flex;align-items:center;gap:16px;height:56px;padding:0 8px 0 18px;border:1px solid var(--line2);border-radius:18px;background:rgba(11,10,9,.72);backdrop-filter:blur(14px)}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--strong);font-weight:600;font-size:16px;letter-spacing:-.01em}
+.nav .bar{position:relative;display:flex;align-items:center;gap:16px;height:56px;padding:0 8px 0 18px;border:1px solid var(--line2);border-radius:18px;background:rgba(11,10,9,.72);backdrop-filter:blur(14px)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--strong);font-weight:600;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
 .brand svg{width:28px;height:28px;flex:none}
 .links{display:flex;gap:22px;margin-left:auto;font-size:14px}
-.links a{text-decoration:none;color:var(--muted)}.links a:hover{color:var(--strong)}
+.links a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;text-decoration:none;color:var(--muted)}.links a:hover{color:var(--strong)}
 .lang{display:flex;gap:2px;font-size:12px;font-weight:500}
 .lang a,.lang b{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border-radius:10px;text-decoration:none;color:var(--muted)}
 .lang b{color:var(--strong);font-weight:500}
-.mlink{display:none;position:relative}
+.mlink{display:none}
 .mlink summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--line2);border-radius:999px;color:var(--strong)}
 .mlink summary::-webkit-details-marker{display:none}
 .mlink .b{display:block;width:16px;height:2px;border-radius:1px;background:currentColor;position:relative}
@@ -407,12 +407,13 @@ blockquote{margin:6px 0 0;padding:18px 20px;border-radius:14px;background:var(--
 
 /* faq */
 .faq{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:40px}
-details{border-bottom:1px solid var(--line)}
-summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:64px;padding:12px 0;color:var(--strong);font-size:18px;font-weight:500}
-summary::-webkit-details-marker{display:none}
-summary .pm{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);transition:transform .2s}
-details[open] summary .pm{transform:rotate(45deg)}
-details p{margin:0 0 22px;color:var(--muted);max-width:44em}
+/* стили аккордеона ограничены разделом FAQ: details в шапке (mlink) стилизуется отдельно */
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:64px;padding:12px 0;color:var(--strong);font-size:18px;font-weight:500}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .pm{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);transition:transform .2s}
+.faq details[open] summary .pm{transform:rotate(45deg)}
+.faq details p{margin:0 0 22px;color:var(--muted);max-width:44em}
 
 /* финал и футер */
 .final{position:relative;overflow:hidden;text-align:center;border-bottom:0}
@@ -422,7 +423,7 @@ details p{margin:0 0 22px;color:var(--muted);max-width:44em}
 .procfig img,.dosfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
 footer{border-top:1px solid var(--line);padding:36px 0 calc(36px + env(safe-area-inset-bottom,0px));font-size:14px;color:var(--muted)}
 footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
-footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}footer a:hover{color:var(--strong)}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}footer nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px}footer a:hover{color:var(--strong)}
 
 @media (max-width:980px){
   .links{display:none}
@@ -442,6 +443,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}fo
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .facts span{border-left:0;padding:2px 10px}
   .nav .bar{gap:8px}
+  .bar .pill{display:none}
 }
 @media (prefers-reduced-motion:reduce){.hero video{display:none}html{scroll-behavior:auto}}
 """
@@ -465,7 +467,7 @@ JS = """
       a.addEventListener('click',function(){d.removeAttribute('open')});
     });
   });
-  document.querySelectorAll('details').forEach(function(d){
+  document.querySelectorAll('details:not(.mlink)').forEach(function(d){
     d.addEventListener('toggle',function(){
       if(d.open){var s=d.querySelector('summary');goal('faq_open',{q:s?s.textContent.trim().slice(0,60):''})}
     });
@@ -657,6 +659,11 @@ RU_BODY = f"""
           <li><b>3</b>Инициативы и обоснование</li><li><b>4</b>Тактики под потребности</li>
           <li><b>5</b>План, вклад, сезонность</li><li><b>6</b>KPI бизнеса и продукта</li>
         </ul>
+      </article>
+      <article class="card">
+        <div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 8.5h13M9.5 8.5v7" stroke="currentColor" stroke-width="1.6"/></svg></div>
+        <h3>Данные и когорты</h3>
+        <p>Профиль таблицы, когорты удержания, воронки и статистика — расчёты сохраняются и повторяются одной командой.</p>
       </article>
       <article class="card w6">
         <div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
@@ -955,6 +962,11 @@ EN_BODY = f"""
           <li><b>3</b>Initiatives and the case for each</li><li><b>4</b>Tactics mapped to needs</li>
           <li><b>5</b>Plan, contribution, seasonality</li><li><b>6</b>Business and product KPIs</li>
         </ul>
+      </article>
+      <article class="card">
+        <div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 8.5h13M9.5 8.5v7" stroke="currentColor" stroke-width="1.6"/></svg></div>
+        <h3>Data and cohorts</h3>
+        <p>Table profiles, retention cohorts, funnels and statistics — calculations are saved and rerun with one command.</p>
       </article>
       <article class="card w6">
         <div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>

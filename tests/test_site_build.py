@@ -722,5 +722,62 @@ class TestRound2DemoNumbers(unittest.TestCase):
         self.assertEqual(facts["SEG_EN"], facts["TEXT_EN"].split(";")[0].strip())
 
 
+class TestRound3Review(SiteBuildBase):
+    """Правки ревью раунда 3: мобильная шапка, бенто без пустых колонок,
+    faq_open только у FAQ-аккордеона, зоны нажатия 44 px у навигации и футера."""
+
+    def _rule(self, page: str, selector: str) -> str:
+        css = _strip_css_comments(page)
+        m = re.search(re.escape(selector) + r"\{([^}]*)\}", css)
+        self.assertIsNotNone(m, f"нет правила {selector}")
+        return m.group(1)
+
+    def test_mlink_panel_anchored_to_bar(self):
+        # панель мобильного меню шириной с капсулу шапки, а не с 44-px бургер
+        for lang, page in self.built.items():
+            self.assertIn("position:relative", self._rule(page, ".nav .bar"), lang)
+            self.assertNotIn("position:relative", self._rule(page, ".mlink"), lang)
+            self.assertIn("position:absolute", self._rule(page, ".mlink-panel"), lang)
+
+    def test_bar_row_fits_narrow_screens(self):
+        # 360px: бренд + RU/EN + бургер — CTA в шапке убирается, текст бренда не переносится
+        for lang, page in self.built.items():
+            self.assertIn("white-space:nowrap", self._rule(page, ".brand"), lang)
+            narrow = page.split("@media (max-width:640px){")[1].split("@media")[0]
+            self.assertIn(".bar .pill{display:none}", narrow, lang)
+
+    def test_details_border_scoped_to_faq(self):
+        # без глобальной рамки details под бургером не появляется лишняя линия
+        for lang, page in self.built.items():
+            css = _strip_css_comments(page)
+            self.assertIn(".faq details{border-bottom", css, lang)
+            self.assertNotIn("details{border-bottom",
+                             css.replace(".faq details{border-bottom", ""), lang)
+
+    def test_faq_goal_ignores_mobile_menu(self):
+        for lang, page in self.built.items():
+            self.assertIn("querySelectorAll('details:not(.mlink)')", page, lang)
+            self.assertNotIn("querySelectorAll('details')", page, lang)
+
+    def test_bento_rows_fill_twelve_columns(self):
+        # десктоп: карточки бенто не оставляют пустых колонок в ряду
+        for lang, page in self.built.items():
+            block = re.search(r'<div class="grid">(.*?)</section>', page, flags=re.S).group(1)
+            widths = [int(m.group(1) or 4)
+                      for m in re.finditer(r'<article class="card(?: w(\d+))?"', block)]
+            self.assertGreaterEqual(len(widths), 7, lang)
+            row = 0
+            for w in widths:
+                if row + w > 12:
+                    self.fail(f"{lang}: карточка w{w} не влезает в ряд (заполнено {row})")
+                row = 0 if row + w == 12 else row + w
+            self.assertEqual(row, 0, f"{lang}: последний ряд не заполнен (свободно {row})")
+
+    def test_nav_and_footer_links_are_44(self):
+        for lang, page in self.built.items():
+            self.assertIn("min-height:44px", self._rule(page, ".links a"), lang)
+            self.assertIn("min-height:44px", self._rule(page, "footer nav a"), lang)
+
+
 if __name__ == "__main__":
     unittest.main()
