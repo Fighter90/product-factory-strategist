@@ -1,6 +1,6 @@
 ---
 id: M-double-diamond
-title: Двойной роман (Double Diamond) — каркас процесса от проблемы к решению
+title: Двойной алмаз (Double Diamond) — каркас процесса от проблемы к решению
 course: synthesis
 sources: ["UK Design Council: Double Diamond", "Синтез курсов продуктовой магистратуры"]
 stages: [intake, research, discovery, situation, options, choice, strategy, validation, review]
@@ -8,7 +8,7 @@ tags: [процесс, фреймворки, double-diamond]
 related: [M-product-frameworks, M-jtbd, M-problem-design, M-solution-design]
 ---
 
-# Двойной роман (Double Diamond)
+# Двойной алмаз (Double Diamond)
 
 ## Когда применять
 Когда нужно объяснить и проконтролировать, на какой стадии мышления находится работа: расходимся (идеи,
