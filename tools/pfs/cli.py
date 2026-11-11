@@ -250,10 +250,11 @@ def cmd_cost(a):
 
 
 def _session_line(s: dict) -> str:
-    """«Сессия учтена…»: фактическая оплата; для план-сессий — и эквивалент по API-ценам (PRO-62)."""
+    """«Сессия учтена…»: фактическая оплата; для план-сессий — и эквивалент по API-ценам,
+    когда он отличается от факта (у обычных сессий он равен факту — хвост не дублируем) (PRO-62)."""
     mark = " (plan)" if any(t.get("plan") for t in s["models"].values()) else ""
     line = f"Сессия учтена{mark}: ${s['usd']:.4f}"
-    if s.get("usd_equivalent"):
+    if mark or s.get("usd_equivalent") != s.get("usd"):
         line += f" · эквивалент по API-ценам ${s['usd_equivalent']:.2f}"
     return line
 

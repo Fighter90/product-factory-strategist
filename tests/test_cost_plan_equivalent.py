@@ -1,6 +1,6 @@
 """PRO-62: стоимость $0.00 при миллионах токенов — эквивалент по API-ценам для подписочных планов.
 
-Проблема: pfs status проекта cvstart-EU показывает «Стоимость: $0.00 (~0 ₽数), токенов 19 735 031» —
+Проблема: pfs status проекта cvstart-EU показывает «Стоимость: $0.00 (~0 ₽), токенов 19 735 031» —
 сессия на glm-5.3-flash (zai-coding-plan) тарифицируется планом, pfs записывает $0 и выглядит
 как ошибка учёта. Теперь:
 - config/pricing.json содержит цены GLM (zai) и других моделей OpenCode с датой сверки;
@@ -83,7 +83,7 @@ class PlanEquivalentTests(unittest.TestCase):
         self.assertEqual(t["input"], 1_000_000)             # токены посчитаны
         self.assertEqual(t["output"], 700_000)              # output + reasoning
         self.assertEqual(t["cache_read"], 4_000_000)        # кэш виден отдельно
-        self.assertNotIn("plan", pm.get("nothing", {}))
+        self.assertEqual(list(pm), ["glm-5.3-flash"])       # в записи только реальная модель
 
     def test_parser_non_plan_has_no_plan_field(self):
         f = self._session_file("ses_p2_session.json",
@@ -131,7 +131,7 @@ class PlanEquivalentTests(unittest.TestCase):
         self.assertEqual(rc, 0, err)
         self.assertIn("подписочный план", out)              # критерий: пометка «подписочный план»
         self.assertIn("эквивалент", out)
-        self.assertNotIn("Итого: $0.00 (~0 ₽数)", out)      # ноль больше не единственная цифра
+        self.assertNotIn("Итого: $0.00", out)               # старый голый ноль больше не печатается
         self.assertIn("glm-5.3-flash (plan)", out)
         text = export.build(self.pdir).read_text(encoding="utf-8")   # Приложение D six-pager
         self.assertIn("подписочный план", text)
@@ -143,6 +143,21 @@ class PlanEquivalentTests(unittest.TestCase):
         text = project.status_text(self.pdir)
         self.assertIn("подписочный план", text)             # $0.00 в pfs status больше не вводит в заблуждение
         self.assertIn("эквивалент", text)
+
+    def test_session_line_tail_only_for_plan(self):
+        # round 2: у обычной сессии эквивалент равен факту — хвост «эквивалент по API-ценам»
+        # дублировал бы ту же цифру; печатаем его только для план-сессий
+        f = self._session_file("ses_p12_session.json",
+                               opencode_session(provider="anthropic", model_id="claude-sonnet-5-5"))
+        s = cost.record_session(self.pdir, "p12", f)
+        self.assertGreater(s["usd"], 0.0)                   # обычная сессия реально тарифицируется
+        self.assertEqual(s["usd_equivalent"], s["usd"])
+        line = cli._session_line(s)
+        self.assertNotIn("эквивалент", line)
+        self.assertNotIn("(plan)", line)
+        f = self._session_file("ses_p13_session.json", opencode_session())
+        line = cli._session_line(cost.record_session(self.pdir, "p13", f))
+        self.assertIn("эквивалент по API-ценам", line)      # план-сессии хвост остаётся
 
     # --- 4. разбивка по шагам (intake…finish) ---
 
