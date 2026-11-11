@@ -1,24 +1,127 @@
 ---
 id: M-external-environment
 lang: en
-title: External environment — market types (B2C…B2B2C), PESTLE registry, hype vs trend, PAM–TAM–SAM–SOM potential calculation
+title: External environment analysis — market types, PESTEL, trend or hype, potential calculation
 course: pm-approaches-en
-sources: ["EN summary of the RU methodology card; original sources listed in the RU card"]
+sources: ["EN mirror of the RU card; original sources listed there"]
 stages: [intake, research, options, strategy]
-tags: [en, summary]
+tags: [pestel, trends, hype, market-sizing, market-types, b2b, b2c, c2c, opportunities-threats]
 related: [M-strategy-growth, M-customers, M-competitors, M-market-sizing, M-risks, M-source-criticism, M-research-types, M-traction-model]
 ---
 
-# External Environment Analysis (EN summary)
+# External environment analysis: market types, PESTEL, trend or hype, potential
 
-**When:** understanding the conditions the product will grow in: which market we play on, which external forces help or hinder, whether the market is big enough for the growth goal. Output: the "current state analysis" section of the strategy — trends, challenges, opportunities and market size with sources. The card separates **facts** (measured, with source and date), **forecasts** (someone else's estimate of the future) and the agent's **hypotheses** of impact on the product.
+## When to apply
+Use when you need to understand the conditions in which the product will grow: which market we play on, which external forces will help or hinder, and whether the market is big enough for the growth goal. The output is the "current state analysis" section of the strategy: trends, challenges, opportunities and market size, with sources. The card separates **facts** (measured values with a source and a date), **forecasts** (someone else's estimate of the future) and the agent's **hypotheses about impact** on the product.
 
-**Core:** the market = all potential customers of the product; its type shapes acquisition and monetization: B2C (value to the end consumer; mass acquisition, product- or marketing-led), B2B (product for an organization, often with sales; client = specific decision-makers; sales-led), B2E (B2B subtype for large clients with customization; few clients, big checks, consulting and implementation; count the market in money and contracts), B2G (state as client, mostly via procurement; social function, tenders, legal requirements), C2C (users create value for each other, an intermediary is needed — a classified; two sides, liquidity, trust), B2B2C (business serves small business for the sake of end consumers; marketplaces — grow supply and demand together).
+## Core idea
+A **market** is all potential customers of the product. The market type determines the approach to acquisition and monetization:
 
-**PESTEL** — six areas of external factors; collect only what affects *this* product (an unemployment service doesn't need real-estate trends). Concrete factor→product links for calibrating the search: the central bank key rate hits high-ticket goods (real estate, cars, premium) — the higher the check, the stronger the dependence on the cost of money; unemployment drives job-board demand; the stories-based content-consumption shift affects social networks and promotion; a simple tax tool legalizes the "gray" segment and feeds freelance exchanges; patent blocking can freeze a release for years (a browser-tabs lawsuit ran ~1.5 years); turnover-based data-leak fines are a direct financial risk for profile-holding services; climate cuts dacha demand in warm winters but lengthens the courier season. Regulatory factors often have an effective date — write it into the registry explicitly. **PESTLE registry format**: document header (product, research goal, date, horizon e.g. 5 years, research summary — more opportunities or threats and the main factors), then a table sorted by significance: Group (P/E/S/T/E/L) | Factor (phrased with a number: "85% of tourists book independently", not "people book online more") | Opportunity/threat | Impact 1–10 | Probability 1–10 | Significance = Impact × Probability | Decision (specific product action) | Source link. A factor without a source and a decision never entered the strategy. Any trend can be both threat and opportunity: falling purchasing power is a threat to a marketplace and an opportunity to bet on the budget segment; subsidies are a "dangerous opportunity" (you get them, your suppliers raise prices, economics break).
+| Type | Essence | What it changes for the strategy |
+|---|---|---|
+| B2C | the value goes to the end consumer | mass acquisition; product- or marketing-led |
+| B2B | a product for an organization; there is often a sales function | the client is specific decision-making people; sales-led |
+| B2E | a B2B subtype for large clients with customization | few clients, large deals, consulting and implementation; measure the market in money and contracts |
+| B2G | the client is the state, usually through procurement | a social function, tenders, legal requirements |
+| C2C | users create value for each other; an intermediary is needed (a classifieds platform) | two sides, liquidity, trust |
+| B2B2C | a business works with small businesses for the sake of end consumers | marketplaces: supply and demand have to be grown together |
 
-**Hype vs trend**: hype is a short attention spike; a trend rests on the values of many people and plateaus. Trend criteria: spreads across ≥3 countries and several industries, lasts several years. The Gartner curve (trigger → peak of expectations → trough of disillusionment → slope of enlightenment → plateau) shows a technology's phase; Moore's chasm separates early adopters from the majority who need a stable product (computer vision across medicine/retail/security/agriculture = trend; episodic AR applications = hype); external events can accelerate trends (remote work after the pandemic). **Market structure**: PAM (potential available — everyone who could become a customer; reviews, World Bank data), TAM (total addressable — those with the need, not necessarily ready to pay; national statistics, tax and agency data, surveys), SAM (serviceable available — the part of TAM already using your and competitors' products; public filings, SensorTower, Similarweb, Google Trends), SOM (serviceable obtainable — the SAM share obtainable given channels, conversions, budgets and capacities; own assumptions and benchmarks). Definitions differ across sources — always fix how each level is defined in the document. Units: users (B2C), money (universal, mandatory for B2E), product units (manufacturing), contracts (B2E); best in both people and money.
+**PESTEL** — six areas of external factors; collect only what affects *this* product (an unemployment service does not need real-estate trends).
 
-**How:** 1) define the market type and sides (who pays, who uses); for B2B name the specific decision-makers; 2) collect 10–15 macro-trends via PESTEL — only product-relevant ones, each tagged threat / opportunity / both; 3) per trend record: essence, source and date (fact), the forecast and who made it, the hypothesis of impact on product metrics (explicitly marked as hypothesis); 4) prioritize: importance × probability (1–3 scale; e.g. for a messenger: data-storage law 3×3=9 — must account; communication secrecy 3×1=3 — solved by infrastructure; foreign-messengers law 1×2=2 — defer); keep 5–6 main, watch the rest; 5) test hype vs trend for each technological hypothesis (real users paying? business model? holding >2 years?) and for confirmed trends find existing cases and their business impact, the needs beneath them, acceleration/deceleration factors, applicability; 6) for significant trends: a mitigation plan (threat) or a way to use them in the product and UTP (opportunity); pass into risks and goals/bets; 7) compute the market: visualize the segments first, then PAM → TAM → SAM → SOM in money and in people; 8) compute SOM from a comparable-strength analogue: `SOM, ₽/yr = downloads (new users/mo) × 12 × purchase conversion × frequency (orders/user/yr) × average check, ₽ × buyout share` (example: 170,000 downloads/mo × 12 × 1% × 1 order × 5,000 ₽ × 60% ≈ 61M ₽/yr); then apply capacity limits (production, service, sales heads × deal length × parallel projects); 9) sanity-check the calculation: levels differ ≥~10×; SOM noticeably smaller than SAM; two methods (top-down and bottom-up) give a comparable order of magnitude; parameters come from data, not guesses; 10) conclude for strategy: is the market enough for goal B? If SOM < goal, that's an argument to revise the goal or segment, or to close the direction.
+| Area | What we look at | Example of impact on the product |
+|---|---|---|
+| Political | alliances and conflicts, sanctions, borders, visas, taxes, subsidies, elections | flight-ticket service: borders and visas; marketplace: countries' trade relations; messenger: the emergence of a state messenger |
+| Economic | growth, inflation, exchange rates, interest rates and credit availability, unemployment, purchasing power | real-estate search: mortgages; marketplace: purchasing power; freelance exchange: unemployment |
+| Social | demographics, lifestyle, education, migration, inclusion | real estate: the birth rate; marketplace: lifestyle changes |
+| Technological | new technologies, automation, protocols, cybersecurity, R&D | marketplace: LLMs in ranking and hyper-personalization; freelance: automation of self-employment |
+| Environmental | climate, recycling, carbon footprint, environmental policy | marketplace: the eco-friendliness trend |
+| Legal | data protection, labor, intellectual property, consumer rights, platform regulation | marketplace: platform-economy law; messenger: storing correspondence |
 
-**Pitfalls:** collecting "all the trends in the world" instead of product-relevant ones; only threats (or only opportunities) — a trend is almost always two-sided; "number magic": small inflations at each step (conversion 2.3% instead of ~1%, 2 purchases instead of 1, buyout 50% instead of 80%) inflate the market 4–10×; SOM ≈ SAM signals an error; SOM ≠ a traction model (SOM is potential under conditions, needed for the "do or don't" decision); one estimator — blind spots; a "snapshot" never revisited; confusing FOMO with a trend — wait for real usage and money; computing the market only to confirm an idea (most often the calculation is needed to see "don't do it" — a valuable result); units mismatched with the business model (users for B2E with four large clients); a factor without a source and a decision; no research summary (which prevail — opportunities or threats — and what it means).
+**Concrete "factor → product" links** (for calibrating the search): the central bank's key rate hits high-ticket goods (real estate, cars, premium products) — the higher the ticket, the stronger the dependence on the cost of money; unemployment drives demand for job boards (the lowest unemployment in ten years means a growing business can become a non-growing one); the shift to the stories-based model of content consumption affects social networks and promotion; the appearance of a simple tax tool (like "My Tax") legalizes the "gray" segment and feeds it into freelance exchanges; patent blocking can freeze a release for years (the browser-tabs lawsuit ran for about 1.5 years); turnover-based fines for personal-data leaks are a direct financial risk for services holding user profiles; climate affects things non-obviously: a warm winter cuts demand for dachas in warm regions but lengthens the courier season. Regulatory factors often have an effective date — write it into the registry explicitly.
+
+**Working format of the PESTLE registry** (as in the course's worksheets): the document header — the product, the research goal, the date and the assessment horizon (for example, 5 years), and the research summary (the conclusion: are there more opportunities or threats, and which factors are the main ones). Then a table sorted by descending significance:
+
+| Group (P/E/S/T/E/L) | Factor (a formulation with a number) | Opportunity / threat | Impact 1–10 | Probability 1–10 | Significance = Impact × Probability | Decision (a specific product action) | Source link |
+|---|---|---|---|---|---|---|---|
+
+How it differs from a "list of trends": each factor has a numeric formulation ("85% of tourists book independently", not "people increasingly book online"), a link and, most importantly, a decision — otherwise the factor never made it into the strategy. The research summary is a mandatory block: "opportunities prevail (5 of the 7 top factors), the main drivers are …, the main threats are …".
+
+**Any trend can be both a threat and an opportunity**: falling purchasing power is a threat to a marketplace, but also an opportunity to bet on the budget segment. Subsidies are a "dangerous opportunity": you receive them, but not your suppliers — they will raise prices and the economics break.
+
+**Hype and trend.** Hype is a short-term spike of attention; a trend rests on the values of a large number of people and reaches a plateau of adoption. Criteria of a trend: it spreads across at least 3 countries and several industries, and lasts several years. The Gartner curve (trigger → peak of inflated expectations → trough of disillusionment → slope of enlightenment → plateau) shows the phase of a technology; "Moore's chasm" is the gap between early adopters and the majority, who need a stable product. A contrast example: computer vision (medicine, retail, security, agriculture) is a trend; augmented reality has episodic applications — hype. External events can accelerate trends quickly (remote work after the pandemic).
+
+**Market structure (per the lecture)**
+
+| Level | Definition | Sources |
+|---|---|---|
+| PAM (potential available) | everyone who could become a customer now and in the foreseeable future; used to validate the lower levels | reviews, World Bank open data, UN Comtrade, Statista |
+| TAM (total addressable) | customers with the need, not necessarily ready to pay | Rosstat statistics, the tax service, agency data, VTsIOM/FOM surveys |
+| SAM (serviceable available) | the part of TAM that already uses your product and competitors' products | public companies' filings, SensorTower, Similarweb, Google Trends, Mediascope, Crunchbase |
+| SOM (serviceable obtainable) | the share of SAM that can be captured given channels, conversions, budgets and capacities | your own assumptions and benchmarks |
+
+Definitions of TAM/SAM may differ in other sources (in `M-market-sizing` SAM is broader) — the document must always state explicitly how each level is defined.
+
+Units: users (B2C), money (universal, mandatory for B2E), product units (manufacturing), contracts (B2E). It is best to measure both in people and in money.
+
+## Procedure
+1. **Define the market type** and the sides (who pays, who uses). For B2B, name the specific decision-making people (`M-customers`).
+2. **Collect macro-trends across PESTEL** — 10–15 of them, only ones relevant to the product. Tag each one: threat / opportunity / both.
+3. **For each trend, record**: the essence, the source and date (fact), the forecast and who issued it, and the hypothesis of impact on the product's metrics (explicitly marked as a hypothesis).
+4. **Prioritize**: assess the importance for the product and the probability of occurrence (a 1–3 scale; score = importance × probability) and select the top 5–6. The rest go to the watch list. Example for a messenger: the correspondence-storage law 3×3=9 (a threat, must be accounted for); correspondence secrecy 3×1=3 (solved by infrastructure); the foreign-messengers law 1×2=2 (defer).
+5. **Check hype vs trend** for each technological hypothesis (criteria above; plus signals: are real users paying, is there a business model, has it held for more than 2 years). If the trend is confirmed: find existing cases and their impact on the business model/service/product, the needs it rests on, the acceleration/deceleration factors, and applicability ("what we are actually ready to implement").
+6. **For significant trends** — a mitigation plan (threat) or a way to use it in the product and the USP (opportunity); pass it into `M-risks` and `M-goals-drivers-bets`.
+7. **Measure the market**: first visualize the segments ("who are the customers we are counting?"), then PAM → TAM → SAM → SOM in money and in people.
+8. **Compute SOM** from an analogue/competitor of comparable capacity:
+   SOM, ₽/year = downloads (new users, people/month) × 12 × purchase conversion × frequency (orders/person/year) × average ticket, ₽ × buyout share.
+   Then overlay capacity constraints (production, service, the number of salespeople × deal duration × the number of parallel projects).
+9. **Validate the calculation**: the levels differ by at least ~10×; SOM is noticeably smaller than SAM; two methods (top-down and bottom-up) give a comparable order of magnitude; parameters are taken from data, not "eyeballed".
+10. **Draw the conclusion for the strategy**: is the market enough for Goal B? If SOM is smaller than the goal, that is an argument for revising the goal or the segment, or for closing the direction. For complex calculations — `M-market-sizing`.
+
+## Template / checklist
+**Trend registry**
+| Area | Trend | Fact / forecast / hypothesis | Source, date | Threat / opportunity | Importance 1–3 | Probability 1–3 | Score | Hype or trend | Action |
+|---|---|---|---|---|---|---|---|---|---|
+
+**SOM calculation (example from the course)**
+| Parameter | Value | Source | Type (fact / assumption) |
+|---|---|---|---|
+| New users, people/year | 120,000 (the level of a comparable app) | app stores | fact, estimate |
+| Purchase conversion | 2% | benchmark | assumption |
+| Orders per customer per year | 5 | assumption | assumption |
+| Average ticket | 2,000 ₽ | open data | fact, estimate |
+| SOM | 120,000 × 2% × 5 × 2,000 = 24M ₽/year | — | calculation |
+
+Another example: apparel — 170,000 downloads/month × 12 × 1% × 1 order × 5,000 ₽ × 60% buyout ≈ 61M ₽/year; for the restaurant-delivery market in the lecture example: Russia's food-service turnover of 3.44 trillion ₽/year → restaurant delivery of 664 billion ₽/year → the SOM of one's own service of 24M ₽/year. Always re-check the arithmetic: on the apparel-chain slide, 50 thousand downloads × 1% × 12 months = 6,000 customers (not 500), and then 6,000 × 2,000 ₽ × 2 orders = 24M ₽.
+
+**Checklist**
+- [ ] For every figure, the source, date, unit and period are stated
+- [ ] Forecasts are not passed off as facts
+- [ ] The registry contains both threats and opportunities
+- [ ] No more than 5–6 priority trends; the rest are on the watch list
+- [ ] Hype is separated from trend using the criteria
+- [ ] PAM/TAM/SAM/SOM are defined explicitly and measured in money and in people
+- [ ] SOM is validated with capacity constraints and a second method
+
+## Typical mistakes
+- **Collecting "all the trends in the world"** instead of the ones affecting the product.
+- **Only threats** (or only opportunities) — a trend is almost always two-sided.
+- **"Number magic"**: small inflations at each step (a conversion of 2.3% instead of ~1%, 2 purchases instead of 1, a buyout of 50% instead of 80%) produce a market 4–10× larger than reality.
+- **SOM ≈ SAM** is a sign of an error; **SOM ≠ a traction model** (SOM is potential under conditions; it is needed for the "do or don't do" decision).
+- **A single estimator** — blind spots; estimates are subjective, but the discussion is more valuable than the numbers themselves and must be recorded (the estimation logic, the review date).
+- **A frozen snapshot**: the estimates are never revisited (remote work was "monitor, probability 3" right up to the pandemic).
+- **Confusing FOMO with a trend**: wait for confirmation by real usage and money; do not invest resources in what has not passed the check.
+- **The market is measured to confirm the idea**; most often the calculation is needed to see "don't do it" — and that is a valuable result.
+- **Units don't match the business model** (users for a B2E business with four large clients).
+- **A factor without a decision and without a source**: the trend is described in words, but the registry has neither a link nor a specific action — it does not affect the strategy.
+- **No "research summary"**: factors are listed, but nothing says which prevail (opportunities or threats), which are the main ones, or what that means for the product.
+
+## Questions that can change the decision
+- Will the market sustain Goal B (in money and in people): is SOM ≥ the goal with a margin?
+- Which of the priority trends is regulatory with a hard deadline? It can change the timeline and budget.
+- Is the market growing through new users or through frequency among existing ones (in the course example the leaders' traffic is comparable — growth comes only from frequency)?
+- Which calculation assumptions (conversion, frequency, ticket) are most sensitive, and is there data to replace them with facts?
+- What happens if a priority threat materializes ahead of schedule (the stop scenario)?
+- What will change in the market over 2–3 years because of a technological trend with low probability but high importance?
+
+## Related maps
+[[M-strategy-growth]], [[M-customers]], [[M-competitors]], [[M-market-sizing]], [[M-risks]], [[M-source-criticism]], [[M-research-types]], [[M-traction-model]]
