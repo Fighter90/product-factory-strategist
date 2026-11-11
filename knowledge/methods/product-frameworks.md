@@ -17,7 +17,7 @@ related: [M-double-diamond, M-lean-canvas, M-goals-drivers-bets, M-success-metri
 ## Карта «фаза → фреймворки»
 | Фаза (двойной роман) | Вопрос | Фреймворки (карты) |
 |---|---|---|
-| Discover | Что происходит? кто пользователь? | JTBD [[M-jtbd]], Аудитория [[M-audience-research]], PESTEL [[M-external-environment]], Тренды [[M-trends-scenarios]], Двойной роман [[M-double-diamond]] |
+| Discover | Что происходит? кто пользователь? | JTBD [[M-jtbd]], Аудитория [[M-audience-research]], PESTEL [[M-external-environment]], Тренды [[M-trends-scenarios]], Двойной алмаз [[M-double-diamond]] |
 | Define | Какую проблему решаем? что верно? | Проблем-дизайн [[M-problem-design]], Конкуренты [[M-competitors]], Situаtion-фреймворк, Lean Canvas [[M-lean-canvas]] |
 | Develop | Как решаем? что приоритетнее? | Драйверы и ставки [[M-goals-drivers-bets]], RICE/ICE/WSJF (ниже), Кано [[M-marketing-research]], Каннибализация [[M-cannibalization]], Платформы [[M-platforms-types-criteria]] |
 | Deliver | Как проверим и зафиксируем? | A/B [[M-ab-testing]], NSM/OKR [[M-success-metrics]], Метрики продукта [[M-product-metrics]], Six-pager [[M-six-pager]], DAСI [[M-decision-daci]] |

@@ -266,11 +266,21 @@ def cmd_kb(a):
             print(f"{r['score']:>6}  {r['id']} › {r['section']}  ({r['path']})\n        {r['snippet']}")
     elif a.action == "index":
         _, problems = kb.build_index()
-        print(f"knowledge/INDEX.md обновлён; карт: {len(kb.cards())}; битых связей: {len(problems)}")
+        kb.build_index_en()
+        print(f"knowledge/INDEX.md и knowledge/INDEX_EN.md обновлены; карт RU: {len(kb.cards())}; битых связей: {len(problems)}")
         for p in problems[:30]:
             print("  - " + p)
     elif a.action == "show":
-        print(kb.card_path(a.query).read_text(encoding="utf-8"))
+        print(kb.card_path(a.query, lang=getattr(a, "lang", "ru")).read_text(encoding="utf-8"))
+    elif a.action == "lint":
+        problems = kb.lint()
+        en = len(list(core.KNOWLEDGE.joinpath("methods_en").glob("*.md")))
+        if problems:
+            print(f"pfs kb lint: проблем: {len(problems)} (карт RU: {len(kb.cards())}, EN: {en})")
+            for p in problems:
+                print("  - " + p)
+            sys.exit(1)
+        print(f"pfs kb lint: OK — карт RU: {len(kb.cards())}, EN: {en}; проблем нет")
 
 
 def cmd_data(a):
@@ -573,8 +583,9 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--window", action="store_true", help="сохранить --since/--until в project.json (хук Stop будет их соблюдать)")
     s.set_defaults(f=cmd_cost)
 
-    s = sp.add_parser("kb", help="база знаний"); s.add_argument("action", choices=["search", "index", "show"]); s.add_argument("query", nargs="?")
-    s.add_argument("-k", type=int, default=8); s.add_argument("--with-project", action="store_true"); s.set_defaults(f=cmd_kb)
+    s = sp.add_parser("kb", help="база знаний"); s.add_argument("action", choices=["search", "index", "show", "lint"]); s.add_argument("query", nargs="?")
+    s.add_argument("-k", type=int, default=8); s.add_argument("--with-project", action="store_true")
+    s.add_argument("--lang", choices=["ru", "en"], default="ru"); s.set_defaults(f=cmd_kb)
 
     s = sp.add_parser("data", help="анализ таблиц (profile/cohort/funnel/stats)")
     s.add_argument("action", choices=["profile", "cohort", "funnel", "stats"],
