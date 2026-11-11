@@ -144,6 +144,7 @@
 - [Бизнес-модель, PLG / MLG / SLG и три линзы инноваций](methods/business-models.md) `M-business-models` — бизнес-модель, plg, mlg, slg, desirability
 - [Каннибализация продуктов, фич, тарифов и каналов](methods/cannibalization.md) `M-cannibalization` — каннибализация, переток, инкремент, размен-метрик, тарифы
 - [Customer Journey Map (CJM) — as-is и to-be, барьеры и возможности](methods/cjm.md) `M-cjm` — cjm, карта-пути, as-is, to-be, барьеры
+- [Стиль документа для комитета — как писать, чтобы решение принималось быстро](methods/committee-style.md) `M-committee-style` — стиль, документ, комитет, язык, редактура
 - [Конкуренты — типы, конкурентный ландшафт, пять сил, Strategy Canvas, JTBD-карта](methods/competitors.md) `M-competitors` — конкуренты, competitive-landscape, пять-сил-портера, strategy-canvas, голубой-океан
 - [Crossing the Chasm — переход от ранних энтузиастов к прагматикам](methods/crossing-chasm.md) `M-crossing-chasm` — chasm, сегмент, beachhead, whole product, прагматики
 - [Клиенты и сегменты — кто клиент, как сегментировать и выбрать целевой сегмент](methods/customers.md) `M-customers` — сегментация, целевой-сегмент, клиент, лпр, jtbd
@@ -210,6 +211,7 @@
 - [Бизнес-модель, PLG / MLG / SLG и три линзы инноваций](methods/business-models.md) `M-business-models` — бизнес-модель, plg, mlg, slg, desirability
 - [Каннибализация продуктов, фич, тарифов и каналов](methods/cannibalization.md) `M-cannibalization` — каннибализация, переток, инкремент, размен-метрик, тарифы
 - [Customer Journey Map (CJM) — as-is и to-be, барьеры и возможности](methods/cjm.md) `M-cjm` — cjm, карта-пути, as-is, to-be, барьеры
+- [Стиль документа для комитета — как писать, чтобы решение принималось быстро](methods/committee-style.md) `M-committee-style` — стиль, документ, комитет, язык, редактура
 - [Конкуренты — типы, конкурентный ландшафт, пять сил, Strategy Canvas, JTBD-карта](methods/competitors.md) `M-competitors` — конкуренты, competitive-landscape, пять-сил-портера, strategy-canvas, голубой-океан
 - [Клиенты и сегменты — кто клиент, как сегментировать и выбрать целевой сегмент](methods/customers.md) `M-customers` — сегментация, целевой-сегмент, клиент, лпр, jtbd
 - [DACI и журнал решений — роли, владельцы, условия пересмотра](methods/decision-daci.md) `M-decision-daci` — daci, решение, роли, ответственность, журнал-решений

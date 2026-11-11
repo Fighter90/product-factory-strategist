@@ -4,7 +4,7 @@ lang: ru
 title: Стиль документа для комитета — как писать, чтобы решение принималось быстро
 course: strategy
 sources: ["PRO-60: карта добавлена для качества стратегии", "PRO-52: русский язык вывода — грамматика, жаргон, англицизмы, редактор", "PRO-53: английский вывод — калька с русского, EN-шаблоны и проверка"]
-stages: [review, decision]
+stages: [strategy, validation, review, decision]
 tags: [стиль, документ, комитет, язык, редактура, шесть-страниц]
 related: [M-six-pager, M-six-pager-etalon, M-decision-daci, M-source-criticism, M-model-validation, M-message-house]
 ---

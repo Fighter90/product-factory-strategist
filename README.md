@@ -201,7 +201,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>основания · обязательства"] --> MON["decision due<br/>что решать сейчас"]
   end
-  KB["knowledge/ — 89 карт по категориям (RU) + 89 EN-зеркал — полная двуязычная база (methods_en/) + INDEX_EN.md<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
+  KB["knowledge/ — 97 карт по категориям (RU) + 97 EN-зеркал — полная двуязычная база (methods_en/) + INDEX_EN.md<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → первоисточники → S###"| S
   SUB -->|"отчёты"| ENV
@@ -279,7 +279,7 @@ flowchart LR
   IMP --> REV["пересмотр: supersede · rebase"]
 ```
 
-### 2. База знаний (89 карт по категориям (RU) + 89 EN-зеркал — полная двуязычная база и EN-индекс)
+### 2. База знаний (97 карт по категориям (RU) + 97 EN-зеркал — полная двуязычная база и EN-индекс)
 Наборы знаний по категориям: стратегия и рост · юнит-экономика и монетизация · продуктовый менеджмент ·
 UX и клиентские метрики · анализ данных и A/B · платформенные решения · Gen AI в продукте. Поверх —
 фреймворки: Double Diamond, Lean Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Кано. Только методики —
@@ -373,7 +373,7 @@ AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject
 .claude/settings.json
 .cursor/rules/       .github/ (Pages workflow) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable · rea)
 config/              models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/           methods/ (89 карт RU) · methods_en/ (89 EN-зеркал — полная двуязычная база) · INDEX.md · INDEX_EN.md
+knowledge/           methods/ (97 карт RU) · methods_en/ (97 EN-зеркал — полная двуязычная база) · INDEX.md · INDEX_EN.md
 tools/pfs/           core · project · route · sources · claims · check · impact · decisions ·
                      data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl · log.jsonl · costs.json ·

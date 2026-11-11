@@ -4,6 +4,7 @@
 Запуск: python3 -m unittest tests.test_kb_lint -v
 """
 import os
+import re
 import sys
 import tempfile
 import unittest
@@ -172,6 +173,93 @@ class KbLintRealKbTests(unittest.TestCase):
         for stage, cards in kb.STAGE_CARDS.items():
             for cid in cards:
                 self.assertIn(cid, ids, f"{stage}: {cid}")
+
+
+class KbLintStagesAndEncodingTests(unittest.TestCase):
+    """PRO-60, раунд 3: stages без шагов процесса, байты U+FFFD в картах и INDEX, счётчики в доках."""
+
+    def lint(self, **kwargs) -> tuple[list[str], Path]:
+        root = Path(tempfile.mkdtemp(prefix="pfs-test-kblint3-"))
+        make_pair(root, **kwargs)
+        with mock.patch.object(core, "KNOWLEDGE", root):
+            return kb.lint(), root
+
+    def test_stages_without_process_step_flagged(self):
+        problems, _ = self.lint(ru_fm=RU_FM.replace("stages: [intake]", "stages: [review, decision]"))
+        self.assertTrue(any("stages" in p and "M-alpha" in p for p in problems), problems)
+
+    def test_stages_with_valid_step_among_extras_pass(self):
+        problems, _ = self.lint(ru_fm=RU_FM.replace("stages: [intake]", "stages: [strategy, review, decision]"))
+        self.assertFalse(any("stages" in p for p in problems), problems)
+
+    def test_replacement_char_in_card_body_flagged(self):
+        problems, _ = self.lint(ru_body=RU_BODY.replace("Зачем карта нужна.", "Позиционир\ufffdвание."))
+        self.assertTrue(any("U+FFFD" in p and "alpha" in p for p in problems), problems)
+
+    def test_replacement_char_in_card_title_flagged(self):
+        problems, _ = self.lint(ru_fm=RU_FM.replace("title: Карта А", "title: Позиционир\ufffdвание"))
+        self.assertTrue(any("U+FFFD" in p for p in problems), problems)
+
+    def test_replacement_char_in_index_flagged(self):
+        _, root = self.lint()
+        (root / "INDEX.md").write_text(
+            "# Навигация\n\n- [Позиционир\ufffdвание по Dunford](methods/alpha.md) `M-alpha`\n",
+            encoding="utf-8")
+        with mock.patch.object(core, "KNOWLEDGE", root):
+            problems = kb.lint()
+        self.assertTrue(any("INDEX.md" in p and "U+FFFD" in p for p in problems), problems)
+
+    def test_real_index_files_have_no_replacement_chars(self):
+        for name in ("INDEX.md", "INDEX_EN.md"):
+            text = (core.KNOWLEDGE / name).read_text(encoding="utf-8")
+            self.assertNotIn("\ufffd", text, name)
+
+    def test_committee_style_listed_in_step_sections(self):
+        """Карта для комитета есть в шагах INDEX (RU и EN), а не только в списке курсов."""
+        with mock.patch.object(core, "KNOWLEDGE", core.KNOWLEDGE):
+            text, problems = kb.build_index()
+            text_en, problems_en = kb.build_index_en()
+        self.assertEqual(problems, [])
+        self.assertEqual(problems_en, [])
+        self.assertNotIn("\ufffd", text)
+        strategy_part = text.split("## Стратегия (`strategy`)")[1].split("## ")[0]
+        self.assertIn("`M-committee-style`", strategy_part)
+        strategy_part_en = text_en.split("## Strategy (`strategy`)")[1].split("## ")[0]
+        self.assertIn("`M-committee-style`", strategy_part_en)
+
+
+class KbDocsCardCountsTests(unittest.TestCase):
+    """PRO-60, раунд 3: счётчики карт в документах — из одного источника (база знаний), не вручную."""
+
+    COUNTS = [  # (файл, [(паттерн числа, "ru" | "en" | "ru_en")])
+        ("README.md", [(r"(\d+) карт по категориям", "ru"),
+                       (r"\((\d+) карт RU\)", "ru"),
+                       (r"(\d+) EN-зеркал", "en")]),
+        ("docs/COMPLIANCE.md", [(r"(\d+) карт RU", "ru"), (r"(\d+) EN-зеркал", "en")]),
+        ("docs/HELP.md", [(r"(\d+) карт методов \(RU\)", "ru"), (r"(\d+) EN-зеркал", "en")]),
+        ("docs/HELP_EN.md", [(r"(\d+) method cards \(RU\)", "ru"), (r"(\d+) EN mirrors", "en")]),
+        ("docs/SUBMISSION.md", [(r"(\d+) карт(?: RU| \(RU\))?", "ru"), (r"(\d+) EN-зеркал", "en")]),
+        ("docs/lovable-brief.md", [(r"(\d+) карт знаний", "ru"), (r"(\d+)\+(\d+) карт", "ru_en"),
+                                   (r"(\d+) карт \(\+", "ru"), (r"(\d+) EN-зеркал", "en")]),
+        ("site/help.html", [(r"(\d+) карт[а-яё]*", "ru"), (r"(\d+) cards", "ru")]),
+    ]
+
+    def test_claimed_counts_match_knowledge_base(self):
+        ru_n = len(list((core.KNOWLEDGE / "methods").glob("*.md")))
+        en_n = len(list((core.KNOWLEDGE / "methods_en").glob("*.md")))
+        expected = {"ru": ru_n, "en": en_n}
+        for rel, pats in self.COUNTS:
+            text = (core.ROOT / rel).read_text(encoding="utf-8")
+            for pat, kind in pats:
+                matches = list(re.finditer(pat, text))
+                self.assertTrue(matches, f"{rel}: нет совпадений для {pat}")
+                for m in matches:
+                    if kind == "ru_en":
+                        self.assertEqual(int(m.group(1)), ru_n, f"{rel}: «{m.group(0)}»")
+                        self.assertEqual(int(m.group(2)), en_n, f"{rel}: «{m.group(0)}»")
+                    else:
+                        self.assertEqual(int(m.group(1)), expected[kind],
+                                         f"{rel}: «{m.group(0)}» ≠ {expected[kind]}")
 
 
 class KbIndexEnTests(unittest.TestCase):

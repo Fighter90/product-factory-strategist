@@ -48,7 +48,7 @@
 | Маршрутизация сценариев и моделей | `pfs route` (сценарий → карты → план моделей), `config/models.json` (fast/balanced/deep, эскалация, `--economy`) | `python3 -m tools.pfs route "запрос"` |
 | Навыки / хуки / субагенты | `.claude/skills/` (121), `.claude/hooks/` (4 события + `_common.py`), `.claude/agents/` (8) | `ls`-команды из шапки файла |
 | MCP + CLI | CLI `python3 -m tools.pfs` (25+ подкоманд); MCP `tools/pfs/mcp_server.py` — 18 инструментов (stdio JSON-RPC) | `python3 -m tools.pfs --help`; `.mcp.json` → pfs-strategist |
-| База знаний с поиском | 89 карт RU + 89 EN-зеркал — полная двуязычная база + `INDEX_EN.md`; BM25 с русским стеммингом (`pfs kb search`), связи `related`, разделы и паритет RU/EN проверяет `pfs kb lint` | `python3 -m tools.pfs doctor` — число карт |
+| База знаний с поиском | 97 карт RU + 97 EN-зеркал — полная двуязычная база + `INDEX_EN.md`; BM25 с русским стеммингом (`pfs kb search`), связи `related`, разделы и паритет RU/EN проверяет `pfs kb lint` | `python3 -m tools.pfs doctor` — число карт |
 | Excel-приложения на формулах | `pfs calc all` → 4 книги (лист «Ввод» + формулы, пересчёт при открытии) | `projects/демо/outputs/attachments/` — 4 файла xlsx |
 | Six-pager для комитета | `pfs export --six-pager` (FAQ-1…6) | демо: SIX_PAGER_RU и SIX_PAGER_EN, каждый в трёх форматах (MD/PDF/DOCX) |
 | Отчёты и конвертация | `pfs export` (REPORT.md), `pfs export --deck`, `pfs docx` (Markdown → Word, без зависимостей) | `projects/демо/outputs/REPORT.md`, `docs/docx/` |

@@ -4,7 +4,7 @@ lang: en
 title: Committee document style — how to write so the decision gets made fast
 course: pm-approaches-en
 sources: ["EN mirror of the RU card; original sources listed there"]
-stages: [review, decision]
+stages: [strategy, validation, review, decision]
 tags: [style, document, committee, language, editing, six-pager]
 related: [M-six-pager, M-six-pager-etalon, M-decision-daci, M-source-criticism, M-model-validation, M-message-house]
 ---

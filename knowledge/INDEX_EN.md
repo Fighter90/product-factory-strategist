@@ -145,6 +145,7 @@
 - [Business model, PLG / MLG / SLG and the Three Lenses of Innovation](methods_en/business-models.md) `M-business-models` — business-models, plg, mlg, slg, desirability
 - [Cannibalization of products, features, plans and channels](methods_en/cannibalization.md) `M-cannibalization` — cannibalization, flow-over, increment, metric-tradeoffs, plans
 - [Customer Journey Map (CJM) — as-is and to-be, barriers and opportunities](methods_en/cjm.md) `M-cjm` — cjm, journey-map, as-is, to-be, barriers
+- [Committee document style — how to write so the decision gets made fast](methods_en/committee-style.md) `M-committee-style` — style, document, committee, language, editing
 - [Competitors — types, competitive landscape, five forces, Strategy Canvas, JTBD map](methods_en/competitors.md) `M-competitors` — competitors, competitive-landscape, porter-five-forces, strategy-canvas, blue-ocean
 - [Crossing the Chasm — the transition from early enthusiasts to pragmatists](methods_en/crossing-chasm.md) `M-crossing-chasm` — chasm, segmentation, beachhead, whole-product, pragmatists
 - [Customers and segments — who the client is, how to segment and choose the target segment](methods_en/customers.md) `M-customers` — segmentation, target-segment, customers, decision-maker, jtbd
@@ -211,6 +212,7 @@
 - [Business model, PLG / MLG / SLG and the Three Lenses of Innovation](methods_en/business-models.md) `M-business-models` — business-models, plg, mlg, slg, desirability
 - [Cannibalization of products, features, plans and channels](methods_en/cannibalization.md) `M-cannibalization` — cannibalization, flow-over, increment, metric-tradeoffs, plans
 - [Customer Journey Map (CJM) — as-is and to-be, barriers and opportunities](methods_en/cjm.md) `M-cjm` — cjm, journey-map, as-is, to-be, barriers
+- [Committee document style — how to write so the decision gets made fast](methods_en/committee-style.md) `M-committee-style` — style, document, committee, language, editing
 - [Competitors — types, competitive landscape, five forces, Strategy Canvas, JTBD map](methods_en/competitors.md) `M-competitors` — competitors, competitive-landscape, porter-five-forces, strategy-canvas, blue-ocean
 - [Customers and segments — who the client is, how to segment and choose the target segment](methods_en/customers.md) `M-customers` — segmentation, target-segment, customers, decision-maker, jtbd
 - [DACI and the decision journal — roles, owners, revision conditions](methods_en/decision-daci.md) `M-decision-daci` — daci, decisions, roles, accountability, decision-journal

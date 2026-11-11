@@ -23,7 +23,7 @@
   дедупликация, детектор внедрённых инструкций, разрешённые домены, защита от SSRF), реестр утверждений с правилами,
   quality gate, анализ влияния, решения, стоимость по транскриптам, поиск по базе знаний, профиль данных и когорты,
   маршрутизация сценариев и моделей. Те же функции — по MCP (`.mcp.json`).
-- **Контекст и знания:** инструкции (AGENTS.md, skills, agents) / методические знания (knowledge/, 89 карт RU + 89 EN-зеркал — полная двуязычная база в methods_en/ + INDEX_EN.md) / настройки
+- **Контекст и знания:** инструкции (AGENTS.md, skills, agents) / методические знания (knowledge/, 97 карт RU + 97 EN-зеркал — полная двуязычная база в methods_en/ + INDEX_EN.md) / настройки
   (config/) / материалы проекта (projects/*/sources) / состояние (state.json, *.jsonl) / результаты (outputs/) — раздельно.
   Агент не грузит базу целиком: `pfs route` даёт список карт, `pfs kb search` — разделы карт (BM25).
 - **Хуки:** SessionStart (контекст проекта при новом чате), PreToolUse/WebFetch (разрешённые домены),
@@ -52,7 +52,7 @@
 - Субагенты: [.claude/agents/](../.claude/agents) — `researcher`, `red-team`, `evidence-auditor`, `synthetic-respondent`,
   `data-analyst`, `ux-analyst`, `comms-strategist`, `router`.
 - Рубрика качества: [knowledge/rubrics/strategy_quality.md](../knowledge/rubrics/strategy_quality.md); шаблоны выходов: [knowledge/templates/](../knowledge/templates).
-- Методическая база: 89 карт (RU) + 89 EN-зеркал — полная двуязычная база (methods_en/) и EN-индекс (INDEX_EN.md) в [knowledge/](../knowledge) — наборы знаний по категориям (стратегия, экономика, продукт, UX, данные, платформы, Gen AI) + набор «PM approaches» (Continuous Discovery, PMF Survey, Lean Startup, North Star Playbook, Crossing the Chasm, Dual-Track Agile, Wardley Mapping, жизненный цикл продукта):
+- Методическая база: 97 карт (RU) + 97 EN-зеркал — полная двуязычная база (methods_en/) и EN-индекс (INDEX_EN.md) в [knowledge/](../knowledge) — наборы знаний по категориям (стратегия, экономика, продукт, UX, данные, платформы, Gen AI) + набор «PM approaches» (Continuous Discovery, PMF Survey, Lean Startup, North Star Playbook, Crossing the Chasm, Dual-Track Agile, Wardley Mapping, жизненный цикл продукта):
   стратегия и рост · юнит-экономика и монетизация · продуктовый менеджмент · UX и клиентские метрики · анализ данных ·
   платформенные решения · Gen AI (только методики, без брендов); навигация — [INDEX.md](../knowledge/INDEX.md).
 
@@ -69,7 +69,7 @@
 | Маршрутизация | `pfs route` (сценарий, карты, вопросы), `config/models.json` (модель под задачу, эскалация, экономия, профили), исправление `--override` | план моделей в демо |
 | Навыки, хуки, субагенты | 121 навык / 4 хука / 8 субагентов (router, researcher, data-analyst, synthetic-respondent, ux-analyst, red-team, comms-strategist, evidence-auditor) | весь демо-прогон |
 | MCP и CLI | CLI `pfs` (25+ команд) + MCP-сервер `pfs-strategist` (18 инструментов) | демо-прогон идёт через CLI+MCP |
-| База знаний | 89 карт (RU) + 89 EN-зеркал — полная двуязычная база и EN-индекс, BM25-поиск, связи `related`, проверка битых ссылок; память проекта без превращения выводов в факты; отзыв записей | `pfs kb search` |
+| База знаний | 97 карт (RU) + 97 EN-зеркал — полная двуязычная база и EN-индекс, BM25-поиск, связи `related`, проверка битых ссылок; память проекта без превращения выводов в факты; отзыв записей | `pfs kb search` |
 | Устойчивость к сбоям | атомарная запись, идемпотентные команды, явные ошибки сети, журнал | лимит API во время сборки: субагенты продолжены с места остановки |
 | Переносимость | состояние в файлах; AGENTS.md + .cursor/rules + copilot-instructions + MCP | — |
 | Сравнение с исходным способом | `docs/demo/compare.py` против ответа обычного чата | раздел 6 |
