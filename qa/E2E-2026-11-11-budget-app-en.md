@@ -2,7 +2,7 @@
 
 > Задача: Paid tier of an open-source app
 > Модель: по умолчанию среды
-> Прогон: свежий клон → `opencode run --auto --format json` (автопрогон, [PRO-54]) → разбор лога `tools/pfs/e2e.py`.
+> Прогон: приёмочный автопрогон в выделенном клоне `~/Projects/pfs-e2e-en` — не свежий временный клон раннера (прогон предшествовал `scripts/e2e_opencode.sh`; то же у antispam-ru, остальные четыре прогона матрицы — свежие клоны через раннер) → `opencode run --auto --format json` (автопрогон, [PRO-54]) → разбор лога `tools/pfs/e2e.py`.
 
 ## Сводка
 
