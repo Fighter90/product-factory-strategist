@@ -19,25 +19,23 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 ## Quick start (5 minutes)
 
-## Installation
+### Installation
 
 ```bash
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
-./scripts/install.sh          # uv tool install -e . (or venv+symlink)
-pfs --help
+./scripts/install.sh                            # uv tool install -e . (or venv+symlink)
+pfs --help                                      # CLI installed: works from any folder
+python3 -m tools.pfs doctor                     # environment check: Python, pdftotext, knowledge base
+python3 -m unittest discover -s tests           # 373 tests
 ```
 
 Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INSTALL_EN.md](docs/INSTALL_EN.md).
+Outside the repository folder only the installed `pfs` works; `python3 -m tools.pfs` works only from the
+repository folder (the `tools` module is resolved relative to the current directory).
 
-```bash
-git clone https://github.com/Fighter90/product-factory-strategist.git
-cd product-factory-strategist
-python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 355 tests
-# in Claude Code (run `claude` in the folder) write the task:
-# "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
-```
+Then in Claude Code (run `claude` in the repository folder) write the task: "Our paid anti-spam service is
+losing subscribers. What do we do and what do we tell customers?"
 
 The agent creates the project, runs question blocks, builds the research and shows progress as
 `Step N/12 · …`. Say **"stop"** to pause, **"clarify: …"** to adjust, **"build the six-pager in two languages with an Excel model and a committee report"**, **"make the presentation"** for a deck from the six-pager. After a break, open a new
@@ -55,7 +53,8 @@ a tracker, a job map; 100% local; 18 BYOK LLM providers; 19 languages; ~7,602 au
 - Task: "Build the commercial version of cvstart.org and a go-to-market strategy for the whole world."
   Comparison axis: paying subscribers and ARR; constraints: the MIT core stays free and open, a solo developer,
   keep the trust of the local/private mode.
-- How the agent ran: 12 steps — brief → 10 sources (S001–S011) → research plan → discovery with 2 synthetic
+- How the agent ran: 12 steps — brief → 10 sources (S001–S002 and S004–S011; S003 was merged into S006 during
+deduplication) → research plan → discovery with 2 synthetic
   personas (honestly labeled, hypotheses only) → situation → 5 options + red team (15 objections + 5 hidden
   assumptions = 20 hits) → the director picked **B: hosted freemium SaaS** (Free BYOK / Pro $12 / Unlimited $29,
   opt-in cloud on top of the local MIT core, honest pricing without auto-renewals, locale waves
@@ -69,8 +68,10 @@ a tracker, a job map; 100% local; 18 BYOK LLM providers; 19 languages; ~7,602 au
   CM $21.75, LTV ≈ $271.88, LTV/CAC ≈ 4.5, break-even ≈ 69 paying; synthetic funnel [S008] is a method,
   not a forecast. Synthetic material is registered with `origin=synthetic` — the tool refuses to record facts on it.
 
-What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_PAGER_RU and SIX_PAGER_EN — each as
-.md/.pdf/.docx**, attachments/*.xlsx — 4 workbooks, img/ screenshots), `projects/демо/interviews/synthetic/`. The six-pager follows the growth-strategy reference format: subsections 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs in two planes, source footnotes; the draft is assembled by `pfs export --six-pager` (spec: `knowledge/templates/SIX_PAGER_PROMPT.md`)
+What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_PAGER_RU and SIX_PAGER_EN — the polished
+committee documents, each as
+.md/.pdf/.docx**; `SIX_PAGER.md` is the auto-scaffold rebuilt by `pfs export --six-pager` and read by `pfs export --deck`,
+attachments/*.xlsx — 4 workbooks, img/ screenshots), `projects/демо/interviews/synthetic/`. The six-pager follows the growth-strategy reference format: subsections 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs in two planes, source footnotes; the draft is assembled by `pfs export --six-pager` (spec: `knowledge/templates/SIX_PAGER_PROMPT.md`)
 (2 AI personas), `projects/демо/analysis/` (generators + funnel CSV). Product screenshots: `site/assets/`.
 Full RU breakdown with a task-requirements mapping table — in
 [README.md](README.md#демонстрационный-проект-cvstart--полный-разбор).

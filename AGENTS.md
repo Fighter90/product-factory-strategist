@@ -121,35 +121,56 @@
 
 ## 6. Шпаргалка команд
 
+Одна команда — одна строка, можно скопировать и выполнить; варианты — в комментарии после `#`.
+
 ```
-pfs new "<название>" "<запрос дословно>"     pfs status | pfs list | pfs use <slug>
-pfs route ["запрос"] [--override X]          pfs models [pick|escalate|use|sync] <задача>
-pfs step <шаг> in_progress|done --next "…"   pfs ask "вопрос" --options "A,B,C" | pfs answer "…"
-pfs next                                     # «что решать сейчас»: шаг, обязательства, пересмотры, вопросы
-pfs questions <шаг|блок>                     # вопросный блок шага (пропуск — pfs log --kind questions-skip)
-pfs source add <url|файл> [--origin own|interview|synthetic] [--published YYYY-MM-DD]
-pfs source add --text-file f.md --url <url> --title "…"     pfs source list | show S001
-pfs source refresh S###                      # перезагрузить web-источник; изменился sha256 — impact по утверждениям
+pfs new "<название>" "<запрос дословно>"
+pfs use <slug>                                # сделать проект активным; pfs list — список, pfs status — сводка
+pfs route ["запрос"] [--override X]           # сценарий и план моделей под задачу
+pfs models                                    # таблица «задача → модель»; подкоманды ниже
+pfs models pick <задача>                      # модель под задачу
+pfs models escalate <задача> --reason "…"     # эскалация после повторных ошибок проверки
+pfs models use <профиль>                      # профиль другой среды (claude, cursor-mixed, ru-local)
+pfs models sync                               # прописать модели в субагентов Claude Code
+pfs step <шаг> done --next "…"                # статус: in_progress или done
+pfs ask "вопрос" --options "A,B,C"            # пауза: агент ждёт ответа руководителя
+pfs answer "…"                                # ответ руководителя
+pfs next                                      # «что решать сейчас»: шаг, обязательства, пересмотры, вопросы
+pfs questions <шаг>                           # вопросный блок шага (пропуск — pfs log --kind questions-skip)
+pfs source add <файл> [--origin own|interview|synthetic] [--published YYYY-MM-DD]
+pfs source add --text-file f.md --url <url> --title "…"     # выписка, если сайт блокирует загрузку
+pfs source list                               # реестр; pfs source show S001 — текст источника
+pfs source refresh S001                       # перезагрузить web-источник; изменился sha256 — impact по утверждениям
 pfs claim add "текст" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "вывод" --kind inference --from C001,C004
-pfs claim supersede --id C003 "новый текст" --reason "…" [--from C…] | retract --id C003 --reason "…"
-pfs claim rebase [--id C010]                 # перенаправить выводы с замещённых оснований на замены
-pfs impact C003 | S002                       pfs check [--strict]
-pfs review lock                              # после ревизии evidence-auditor; правки реестра после lock → «вердикт review устарел» — повторите review и lock
-pfs gap list                                 pfs gap close 3 --claim C069 [--note "чем закрыт"]  # пробел закрыт синхронно в 01 и 02; check ловит рассинхрон
-pfs kb search "когортный анализ удержания"   pfs kb show M-jtbd | pfs kb index
-pfs data profile file.csv --save profile     pfs data cohort file.csv --user id --date dt --save cohorts
-pfs data funnel file.csv --steps visit,signup,pay --user id   pfs data stats file.csv --col revenue [--group seg]
-pfs interview guide --persona "Родитель 7–12" [--topic] | pfs interview save transcript.md --persona …
-pfs media add скрин.png --desc "что видно" --title "…"       pfs ux scaffold S003 --focus "онбординг"
-pfs docx <файл.md> [--out]                   # Markdown → Word
-pfs decision add --title … --decision … --owner … --grounds C001,C007 --metric "NSM: 10 -> 12 @2027-01-01" \
-                 --review 2027-01-01 --trigger "…" --commit "что|кто|когда"
-pfs decision due [--on YYYY-MM-DD] | list | done --id D001 --commitment K1 | rebase --id D001 --note "…"
+pfs claim supersede --id C001 "новый текст" --reason "…" [--from C001]   # замещение, не удаление
+pfs claim retract --id C001 --reason "…"      # отзыв: пометка «отозвано», строка остаётся
+pfs claim rebase [--id C001]                  # перенаправить выводы с замещённых оснований на замены
+pfs impact C001                               # что затронет изменение; pfs impact S001 — то же для источника
+pfs check [--strict]                          # ошибки → ненулевой код выхода
+pfs review lock                               # после ревизии evidence-auditor; правки реестра после lock → «вердикт review устарел» — повторите review и lock
+pfs gap list
+pfs gap close 3 --claim C001 [--note "чем закрыт"]   # пробел закрыт синхронно в 01 и 02; check ловит рассинхрон
+pfs kb search "когортный анализ удержания"
+pfs kb show M-jtbd                            # показать карту; pfs kb index — пересобрать INDEX.md
+pfs data profile file.csv --save profile
+pfs data cohort file.csv --user id --date dt --save cohorts
+pfs data funnel file.csv --steps visit,signup,pay --user id
+pfs data stats file.csv --col revenue [--group seg]
+pfs interview guide --persona "Родитель 7–12" [--topic "…"]
+pfs interview save transcript.md --persona "…"               # транскрипт ИИ-респондента: только гипотезы
+pfs media add скрин.png --desc "что видно" --title "…"
+pfs ux scaffold S001 --focus "онбординг"
+pfs docx <файл.md> [--out]                    # Markdown → Word
+pfs decision add --title "…" --decision "…" --owner "CPO" --grounds C001,C007 \
+                 --metric "NSM: 10 -> 12 @2027-01-01" --review 2027-01-01 \
+                 --trigger "…" --commit "что|кто|когда"
+pfs decision due                              # что решать сейчас: просроченные обязательства, пересмотры
+pfs decision done --id D001 --commitment K1   # закрыть обязательство; pfs decision list / status / rebase
 pfs cost [--transcript <jsonl>] [--since|--until <ISO>] [--window]
-pfs calc scaffold                              # каркас calcs.json из 02/04/06/07 (null-поля — дописать); затем pfs calc all
-pfs calc [all|unit-econ|growth|cohort|market]   # Excel-приложения (юнит-экономика, рост, когорты, рынок) → outputs/attachments/
-pfs export [--six-pager] [--no-calcs]           # REPORT.md; six-pager в формате референса стратегии (спецификация: knowledge/templates/SIX_PAGER_PROMPT.md) с Excel-приложениями
-pfs export --deck                            # HTML-дека 16:9 из SIX_PAGER.md
+pfs calc scaffold                             # каркас calcs.json из 02/04/06/07 (null-поля — дописать); затем pfs calc all
+pfs calc all                                  # Excel-приложения; варианты: unit-econ, growth, cohort, market
+pfs export [--six-pager] [--no-calcs]         # REPORT.md; six-pager в формате референса стратегии (спецификация: knowledge/templates/SIX_PAGER_PROMPT.md) с Excel-приложениями
+pfs export --deck                             # HTML-дека 16:9 из SIX_PAGER.md
 pfs doctor
 ```

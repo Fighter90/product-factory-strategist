@@ -1,9 +1,14 @@
 {
-  "at": "2026-11-10T10:19:16+03:00",
+  "at": "2026-11-11T12:05:38+03:00",
   "claims": 20,
   "sources": 10,
-  "claims_sha": "5c22363ff637fa672514993455ec8157ac6b476ce702a932e116450bcf0505d1",
+  "claims_sha": "3a2a4bf59fccb343d5c4b0a230b0fdcccd973088b3b9b0237fc7c13c86e7739c",
   "sources_sha": "1545271df5851cdd3095d450ad90866d7c339614df5cb4a910c0f484d01f73c9",
-  "calcs_mtime": 1794276470.1455011,
-  "attachments_mtime": 1794295156.1094077
+  "calcs_sha": "8d24edc99c404ced5b0c9d583d0d7a7c18d54e377b0d68dcacbc3c7a0c9afca0",
+  "attachments_sha": {
+    "cohort_retention.xlsx": "1f8fa00476b4f9091e377b4881c594172a5415d8adfc90b15dfb573a705d82c4",
+    "growth_model.xlsx": "b452eec5b942e1efa190e3fddf7d6289340bf9ffdbf0de3a2c84097012c739ae",
+    "market_sizing.xlsx": "eb7ea45cd7f454da39307d6a8b090faf0ad08918b30e6b2bbb2c6f576c7e24d8",
+    "unit_economics.xlsx": "c6279cee18951840425e1fed66861c6013a817dfe873be92bf3dffd2e151c529"
+  }
 }

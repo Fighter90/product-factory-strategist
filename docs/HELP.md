@@ -36,7 +36,7 @@
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor     # проверка окружения
-python3 -m unittest discover -s tests   # самопроверка (260 тестов)
+python3 -m unittest discover -s tests   # самопроверка (373 теста)
 ```
 
 `doctor` показывает: способ установки (editable/venv/source), версию пакета, путь до `pfs` (which), здоровье PATH, расположение projects dir, версию Python, наличие pdftotext/pypdf, число карт в базе знаний, активный проект.
@@ -425,8 +425,10 @@ scripts/e2e_opencode.sh ru qa/tasks/antispam-ru.md    # 3 задачи × ru/en 
 ## 13. Шпаргалка (короткая)
 
 ```bash
-pfs new "…" "…" / pfs use slug / pfs status          # проекты
-pfs source add <url|файл>                            # источники
+pfs new "…" "…"                                      # новый проект
+pfs use <slug>                                       # сделать проект активным
+pfs status                                           # где остановились; pfs list — все проекты
+pfs source add <файл>                                # источники (URL — той же командой: pfs source add https://…)
 pfs source fetch <url>                               # недоступный URL: фолбэки reader/архив; refresh идёт той же цепочкой
 pfs claim add "…" --kind fact --source S001 --grade B       # утверждения
 pfs claim add-batch claims.jsonl                            # пачка утверждений из JSONL

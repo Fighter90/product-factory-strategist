@@ -21,10 +21,12 @@ def run(pdir: Path, no_deck: bool = False, en: bool = False) -> dict:
     останавливает сборку (эквивалент `pfs check --strict`, где --strict — это
     «ошибки → ненулевой код выхода»; отдельного флага strict у check.run нет,
     предупреждения сборке не мешают). Пакет из невалидного реестра не собираем.
-    Возвращает {check, artifacts, missing_docs, stale_warnings} — stale_warnings
-    это предупреждения о несвежих основаниях ДО пересборки (свежая сборка их снимает).
+    Возвращает {check, artifacts, missing_docs, stale_warnings, stale_facts} —
+    stale_facts это факты «что в реестре изменилось ДО пересборки» (свежая сборка их
+    снимает), stale_warnings — те же факты в виде предупреждения с советом «пересоберите».
     """
-    stale = export.freshness_warnings(pdir)  # предупреждение о несвежих основаниях — до сборки
+    stale_facts = export.freshness_facts(pdir)  # предупреждение о несвежих основаниях — до сборки
+    stale = export.freshness_warnings(pdir)
     qc = check.run(pdir)
     if qc["errors"]:  # строгий затвор: любая ошибка check останавливает сборку (см. докстрингу)
         raise core.PfsError("pfs finish: автопроверка нашла ошибки — пакет не собран:\n- "
@@ -44,11 +46,14 @@ def run(pdir: Path, no_deck: bool = False, en: bool = False) -> dict:
     missing = [name for name in export.ORDER if not (pdir / "outputs" / name).exists()]
     core.log(pdir, "action", "Собран финальный пакет: " + ", ".join(p.name for p in artifacts),
              tool="pfs finish")
-    return {"check": qc, "artifacts": artifacts, "missing_docs": missing, "stale_warnings": stale}
+    return {"check": qc, "artifacts": artifacts, "missing_docs": missing,
+            "stale_warnings": stale, "stale_facts": stale_facts}
 
 
 def summary_text(res: dict) -> str:
-    """Сводка «что собрано + что устарело»: артефакты, недостающие документы, несвежие основания."""
+    """Сводка «что собрано + что устарело»: артефакты, недостающие документы, несвежие основания.
+    Только факты: пересборка уже случилась — совет «пересоберите» здесь противоречил бы строке
+    «снято свежей пересборкой» (PRO-63)."""
     lines = ["Собрано ({}):".format(len(res["artifacts"]))
              + "".join(f"\n- {p}" for p in res["artifacts"])]
     if res["missing_docs"]:
@@ -56,7 +61,10 @@ def summary_text(res: dict) -> str:
                      + ", ".join(res["missing_docs"]))
     else:
         lines.append("Документы 00–07: все на месте")
-    if res["stale_warnings"]:
+    facts = res.get("stale_facts")
+    if facts is None:  # совместимость: словарь без stale_facts — вычислить по фактам предупреждений
+        facts = [w.split(": ", 1)[1].split(" — приложения", 1)[0] for w in res["stale_warnings"]]
+    if facts:
         lines.append("До сборки реестр менялся — снято свежей пересборкой: "
-                     + " ".join(res["stale_warnings"]))
+                     + ", ".join(facts))
     return "\n".join(lines)

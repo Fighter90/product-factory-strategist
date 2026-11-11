@@ -299,9 +299,8 @@ def cmd_data(a):
 def cmd_interview(a):
     pdir = _p(a)
     if a.action == "guide":
-        if not (a.topic or "").strip():
-            raise core.PfsError("interview guide: укажите тему --topic")
-        print(f"Гайд: {participate.guide(pdir, a.persona, a.topic)}")
+        topic = (a.topic or "").strip() or a.persona.strip()  # --topic необязательна: по умолчанию персона
+        print(f"Гайд: {participate.guide(pdir, a.persona, topic)}")
     else:
         if not a.file:
             raise core.PfsError("interview save: укажите файл транскрипта/выжимки")
@@ -582,7 +581,7 @@ def build_parser() -> argparse.ArgumentParser:
                    help="guide — каркас вопросов; save — транскрипт ИИ-респондента как источник")
     s.add_argument("file", nargs="?", help="файл транскрипта/выжимки (для save)")
     s.add_argument("--persona", required=True, help="персона ИИ-респондента, напр. «Родитель 7–12»")
-    s.add_argument("--topic", help="тема интервью (для guide)")
+    s.add_argument("--topic", help="тема интервью (для guide; необязательно — по умолчанию персона)")
     s.add_argument("--title", help="заголовок источника (для save)")
     s.set_defaults(f=cmd_interview)
 

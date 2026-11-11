@@ -194,6 +194,8 @@ class FinishTests(unittest.TestCase):
     def test_cli_finish_prints_stale_warning_once(self):
         # PRO-41: cmd_finish печатал предупреждения о несвежем реестре дважды —
         # сырой цикл по res["stale_warnings"] и повтор внутри summary_text.
+        # PRO-63: в сводке finish только факты («снято свежей пересборкой»), без
+        # противоречащего советa «Пересоберите» — пересборка уже выполнена.
         export.build(self.pdir)
         export.save_state(self.pdir)
         claims.add(self.pdir, "Ещё гипотеза", "hypothesis", [], grade="D")
@@ -204,7 +206,9 @@ class FinishTests(unittest.TestCase):
         out = buf.getvalue()
         self.assertIn("+1 claims", out)  # предупреждение присутствует в выводе
         self.assertEqual(out.count("+1 claims"), 1)  # ровно один раз на вызов
-        self.assertEqual(out.count("Реестр изменился после последнего экспорта"), 1)
+        self.assertNotIn("Реестр изменился после последнего экспорта", out)
+        self.assertIn("снято свежей пересборкой", out)
+        self.assertNotIn("Пересоберите", out)
 
 
 if __name__ == "__main__":

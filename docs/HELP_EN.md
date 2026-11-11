@@ -37,7 +37,7 @@ You need: Python 3.9+ (no packages), git, any environment above. Optional: `pdft
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # self-check (260 tests)
+python3 -m unittest discover -s tests          # self-check (373 tests)
 ```
 
 `doctor` reports install mode (editable/venv/source), package version, `pfs` path (which), PATH health, projects dir location, Python version, pdftotext/pypdf availability, number of knowledge cards, active project.
@@ -434,8 +434,10 @@ Linear integration: key in `.env` (`LINEAR_API_KEY`), server — `npx mcp-server
 ## 13. Cheat sheet (short)
 
 ```bash
-pfs new "…" "…" / pfs use slug / pfs status          # projects
-pfs source add <url|file>                            # sources
+pfs new "…" "…"                                      # a new project
+pfs use <slug>                                       # make a project active
+pfs status                                           # where we stopped; pfs list — all projects
+pfs source add <file>                                # sources (URLs: the same command, pfs source add https://…)
 pfs source fetch <url>                               # unreachable URL: reader/archive fallbacks; refresh reuses the chain
 pfs claim add "…" --kind fact --source S001 --grade B       # claims
 pfs claim add-batch claims.jsonl                            # register claims in bulk from JSONL

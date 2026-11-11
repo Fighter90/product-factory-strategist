@@ -35,13 +35,20 @@ uv есть → `uv tool install -e .`; uv нет → venv `~/.pfs-venv` + symli
 
 ```bash
 pfs new "<название>" "<запрос дословно>"   # новый проект
-pfs list / status / next                  # проекты, где остановились, что решать
+pfs list                                  # список проектов
+pfs status                                # где остановились, что решать
+pfs next                                  # что решать сейчас: шаг, обязательства, пересмотры
 pfs --project <slug> check --strict       # контроль качества документов
 pfs finish                                # финальный пакет одной цепочкой
 pfs                                       # без аргументов — шпаргалка (rc=0)
 ```
 
 Папка проектов: `<репо>/projects` по умолчанию; переопределяется `PFS_PROJECTS_DIR`.
+
+**Outside the repository folder only the installed `pfs` works.** `python3 -m tools.pfs` runs the
+`tools` module from the repository folder: outside it Python cannot find the module
+(`ModuleNotFoundError: No module named 'tools'`). Once installed (`./scripts/install.sh`), the `pfs`
+command works from any directory — agents in client projects should call `pfs`.
 Paths (knowledge, config) резолвятся от расположения пакета — cwd не важен.
 
 ## Обновление

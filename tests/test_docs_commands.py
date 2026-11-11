@@ -356,11 +356,19 @@ class DocsCommandsTests(unittest.TestCase):
 
     def test_interview_guide_topic_optional(self):
         """HELP/AGENTS: `--topic` у interview guide необязателен (PRO-63 п.1)."""
-        res = _run(["python3", "-m", "tools.pfs", "interview", "guide", "--persona", "Родитель 7–12"])
+        res = _run(["python3", "-m", "tools.pfs", "--project", "демо",
+                    "interview", "guide", "--persona", "Родитель 7–12"])
         self.assertNotIn("Traceback", res.stderr, res.stderr)
         self.assertEqual(res.returncode, 0, f"rc={res.returncode}: {res.stdout} {res.stderr}")
         self.assertTrue((PROJECTS / "демо" / "interviews" / "synthetic" /
                          "guide_родитель-7-12.md").exists(), "гайд не создан")
+
+    def test_counters_match_reality(self):
+        """PRO-63: счётчики в доках («N тестов», «N навыков», «N карт») подставляет
+        scripts/update_counters.py; --check выходит с 0, если они актуальны."""
+        res = subprocess.run([sys.executable, str(ROOT / "scripts" / "update_counters.py"), "--check"],
+                             capture_output=True, text=True, timeout=300, cwd=str(ROOT))
+        self.assertEqual(res.returncode, 0, f"счётчики разъехались:\n{res.stdout}\n{res.stderr}")
 
 
 if __name__ == "__main__":

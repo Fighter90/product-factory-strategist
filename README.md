@@ -20,25 +20,23 @@ Windsurf, Copilot.
 
 ## Быстрый старт (5 минут)
 
-## Установка
+### Установка
 
 ```bash
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
-./scripts/install.sh          # uv tool install -e . (или venv+symlink)
-pfs --help
+./scripts/install.sh                            # uv tool install -e . (или venv+symlink)
+pfs --help                                      # CLI установлен: работает из любой папки
+python3 -m tools.pfs doctor                     # установка и окружение: Python, pdftotext, база знаний
+python3 -m unittest discover -s tests           # 373 теста
 ```
 
 Детали, PEP 668, обновление, удаление, тестирование и troubleshooting — [docs/INSTALL.md](docs/INSTALL.md).
+Вне папки репозитория работает только установленный `pfs`; `python3 -m tools.pfs` — только из папки
+репозитория (модуль `tools` ищется относительно текущего каталога).
 
-```bash
-git clone https://github.com/Fighter90/product-factory-strategist.git
-cd product-factory-strategist
-python3 -m tools.pfs doctor                    # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 355 тестов
-# в Claude Code (команда claude в папке) напишите задачу:
-# «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
-```
+Запуск в Claude Code (команда `claude` в папке репозитория) — напишите задачу: «Платная защита от спама
+теряет подписчиков. Что делать и что говорить абонентам?»
 
 Агент сам создаст проект, пройдёт блоки вопросов, построит исследование и покажет прогресс строкой
 `Шаг N/12 · …`. «Стоп» — пауза, «уточни: …» — корректировка, «собери six-pager» — отчёт для комитета,
@@ -67,7 +65,7 @@ python3 -m unittest discover -s tests          # 355 тестов
 | Шаг | Что происходило | Команды / факты |
 |---|---|---|
 | 0 · Бриф | ≤3 вопроса руководителю: решение (стратегия коммерциализации + GTM), ось (платящие/ARR), ограничения (MIT-core, соло, локальный режим). Человек подтвердил бриф | `pfs new`, `pfs answer`, `00_brief.md` |
-| 1 · Источники | 10 источников (S001–S011): сайт и README продукта, рынок resume builders, цены конкурентов, рекрутинг/ATS, синтетическая воронка, 2 ИИ-респондента, выбор руководителя | `pfs source add` ×10 |
+| 1 · Источники | 10 источников (S001–S002, S004–S011 — S003 объединён с S006 при дедупликации): сайт и README продукта, рынок resume builders, цены конкурентов, рекрутинг/ATS, синтетическая воронка, 2 ИИ-респондента, выбор руководителя | `pfs source add` ×10 |
 | 2 · Исследование | 20 утверждений с типами (12 фактов, 4 гипотезы, 4 допущения) и силой A–D: resume builders $1,2–2,4 млрд (диапазон — агрегаторы расходятся ×2), AI-сегмент CAGR 13,1%, онлайн-рекрутинг $37,97 млрд (2025), ATS у 98% F500 | `pfs claim add` ×20 |
 | 3 · Дискавери | 2 синтетические персоны (Sarah 32, EN-сегмент; Markus 35, Берлин) — честно помечены origin=synthetic, дали только гипотезы; 7 конкурентов $8–40/мес с автопродлениями (Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi) | `pfs interview save`, S009–S010 |
 | 4 · Ситуация | Известно / не знаем / противоречия: внутренних метрик hosted-версии нет (её ещё не существует) — честный пробел; рыночные оценки — диапазонами | `02_situation.md` |
@@ -103,8 +101,9 @@ python3 -m unittest discover -s tests          # 355 тестов
 | Обе стратегии | `projects/демо/outputs/04_product_strategy.md`, `05_comms_strategy.md` |
 | План проверки (90 дней) | `projects/демо/outputs/06_validation_plan.md` |
 | Ревью качества | `projects/демо/outputs/07_quality_review.md` |
-| **Six-pager RU** (MD · **PDF** · DOCX) | `projects/демо/outputs/SIX_PAGER_RU.md` · `.pdf` · `.docx` |
-| **Six-pager EN** (MD · **PDF** · DOCX) | `projects/демо/outputs/SIX_PAGER_EN.md` · `.pdf` · `.docx` |
+| **Six-pager RU** (MD · **PDF** · DOCX) — вычитанный комитетский документ | `projects/демо/outputs/SIX_PAGER_RU.md` · `.pdf` · `.docx` |
+| **Six-pager EN** (MD · **PDF** · DOCX) — вычитанный комитетский документ | `projects/демо/outputs/SIX_PAGER_EN.md` · `.pdf` · `.docx` |
+| Six-pager автосборки (`pfs export --six-pager`; его читает deck) | `projects/демо/outputs/SIX_PAGER.md` |
 | Полный отчёт | `projects/демо/outputs/REPORT.md` |
 | Excel-модель (4 книги) | `projects/демо/outputs/attachments/` (unit_economics · growth_model · cohort_retention · market_sizing) |
 | Скриншоты продукта | `projects/демо/outputs/img/`, `site/assets/` |
@@ -119,7 +118,7 @@ python3 -m unittest discover -s tests          # 355 тестов
 |---|---|
 | **Обязательный минимум** | |
 | Поставить задачу, ≤3 вопроса | `00_brief.md`; вопросы intake — только важное |
-| Материалы + источник каждого сведения | 10 источников S001–S011 (`pfs source list`); дедуп SHA-256; 20 утверждений C001–C020 с тегами типов и силы A–D |
+| Материалы + источник каждого сведения | 10 источников S001–S011 без S003 (`pfs source list`; S003 объединён с S006 при дедупликации); дедуп SHA-256; 20 утверждений C001–C020 с тегами типов и силы A–D |
 | План от вопросов, меняющих решение; пробелы | `01_research_plan.md`; честные пробелы в `02_situation.md` (нет внутренних метрик hosted-версии) |
 | ≥3 варианта, вкл. «оставить как есть» и «закрыть»; возражения | `03_options.md`: A–E; red team — 20 ударов (15 возражений + 5 скрытых допущений) |
 | Продуктовая + коммуникационная стратегия | `04_product_strategy.md`, `05_comms_strategy.md`, таблица «обещание → подтверждение» |

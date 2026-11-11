@@ -18,19 +18,20 @@ STATE = ".export_state.json"
 # ---------- свежесть экспорта: снимок реестра на момент сборки ----------
 
 def _registry_snapshot(pdir: Path) -> dict:
-    """Снимок реестра на момент экспорта: числа строк, sha256 содержимого реестров
-    и mtimes расчётов (calcs.json и outputs/attachments/*.xlsx). Хеш ловит правки
-    на месте (retract/rebase/supersede, source refresh), которые число строк не меняют."""
-    calcs = pdir / "calcs.json"
-    att_mtime = max((p.stat().st_mtime for p in (pdir / "outputs" / "attachments").glob("*.xlsx")),
-                    default=None)
+    """Снимок реестра на момент экспорта: числа строк и sha256 содержимого реестров,
+    calcs.json и Excel-приложений. Хеш ловит правки на месте (retract/rebase/supersede,
+    source refresh), которые число строк не меняют, и НЕ зависит от mtime файлов:
+    свежий клон (git выставляет файлам новые времена при том же содержимом) не должен
+    выглядеть как «реестр изменился» (PRO-63)."""
     return {"at": core.now(),
             "claims": len(core.read_jsonl(pdir / "claims.jsonl")),
             "sources": len(core.read_jsonl(pdir / "sources.jsonl")),
             "claims_sha": _file_sha(pdir / "claims.jsonl"),
             "sources_sha": _file_sha(pdir / "sources.jsonl"),
-            "calcs_mtime": calcs.stat().st_mtime if calcs.exists() else None,
-            "attachments_mtime": att_mtime}
+            "calcs_sha": _file_sha(pdir / "calcs.json"),
+            "attachments_sha": {p.name: _file_sha(p)
+                                for p in sorted((pdir / "outputs" / "attachments").glob("*.xlsx"))}
+            }
 
 
 def _file_sha(path: Path) -> str | None:
@@ -52,19 +53,21 @@ def save_state(pdir: Path) -> dict:
 
 
 def _excel_changed(pdir: Path, snap: dict) -> bool:
-    """calcs.json или книги в outputs/attachments изменились после последнего экспорта."""
-    calcs = pdir / "calcs.json"
-    if (calcs.stat().st_mtime if calcs.exists() else None) != snap.get("calcs_mtime"):
+    """calcs.json или книги в outputs/attachments изменились ПО СОДЕРЖИМОМУ после
+    последнего экспорта. Снимки старого формата (только mtime, до PRO-63) содержимое
+    не хранят — сравнивать нечего, ложных предупреждений на свежем клоне не даём."""
+    if "calcs_sha" not in snap and "attachments_sha" not in snap:
+        return False
+    if _file_sha(pdir / "calcs.json") != snap.get("calcs_sha"):
         return True
-    att_mtime = max((p.stat().st_mtime for p in (pdir / "outputs" / "attachments").glob("*.xlsx")),
-                    default=None)
-    return att_mtime != snap.get("attachments_mtime")
+    cur = {p.name: _file_sha(p) for p in sorted((pdir / "outputs" / "attachments").glob("*.xlsx"))}
+    return cur != snap.get("attachments_sha")
 
 
-def freshness_warnings(pdir: Path) -> list[str]:
-    """Предупреждение об устаревшем отчёте: реестр изменился после последнего экспорта
-    (по числу строк ИЛИ по содержимому — отзыв/замещение/refresh пишут файл на месте).
-    [] — снимка нет или с момента сборки ничего не поменялось."""
+def freshness_facts(pdir: Path) -> list[str]:
+    """Факты «что изменилось в реестре после последнего экспорта» — без совета
+    «пересоберите» (его добавляет freshness_warnings; pfs finish после пересборки
+    сам снимает устаревание, и совет в сводке противоречил бы делу)."""
     snap = read_state(pdir)
     if not snap:
         return []
@@ -81,6 +84,14 @@ def freshness_warnings(pdir: Path) -> list[str]:
         parts.append("изменено содержимое sources.jsonl")
     if _excel_changed(pdir, snap):
         parts.append("Excel пересобран")
+    return parts
+
+
+def freshness_warnings(pdir: Path) -> list[str]:
+    """Предупреждение об устаревшем отчёте: реестр изменился после последнего экспорта
+    (по числу строк ИЛИ по содержимому — отзыв/замещение/refresh пишут файл на месте).
+    [] — снимка нет или с момента сборки ничего не поменялось."""
+    parts = freshness_facts(pdir)
     if not parts:
         return []
     return ["⚠ Реестр изменился после последнего экспорта: " + ", ".join(parts)
