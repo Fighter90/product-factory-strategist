@@ -1,5 +1,6 @@
 ---
 id: M-cannibalization
+lang: ru
 title: Каннибализация продуктов, фич, тарифов и каналов
 course: skills
 sources: ["product-skills: cannibalization", "product-skills: growth-effects (каннибализация в модели)", "Продуктовые бизнес-модели и юнит-экономика, занятие 7: каннибализация (двусторонняя, типы, бейзлайн)"]

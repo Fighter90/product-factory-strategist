@@ -1,5 +1,6 @@
 ---
 id: M-market-sizing
+lang: ru
 title: Оценка объёма рынка (PAM / TAM / SAM / SOM)
 course: skills
 sources: ["product-skills: market-sizing", "product-skills: traction-modeling (top-down и «проверка сверху»)", "product-skills: product-navigator", "Стратегии роста, занятие 2: расчёт рынка и SOM через конкурента", "Стратегии роста, практика курса: расчётная таблица PAM→TAM→SAM→SOM (этап / логика / деньги / пользователи / источники)"]

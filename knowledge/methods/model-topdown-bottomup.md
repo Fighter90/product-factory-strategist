@@ -1,5 +1,6 @@
 ---
 id: M-model-topdown-bottomup
+lang: ru
 title: Top-Down и Bottom-up моделирование бизнеса
 course: strategy
 sources: ["Продуктовые бизнес-модели и юнит-экономика, занятие 4: Top-Down моделирование (Market/Money, Demand-side, Supply-side)", "занятие 5: Bottom-up моделирование (драйверы, когорты, принципы построения)", "практикум: шаблон traction-модели (Avito Travel), xlsx"]

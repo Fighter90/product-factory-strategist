@@ -266,9 +266,20 @@ def cmd_kb(a):
             print(f"{r['score']:>6}  {r['id']} › {r['section']}  ({r['path']})\n        {r['snippet']}")
     elif a.action == "index":
         _, problems = kb.build_index()
-        print(f"knowledge/INDEX.md обновлён; карт: {len(kb.cards())}; битых связей: {len(problems)}")
-        for p in problems[:30]:
+        _, problems_en = kb.build_index_en()
+        n_en = len(list((core.KNOWLEDGE / "methods_en").glob("*.md")))
+        print(f"knowledge/INDEX.md и INDEX_EN.md обновлены; карт RU: {len(kb.cards())}, EN: {n_en}; "
+              f"битых связей: {len(problems) + len(problems_en)}")
+        for p in (problems + problems_en)[:30]:
             print("  - " + p)
+    elif a.action == "lint":
+        problems = kb.lint()
+        for p in problems:
+            print("  - " + p)
+        n_en = len(list((core.KNOWLEDGE / "methods_en").glob("*.md")))
+        print(f"kb lint: карт RU {len(kb.cards())}, EN {n_en}; проблем: {len(problems)}")
+        if problems:
+            sys.exit(1)
     elif a.action == "show":
         print(kb.card_path(a.query).read_text(encoding="utf-8"))
 
@@ -573,7 +584,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--window", action="store_true", help="сохранить --since/--until в project.json (хук Stop будет их соблюдать)")
     s.set_defaults(f=cmd_cost)
 
-    s = sp.add_parser("kb", help="база знаний"); s.add_argument("action", choices=["search", "index", "show"]); s.add_argument("query", nargs="?")
+    s = sp.add_parser("kb", help="база знаний"); s.add_argument("action", choices=["search", "index", "show", "lint"]); s.add_argument("query", nargs="?")
     s.add_argument("-k", type=int, default=8); s.add_argument("--with-project", action="store_true"); s.set_defaults(f=cmd_kb)
 
     s = sp.add_parser("data", help="анализ таблиц (profile/cohort/funnel/stats)")

@@ -24,6 +24,7 @@
 ```markdown
 ---
 id: M-<тема>                # уникальный, латиница, kebab-case, например M-jtbd
+lang: ru | en               # язык карты; EN-зеркало — methods_en/<то же имя файла>
 title: Название метода
 course: strategy | pm | product | ux | data | ai | skills | synthesis
 sources: ["происхождение материала", "..."]   # без названий компаний
@@ -59,4 +60,9 @@ related: [M-competitors, M-market-sizing]
 Правила: одна карта — 60–250 строк; язык — русский; англоязычные термины — в скобках при первом упоминании;
 формулы метрик — с единицами и периодом; без общих слов.
 
-**EN mirror:** `knowledge/methods_en/` — английские версии ключевых карт и набор PM approaches; `knowledge/INDEX_EN.md` — EN-индекс: PM-подходы (16 карт EN) + полный перечень RU-канона. Канонический поиск (`pfs kb search`) работает по RU и EN совместно.
+Правила целостности (проверяет `python3 -m tools.pfs kb lint`, PRO-60): имя файла = id без префикса `M-`
+(у EN-зеркала — то же имя в `methods_en/`); id RU и EN совпадают, суффикса `-en` нет; `related` заполнено;
+разделы EN повторяют RU (переводы заголовков — словарь в `tools/pfs/kb.py`), объём EN — не меньше 80% от RU;
+битые `[[ссылки]]`, дубли тегов и пустые разделы не допускаются. Навигация: `INDEX.md` и `INDEX_EN.md`.
+
+**EN mirror:** `knowledge/methods_en/` — зеркала всех RU-карт (89 EN, course `pm-approaches-en`); `knowledge/INDEX_EN.md` — EN-навигация, генерируется вместе с `INDEX.md` командой `pfs kb index`. Канонический поиск (`pfs kb search`) работает по RU и EN совместно.

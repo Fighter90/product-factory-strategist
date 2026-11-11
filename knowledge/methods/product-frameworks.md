@@ -1,5 +1,6 @@
 ---
 id: M-product-frameworks
+lang: ru
 title: Продуктовые фреймворки — что, когда и зачем
 course: synthesis
 sources: ["Синтез курсов продуктовой магистратуры и product-skills"]
@@ -15,9 +16,9 @@ related: [M-double-diamond, M-lean-canvas, M-goals-drivers-bets, M-success-metri
 ответ»; каждый фреймворк заполняется данными из реестра C###/S### и калькуляций, иначе он бесполезен.
 
 ## Карта «фаза → фреймворки»
-| Фаза (двойной роман) | Вопрос | Фреймворки (карты) |
+| Фаза (двойной алмаз) | Вопрос | Фреймворки (карты) |
 |---|---|---|
-| Discover | Что происходит? кто пользователь? | JTBD [[M-jtbd]], Аудитория [[M-audience-research]], PESTEL [[M-external-environment]], Тренды [[M-trends-scenarios]], Двойной роман [[M-double-diamond]] |
+| Discover | Что происходит? кто пользователь? | JTBD [[M-jtbd]], Аудитория [[M-audience-research]], PESTEL [[M-external-environment]], Тренды [[M-trends-scenarios]], Двойной алмаз [[M-double-diamond]] |
 | Define | Какую проблему решаем? что верно? | Проблем-дизайн [[M-problem-design]], Конкуренты [[M-competitors]], Situаtion-фреймворк, Lean Canvas [[M-lean-canvas]] |
 | Develop | Как решаем? что приоритетнее? | Драйверы и ставки [[M-goals-drivers-bets]], RICE/ICE/WSJF (ниже), Кано [[M-marketing-research]], Каннибализация [[M-cannibalization]], Платформы [[M-platforms-types-criteria]] |
 | Deliver | Как проверим и зафиксируем? | A/B [[M-ab-testing]], NSM/OKR [[M-success-metrics]], Метрики продукта [[M-product-metrics]], Six-pager [[M-six-pager]], DAСI [[M-decision-daci]] |
@@ -42,7 +43,7 @@ related: [M-double-diamond, M-lean-canvas, M-goals-drivers-bets, M-success-metri
   для моделей/прогнозов.
 
 ## Процедура (агент)
-1. Определить фазу двойного романа и вопрос — выбрать 1–2 фреймворка из карты, не больше.
+1. Определить фазу двойного алмаза и вопрос — выбрать 1–2 фреймворка из карты, не больше.
 2. Заполнить фреймворк данными реестра: каждая ячейка/оценка — C###/S### или пометка «ПРИМЕР».
 3. Вывести из фреймворка проверяемое следствие → добавить в план проверки (06) или прогноз (C###-forecast).
 
@@ -54,7 +55,7 @@ related: [M-double-diamond, M-lean-canvas, M-goals-drivers-bets, M-success-metri
 
 ## Вопросы, которые могут изменить решение
 - Какой один фреймворк ответит на текущий вопрос дешевле всего?
-- Что должно случиться, чтобы мы сменили фазу романа прямо сейчас?
+- Что должно случиться, чтобы мы сменили фазу алмаза прямо сейчас?
 
 ## Связанные карты
 [[M-double-diamond]], [[M-lean-canvas]], [[M-goals-drivers-bets]], [[M-success-metrics]], [[M-ab-testing]]

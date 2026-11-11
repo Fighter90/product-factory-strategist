@@ -1,5 +1,6 @@
 ---
 id: M-benchmarking
+lang: ru
 title: Бенчмаркинг: эталонные значения метрик и проверка их применимости
 course: skills
 sources: ["product-skills: benchmarking", "product-skills: model-validation (бенчмарки и ретро-данные)", "product-skills: traction-modeling (использование бенчмарков)"]

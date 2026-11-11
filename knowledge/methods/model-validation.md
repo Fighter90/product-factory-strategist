@@ -1,5 +1,6 @@
 ---
 id: M-model-validation
+lang: ru
 title: Валидация модели (бэктест, бенчмарки, sensitivity)
 course: strategy
 sources: ["Продуктовые бизнес-модели и юнит-экономика, занятие 12: валидация модели", "занятие 5, ч.9: типовые ошибки и sensitivity", "product-skills: model-validation (формулы CHECKS, светофор)"]

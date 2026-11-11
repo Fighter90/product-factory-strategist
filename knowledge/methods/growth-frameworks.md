@@ -1,5 +1,6 @@
 ---
 id: M-growth-frameworks
+lang: ru
 title: Фреймворки роста: AARRR, HEART, Flywheel, Growth Loops, Growth Model Canvas
 course: skills
 sources: ["product-skills: growth-frameworks", "product-skills: product-metrics (AARRR в пирамиде метрик, ссылка)", "product-skills: product-navigator"]

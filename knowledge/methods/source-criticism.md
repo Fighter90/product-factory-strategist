@@ -1,5 +1,6 @@
 ---
 id: M-source-criticism
+lang: ru
 title: Критика источников и аналитических отчётов, шкала достоверности, фиксация происхождения
 course: skills
 sources: ["product-skills: analytical-reports", "product-skills: trend-analysis (сигнал/хайп, когнитивные ошибки)", "product-skills: benchmarking (7 шагов проверки, триангуляция)", "product-skills: pestle-analysis (Evidence Log)", "product-skills: market-sizing (правило цитирования)"]

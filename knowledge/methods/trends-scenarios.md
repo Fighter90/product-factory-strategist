@@ -1,5 +1,6 @@
 ---
 id: M-trends-scenarios
+lang: ru
 title: Анализ трендов и сценарное планирование
 course: skills
 sources: ["product-skills: trend-analysis", "product-skills: analytical-reports (narrative fallacy, сценарии в отчётах)", "product-skills: growth-effects (внешние факторы в модели)"]

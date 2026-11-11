@@ -1,5 +1,6 @@
 ---
 id: M-monetization
+lang: ru
 title: Модели монетизации, value metric и ценообразование (с разделом про аукционы)
 course: skills
 sources: ["product-skills: monetization-models", "product-skills: auction-monetization", "product-skills: unit-economics (CPA-кейс)", "product-skills: business-models (список моделей)", "Продуктовые бизнес-модели и юнит-экономика, занятие 5: типовые модели монетизации, программы лояльности", "занятие 9: модели монетизации 1 (лестница моделей, распределения, прайсинг, фишечки)", "занятие 10: модели монетизации 2 (CPA/подписка/транзакция, формулы UE)"]

@@ -1,5 +1,6 @@
 ---
 id: M-traction-model
+lang: ru
 title: Трекшн-модель (модель роста): построение, эффекты, валидация
 course: skills
 sources: ["product-skills: traction-modeling", "product-skills: growth-effects", "product-skills: model-validation", "product-skills: cannibalization (блок про закладку в модель)", "Продуктовые бизнес-модели и юнит-экономика, занятия 3–5: гипотезы, Top-Down, Bottom-up", "практикум: шаблон traction-модели (Avito Travel), xlsx ДЗ 1–3"]

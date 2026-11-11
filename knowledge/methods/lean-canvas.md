@@ -1,5 +1,6 @@
 ---
 id: M-lean-canvas
+lang: ru
 title: Lean Canvas — гипотезы бизнеса на одном листе
 course: strategy
 sources: ["Ash Maurya: Running Lean", "Синтез курса «Продуктовые бизнес-модели и юнит-экономика»"]

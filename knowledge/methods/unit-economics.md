@@ -1,5 +1,6 @@
 ---
 id: M-unit-economics
+lang: ru
 title: Юнит-экономика (LTV, CAC, окупаемость)
 course: skills
 sources: ["product-skills: unit-economics", "product-skills: monetization-models (CPA-кейс, точки сверки)", "product-skills: benchmarking (сегментация монетизации)", "Продуктовые бизнес-модели и юнит-экономика, занятие 1: финансовый учёт и место юнит-экономики", "занятие 2: классификация расходов (постоянные/переменные, P&L до EBITDA)", "занятие 8: юнит-экономика (методы LTV, юнит, когорты, рычаги)"]

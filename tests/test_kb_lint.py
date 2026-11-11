@@ -1,0 +1,162 @@
+"""PRO-60: pfs kb lint — целостность базы знаний (frontmatter, [[ссылки]], теги, пустые
+разделы, паритет RU/EN по разделам и объёму, совпадение id) и INDEX_EN.md.
+
+Запуск: python3 -m unittest tests.test_kb_lint -v
+"""
+import os
+import tempfile
+import unittest
+from pathlib import Path
+from unittest import mock
+
+TMP = tempfile.mkdtemp(prefix="pfs-test-kblint-")
+os.environ["PFS_PROJECTS_DIR"] = TMP
+
+from tools.pfs import core, kb  # noqa: E402
+from tools.pfs.core import PfsError  # noqa: E402
+
+RU_FM = ("---\nid: M-alpha\ntitle: Карта А\nlang: ru\ncourse: strategy\n"
+         "stages: [intake]\ntags: [тег-а, тег-б]\nrelated: [M-beta]\n---\n")
+EN_FM = ("---\nid: M-alpha\ntitle: Map A\nlang: en\ncourse: strategy\n"
+         "stages: [intake]\ntags: [tag-a, tag-b]\nrelated: [M-beta]\n---\n")
+RU_BODY = ("# Карта А\n\n## Когда применять\n\nЗачем карта нужна.\n\n"
+           "## Суть\n\nСуть метода: правило `UE = LTV - CAC`.\n\n"
+           "## Связанные карты\n\n[[M-beta]] и [[M-alpha]].\n")
+EN_BODY = ("# Map A\n\n## When to apply\n\nWhy this map exists.\n\n"
+           "## Core idea\n\nThe core rule: `UE = LTV - CAC`.\n\n"
+           "## Related maps\n\n[[M-beta]] and [[M-alpha]].\n")
+
+
+def make_pair(root: Path, ru_body: str = RU_BODY, en_body: str = EN_BODY,
+              ru_fm: str = RU_FM, en_fm: str = EN_FM, ru_name: str = "alpha.md",
+              en_name: str = "alpha.md", en_skip: bool = False) -> None:
+    (root / "methods").mkdir(parents=True, exist_ok=True)
+    (root / "methods" / ru_name).write_text(ru_fm + ru_body, encoding="utf-8")
+    (root / "methods").mkdir(parents=True, exist_ok=True)
+    (root / "methods" / "beta.md").write_text(
+        "---\nid: M-beta\ntitle: Карта Б\nlang: ru\ncourse: strategy\nstages: [research]\n"
+        "tags: [тег-в]\nrelated: [M-alpha]\n---\n# Б\n\n## Когда применять\n\nБ.\n", encoding="utf-8")
+    (root / "methods_en").mkdir(parents=True, exist_ok=True)
+    (root / "methods_en" / "beta.md").write_text(
+        "---\nid: M-beta\ntitle: Map B\nlang: en\ncourse: strategy\nstages: [research]\n"
+        "tags: [tag-c]\nrelated: [M-alpha]\n---\n# B\n\n## When to apply\n\nB.\n", encoding="utf-8")
+    if not en_skip:
+        (root / "methods_en" / en_name).write_text(en_fm + en_body, encoding="utf-8")
+
+
+class KbLintSyntheticTests(unittest.TestCase):
+    def lint(self, **kwargs) -> list[str]:
+        root = Path(tempfile.mkdtemp(prefix="pfs-test-kblint-case-"))
+        make_pair(root, **kwargs)
+        with mock.patch.object(core, "KNOWLEDGE", root):
+            return kb.lint()
+
+    def test_clean_pair_has_no_problems(self):
+        self.assertEqual(self.lint(), [])
+
+    def test_missing_required_frontmatter_key(self):
+        problems = self.lint(ru_fm=RU_FM.replace("lang: ru\n", ""))
+        self.assertTrue(any("M-alpha" in p and "lang" in p for p in problems), problems)
+
+    def test_id_without_m_prefix_and_en_id_mismatch(self):
+        problems = self.lint(en_fm=EN_FM.replace("id: M-alpha", "id: M-alpha-en"))
+        self.assertTrue(any("M-alpha" in p and "-en" in p for p in problems), problems)
+        problems = self.lint(ru_fm=RU_FM.replace("id: M-alpha", "id: alpha"))
+        self.assertTrue(any("M-" in p and "alpha.md" in p for p in problems), problems)
+
+    def test_duplicate_tags(self):
+        problems = self.lint(ru_fm=RU_FM.replace("tags: [тег-а, тег-б]", "tags: [тег-а, тег-а]"))
+        self.assertTrue(any("тег-а" in p and "M-alpha" in p for p in problems), problems)
+
+    def test_broken_wikilink_and_related(self):
+        problems = self.lint(ru_body=RU_BODY.replace("[[M-beta]]", "[[M-missing]]"))
+        self.assertTrue(any("M-missing" in p for p in problems), problems)
+        problems = self.lint(ru_fm=RU_FM.replace("related: [M-beta]", "related: [M-ghost]"))
+        self.assertTrue(any("M-ghost" in p for p in problems), problems)
+
+    def test_empty_section(self):
+        problems = self.lint(ru_body=RU_BODY.replace("Суть метода: правило `UE = LTV - CAC`.\n", ""))
+        self.assertTrue(any("Суть" in p and "M-alpha" in p for p in problems), problems)
+
+    def test_missing_en_twin(self):
+        problems = self.lint(en_skip=True)
+        self.assertTrue(any("alpha.md" in p for p in problems), problems)
+
+    def test_en_volume_below_80_percent(self):
+        short = EN_BODY.replace("The core rule: `UE = LTV - CAC`.", "Rule.")
+        problems = self.lint(en_body=short)
+        self.assertTrue(any("80%" in p and "alpha.md" in p for p in problems), problems)
+
+    def test_en_section_parity_count_order_and_known_headings(self):
+        problems = self.lint(en_body=EN_BODY.replace("## Core idea\n\n", "").replace(
+            "The core rule: `UE = LTV - CAC`.\n\n", ""))
+        self.assertTrue(any("раздел" in p and "M-alpha" in p for p in problems), problems)
+        problems = self.lint(en_body=EN_BODY.replace("## Core idea", "## Gist"))
+        self.assertTrue(any("Gist" in p for p in problems), problems)
+
+    def test_ru_version_line_forbidden_in_en(self):
+        problems = self.lint(en_body=EN_BODY + "\n**RU-версия:** `knowledge/methods/alpha.md`\n")
+        self.assertTrue(any("RU-версия" in p for p in problems), problems)
+
+    def test_filename_uniformity(self):
+        problems = self.lint(ru_name="M-alpha.md", en_name="M-alpha.md")
+        self.assertTrue(any("M-alpha.md" in p and "префикс" in p for p in problems), problems)
+        problems = self.lint(en_name="alpha-en.md", en_skip=False)
+        self.assertTrue(any("alpha-en.md" in p for p in problems), problems)
+
+    def test_lang_field_values(self):
+        problems = self.lint(en_fm=EN_FM.replace("lang: en", "lang: ru"))
+        self.assertTrue(any("lang" in p and "alpha.md" in p for p in problems), problems)
+
+    def test_real_knowledge_base_structure_now(self):
+        """Единая схема имён уже применена: без M-префикса и без -en-суффикса."""
+        for p in (core.KNOWLEDGE / "methods").glob("*.md"):
+            self.assertFalse(p.name.startswith("M-"), p.name)
+        for p in (core.KNOWLEDGE / "methods_en").glob("*.md"):
+            self.assertFalse(p.name.startswith("M-"), p.name)
+            self.assertFalse(p.stem.endswith("-en"), p.name)
+            self.assertTrue((core.KNOWLEDGE / "methods" / p.name).exists(), p.name)
+
+
+class KbCardPathEnTests(unittest.TestCase):
+    def test_en_suffix_resolves_to_methods_en_twin(self):
+        root = Path(tempfile.mkdtemp(prefix="pfs-test-kblint-path-"))
+        make_pair(root)
+        with mock.patch.object(core, "KNOWLEDGE", root):
+            self.assertTrue(kb.card_path("M-alpha").is_relative_to(root / "methods"))
+            en = kb.card_path("M-alpha-en")
+            self.assertEqual(en.parent.name, "methods_en")
+            self.assertEqual(en.name, "alpha.md")
+        root2 = Path(tempfile.mkdtemp(prefix="pfs-test-kblint-path2-"))
+        make_pair(root2, en_skip=True)
+        with mock.patch.object(core, "KNOWLEDGE", root2):
+            with self.assertRaises(PfsError):
+                kb.card_path("M-alpha-en")
+
+    def test_real_kb_en_cards_share_id_with_ru_and_have_lang(self):
+        for p in (core.KNOWLEDGE / "methods_en").glob("*.md"):
+            meta = kb.frontmatter(p.read_text(encoding="utf-8"))
+            self.assertEqual(meta.get("lang"), "en", p.name)
+            self.assertFalse(str(meta.get("id", "")).endswith("-en"), p.name)
+            ru = core.KNOWLEDGE / "methods" / p.name
+            if ru.exists():
+                ru_meta = kb.frontmatter(ru.read_text(encoding="utf-8"))
+                self.assertEqual(meta.get("id"), ru_meta.get("id"), p.name)
+
+
+class KbIndexEnTests(unittest.TestCase):
+    def test_build_index_en_groups_by_stages_and_reports_broken_links(self):
+        root = Path(tempfile.mkdtemp(prefix="pfs-test-kblint-idx-"))
+        make_pair(root)
+        with mock.patch.object(core, "KNOWLEDGE", root):
+            text, problems = kb.build_index_en()
+        written = (root / "INDEX_EN.md").read_text(encoding="utf-8")
+        self.assertEqual(text, written)
+        self.assertIn("Problem statement (`intake`)", written)
+        self.assertIn("(methods_en/alpha.md)", written)
+        self.assertIn("`M-alpha`", written)
+        self.assertEqual(problems, [])
+
+
+if __name__ == "__main__":
+    unittest.main()
