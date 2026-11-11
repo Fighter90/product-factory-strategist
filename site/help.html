@@ -47,7 +47,7 @@ h3{font-size:20px;line-height:1.3}
 
 /* fixed pill header */
 .nav{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:0;right:0;z-index:50}
-.nav .bar{position:relative;display:flex;align-items:center;gap:16px;height:56px;padding:0 8px 0 18px;border:1px solid var(--line2);border-radius:18px;background:rgba(11,10,9,.72);backdrop-filter:blur(14px)}
+.nav .bar{position:relative;display:flex;align-items:center;gap:16px;height:56px;padding:0 8px 0 18px;border:1px solid var(--line2);border-radius:18px;background:var(--bg2)}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--strong);font-weight:600;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
 .brand svg{width:28px;height:28px;flex:none}
 .links{display:flex;gap:22px;margin-left:auto;font-size:14px}
@@ -101,9 +101,9 @@ section{padding:110px 0;border-bottom:1px solid var(--line)}
 .node .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:8px}
 .node small{display:block;color:var(--muted);font-size:13px;line-height:1.45}
 .node strong{font-weight:500;color:var(--strong);font-size:15px}
-.col.in .node::after,.col.out .node::before{content:"";position:absolute;top:50%;width:44px;height:1px;background:linear-gradient(90deg,var(--line2),var(--accent))}
-.col.in .node::after{right:-45px}.col.out .node::before{left:-45px;background:linear-gradient(90deg,var(--accent),var(--line2))}
-.core{margin:0 44px;padding:30px 26px;border:1px solid rgba(238,138,60,.45);border-radius:20px;background:linear-gradient(180deg,#1A1511,#120F0D);text-align:center;display:flex;flex-direction:column;gap:14px}
+.col.in .node::after,.col.out .node::before{content:"";position:absolute;top:50%;width:44px;height:1px;background:var(--line2)}
+.col.in .node::after{right:-45px}.col.out .node::before{left:-45px}
+.core{margin:0 44px;padding:30px 26px;border:1px solid rgba(238,138,60,.45);border-radius:20px;background:var(--card);text-align:center;display:flex;flex-direction:column;gap:14px}
 .core .name{font-size:22px;font-weight:600;color:var(--strong);letter-spacing:-.01em}
 .core ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
 .core li{font-size:12px;padding:5px 10px;border:1px solid var(--line2);border-radius:999px;color:var(--text)}
@@ -163,7 +163,7 @@ section{padding:110px 0;border-bottom:1px solid var(--line)}
 .stack{display:flex;flex-direction:column;max-width:760px;margin:0 auto;width:100%}
 .layer{position:relative;display:flex;gap:16px;align-items:flex-start;padding:20px 24px;border:1px solid var(--line2);border-radius:16px;background:var(--card);min-width:0}
 .layer+.layer{margin-top:26px}
-.layer+.layer::before{content:"";position:absolute;left:50%;top:-27px;width:1px;height:26px;background:linear-gradient(180deg,var(--accent),var(--line2))}
+.layer+.layer::before{content:"";position:absolute;left:50%;top:-27px;width:1px;height:26px;background:var(--line2)}
 .layer .n{flex:none;width:34px;height:34px;border-radius:10px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:13px}
 .layer b{display:block;color:var(--strong);font-weight:500;font-size:16px;margin-bottom:4px}
 .layer small{color:var(--muted);font-size:14px;line-height:1.5;display:block}
@@ -196,7 +196,7 @@ blockquote{margin:6px 0 0;padding:18px 20px;border-radius:14px;background:var(--
 
 /* final CTA and footer */
 .final{position:relative;overflow:hidden;text-align:center;border-bottom:0}
-.final .box{position:relative;margin:0 auto;max-width:980px;padding:80px 28px;border:1px solid rgba(238,138,60,.4);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,rgba(238,138,60,.16),rgba(11,10,9,0) 60%),var(--bg2);display:flex;flex-direction:column;align-items:center;gap:22px}
+.final .box{position:relative;margin:0 auto;max-width:980px;padding:80px 28px;border:1px solid var(--accent);border-radius:28px;background:var(--bg2);display:flex;flex-direction:column;align-items:center;gap:22px}
 .procfig{margin:44px auto 0;max-width:760px}
 .dosfig{margin:0 auto;width:100%;max-width:520px}
 .procfig img,.dosfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
@@ -364,7 +364,7 @@ p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono
     <ol class="steps">
       <li><span class="label">1 · Скачайте репозиторий</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
       <li><span class="label">2 · Установите pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
-      <li><span class="label">3 · Проверьте окружение</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
+      <li><span class="label">3 · Проверьте окружение</span><div class="cmd"><code>python3 -m tools.pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
       <li><span class="label">4 · Откройте папку в своей среде</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Скопировано" data-fail="Не скопировалось">Копировать</button></div></li>
     </ol>
   </div>

@@ -1124,5 +1124,82 @@ class TestRound2ReviewFixes(SiteBuildBase):
         # EN-исходник запрещено писать кириллицей (PRO-61) — там путь не упомянут
 
 
+# ---------- раунд ревью: без стекла и свечения, команды установки ----------
+
+class TestNoGlassNoGlow(SiteBuildBase):
+    """ТЗ PRO-66 запрещает «стекло» и «свечение»: капсула шапки и бокс финального
+    CTA — плоские, на фоновом цвете палитры var(--bg2), без полупрозрачных
+    подложек, backdrop-filter и radial-свечения акцентом. radial-gradient
+    остаётся только там, где он прописан ТЗ, — в тонировке видео
+    (.hero .tint) и ножке к фону (.hero .fade)."""
+
+    def _rule(self, page: str, selector: str) -> str:
+        css = _strip_css_comments(page)
+        m = re.search(re.escape(selector) + r"\{([^{}]*)\}", css)
+        self.assertIsNotNone(m, f"нет правила {selector}")
+        return m.group(1)
+
+    def test_nav_bar_flat_opaque(self):
+        for lang, page in self.built.items():
+            rule = self._rule(page, ".nav .bar")
+            self.assertNotIn("backdrop-filter", rule, f"{lang}: стекло (blur) в шапке")
+            self.assertNotIn("rgba(", rule, f"{lang}: полупрозрачная подложка шапки")
+            self.assertIn("background:var(--bg2)", rule, lang)
+
+    def test_final_box_flat(self):
+        for lang, page in self.built.items():
+            rule = self._rule(page, ".final .box")
+            self.assertNotIn("gradient", rule, f"{lang}: radial-свечение в финальном CTA")
+            self.assertNotIn("rgba(", rule, f"{lang}: полупрозрачная рамка бокса")
+            self.assertIn("background:var(--bg2)", rule, lang)
+
+    def test_no_backdrop_filter_anywhere(self):
+        for lang, page in self.built.items():
+            self.assertNotIn("backdrop-filter", _strip_css_comments(page),
+                             f"{lang}: backdrop-filter («стекло») запрещён ТЗ")
+
+    def test_gradients_only_in_video_tint(self):
+        for lang, page in self.built.items():
+            css = _strip_css_comments(page)
+            offenders = sorted({sel.strip() for sel, body in
+                                re.findall(r"([^{}]+)\{([^{}]*gradient[^{}]*)\}", css)
+                                if sel.strip() not in (".hero .tint", ".hero .fade")})
+            self.assertEqual(offenders, [],
+                             f"{lang}: градиент вне тонировки видео: {offenders}")
+
+
+class TestInstallCommandsDocumented(SiteBuildBase):
+    """PRO-63-класс: команды на сайте должны работать после чистого клона.
+
+    doctor — только в документированной форме python3 -m tools.pfs doctor
+    (AGENTS.md, README.md:37, docs/HELP.md): голый pfs зависит от PATH,
+    который обновляет install.sh, и в той же сессии оболочки может не
+    существовать. ./scripts/install.sh сайт советует только если он есть
+    в репозитории — проверяем и то и другое.
+    """
+
+    QUICK_START = ("ru", "en", "ru_help", "en_help")
+
+    def _commands(self, page: str) -> list[str]:
+        return re.findall(r"<code>([^<]+)</code>", page)
+
+    def test_doctor_only_documented_form(self):
+        for key, page in self.built.items():
+            for cmd in self._commands(page):
+                if "doctor" in cmd:
+                    self.assertEqual(cmd, "python3 -m tools.pfs doctor",
+                                     f"{key}: недокументированная форма «{cmd}»")
+        for key in self.QUICK_START:
+            cmds = [c for c in self._commands(self.built[key]) if "doctor" in c]
+            self.assertEqual(cmds, ["python3 -m tools.pfs doctor"],
+                             f"{key}: ровно одна команда проверки окружения: {cmds}")
+
+    def test_install_script_shipped_and_referenced(self):
+        self.assertTrue((ROOT / "scripts" / "install.sh").exists(),
+                        "сайт советует ./scripts/install.sh, но файла нет в репозитории")
+        for key in self.QUICK_START:
+            self.assertIn("./scripts/install.sh", self.built[key], key)
+
+
 if __name__ == "__main__":
     unittest.main()
