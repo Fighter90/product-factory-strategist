@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CVStart demo walkthrough — from a request to a decision</title>
+<meta name="description" content="An end-to-end run of the agent on the live open-source product cvstart.org: the verbatim request, the market with sources, red-teamed options, a RU and EN six-pager and decision D001 with commitments.">
+<link rel="canonical" href="https://strategyproduct.ru/en/demo.html">
+<link rel="alternate" hreflang="ru" href="https://strategyproduct.ru/demo.html">
+<link rel="alternate" hreflang="en" href="https://strategyproduct.ru/en/demo.html">
+<link rel="alternate" hreflang="x-default" href="https://strategyproduct.ru/demo.html">
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Product Factory Strategist">
+<meta property="og:title" content="CVStart demo walkthrough — from a request to a decision">
+<meta property="og:description" content="The verbatim request, the market with sources, red-teamed options, a six-pager in two languages and decision D001.">
+<meta property="og:url" content="https://strategyproduct.ru/en/demo.html">
+<meta property="og:image" content="https://strategyproduct.ru/assets/og/og-en.jpg">
+<meta property="og:image:width" content="1800">
+<meta property="og:image:height" content="1012">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* Warm dark v3: warm neutrals, one amber accent, pills, thin lines */
+:root{
+  --bg:#0B0A09; --bg2:#12100E; --card:#151311; --line:rgba(214,210,204,.10); --line2:rgba(214,210,204,.18);
+  --text:#D6D2CC; --strong:#F1EEE9; --muted:#8C877F; --accent:#EE8A3C; --accent-ink:#1A0E05; --pill:#BDB9B3;
+  --font:Inter,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.label{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1,h2,h3{color:var(--strong);font-weight:500;text-wrap:balance;margin:0}
+h1{font-size:clamp(40px,6.4vw,76px);line-height:1.05;letter-spacing:-.02em}
+h2{font-size:clamp(28px,3.4vw,40px);line-height:1.1;letter-spacing:-.01em}
+h3{font-size:20px;line-height:1.3}
+.acc{color:var(--accent);font-weight:400}
+.muted{color:var(--muted)}
+.skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:16px;z-index:99;background:var(--strong);color:var(--bg);padding:8px 12px;border-radius:8px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
+
+/* fixed pill header */
+.nav{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:0;right:0;z-index:50}
+.nav .bar{position:relative;display:flex;align-items:center;gap:16px;height:56px;padding:0 8px 0 18px;border:1px solid var(--line2);border-radius:18px;background:rgba(11,10,9,.72);backdrop-filter:blur(14px)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--strong);font-weight:600;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
+.brand svg{width:28px;height:28px;flex:none}
+.links{display:flex;gap:22px;margin-left:auto;font-size:14px}
+.links a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;text-decoration:none;color:var(--muted)}.links a:hover{color:var(--strong)}
+.lang{display:flex;gap:2px;font-size:12px;font-weight:500}
+.lang a,.lang b{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border-radius:10px;text-decoration:none;color:var(--muted)}
+.lang b{color:var(--strong);font-weight:500}
+.mlink{display:none}
+.mlink summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--line2);border-radius:999px;color:var(--strong)}
+.mlink summary::-webkit-details-marker{display:none}
+.mlink .b{display:block;width:16px;height:2px;border-radius:1px;background:currentColor;position:relative}
+.mlink .b::before,.mlink .b::after{content:"";position:absolute;left:0;width:16px;height:2px;border-radius:1px;background:currentColor}
+.mlink .b::before{top:-5px}.mlink .b::after{top:5px}
+.mlink[open] .b{background:transparent}
+.mlink[open] .b::before{transform:translateY(5px) rotate(45deg)}
+.mlink[open] .b::after{transform:translateY(-5px) rotate(-45deg)}
+.mlink-panel{position:absolute;top:calc(100% + 10px);left:0;right:0;display:flex;flex-direction:column;padding:8px;border:1px solid var(--line2);border-radius:18px;background:var(--card);box-shadow:0 18px 44px rgba(0,0,0,.45)}
+.mlink-panel a{display:flex;align-items:center;min-height:44px;padding:0 14px;border-radius:12px;text-decoration:none;color:var(--strong);font-weight:500;font-size:15px}
+.mlink-panel a:hover{background:var(--bg2)}
+
+/* pill buttons */
+.pill{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 6px 0 20px;border-radius:999px;font-size:16px;font-weight:500;text-decoration:none;border:0;cursor:pointer;font-family:inherit;transition:filter .2s,background .2s}
+.pill .arr{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.18)}
+.pill .arr svg{width:16px;height:16px}
+.pill-a{background:var(--accent);color:var(--accent-ink)}.pill-a:hover{filter:brightness(1.08)}
+.pill-b{background:var(--pill);color:#0A0908}.pill-b:hover{background:#D3CFC9}
+.pill-sm{min-height:44px;font-size:14px;padding-left:16px}.pill-sm .arr{width:32px;height:32px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;min-height:760px;display:flex;align-items:center;padding:150px 0 110px;text-align:center;border-bottom:1px solid var(--line)}
+.hero video{position:absolute;left:50%;top:50%;width:min(1100px,140%);transform:translate(-50%,-48%);opacity:.85;mix-blend-mode:screen;pointer-events:none}
+.hero .tint{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#F6C089 0%,#EE8A3C 38%,#8C4A1E 75%);mix-blend-mode:multiply;pointer-events:none}
+.hero .fade{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(11,10,9,.25) 0%,rgba(11,10,9,.7) 55%,var(--bg) 85%);pointer-events:none}
+.hero .inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:26px}
+.hero p.lead{max-width:36em;margin:0;color:var(--text);font-size:18px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.facts{display:flex;flex-wrap:wrap;justify-content:center;gap:0;margin-top:18px;font-size:13px;color:var(--muted)}
+.facts span{padding:0 18px;border-left:1px solid var(--line2)}.facts span:first-child{border-left:0}
+.facts b{color:var(--strong);font-weight:500}
+
+section{padding:110px 0;border-bottom:1px solid var(--line)}
+.head{display:flex;flex-direction:column;gap:14px;max-width:760px;margin-bottom:48px}
+.head p{margin:0;color:var(--muted)}
+
+/* flow: request -> evidence registry -> result */
+.flow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr);gap:0;align-items:center}
+.col{display:flex;flex-direction:column;gap:12px}
+.node{position:relative;display:flex;gap:12px;align-items:flex-start;padding:16px 18px;border:1px solid var(--line2);border-radius:14px;background:var(--card)}
+.node .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:8px}
+.node small{display:block;color:var(--muted);font-size:13px;line-height:1.45}
+.node strong{font-weight:500;color:var(--strong);font-size:15px}
+.col.in .node::after,.col.out .node::before{content:"";position:absolute;top:50%;width:44px;height:1px;background:linear-gradient(90deg,var(--line2),var(--accent))}
+.col.in .node::after{right:-45px}.col.out .node::before{left:-45px;background:linear-gradient(90deg,var(--accent),var(--line2))}
+.core{margin:0 44px;padding:30px 26px;border:1px solid rgba(238,138,60,.45);border-radius:20px;background:linear-gradient(180deg,#1A1511,#120F0D);text-align:center;display:flex;flex-direction:column;gap:14px}
+.core .name{font-size:22px;font-weight:600;color:var(--strong);letter-spacing:-.01em}
+.core ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.core li{font-size:12px;padding:5px 10px;border:1px solid var(--line2);border-radius:999px;color:var(--text)}
+
+/* comparison with a plain chat */
+.cmp{border-top:1px solid var(--line2)}
+.cmp .row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr) minmax(0,1.3fr);gap:24px;padding:20px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.cmp .row.hd{padding:12px 0}
+.cmp .what{color:var(--strong);font-weight:500}
+.cmp .yes{display:flex;gap:10px;align-items:baseline}.cmp .yes::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateY(-2px)}
+
+/* bento grid of features */
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.card{grid-column:span 4;min-width:0;padding:26px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:14px}
+.card.w6{grid-column:span 6}.card.w8{grid-column:span 8}
+.card .ic{width:36px;height:36px;border-radius:10px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.card .ic svg{width:18px;height:18px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.faqlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.faqlist li{list-style:none;padding:10px 12px;border-radius:10px;background:var(--bg2);font-size:14px}
+.faqlist b{color:var(--accent);font-weight:500;margin-right:8px}
+
+/* process */
+.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.ph{padding:22px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:12px;min-width:0}
+.ph ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.ph li{display:flex;align-items:center;gap:12px;font-size:15px}
+.ph .n{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
+.ph li.h .n{border:1.5px solid var(--accent);color:var(--accent)}
+/* badge on human-decision steps: the text comes from a per-language token to avoid leaks */
+.ph li.h::after{content:"you";margin-left:auto;font-size:11px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+
+/* evidence chain: terminal, claim, excel */
+.proof{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:24px;align-items:start}
+.proof-side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.term{border:1px solid var(--line2);border-radius:18px;background:#0D0C0A;overflow:hidden;min-width:0}
+.term .bar{display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.term .bar i{width:10px;height:10px;border-radius:50%;background:var(--line2)}
+.term pre{margin:0;padding:18px 20px;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
+.term .p{color:var(--muted)}.term .a{color:var(--strong)}.term .hi{color:var(--accent)}
+.claim{border:1px solid rgba(238,138,60,.45);border-radius:18px;background:var(--card);padding:24px;display:flex;flex-direction:column;gap:14px}
+.claim .tags{display:flex;gap:8px;flex-wrap:wrap}
+.claim .tag{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--muted)}
+.claim .tag.a{border-color:rgba(238,138,60,.5);color:var(--accent)}
+.claim p{margin:0;color:var(--text);font-size:15px}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+.chip{padding:8px 12px;border:1px solid var(--line2);border-radius:10px;background:var(--bg2);min-width:0}
+.chip.a{border-color:rgba(238,138,60,.5)}
+.chip em{font-style:normal;color:var(--accent)}
+.xl{border:1px solid var(--line2);border-radius:18px;background:var(--card);padding:20px 24px}
+.xl table{width:100%;border-collapse:collapse;font-size:14px}
+.xl td{padding:9px 0;border-bottom:1px solid var(--line);color:var(--text)}
+.xl tr:last-child td{border-bottom:0}
+.xl td:last-child{text-align:right;color:var(--strong);font-variant-numeric:tabular-nums}
+
+/* architecture */
+.stack{display:flex;flex-direction:column;max-width:760px;margin:0 auto;width:100%}
+.layer{position:relative;display:flex;gap:16px;align-items:flex-start;padding:20px 24px;border:1px solid var(--line2);border-radius:16px;background:var(--card);min-width:0}
+.layer+.layer{margin-top:26px}
+.layer+.layer::before{content:"";position:absolute;left:50%;top:-27px;width:1px;height:26px;background:linear-gradient(180deg,var(--accent),var(--line2))}
+.layer .n{flex:none;width:34px;height:34px;border-radius:10px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:13px}
+.layer b{display:block;color:var(--strong);font-weight:500;font-size:16px;margin-bottom:4px}
+.layer small{color:var(--muted);font-size:14px;line-height:1.5;display:block}
+
+/* demo */
+.demo{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line2);border:1px solid var(--line2);border-radius:18px;overflow:hidden;margin:0}
+.stats div{background:var(--card);padding:22px;display:flex;flex-direction:column-reverse;gap:6px}
+.stats b{font-size:30px;font-weight:500;color:var(--strong);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.stats span{font-size:13px;color:var(--muted)}
+
+/* install */
+.inst{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.cmd{display:flex;align-items:center;gap:10px;padding:6px 6px 6px 16px;border:1px solid var(--line2);border-radius:14px;background:var(--card)}
+.cmd code{flex:1;min-width:0;overflow-x:auto;white-space:nowrap;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--strong)}
+.copy{flex:none;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--text);font:500 13px var(--font);cursor:pointer}
+.copy:hover{border-color:var(--accent)}
+blockquote{margin:6px 0 0;padding:18px 20px;border-radius:14px;background:var(--card);border:1px solid var(--line2);color:var(--strong)}
+
+/* faq */
+.faq{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:40px}
+/* accordion styles are scoped to the FAQ section: the header details (mlink) is styled separately */
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:64px;padding:12px 0;color:var(--strong);font-size:18px;font-weight:500}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .pm{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);transition:transform .2s}
+.faq details[open] summary .pm{transform:rotate(45deg)}
+.faq details p{margin:0 0 22px;color:var(--muted);max-width:44em}
+
+/* final CTA and footer */
+.final{position:relative;overflow:hidden;text-align:center;border-bottom:0}
+.final .box{position:relative;margin:0 auto;max-width:980px;padding:80px 28px;border:1px solid rgba(238,138,60,.4);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,rgba(238,138,60,.16),rgba(11,10,9,0) 60%),var(--bg2);display:flex;flex-direction:column;align-items:center;gap:22px}
+.procfig{margin:44px auto 0;max-width:760px}
+.dosfig{margin:0 auto;width:100%;max-width:520px}
+.procfig img,.dosfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
+footer{border-top:1px solid var(--line);padding:36px 0 calc(36px + env(safe-area-inset-bottom,0px));font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}footer nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px}footer a:hover{color:var(--strong)}
+
+/* subpages (demo, help, materials): same system, hero without video */
+.subhero{padding:170px 0 72px;text-align:center;border-bottom:1px solid var(--line)}
+.subhero .inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:20px}
+.subhero p.lead{max-width:44em;margin:0;color:var(--text);font-size:18px}
+.links b{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;color:var(--strong);font-weight:500}
+p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--strong);background:var(--bg2);border:1px solid var(--line2);border-radius:6px;padding:1px 6px}
+.coverfig{margin:56px auto 0;max-width:980px}
+.coverfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
+
+/* demo page: facts, options, decision */
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.mcard{padding:24px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:10px;min-width:0}
+.mcard b{font-size:24px;font-weight:500;color:var(--strong);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.mcard span{color:var(--muted);font-size:14px;line-height:1.5}
+.mcard i{font-style:normal;font-size:12px;color:var(--accent);letter-spacing:.04em}
+.rows{border-top:1px solid var(--line2)}
+.rows .row{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:24px;padding:18px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.rows .row b{color:var(--strong);font-weight:500;font-size:16px}
+.rows .row p{margin:0;color:var(--muted);font-size:15px}
+.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.shot{margin:0;border:1px solid var(--line2);border-radius:18px;background:var(--card);padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.shot img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}
+.shot figcaption{color:var(--muted);font-size:13px;line-height:1.5}
+.sixlist{display:grid;gap:8px;max-width:760px;margin:0 auto}
+.sixlist li{list-style:none;display:flex;gap:14px;align-items:baseline;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);font-size:14px;color:var(--muted)}
+.sixlist b{flex:none;color:var(--accent);font-weight:500;min-width:64px}
+
+@media (max-width:980px){
+  .links{display:none}
+  .mlink{display:block}
+  .nav .bar{padding-right:6px}
+  .flow{grid-template-columns:minmax(0,1fr);gap:14px}.core{margin:6px 0}
+  .col.in .node::after,.col.out .node::before{display:none}
+  .card,.card.w6,.card.w8{grid-column:1/-1}
+  .phases{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .proof,.demo,.inst,.faq{grid-template-columns:minmax(0,1fr)}
+  .mgrid,.shots{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  section{padding:80px 0}
+  .hero{min-height:640px;padding:130px 0 80px}
+  .subhero{padding:140px 0 56px}
+  .phases,.faqlist,.mgrid,.shots{grid-template-columns:minmax(0,1fr)}
+  .cmp .row,.rows .row{grid-template-columns:minmax(0,1fr);gap:4px}.cmp .row.hd{display:none}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .facts span{border-left:0;padding:2px 10px}
+  .nav .bar{gap:8px}
+  .bar .pill{display:none}
+}
+@media (prefers-reduced-motion:reduce){.hero video{display:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="bar">
+      <a class="brand" href="index.html" aria-label="Product Factory Strategist — home">
+        <svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="6.5" y="11.5" width="20" height="23" rx="4" stroke="#D6D2CC" stroke-width="1.6"/><rect x="13.5" y="5.5" width="20" height="23" rx="4" fill="#0B0A09" stroke="#D6D2CC" stroke-width="1.6"/><path d="M18 12.5h11M18 16.5h11M18 20.5h6" stroke="#D6D2CC" stroke-width="1.6" stroke-linecap="round"/><circle cx="29" cy="24" r="3" fill="#EE8A3C"/></svg>
+        Strategist
+      </a>
+      <nav class="links" aria-label="Sections"><a href="index.html#how">How it works</a><a href="index.html#features">Features</a><b aria-current="page">Demo</b><a href="help.html">Help</a><a href="materials.html">Materials</a></nav>
+      <div class="lang"><b aria-current="true">EN</b><a href="../demo.html" hreflang="ru" data-goal="lang_switch">RU</a></div>
+      <a class="pill pill-a pill-sm" href="index.html#install" data-goal="cta_install_click">Start<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <details class="mlink">
+        <summary aria-label="Sections menu"><span class="b" aria-hidden="true"></span></summary>
+        <nav class="mlink-panel" aria-label="Sections"><a href="index.html#how">How it works</a><a href="index.html#features">Features</a><a href="demo.html" aria-current="page">Demo</a><a href="help.html">Help</a><a href="materials.html">Materials</a></nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="subhero" id="top" aria-labelledby="h1">
+  <div class="wrap inner">
+    <div class="eyebrow">Demo project · steps 1–12</div>
+    <h1 id="h1">CVStart: <span class="acc">from a product lead’s request</span> to a decision with commitments</h1>
+    <p class="lead">An end-to-end run of the agent on a live open-source product, cvstart.org: a brief, the resume-builder market, red-teamed options, a RU and EN six-pager with four Excel workbooks, and decision D001. Every number on this page comes from the project files, not from hands.</p>
+    <div class="facts"><span><b>10</b> sources</span><span><b>20</b> claims</span><span>options <b>A–E</b></span><span><b>15 + 5</b> red-team hits</span></div>
+    <div class="ctas">
+      <a class="pill pill-b" href="#brief">The brief<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="pill pill-a" href="materials.html" data-goal="cta_demo_click">Run materials<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    </div>
+    <figure class="coverfig">
+      <picture>
+        <source type="image/avif" srcset="../assets/dark-hero-paper.avif">
+        <img src="../assets/dark-hero-paper.webp" width="1800" height="1012" alt="Dark paper scattered with particles and an amber thread — the cover of the demo walkthrough" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+  </div>
+</section>
+
+<section id="brief" aria-labelledby="brief-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">The brief</div>
+      <h2 id="brief-h">The product lead’s task, <span class="acc">word for word</span></h2>
+      <p>The second argument of pfs new is the request without paraphrasing. The agent turns it into a brief, shows it for approval and then runs steps 1–12.</p>
+    </div>
+    <div class="term" aria-label="Creating the demo project" style="max-width:760px;margin:0 auto">
+      <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
+      <pre><span class="p">$</span> pfs new "CVStart: paid version" "Develop a commercial version of the cvstart.org project (an open-source AI resume builder and job search: a scan of 129 job boards, AI scoring, CV Studio, a local pipeline, 19 languages) — resume creation and job search — and a strategy to take it to market worldwide. Product: https://cvstart.org/, repository: https://github.com/Fighter90/career-ops-ui"
+<span class="hi">Created the demo project · scenario: go-to-market · next: intake</span></pre>
+    </div>
+    <div class="claim" style="max-width:760px;margin:24px auto 0">
+      <div class="tags"><span class="tag a">step 1 · intake</span><span class="tag">00_brief.md</span></div>
+      <p>The product lead’s request, word for word: “Develop a commercial version of the cvstart.org project (an open-source AI resume builder and job search: a scan of 129 job boards, AI scoring, CV Studio, a local pipeline, 19 languages) — resume creation and job search — and a strategy to take it to market worldwide. Product: https://cvstart.org/, repository: https://github.com/Fighter90/career-ops-ui” The decision the brief targets: pick a commercialization strategy and a global go-to-market plan. Comparison axis: growth in paying subscribers and ARR. Constraints: the open-source core stays MIT, a solo developer, and trust in the local mode is preserved.</p>
+    </div>
+  </div>
+</section>
+
+<section id="product" aria-labelledby="product-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">The product in this demo</div>
+      <h2 id="product-h">A live open-source product, <span class="acc">not a staged showcase</span></h2>
+      <p>The CVStart product (career-ops UI): a scan of ~129 job boards, AI vacancy scoring 0.0–5.0, CV Studio (resume tuning, humanize, ATS bullets), PDF/DOCX export, cover letters, a tracker, a job map, mock interviews; 100% local; 18 BYOK LLM providers; ~7602 automated tests; MIT license Source: S001 · product screenshots come from the demo project repository.</p>
+    </div>
+    <div class="shots">
+      <figure class="shot"><img src="../assets/cv_landing_ru.jpg" width="960" height="1600" alt="cvstart.org landing page in the Russian locale" loading="lazy" decoding="async"><figcaption>The landing page in the Russian locale: free-to-use positioning, job-board scanning, interface languages.</figcaption></figure>
+      <figure class="shot"><img src="../assets/cv_landing_en.jpg" width="960" height="1600" alt="cvstart.org landing page in the English locale" loading="lazy" decoding="async"><figcaption>The same landing page in the English locale — one codebase, language versions with hreflang: hence the locale waves in the strategy.</figcaption></figure>
+      <figure class="shot"><img src="../assets/cv_dash_ru.jpg" width="1600" height="1000" alt="cvstart.org job-search dashboard in the Russian locale" loading="lazy" decoding="async"><figcaption>The job-search dashboard: AI vacancy scoring against your resume — the core of the product and the entry point into CV Studio.</figcaption></figure>
+      <figure class="shot"><img src="../assets/cv_dash_en.jpg" width="1600" height="1000" alt="cvstart.org job-search dashboard in the English locale" loading="lazy" decoding="async"><figcaption>The English version of the dashboard: fit scoring against your resume, job-board filters.</figcaption></figure>
+      <figure class="shot"><img src="../assets/cv_map_en.jpg" width="1600" height="1487" alt="cvstart.org job map" loading="lazy" decoding="async"><figcaption>The job map: offer geography on top of the job-board scan.</figcaption></figure>
+      <figure class="shot"><img src="../assets/cv_tracker_en.jpg" width="1600" height="1000" alt="cvstart.org application tracker" loading="lazy" decoding="async"><figcaption>The application tracker with follow-ups: the application funnel keeps users engaged between job-search sessions.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="run" aria-labelledby="run-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">How the agent worked</div>
+      <h2 id="run-h">Twelve steps. <span class="acc">Three decisions are yours.</span></h2>
+      <p>The agent drove the work on its own, stopping only where a human decides: confirming the brief (step 1), choosing an option (step 7), approving the decision (step 11). The state lives in project files, so breaks and tool changes lose nothing.</p>
+    </div>
+    <div class="phases">
+      <div class="ph"><h3>Research</h3><ol><li class="h"><span class="n">1</span>Brief</li><li><span class="n">2</span>Sources</li><li><span class="n">3</span>Research</li><li><span class="n">4</span>Segments</li></ol></div>
+      <div class="ph"><h3>Define</h3><ol><li><span class="n">5</span>Situation</li><li><span class="n">6</span>Options and red team</li><li class="h"><span class="n">7</span>Choice</li></ol></div>
+      <div class="ph"><h3>Develop</h3><ol><li><span class="n">8</span>Strategies</li><li><span class="n">9</span>Validation plan</li><li><span class="n">10</span>Quality review</li></ol></div>
+      <div class="ph"><h3>Deliver</h3><ol><li class="h"><span class="n">11</span>Decision</li><li><span class="n">12</span>Monitoring</li></ol></div>
+    </div>
+    <div class="rows" style="margin-top:44px">
+      <div class="row"><b>Steps 1–4 · research</b><p>an approved brief, 10 sources with no blocked domains, 20 claims with type and grade, segments and persona hypotheses from synthetic interviews.</p></div>
+      <div class="row"><b>Steps 5–7 · define</b><p>a situation with honest gaps, options A–E including status quo and shut-down, a red team with 15 objections and 5 hidden assumptions, the human choice.</p></div>
+      <div class="row"><b>Steps 8–10 · develop</b><p>product and communication strategies, a validation plan with thresholds, an independent quality review, a RU and EN six-pager with Excel workbooks.</p></div>
+      <div class="row"><b>Steps 11–12 · deliver</b><p>decision D001 with grounds and a review date, commitment monitoring left open after the run.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="market" aria-labelledby="market-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">What it found</div>
+      <h2 id="market-h">The market in numbers, <span class="acc">with sources</span></h2>
+      <p>Every number in the registry carries a type, an A–D grade and a source. Card values are cross-checked against claim texts on every build: if the registry changes, the build fails instead of showing stale numbers.</p>
+    </div>
+    <div class="mgrid">
+      <article class="mcard"><b>$1.2–2.4B</b><span>the resume-builder market, 2024–2025; aggregator estimates diverge twofold, so the market is recorded as ranges</span><i>S006 → C005</i></article>
+      <article class="mcard"><b>13.1%</b><span>CAGR of the AI sub-segment of resume builders — growth exactly where CVStart plays</span><i>S006 → C005</i></article>
+      <article class="mcard"><b>$8–40/mo</b><span>seven direct competitors (Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi) — freemium with aggressive auto-renewals</span><i>S004 → C006</i></article>
+      <article class="mcard"><b>98%</b><span>of Fortune 500 companies use an ATS — a robot filters resumes before a human sees them</span><i>S007 → C008</i></article>
+      <article class="mcard"><b>31–74%</b><span>of job seekers use AI in their job search — a survey spread, recorded as a range</span><i>S005 → C009</i></article>
+      <article class="mcard"><b>$37.97B</b><span>the global online recruiting market — the base for sizing the addressable market</span><i>S007 → C011</i></article>
+    </div>
+    <div class="claim" style="margin-top:24px">
+      <div class="tags"><span class="tag">hypothesis · synthesis, not fact</span></div>
+      <p>The unoccupied niche is a hypothesis [C013]: a multilingual private open-source AI resume builder, while western competitors cover English plus five languages. Persona hypotheses and the beta funnel are tagged origin=synthetic — hypotheses and method illustrations, not proven demand.</p>
+    </div>
+  </div>
+</section>
+
+<section id="options" aria-labelledby="options-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Steps 6–7</div>
+      <h2 id="options-h">Options and red team: <span class="acc">five paths, none silent</span></h2>
+      <p>At least three substantively distinct options, including “keep as is” and “shut it down”. A dedicated subagent attacks each one; its hits are built into the mitigations and the thresholds of the validation plan. The full table with economics lives in <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/03_options.md" target="_blank" rel="noopener">03_options.md</a>.</p>
+    </div>
+    <div class="rows">
+      <div class="row"><b>A · status quo</b><p>free open source, nothing changes. Red-team hit: “an expensive hobby” — the MIT license lets a fork monetize your work.</p></div>
+      <div class="row"><b>B · hosted freemium SaaS <span style="color:var(--accent)">← chosen</span></b><p>Free (BYOK) / Pro / Unlimited tiers, an opt-in cloud on top of the local MIT core, honest pricing without auto-renewals, locale waves. Hit: community trust in commercializing an open-source core — mitigations: BYOK-free tier, opt-in cloud, honest pricing, stop thresholds.</p></div>
+      <div class="row"><b>C · B2B white-label</b><p>hosting the resume builder under a partner’s brand. Hit: a solo developer has no sales capability — deferred.</p></div>
+      <div class="row"><b>D · dual-license</b><p>a paid commercial license on top of open source. Hit: it does not hold up legally on top of MIT — rejected.</p></div>
+      <div class="row"><b>E · shut down commerce</b><p>the product stays a free OSS project. Hit: walking away from an asset on a growing market.</p></div>
+    </div>
+    <div class="claim" style="margin-top:24px">
+      <div class="tags"><span class="tag a">choice · step 7</span><span class="tag">option B · Hosted freemium SaaS</span></div>
+      <p>The agent’s recommendation is not “the best option in general” — it is the best one under the product lead’s constraints: the MIT core stays, solo resources, trust in the local mode is preserved. Conscious rejections: C — no sales capability; D — invalid on top of MIT; E — walking away from a growing market; A — a fork monetizes the work.</p>
+    </div>
+  </div>
+</section>
+
+<section id="decision" aria-labelledby="decision-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Step 11 · decision</div>
+      <h2 id="decision-h">D001: <span class="acc">CVStart commercial version: hosted freemium SaaS, global</span></h2>
+      <p>A decision is recorded with grounds, a metric, a commitment, a review trigger and a date — <code>pfs decision add</code> writes it to decisions.jsonl, and <code>pfs next</code> and <code>pfs decision due</code> watch it from then on.</p>
+    </div>
+    <div class="claim">
+      <div class="tags"><span class="tag a">D001</span><span class="tag">grounds: C019 · C013 · C014 · C016 · C005 · C006</span></div>
+      <p>Metric: paying users of the hosted beta — target &gt;=40 by 2027-02-10. Commitment: hosted beta in 3 EN geos (US/EU) — by 2026-12-15. Decision review: 2027-02-10. Trigger: if paying users are below 20 by week 12 with activation below 35%, shut down the commercial track (option E); if GitHub stars fall by more than 30% after the cloud announcement, rework the opt-in communication.</p>
+    </div>
+  </div>
+</section>
+
+<section id="econ" aria-labelledby="econ-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Economics</div>
+      <h2 id="econ-h">Paying-user math <span class="acc">in live formulas</span></h2>
+      <p>The demo’s unit assumptions are [C016]; you can change the values on the input sheet of unit_economics.xlsx and the formulas recalculate.</p>
+    </div>
+    <div class="xl" style="max-width:560px">
+      <div class="label" style="margin-bottom:10px">Excel · input sheet</div>
+      <table>
+        <tr><td>Pro price</td><td>$29/mo</td></tr>
+        <tr><td>25% variable costs → contribution margin</td><td>$21,75</td></tr>
+        <tr><td>LTV</td><td>≈ $272</td></tr>
+        <tr><td>LTV / CAC</td><td>≈ 4,5</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="sixpager" aria-labelledby="six-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">The committee document</div>
+      <h2 id="six-h">A RU and EN six-pager <span class="acc">with Excel workbooks</span></h2>
+      <p>The report follows the FAQ-1…6 structure: market, segments, red-teamed options, tactics, plan and KPIs. Numbers trace back to registry claims; all formats live on the materials page.</p>
+    </div>
+    <ul class="sixlist">
+      <li><b>FAQ-1</b><span>market and trends: size and estimate ranges, the ATS hiring gate, subscription fatigue</span></li>
+      <li><b>FAQ-2</b><span>segments, personas and barriers — hypotheses to test in the beta</span></li>
+      <li><b>FAQ-3</b><span>options A–E with red-team objections and the B choice</span></li>
+      <li><b>FAQ-4</b><span>the tactic matrix: BYOK-free tier, an honest pricing page, CV Studio, a follow-up tracker</span></li>
+      <li><b>FAQ-5</b><span>the plan: a 90-day beta with continue / adjust / stop thresholds</span></li>
+      <li><b>FAQ-6</b><span>KPIs in two planes: business and product</span></li>
+    </ul>
+    <div class="ctas" style="margin-top:28px;justify-content:center">
+      <a class="pill pill-a" href="materials.html" data-goal="cta_demo_click">Open the materials<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="pill pill-b" href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.pdf" target="_blank" rel="noopener">SIX_PAGER_EN.pdf<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    </div>
+  </div>
+</section>
+
+<section class="final" aria-labelledby="fin-h">
+  <div class="wrap">
+    <div class="box">
+      <figure class="dosfig">
+        <picture>
+          <source type="image/avif" srcset="../assets/dossier-dark.avif">
+          <img src="../assets/dossier-dark.webp" width="1800" height="1012" alt="Decision package: documents bundled with thread on a dark background" loading="lazy" decoding="async">
+        </picture>
+      </figure>
+      <div class="eyebrow">The run took one human evening</div>
+      <h2 id="fin-h">Repeat it <span class="acc">on your own problem</span></h2>
+      <p class="muted" style="margin:0;max-width:34em">Install the agent and describe your task as it is — the brief, the options and the decision will come together through the same twelve steps.</p>
+      <div class="ctas">
+        <a class="pill pill-a" href="index.html#install" data-goal="cta_install_click">Install<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <a class="pill pill-b" href="https://github.com/Fighter90/product-factory-strategist" data-goal="github_click">GitHub<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span style="color:var(--strong);font-weight:500">Product Factory Strategist</span>
+    <nav aria-label="Links"><a href="https://github.com/Fighter90/product-factory-strategist">GitHub</a><a href="help.html">Help</a><a href="materials.html">Demo materials</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/CHANGELOG.md">Changelog</a></nav>
+    <span>MIT · open source</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  function goal(name,params){if(window.ym&&window.YM_ID){window.ym(window.YM_ID,'reachGoal',name,params||{})}}
+  document.querySelectorAll('[data-goal]').forEach(function(el){
+    el.addEventListener('click',function(){goal(el.dataset.goal)});
+  });
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.parentNode.querySelector('code').textContent;
+      var done=function(){var o=b.textContent;b.textContent=b.dataset.ok||'OK';setTimeout(function(){b.textContent=o},1600)};
+      try{navigator.clipboard.writeText(t).then(done,done)}catch(e){done()}
+      goal('copy_command',{i:b.dataset.copy});
+    });
+  });
+  document.querySelectorAll('.mlink').forEach(function(d){
+    d.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click',function(){d.removeAttribute('open')});
+    });
+  });
+  document.querySelectorAll('details:not(.mlink)').forEach(function(d){
+    d.addEventListener('toggle',function(){
+      if(d.open){var s=d.querySelector('summary');goal('faq_open',{q:s?s.textContent.trim().slice(0,60):''})}
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,612 +1,514 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Демо-разбор: CVStart — от задачи руководителя до six-pager</title>
-<meta name="description" content="Сквозной разбор работы ИИ-агента на живом open-source продукте cvstart.org: задание руководителя, 12 шагов, рынок resume builders, 5 вариантов с red team, экономика платящего, six-pager RU/EN с Excel и решение D001.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='.55' stop-color='%23818cf8'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='11' fill='%2305070f'/%3E%3Cg fill='none' stroke='url(%23g)' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M14 10H34L42 19L24 42L6 19Z'/%3E%3Cpath d='M6 19H42' opacity='.7'/%3E%3Cpath d='M14 10L20 19L24 42' opacity='.55'/%3E%3Cpath d='M34 10L28 19L24 42' opacity='.55'/%3E%3C/g%3E%3C/svg%3E">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Демо-разбор CVStart — от запроса до решения</title>
+<meta name="description" content="Сквозной прогон агента на живом open-source продукте cvstart.org: дословный запрос, рынок с источниками, варианты и red team, six-pager RU и EN и решение D001 с обязательствами.">
+<link rel="canonical" href="https://strategyproduct.ru/demo.html">
+<link rel="alternate" hreflang="ru" href="https://strategyproduct.ru/demo.html">
+<link rel="alternate" hreflang="en" href="https://strategyproduct.ru/en/demo.html">
+<link rel="alternate" hreflang="x-default" href="https://strategyproduct.ru/demo.html">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Демо-разбор: CVStart — от задачи руководителя до six-pager">
+<meta property="og:site_name" content="Стратег Фабрики продуктов">
+<meta property="og:title" content="Демо-разбор CVStart — от запроса до решения">
+<meta property="og:description" content="Дословный запрос, рынок с источниками, варианты и red team, six-pager RU и EN и решение D001.">
 <meta property="og:url" content="https://strategyproduct.ru/demo.html">
+<meta property="og:image" content="https://strategyproduct.ru/assets/og/og-ru.jpg">
+<meta property="og:image:width" content="1800">
+<meta property="og:image:height" content="1012">
+<meta name="twitter:card" content="summary_large_image">
 <style>
+/* Warm dark v3: warm neutrals, one amber accent, pills, thin lines */
 :root{
-  --bg:#05070f; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06);
-  --text:#eef2ff; --muted:#9aa7bd; --line:rgba(148,163,184,.16);
-  --accent:#2dd4bf; --accent2:#818cf8; --accent3:#f472b6; --warn:#f6ad55; --ok:#48bb78;
-  --code:rgba(8,12,24,.75);
+  --bg:#0B0A09; --bg2:#12100E; --card:#151311; --line:rgba(214,210,204,.10); --line2:rgba(214,210,204,.18);
+  --text:#D6D2CC; --strong:#F1EEE9; --muted:#8C877F; --accent:#EE8A3C; --accent-ink:#1A0E05; --pill:#BDB9B3;
+  --font:Inter,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-@property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
-[id]{scroll-margin-top:92px}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
-body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(1200px 800px at 78% -12%,rgba(129,140,248,.10),transparent 62%),radial-gradient(1000px 760px at -12% 32%,rgba(45,212,191,.08),transparent 62%),radial-gradient(1100px 820px at 108% 92%,rgba(244,114,182,.07),transparent 62%)}
-::selection{background:rgba(45,212,191,.3)}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1160px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.label{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1,h2,h3{color:var(--strong);font-weight:500;text-wrap:balance;margin:0}
+h1{font-size:clamp(40px,6.4vw,76px);line-height:1.05;letter-spacing:-.02em}
+h2{font-size:clamp(28px,3.4vw,40px);line-height:1.1;letter-spacing:-.01em}
+h3{font-size:20px;line-height:1.3}
+.acc{color:var(--accent);font-weight:400}
+.muted{color:var(--muted)}
+.skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:16px;z-index:99;background:var(--strong);color:var(--bg);padding:8px 12px;border-radius:8px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
 
-.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;opacity:.24;filter:blur(110px);
-  background:conic-gradient(from 0deg at 32% 28%,rgba(45,212,191,.15),transparent 28%,rgba(129,140,248,.15) 52%,transparent 76%,rgba(244,114,182,.12));
-  animation:auroraSpin 44s linear infinite}
-.noise{position:absolute;inset:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+/* fixed pill header */
+.nav{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:0;right:0;z-index:50}
+.nav .bar{position:relative;display:flex;align-items:center;gap:16px;height:56px;padding:0 8px 0 18px;border:1px solid var(--line2);border-radius:18px;background:rgba(11,10,9,.72);backdrop-filter:blur(14px)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--strong);font-weight:600;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
+.brand svg{width:28px;height:28px;flex:none}
+.links{display:flex;gap:22px;margin-left:auto;font-size:14px}
+.links a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;text-decoration:none;color:var(--muted)}.links a:hover{color:var(--strong)}
+.lang{display:flex;gap:2px;font-size:12px;font-weight:500}
+.lang a,.lang b{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border-radius:10px;text-decoration:none;color:var(--muted)}
+.lang b{color:var(--strong);font-weight:500}
+.mlink{display:none}
+.mlink summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--line2);border-radius:999px;color:var(--strong)}
+.mlink summary::-webkit-details-marker{display:none}
+.mlink .b{display:block;width:16px;height:2px;border-radius:1px;background:currentColor;position:relative}
+.mlink .b::before,.mlink .b::after{content:"";position:absolute;left:0;width:16px;height:2px;border-radius:1px;background:currentColor}
+.mlink .b::before{top:-5px}.mlink .b::after{top:5px}
+.mlink[open] .b{background:transparent}
+.mlink[open] .b::before{transform:translateY(5px) rotate(45deg)}
+.mlink[open] .b::after{transform:translateY(-5px) rotate(-45deg)}
+.mlink-panel{position:absolute;top:calc(100% + 10px);left:0;right:0;display:flex;flex-direction:column;padding:8px;border:1px solid var(--line2);border-radius:18px;background:var(--card);box-shadow:0 18px 44px rgba(0,0,0,.45)}
+.mlink-panel a{display:flex;align-items:center;min-height:44px;padding:0 14px;border-radius:12px;text-decoration:none;color:var(--strong);font-weight:500;font-size:15px}
+.mlink-panel a:hover{background:var(--bg2)}
 
-#bar{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));box-shadow:0 0 12px rgba(129,140,248,.7)}
-header{position:sticky;top:0;z-index:50;background:rgba(5,7,15,.66);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.nav{display:flex;align-items:center;gap:16px;padding:13px 0;flex-wrap:wrap}
-.logo{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:.2px}
-.logo-t{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
-.logo .mark{width:25px;height:25px;flex:none;filter:drop-shadow(0 0 10px rgba(45,212,191,.28));transition:filter .3s,transform .45s cubic-bezier(.2,.6,.2,1)}
-.logo:hover{text-decoration:none}
-.logo:hover .mark{transform:rotate(10deg) scale(1.06);filter:drop-shadow(0 0 14px rgba(129,140,248,.55))}
-.nav a.nl{color:var(--muted);font-size:14px;position:relative}
-.nav a.nl::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transition:width .25s}
-.nav a.nl:hover{color:var(--text);text-decoration:none}
-.nav a.nl:hover::after{width:100%}
-.nav a.nl.on{color:var(--accent)}
-.nav a.nl.on::after{width:100%}
-.lang{margin-left:auto;display:flex;gap:6px}
-.lang button{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:8px;cursor:pointer;font-size:13px;transition:.2s}
-.lang button.active{color:#05070f;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));border-color:transparent;font-weight:700}
-body[data-lang=en] [lang=ru]{display:none}
-body[data-lang=ru] [lang=en]{display:none}
-body[data-lang=en] code[lang=ru]{display:inline} /* literal repo paths are not translated */
+/* pill buttons */
+.pill{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 6px 0 20px;border-radius:999px;font-size:16px;font-weight:500;text-decoration:none;border:0;cursor:pointer;font-family:inherit;transition:filter .2s,background .2s}
+.pill .arr{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.18)}
+.pill .arr svg{width:16px;height:16px}
+.pill-a{background:var(--accent);color:var(--accent-ink)}.pill-a:hover{filter:brightness(1.08)}
+.pill-b{background:var(--pill);color:#0A0908}.pill-b:hover{background:#D3CFC9}
+.pill-sm{min-height:44px;font-size:14px;padding-left:16px}.pill-sm .arr{width:32px;height:32px}
 
-.hero{position:relative;padding:76px 0 56px;overflow:hidden;border-bottom:1px solid var(--line)}
-.hero::after{content:"";position:absolute;top:-60%;left:-30%;width:44%;height:220%;transform:rotate(18deg) translateX(-140%);
-  background:linear-gradient(90deg,transparent,rgba(238,242,255,.05) 45%,rgba(244,114,182,.06) 55%,transparent);
-  animation:sweep 9s ease-in-out infinite;pointer-events:none;z-index:1}
-@keyframes sweep{0%,55%{transform:rotate(18deg) translateX(-140%)}75%,100%{transform:rotate(18deg) translateX(460%)}}
-.hero h1{font-size:clamp(30px,4.2vw,46px);font-weight:850;letter-spacing:-.8px;position:relative}
-.hero h1 .grad{background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 45%,var(--accent3) 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero .sub{color:var(--muted);font-size:16.5px;max-width:860px;margin:14px 0 0;position:relative}
-.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px;position:relative}
-.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 14px;font-size:12.5px;color:var(--muted)}
-.chip b{color:var(--accent);font-weight:700}
+/* hero */
+.hero{position:relative;overflow:hidden;min-height:760px;display:flex;align-items:center;padding:150px 0 110px;text-align:center;border-bottom:1px solid var(--line)}
+.hero video{position:absolute;left:50%;top:50%;width:min(1100px,140%);transform:translate(-50%,-48%);opacity:.85;mix-blend-mode:screen;pointer-events:none}
+.hero .tint{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#F6C089 0%,#EE8A3C 38%,#8C4A1E 75%);mix-blend-mode:multiply;pointer-events:none}
+.hero .fade{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(11,10,9,.25) 0%,rgba(11,10,9,.7) 55%,var(--bg) 85%);pointer-events:none}
+.hero .inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:26px}
+.hero p.lead{max-width:36em;margin:0;color:var(--text);font-size:18px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.facts{display:flex;flex-wrap:wrap;justify-content:center;gap:0;margin-top:18px;font-size:13px;color:var(--muted)}
+.facts span{padding:0 18px;border-left:1px solid var(--line2)}.facts span:first-child{border-left:0}
+.facts b{color:var(--strong);font-weight:500}
 
-.split{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:34px;position:relative;z-index:2}
-@media(max-width:860px){.split{grid-template-columns:1fr}}
-.split2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-@media(max-width:860px){.split2{grid-template-columns:1fr}}
-.cv-card{background:linear-gradient(160deg,#0a1220,#05070f 70%);border:1px solid rgba(45,212,191,.32);border-radius:18px;padding:26px 28px;position:relative;overflow:hidden}
-.cv-card::before{content:"";position:absolute;inset:0;background:radial-gradient(420px circle at 85% 15%,rgba(45,212,191,.14),transparent 55%);pointer-events:none}
-.cv-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
-.cv-mark{width:46px;height:46px;flex:none;filter:drop-shadow(0 0 16px rgba(45,212,191,.4));animation:cvPulse 5s ease-in-out infinite}
-@keyframes cvPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-.cv-name{font-family:Georgia,"Times New Roman",serif;font-size:26px;font-weight:700;color:var(--text);letter-spacing:.04em}
-.cv-name em{color:var(--accent);font-style:normal}
-.cv-tag{font-size:12px;color:rgba(238,242,255,.55);letter-spacing:.16em;text-transform:uppercase}
-.cv-card p{color:rgba(238,242,255,.78);font-size:14px;margin:7px 0}
-.cv-card a{color:var(--accent)}
-.agent-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 28px;backdrop-filter:blur(8px)}
-.agent-card h3,.cv-card h3{font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:14px}
-.cv-card h3{color:var(--accent)}
-.agent-card p{color:var(--muted);font-size:14.5px;margin:8px 0}
-.agent-card b{color:var(--text)}
+section{padding:110px 0;border-bottom:1px solid var(--line)}
+.head{display:flex;flex-direction:column;gap:14px;max-width:760px;margin-bottom:48px}
+.head p{margin:0;color:var(--muted)}
 
-section{padding:64px 0;position:relative}
-section+section{border-top:1px solid rgba(148,163,184,.12)}
-h2{font-size:clamp(23px,3vw,30px);letter-spacing:-.4px;margin-bottom:12px;position:relative;padding-bottom:12px}
-h2::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;border-radius:2px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transform:scaleX(0);transform-origin:left}
-.rv.in h2::after{transform:scaleX(1);transition:transform .9s cubic-bezier(.2,.6,.2,1) .25s}
-.lead{color:var(--muted);max-width:860px;margin-bottom:26px;overflow-wrap:anywhere}
+/* flow: request -> evidence registry -> result */
+.flow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr);gap:0;align-items:center}
+.col{display:flex;flex-direction:column;gap:12px}
+.node{position:relative;display:flex;gap:12px;align-items:flex-start;padding:16px 18px;border:1px solid var(--line2);border-radius:14px;background:var(--card)}
+.node .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:8px}
+.node small{display:block;color:var(--muted);font-size:13px;line-height:1.45}
+.node strong{font-weight:500;color:var(--strong);font-size:15px}
+.col.in .node::after,.col.out .node::before{content:"";position:absolute;top:50%;width:44px;height:1px;background:linear-gradient(90deg,var(--line2),var(--accent))}
+.col.in .node::after{right:-45px}.col.out .node::before{left:-45px;background:linear-gradient(90deg,var(--accent),var(--line2))}
+.core{margin:0 44px;padding:30px 26px;border:1px solid rgba(238,138,60,.45);border-radius:20px;background:linear-gradient(180deg,#1A1511,#120F0D);text-align:center;display:flex;flex-direction:column;gap:14px}
+.core .name{font-size:22px;font-weight:600;color:var(--strong);letter-spacing:-.01em}
+.core ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.core li{font-size:12px;padding:5px 10px;border:1px solid var(--line2);border-radius:999px;color:var(--text)}
 
-.rv{animation:rvIn linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
-@keyframes rvIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-@supports not (animation-timeline: view()){ .rv{animation:none} }
+/* comparison with a plain chat */
+.cmp{border-top:1px solid var(--line2)}
+.cmp .row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr) minmax(0,1.3fr);gap:24px;padding:20px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.cmp .row.hd{padding:12px 0}
+.cmp .what{color:var(--strong);font-weight:500}
+.cmp .yes{display:flex;gap:10px;align-items:baseline}.cmp .yes::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateY(-2px)}
 
-.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
-.fact{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;backdrop-filter:blur(8px);transition:transform .25s,border-color .25s}
-.fact:hover{transform:translateY(-3px);border-color:rgba(129,140,248,.5)}
-.fact b{font-size:24px;display:block;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
-.fact span{color:var(--muted);font-size:13px}
-.fact i{display:block;font-style:normal;font-size:11.5px;color:rgba(154,167,189,.7);margin-top:7px}
+/* bento grid of features */
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.card{grid-column:span 4;min-width:0;padding:26px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:14px}
+.card.w6{grid-column:span 6}.card.w8{grid-column:span 8}
+.card .ic{width:36px;height:36px;border-radius:10px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.card .ic svg{width:18px;height:18px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.faqlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.faqlist li{list-style:none;padding:10px 12px;border-radius:10px;background:var(--bg2);font-size:14px}
+.faqlist b{color:var(--accent);font-weight:500;margin-right:8px}
 
-.tl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.tl-svg{min-width:980px;width:100%;height:auto;display:block}
-.tl-svg .path{stroke-dasharray:1600;stroke-dashoffset:0;animation:draw linear both;animation-timeline:view();animation-range:entry 10% exit 70%}
-@keyframes draw{from{stroke-dashoffset:1600}to{stroke-dashoffset:0}}
-.tl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
-.tl-cell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
-.tl-cell b{font-size:12px;color:var(--accent);display:block;margin-bottom:3px}
-.tl-cell span{font-size:12px;color:var(--muted)}
-.tl-cell.human{border-color:rgba(246,173,85,.4)}
-.tl-cell.human b{color:var(--warn)}
+/* process */
+.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.ph{padding:22px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:12px;min-width:0}
+.ph ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.ph li{display:flex;align-items:center;gap:12px;font-size:15px}
+.ph .n{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
+.ph li.h .n{border:1.5px solid var(--accent);color:var(--accent)}
+/* badge on human-decision steps: the text comes from a per-language token to avoid leaks */
+.ph li.h::after{content:"вы";margin-left:auto;font-size:11px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
 
-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;display:block;overflow-x:auto}
-th{background:var(--card2);text-align:left;padding:9px 12px;border:1px solid var(--line);font-weight:700;white-space:nowrap}
-td{padding:8px 12px;border:1px solid var(--line);color:var(--muted);vertical-align:top;overflow-wrap:anywhere}
-td code{white-space:nowrap}
-code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
-p code,td code,.kp code{background:var(--code);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.9em;color:var(--accent)}
+/* evidence chain: terminal, claim, excel */
+.proof{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:24px;align-items:start}
+.proof-side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.term{border:1px solid var(--line2);border-radius:18px;background:#0D0C0A;overflow:hidden;min-width:0}
+.term .bar{display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.term .bar i{width:10px;height:10px;border-radius:50%;background:var(--line2)}
+.term pre{margin:0;padding:18px 20px;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
+.term .p{color:var(--muted)}.term .a{color:var(--strong)}.term .hi{color:var(--accent)}
+.claim{border:1px solid rgba(238,138,60,.45);border-radius:18px;background:var(--card);padding:24px;display:flex;flex-direction:column;gap:14px}
+.claim .tags{display:flex;gap:8px;flex-wrap:wrap}
+.claim .tag{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--muted)}
+.claim .tag.a{border-color:rgba(238,138,60,.5);color:var(--accent)}
+.claim p{margin:0;color:var(--text);font-size:15px}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+.chip{padding:8px 12px;border:1px solid var(--line2);border-radius:10px;background:var(--bg2);min-width:0}
+.chip.a{border-color:rgba(238,138,60,.5)}
+.chip em{font-style:normal;color:var(--accent)}
+.xl{border:1px solid var(--line2);border-radius:18px;background:var(--card);padding:20px 24px}
+.xl table{width:100%;border-collapse:collapse;font-size:14px}
+.xl td{padding:9px 0;border-bottom:1px solid var(--line);color:var(--text)}
+.xl tr:last-child td{border-bottom:0}
+.xl td:last-child{text-align:right;color:var(--strong);font-variant-numeric:tabular-nums}
 
-.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
-.trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-.trio .agent-card{padding:20px 22px}
-.trio .agent-card p{font-size:13.5px}
-.wf-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.wf-svg{min-width:760px;width:100%;height:auto;display:block}
-.wf-svg .bar-g{animation:appear linear both;animation-timeline:view();animation-range:entry 30% exit 75%}
-.wf-svg text{animation:appear linear both;animation-timeline:view();animation-range:entry 40% exit 85%}
-@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
-@keyframes appear{from{opacity:0}to{opacity:1}}
+/* architecture */
+.stack{display:flex;flex-direction:column;max-width:760px;margin:0 auto;width:100%}
+.layer{position:relative;display:flex;gap:16px;align-items:flex-start;padding:20px 24px;border:1px solid var(--line2);border-radius:16px;background:var(--card);min-width:0}
+.layer+.layer{margin-top:26px}
+.layer+.layer::before{content:"";position:absolute;left:50%;top:-27px;width:1px;height:26px;background:linear-gradient(180deg,var(--accent),var(--line2))}
+.layer .n{flex:none;width:34px;height:34px;border-radius:10px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:13px}
+.layer b{display:block;color:var(--strong);font-weight:500;font-size:16px;margin-bottom:4px}
+.layer small{color:var(--muted);font-size:14px;line-height:1.5;display:block}
 
-.note{border-left:3px solid var(--accent);background:var(--card);padding:13px 17px;border-radius:0 12px 12px 0;color:var(--muted);font-size:14px;margin:16px 0}
-.cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}
-.btn{display:inline-block;padding:12px 26px;border-radius:12px;font-weight:700;font-size:15px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
-.btn:hover{transform:translateY(-2px)}
-.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));color:#05070f;box-shadow:0 8px 30px rgba(45,212,191,.28)}
-.btn.primary::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.5) 50%,transparent 60%);transform:translateX(-120%);transition:transform .6s}
-.btn.primary:hover::after{transform:translateX(120%)}
-.btn.ghost{border:1px solid var(--line);color:var(--text);background:var(--card)}
-.btn.ghost:hover{border-color:var(--accent)}
+/* demo */
+.demo{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line2);border:1px solid var(--line2);border-radius:18px;overflow:hidden;margin:0}
+.stats div{background:var(--card);padding:22px;display:flex;flex-direction:column-reverse;gap:6px}
+.stats b{font-size:30px;font-weight:500;color:var(--strong);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.stats span{font-size:13px;color:var(--muted)}
 
-.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
+/* install */
+.inst{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.cmd{display:flex;align-items:center;gap:10px;padding:6px 6px 6px 16px;border:1px solid var(--line2);border-radius:14px;background:var(--card)}
+.cmd code{flex:1;min-width:0;overflow-x:auto;white-space:nowrap;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--strong)}
+.copy{flex:none;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--text);font:500 13px var(--font);cursor:pointer}
+.copy:hover{border-color:var(--accent)}
+blockquote{margin:6px 0 0;padding:18px 20px;border-radius:14px;background:var(--card);border:1px solid var(--line2);color:var(--strong)}
 
-footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
-footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
+/* faq */
+.faq{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:40px}
+/* accordion styles are scoped to the FAQ section: the header details (mlink) is styled separately */
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:64px;padding:12px 0;color:var(--strong);font-size:18px;font-weight:500}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .pm{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);transition:transform .2s}
+.faq details[open] summary .pm{transform:rotate(45deg)}
+.faq details p{margin:0 0 22px;color:var(--muted);max-width:44em}
 
+/* final CTA and footer */
+.final{position:relative;overflow:hidden;text-align:center;border-bottom:0}
+.final .box{position:relative;margin:0 auto;max-width:980px;padding:80px 28px;border:1px solid rgba(238,138,60,.4);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,rgba(238,138,60,.16),rgba(11,10,9,0) 60%),var(--bg2);display:flex;flex-direction:column;align-items:center;gap:22px}
+.procfig{margin:44px auto 0;max-width:760px}
+.dosfig{margin:0 auto;width:100%;max-width:520px}
+.procfig img,.dosfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
+footer{border-top:1px solid var(--line);padding:36px 0 calc(36px + env(safe-area-inset-bottom,0px));font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}footer nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px}footer a:hover{color:var(--strong)}
 
-.shot-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;backdrop-filter:blur(8px);display:flex;flex-direction:column}
-.shot-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--card2)}
-.shot-bar i{width:10px;height:10px;border-radius:50%;background:rgba(154,167,189,.35)}
-.shot-bar i:nth-child(1){background:#f472b6}.shot-bar i:nth-child(2){background:#f6ad55}.shot-bar i:nth-child(3){background:#48bb78}
-.shot-bar span{margin-left:10px;font-size:12px;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,monospace}
-.shot-card img{width:100%;display:block}
-.shot-crop{aspect-ratio:16/10;overflow:hidden;flex:1 1 auto;min-height:220px}
-.shot-crop img{width:100%;height:100%;object-fit:cover;object-position:top center}
-.shot-cap{padding:10px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
-.shots4{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:14px;margin-top:20px}
-@media(max-width:980px){.shots4{grid-template-columns:1fr}}
-@media(max-width:700px){
-  .nav a.nl{display:none}
-  .wrap{padding:0 18px}
-  .cv-card,.agent-card{padding:20px 16px}
-  .cv-card p,.agent-card p{font-size:13.5px}
-  .cta .btn{width:100%;text-align:center;margin-bottom:10px}
-  .shot-cap{font-size:11.5px;padding:8px 12px}
-  .shots4{gap:12px}
+/* subpages (demo, help, materials): same system, hero without video */
+.subhero{padding:170px 0 72px;text-align:center;border-bottom:1px solid var(--line)}
+.subhero .inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:20px}
+.subhero p.lead{max-width:44em;margin:0;color:var(--text);font-size:18px}
+.links b{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;color:var(--strong);font-weight:500}
+p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--strong);background:var(--bg2);border:1px solid var(--line2);border-radius:6px;padding:1px 6px}
+.coverfig{margin:56px auto 0;max-width:980px}
+.coverfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
+
+/* demo page: facts, options, decision */
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.mcard{padding:24px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:10px;min-width:0}
+.mcard b{font-size:24px;font-weight:500;color:var(--strong);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.mcard span{color:var(--muted);font-size:14px;line-height:1.5}
+.mcard i{font-style:normal;font-size:12px;color:var(--accent);letter-spacing:.04em}
+.rows{border-top:1px solid var(--line2)}
+.rows .row{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:24px;padding:18px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.rows .row b{color:var(--strong);font-weight:500;font-size:16px}
+.rows .row p{margin:0;color:var(--muted);font-size:15px}
+.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.shot{margin:0;border:1px solid var(--line2);border-radius:18px;background:var(--card);padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.shot img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}
+.shot figcaption{color:var(--muted);font-size:13px;line-height:1.5}
+.sixlist{display:grid;gap:8px;max-width:760px;margin:0 auto}
+.sixlist li{list-style:none;display:flex;gap:14px;align-items:baseline;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);font-size:14px;color:var(--muted)}
+.sixlist b{flex:none;color:var(--accent);font-weight:500;min-width:64px}
+
+@media (max-width:980px){
+  .links{display:none}
+  .mlink{display:block}
+  .nav .bar{padding-right:6px}
+  .flow{grid-template-columns:minmax(0,1fr);gap:14px}.core{margin:6px 0}
+  .col.in .node::after,.col.out .node::before{display:none}
+  .card,.card.w6,.card.w8{grid-column:1/-1}
+  .phases{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .proof,.demo,.inst,.faq{grid-template-columns:minmax(0,1fr)}
+  .mgrid,.shots{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-.faq6{display:grid;gap:8px;margin-top:6px}
-.f6{display:flex;gap:10px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 13px}
-.f6 b{font-size:12px;color:var(--accent);flex:none;font-variant-numeric:tabular-nums}
-.f6 span{font-size:13px;color:var(--muted)}
-.f6 span b{color:var(--text)}
-.colcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;backdrop-filter:blur(8px)}
-.colcard h3{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);margin-bottom:12px}
-.pbtn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.pbtn{display:inline-block;border:1px solid rgba(244,114,182,.45);color:#f472b6;border-radius:9px;padding:5px 12px;font-size:12.5px;font-weight:600}
-.pbtn:hover{text-decoration:none;background:rgba(244,114,182,.08)}
-.pbtn.ghost2{border-color:var(--line);color:var(--muted)}
-.pbtn.ghost2:hover{color:var(--text);border-color:var(--accent)}
-
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation:none!important;transition:none!important}
-  .aurora{display:none}
-  .hero::after{display:none}
-  .rv{opacity:1;transform:none;animation:none}
-  .tl-svg .path{stroke-dashoffset:0}
-  .wf-svg rect.b{transform:none}
+@media (max-width:640px){
+  section{padding:80px 0}
+  .hero{min-height:640px;padding:130px 0 80px}
+  .subhero{padding:140px 0 56px}
+  .phases,.faqlist,.mgrid,.shots{grid-template-columns:minmax(0,1fr)}
+  .cmp .row,.rows .row{grid-template-columns:minmax(0,1fr);gap:4px}.cmp .row.hd{display:none}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .facts span{border-left:0;padding:2px 10px}
+  .nav .bar{gap:8px}
+  .bar .pill{display:none}
 }
+@media (prefers-reduced-motion:reduce){.hero video{display:none}html{scroll-behavior:auto}}
 </style>
 </head>
-<body data-lang="ru">
-<script>try{var l=localStorage.getItem("pfs-lang")||((navigator.language||"").toLowerCase().indexOf("ru")===0?"ru":"en");document.body.setAttribute("data-lang",l);}catch(e){document.body.setAttribute("data-lang","ru");}</script>
-<div class="bg" aria-hidden="true"><div class="aurora"></div><div class="noise"></div></div>
-<div id="bar"></div>
+<body>
+<a class="skip" href="#main">К содержимому</a>
 
-<header><div class="wrap nav">
-  <a class="logo" href="index.html"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t"><span lang="ru">Стратег Фабрики продуктов</span><span lang="en">Product Factory Strategist</span></span></a>
-  <a class="nl" href="index.html#features" lang="ru">Возможности</a><a class="nl" href="index.html#features" lang="en">Features</a>
-  <a class="nl" href="index.html#process" lang="ru">Процесс</a><a class="nl" href="index.html#process" lang="en">Process</a>
-  <a class="nl on" href="demo.html" lang="ru">Демо</a><a class="nl on" href="demo.html" lang="en">Demo</a>
-  <a class="nl" href="index.html#commands" lang="ru">Команды</a><a class="nl" href="index.html#commands" lang="en">Commands</a>
-  <a class="nl" href="materials.html?v=9" lang="ru">Материалы</a><a class="nl" href="materials.html?v=9" lang="en">Materials</a>
-  <a class="nl" href="help.html?v=9" lang="ru">Справка</a><a class="nl" href="help.html?v=9" lang="en">Help</a>
-  <div class="lang" role="group" aria-label="Language / Язык">
-    <button id="btn-ru" onclick="setLang('ru')" aria-pressed="true">RU</button>
-    <button id="btn-en" onclick="setLang('en')" aria-pressed="false">EN</button>
-  </div>
-</div></header>
-
-<div class="hero"><div class="wrap">
-  <h1 lang="ru">Демо-разбор: <span class="grad">CVStart</span> — от задачи руководителя до six-pager</h1>
-  <h1 lang="en">Demo walkthrough: <span class="grad">CVStart</span> — from a director's brief to a six-pager</h1>
-  <p class="sub" lang="ru">Сквозной прогон агента на живом open-source продукте — cvstart.org: AI-конструктор резюме и дашборд поиска работы. Ниже — сама задача, как агент работал, что нашёл о рынке, как атаковал собственные варианты red team, и финальный отчёт с Excel-моделью. Каждое число — с источником.</p>
-  <p class="sub" lang="en">An end-to-end run of the agent on a live open-source product — cvstart.org, an AI resume builder with a job-search dashboard. Below: the brief itself, how the agent worked, what it found about the market, how it red-teamed its own options, and the final report with an Excel model. Every number comes with a source.</p>
-  <div class="chips">
-    <span class="chip"><b>12</b><span lang="ru"> шагов процесса</span><span lang="en"> process steps</span></span>
-    <span class="chip"><b>10</b><span lang="ru"> источников S001–S011</span><span lang="en"> sources S001–S011</span></span>
-    <span class="chip"><b>20</b><span lang="ru"> утверждений C001–C020</span><span lang="en"> claims C001–C020</span></span>
-    <span class="chip"><b>5</b><span lang="ru"> вариантов + red team</span><span lang="en"> options + red team</span></span>
-    <span class="chip"><b>20</b><span lang="ru"> ударов red team</span><span lang="en"> red-team hits</span></span>
-    <span class="chip"><b>4</b><span lang="ru"> книги Excel</span><span lang="en"> Excel workbooks</span></span>
-    <span class="chip"><b>RU + EN</b><span lang="ru"> six-pager × 3 формата</span><span lang="en"> six-pager × 3 formats</span></span>
-    <span class="chip"><b>100/100</b> check --strict</span>
-  </div>
-  <div class="split">
-    <div class="cv-card">
-      <h3 lang="ru">Продукт демо</h3>
-      <h3 lang="en">The product in this demo</h3>
-      <div class="cv-head">
-        <svg class="cv-mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="cvGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><g fill="none" stroke="url(#cvGrad)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M13 6h15l8 8v22a6 6 0 0 1-6 6H13a6 6 0 0 1-6-6V12a6 6 0 0 1 6-6Z"/><path d="M28 6v8h8" opacity=".65"/><path d="M15 23h14" opacity=".7"/><path d="M15 29h14" opacity=".5"/><path d="M15 35h8" opacity=".35"/></g></svg>
-        <div><div class="cv-name">CV<em>Start</em></div><div class="cv-tag">open-source AI resume builder · cvstart.org</div></div>
-      </div>
-      <p lang="ru">Открытый (MIT) AI-конструктор резюме и дашборд поиска работы: скан ~129 джоб-бордов (124 EN + 5 RU — hh.ru, Habr Career, GeekJob, GetMatch, Trudvsem), AI-скоринг вакансий 0.0–5.0 против резюме, CV Studio (тюминг под JD, humanize, ATS-буллеты), PDF/DOCX-экспорт, cover letters, авто-пайплайн, трекер заявок с follow-up, карта вакансий, mock-интервью.</p>
-      <p lang="en">An open-source (MIT) AI resume builder and job-search dashboard: scans ~129 job boards (124 EN + 5 RU — hh.ru, Habr Career, GeekJob, GetMatch, Trudvsem), AI vacancy scoring 0.0–5.0 against your resume, CV Studio (JD tuning, humanize, ATS bullets), PDF/DOCX export, cover letters, an auto pipeline, an application tracker with follow-ups, a job map, and mock interviews.</p>
-      <p lang="ru">100% локально — данные у пользователя; 18 LLM-провайдеров BYOK + keyless; 19 языков интерфейса; ~7 602 автотеста. Монетизации нет — «$0 forever», публичного хостинга нет.</p>
-      <p lang="en">100% local — the data stays with the user; 18 BYOK + keyless LLM providers; 19 UI languages; ~7,602 automated tests. No monetization — "$0 forever" — and no public hosting.</p>
-      <p><a href="https://cvstart.org/" target="_blank" rel="noopener">cvstart.org</a> · <a href="https://github.com/Fighter90/career-ops-ui" target="_blank" rel="noopener">github.com/Fighter90/career-ops-ui</a></p>
-    </div>
-    <div class="agent-card">
-      <h3 lang="ru">Задание руководителя</h3>
-      <h3 lang="en">The director's brief</h3>
-      <p lang="ru"><b>Задание агенту:</b> «Разработать коммерческую версию проекта cvstart.org (open-source AI-конструктор резюме и поиск вакансий: скан ~129 джоб-бордов, AI-скоринг, CV Studio, локальный пайплайн, 19 языков) — формирование резюме, поиск вакансий — и стратегия вывода на рынок на весь мир».</p>
-      <p lang="en"><b>Brief to the agent:</b> "Develop a commercial version of cvstart.org (an open-source AI resume builder and job search: ~129 job boards scanned, AI scoring, CV Studio, a local pipeline, 19 languages) — resume building and job search — plus a go-to-market strategy for the entire world."</p>
-      <p lang="ru"><b>Ось сравнения:</b> рост платящих подписчиков и ARR.</p>
-      <p lang="en"><b>Comparison axis:</b> growth in paying subscribers and ARR.</p>
-      <p lang="ru"><b>Ограничения:</b> open-source core остаётся MIT; соло-разработчик; не сломать доверие локального режима (ответы руководителя в intake).</p>
-      <p lang="en"><b>Constraints:</b> the open-source core stays MIT; a solo developer; don't break trust in the local mode (the director's answers in intake).</p>
+<header class="nav">
+  <div class="wrap">
+    <div class="bar">
+      <a class="brand" href="index.html" aria-label="Стратег Фабрики продуктов — на главную">
+        <svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="6.5" y="11.5" width="20" height="23" rx="4" stroke="#D6D2CC" stroke-width="1.6"/><rect x="13.5" y="5.5" width="20" height="23" rx="4" fill="#0B0A09" stroke="#D6D2CC" stroke-width="1.6"/><path d="M18 12.5h11M18 16.5h11M18 20.5h6" stroke="#D6D2CC" stroke-width="1.6" stroke-linecap="round"/><circle cx="29" cy="24" r="3" fill="#EE8A3C"/></svg>
+        Стратег
+      </a>
+      <nav class="links" aria-label="Разделы"><a href="index.html#how">Как работает</a><a href="index.html#features">Возможности</a><b aria-current="page">Демо</b><a href="help.html">Справка</a><a href="materials.html">Материалы</a></nav>
+      <div class="lang"><b aria-current="true">RU</b><a href="en/demo.html" hreflang="en" data-goal="lang_switch">EN</a></div>
+      <a class="pill pill-a pill-sm" href="index.html#install" data-goal="cta_install_click">Запустить<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <details class="mlink">
+        <summary aria-label="Меню разделов"><span class="b" aria-hidden="true"></span></summary>
+        <nav class="mlink-panel" aria-label="Разделы"><a href="index.html#how">Как работает</a><a href="index.html#features">Возможности</a><a href="demo.html" aria-current="page">Демо</a><a href="help.html">Справка</a><a href="materials.html">Материалы</a></nav>
+      </details>
     </div>
   </div>
-</div></div>
+</header>
 
-<section id="shots"><div class="wrap">
-  <h2 class="rv" lang="ru">Продукт демо: скриншоты cvstart.org</h2>
-  <h2 class="rv" lang="en">The product in this demo: cvstart.org screenshots</h2>
-  <p class="lead rv d1" lang="ru">Живой open-source продукт, на котором агент вёл весь прогон: лендинг в двух локалях, дашборд поиска работы с AI-скорингом, карта вакансий и трекер заявок.</p>
-  <p class="lead rv d1" lang="en">The live open-source product the agent worked on throughout the run: a landing page in two locales, a job-search dashboard with AI scoring, a job map, and an application tracker.</p>
-  <div class="split rv d2">
-    <div class="shot-card">
-      <div class="shot-bar"><i></i><i></i><i></i><span><span lang="ru">cvstart.org — лендинг · RU</span><span lang="en">cvstart.org — landing · RU</span></span></div>
-      <div class="shot-crop"><img src="assets/cv_landing_ru.jpg?v=9" alt="Лендинг cvstart.org (русский): AI-конструктор резюме, скан ~129 джоб-бордов, AI-скоринг 0.0–5.0, 19 языков"></div>
-      <div class="shot-cap"><span lang="ru">Лендинг в русской локали: позиционирование «$0 forever», скан ~129 джоб-бордов (124 EN + 5 RU), 19 языков интерфейса. Источник продукта [S001].</span><span lang="en">The landing page in the Russian locale: "$0 forever" positioning, ~129 job boards scanned (124 EN + 5 RU), 19 UI languages. Product source [S001].</span></div>
+<main id="main">
+
+<section class="subhero" id="top" aria-labelledby="h1">
+  <div class="wrap inner">
+    <div class="eyebrow">Демо-проект · шаги 1–12</div>
+    <h1 id="h1">CVStart: <span class="acc">от запроса руководителя</span> до решения с обязательствами</h1>
+    <p class="lead">Сквозной прогон агента на живом open-source продукте cvstart.org: бриф, рынок resume builders, варианты с red team, six-pager RU и EN с четырьмя книгами Excel и решение D001. Все числа на странице — из файлов проекта, не руками.</p>
+    <div class="facts"><span><b>10</b> источников</span><span><b>20</b> утверждений</span><span>варианты <b>A–E</b></span><span><b>15 + 5</b> ударов red team</span></div>
+    <div class="ctas">
+      <a class="pill pill-b" href="#brief">Задание руководителя<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="pill pill-a" href="materials.html" data-goal="cta_demo_click">Материалы прогона<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
     </div>
-    <div class="shot-card">
-      <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — landing · EN</span></div>
-      <div class="shot-crop"><img src="assets/cv_landing_en.jpg?v=9" alt="Лендинг cvstart.org (English): open-source AI resume builder, job-search dashboard, ATS bullets"></div>
-      <div class="shot-cap"><span lang="ru">Тот же лендинг в английской локали — одна кодовая база, 19 языковых версий с hreflang: отсюда волны локалей в стратегии.</span><span lang="en">The same landing page in the English locale — one codebase, 19 language versions with hreflang: hence the locale waves in the strategy.</span></div>
+    <figure class="coverfig">
+      <picture>
+        <source type="image/avif" srcset="assets/dark-hero-paper.avif">
+        <img src="assets/dark-hero-paper.webp" width="1800" height="1012" alt="Тёмная бумага с рассыпанными частицами и янтарной нитью — обложка демо-разбора" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+  </div>
+</section>
+
+<section id="brief" aria-labelledby="brief-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Задание</div>
+      <h2 id="brief-h">Задача руководителя <span class="acc">дословно</span></h2>
+      <p>Второй аргумент pfs new — запрос без пересказа. Из него агент собирает бриф, показывает его на подтверждение и дальше работает по шагам 1–12.</p>
+    </div>
+    <div class="term" aria-label="Создание демо-проекта" style="max-width:760px;margin:0 auto">
+      <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
+      <pre><span class="p">$</span> pfs new "CVStart: платная версия" "Разработать коммерческую версию проекта cvstart.org (open-source AI-конструктор резюме и поиск вакансий: скан 129 джоб-бордов, AI-скоринг, CV Studio, локальный пайплайн, 19 языков) — формирование резюме, поиск вакансий — и стратегию вывода на рынок на весь мир. Продукт: https://cvstart.org/, репозиторий: https://github.com/Fighter90/career-ops-ui"
+<span class="hi">Создан projects/демо · сценарий: вывод на рынок · дальше: intake</span></pre>
+    </div>
+    <div class="claim" style="max-width:760px;margin:24px auto 0">
+      <div class="tags"><span class="tag a">шаг 1 · intake</span><span class="tag">00_brief.md</span></div>
+      <p>Задача руководителя дословно: «Разработать коммерческую версию проекта cvstart.org (open-source AI-конструктор резюме и поиск вакансий: скан 129 джоб-бордов, AI-скоринг, CV Studio, локальный пайплайн, 19 языков) — формирование резюме, поиск вакансий — и стратегию вывода на рынок на весь мир. Продукт: https://cvstart.org/, репозиторий: https://github.com/Fighter90/career-ops-ui» Решение по результату брифа — выбор стратегии коммерциализации и глобального GTM. Ось сравнения: рост платящих подписчиков и ARR. Ограничения: open-source core остаётся MIT, соло-разработчик, доверие локального режима не ломается.</p>
     </div>
   </div>
-  <div class="shots4 rv d3">
-    <div class="shot-card">
-      <div class="shot-bar"><i></i><i></i><i></i><span><span lang="ru">cvstart.org — дашборд · RU</span><span lang="en">cvstart.org — dashboard · RU</span></span></div>
-      <div class="shot-crop"><img src="assets/cv_dash_ru.jpg?v=9" alt="Дашборд поиска работы CVStart (русский): AI-скоринг вакансий против резюме"></div>
-      <div class="shot-cap"><span lang="ru">Дашборд поиска работы: AI-скоринг вакансий 0.0–5.0 против резюме — ядро продукта и точка входа в CV Studio.</span><span lang="en">The job-search dashboard: AI vacancy scoring 0.0–5.0 against your resume — the core of the product and the entry point into CV Studio.</span></div>
+</section>
+
+<section id="product" aria-labelledby="product-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Продукт демо</div>
+      <h2 id="product-h">Живой open-source продукт, <span class="acc">а не выдуманная витрина</span></h2>
+      <p>Продукт CVStart (career-ops UI): скан ~129 джоб-бордов, AI-скоринг вакансий 0.0–5.0, CV Studio (тюминг резюме, humanize, ATS-буллеты), PDF/DOCX-экспорт, cover letters, трекер, карта вакансий, mock-интервью; 100% локально; 18 LLM-провайдеров BYOK; ~7602 автотеста; лицензия MIT Источник: S001 · скриншоты продукта — из репозитория демо-проекта.</p>
     </div>
-    <div class="shot-card">
-      <div class="shot-bar"><i></i><i></i><i></i><span>cvstart.org — dashboard · EN</span></div>
-      <div class="shot-crop"><img src="assets/cv_dash_en.jpg?v=9" alt="Job-search dashboard CVStart (English): vacancy fit scoring against your resume"></div>
-      <div class="shot-cap"><span lang="ru">Английская версия дашборда: fit-скоринг против резюме, фильтры по джоб-бордам — то, что сравнивают с Jobscan/Teal.</span><span lang="en">The English version of the dashboard: fit scoring against your resume, job-board filters — what people compare to Jobscan/Teal.</span></div>
-    </div>
-    <div class="shot-card">
-      <div class="shot-bar"><i></i><i></i><i></i><span><span lang="ru">cvstart.org — карта вакансий · EN</span><span lang="en">cvstart.org — job map · EN</span></span></div>
-      <div class="shot-crop"><img src="assets/cv_map_en.jpg?v=9" alt="Карта вакансий CVStart (English): job map"></div>
-      <div class="shot-cap"><span lang="ru">Карта вакансий: география предложений поверх скана ~129 джоб-бордов.</span><span lang="en">The job map: offer geography on top of the ~129 job boards scanned.</span></div>
-    </div>
-    <div class="shot-card">
-      <div class="shot-bar"><i></i><i></i><i></i><span><span lang="ru">cvstart.org — трекер заявок · EN</span><span lang="en">cvstart.org — application tracker · EN</span></span></div>
-      <div class="shot-crop"><img src="assets/cv_tracker_en.jpg?v=9" alt="Трекер заявок CVStart (English): application tracker with follow-up"></div>
-      <div class="shot-cap"><span lang="ru">Трекер заявок с follow-up: воронка откликов удерживает пользователя между сессиями поиска — база retention hosted-версии.</span><span lang="en">The application tracker with follow-ups: the application funnel keeps users engaged between job-search sessions — the retention foundation for the hosted version.</span></div>
+    <div class="shots">
+      <figure class="shot"><img src="assets/cv_landing_ru.jpg" width="960" height="1600" alt="Лендинг cvstart.org в русской локали" loading="lazy" decoding="async"><figcaption>Лендинг в русской локали: позиционирование бесплатности, скан джоб-бордов, языки интерфейса.</figcaption></figure>
+      <figure class="shot"><img src="assets/cv_landing_en.jpg" width="960" height="1600" alt="Лендинг cvstart.org в английской локали" loading="lazy" decoding="async"><figcaption>Тот же лендинг в английской локали — одна кодовая база, языковые версии с hreflang: отсюда волны локалей в стратегии.</figcaption></figure>
+      <figure class="shot"><img src="assets/cv_dash_ru.jpg" width="1600" height="1000" alt="Дашборд поиска работы cvstart.org в русской локали" loading="lazy" decoding="async"><figcaption>Дашборд поиска работы: AI-скоринг вакансий против резюме — ядро продукта и точка входа в CV Studio.</figcaption></figure>
+      <figure class="shot"><img src="assets/cv_dash_en.jpg" width="1600" height="1000" alt="Дашборд поиска работы cvstart.org в английской локали" loading="lazy" decoding="async"><figcaption>Английская версия дашборда: fit-скоринг против резюме, фильтры по джоб-бордам.</figcaption></figure>
+      <figure class="shot"><img src="assets/cv_map_en.jpg" width="1600" height="1487" alt="Карта вакансий cvstart.org" loading="lazy" decoding="async"><figcaption>Карта вакансий: география предложений поверх скана джоб-бордов.</figcaption></figure>
+      <figure class="shot"><img src="assets/cv_tracker_en.jpg" width="1600" height="1000" alt="Трекер заявок cvstart.org" loading="lazy" decoding="async"><figcaption>Трекер заявок с follow-up: воронка откликов удерживает пользователя между сессиями поиска.</figcaption></figure>
     </div>
   </div>
-</div></section>
+</section>
 
-<section id="work"><div class="wrap">
-  <h2 class="rv" lang="ru">Как работал агент: 12 шагов, 3 паузы человека</h2>
-  <h2 class="rv" lang="en">How the agent worked: 12 steps, 3 human pauses</h2>
-  <p class="lead rv d1" lang="ru">Агент вёл сам, останавливаясь только там, где решает человек: подтверждение брифа (шаг 0), выбор варианта (шаг 6), утверждение решения (шаг 10). Прогресс — одной строкой, состояние — в файлах проекта.</p>
-  <p class="lead rv d1" lang="en">The agent drove the work on its own, stopping only where a human decides: confirming the brief (step 0), choosing an option (step 6), approving the decision (step 10). Progress in one line, state kept in project files.</p>
-  <div class="tl-wrap rv d2"><svg class="tl-svg" viewBox="0 0 1080 130" role="img" aria-label="Таймлайн 12 шагов">
-    <path class="path" d="M30 65 H1050" fill="none" stroke="url(#lg)" stroke-width="2.5"/>
-    <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".5" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
-    <g font-size="12.5" font-weight="700" text-anchor="middle">
-      <g><circle cx="30" cy="65" r="13" fill="#05070f" stroke="#f6ad55" stroke-width="2"/><text x="30" y="69" fill="#f6ad55">0</text><text x="30" y="36" fill="#f6ad55">⚑ бриф</text></g>
-      <g><circle cx="116" cy="65" r="13" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="116" y="69" fill="#2dd4bf">1</text><text x="116" y="36" fill="#9aa7bd">источники</text></g>
-      <g><circle cx="202" cy="65" r="13" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="202" y="69" fill="#2dd4bf">2</text><text x="202" y="36" fill="#9aa7bd">исследование</text></g>
-      <g><circle cx="288" cy="65" r="13" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="288" y="69" fill="#2dd4bf">3</text><text x="288" y="36" fill="#9aa7bd">дискавери</text></g>
-      <g><circle cx="374" cy="65" r="13" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="374" y="69" fill="#2dd4bf">4</text><text x="374" y="36" fill="#9aa7bd">ситуация</text></g>
-      <g><circle cx="460" cy="65" r="13" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="460" y="69" fill="#818cf8">5</text><text x="460" y="36" fill="#9aa7bd">варианты</text></g>
-      <g><circle cx="546" cy="65" r="13" fill="#05070f" stroke="#f6ad55" stroke-width="2"/><text x="546" y="69" fill="#f6ad55">6</text><text x="546" y="36" fill="#f6ad55">⚑ выбор B</text></g>
-      <g><circle cx="632" cy="65" r="13" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="632" y="69" fill="#818cf8">7</text><text x="632" y="36" fill="#9aa7bd">стратегии</text></g>
-      <g><circle cx="718" cy="65" r="13" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="718" y="69" fill="#818cf8">8</text><text x="718" y="36" fill="#9aa7bd">проверка</text></g>
-      <g><circle cx="804" cy="65" r="13" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="804" y="69" fill="#818cf8">9</text><text x="804" y="36" fill="#9aa7bd">review 100/100</text></g>
-      <g><circle cx="890" cy="65" r="13" fill="#05070f" stroke="#f6ad55" stroke-width="2"/><text x="890" y="69" fill="#f6ad55">10</text><text x="890" y="36" fill="#f6ad55">⚑ решение D001</text></g>
-      <g><circle cx="976" cy="65" r="13" fill="#05070f" stroke="#f472b6" stroke-width="2"/><text x="976" y="69" fill="#f472b6">11</text><text x="976" y="36" fill="#9aa7bd">мониторинг ▶</text></g>
-      <g><circle cx="1050" cy="65" r="5" fill="#f472b6"/></g>
-    </g>
-  </svg></div>
-  <div class="tl-grid rv d3">
-    <div class="tl-cell"><b>0–3 · Discover</b><span lang="ru">бриф, 10 источников (cvstart.org, рыночные дайджесты), 20 утверждений, персоны-гипотезы из синтетики</span><span lang="en">the brief, 10 sources (cvstart.org, market digests), 20 claims, persona hypotheses from synthetic interviews</span></div>
-    <div class="tl-cell"><b>4–6 · Define</b><span lang="ru">ситуация с пробелами, 5 вариантов A–E, red team: 15 возражений + 5 скрытых допущений, выбор человека</span><span lang="en">the situation with gaps, 5 options A–E, red team: 15 objections + 5 hidden assumptions, the human's choice</span></div>
-    <div class="tl-cell"><b>7–9 · Develop</b><span lang="ru">продуктовая + коммуникационная стратегии, план проверки, review 100/100, six-pager RU+EN + 4 книги Excel</span><span lang="en">product + communication strategies, a validation plan, review 100/100, a RU+EN six-pager + 4 Excel workbooks</span></div>
-    <div class="tl-cell human"><b>10–11 · Deliver</b><span lang="ru">решение D001 с основаниями и датой пересмотра, мониторинг обязательств открыт</span><span lang="en">decision D001 with grounds and a review date, commitment monitoring open</span></div>
-  </div>
-</div></section>
-
-<section id="market"><div class="wrap">
-  <h2 class="rv" lang="ru">Что агент нашёл: рынок в цифрах с источниками</h2>
-  <h2 class="rv" lang="en">What the agent found: the market in numbers, with sources</h2>
-  <p class="lead rv d1" lang="ru">Каждое число реестра — с типом, силой A–D и источником. Цепочка S### → C### → D### прослеживается от ссылки до решения. Пример: дайджест Wiseguy Reports → утверждение «коридор $1,2–2,4 млрд» [C005] → решение D001.</p>
-  <p class="lead rv d1" lang="en">Every number in the registry carries a type, an A–D strength grade and a source. The chain S### → C### → D### is traceable from a link to a decision. Example: the Wiseguy Reports digest → the claim "a $1.2–2.4B corridor" [C005] → decision D001.</p>
-  <div class="facts">
-    <div class="fact rv"><b lang="ru">$1,2–2,4 млрд</b><b lang="en">$1.2–2.4B</b><span lang="ru">рынок resume builders, 2024–2025; оценки агрегаторов расходятся ×2 — рынок записан диапазонами</span><span lang="en">the resume-builder market, 2024–2025; aggregator estimates diverge ×2 — so the market is recorded as ranges</span><i>S006 · Wiseguy Reports → C005</i></div>
-    <div class="fact rv d1"><b lang="ru">13,1%</b><b lang="en">13.1%</b><span lang="ru">CAGR AI-подсегмента resume builders — рост именно там, где CVStart</span><span lang="en">CAGR of the AI sub-segment of resume builders — growth exactly where CVStart plays</span><i><span lang="ru">S006 · агрегаторы рынка → C005</span><span lang="en">S006 · market aggregators → C005</span></i></div>
-    <div class="fact rv d2"><b lang="ru">$8–40/мес</b><b lang="en">$8–40/mo</b><span lang="ru">7 конкурентов (Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi) — freemium с агрессивными автопродлениями</span><span lang="en">7 competitors (Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi) — freemium with aggressive auto-renewals</span><i>S004 · Rezi/Kickresume pricing → C006</i></div>
-    <div class="fact rv d3"><b>98%</b><span lang="ru">компаний Fortune 500 используют ATS — резюме фильтрует робот до человека</span><span lang="en">of Fortune 500 companies use an ATS — a robot filters resumes before a human sees them</span><i>S007 · SkyQuest/Jobscan → C008</i></div>
-    <div class="fact rv"><b>31–74%</b><span lang="ru">соискателей применяют AI в поиске работы (разброс опросов 2025–2026)</span><span lang="en">of job seekers use AI in their job search (2025–2026 survey spread)</span><i>S005 · Kickresume Press → C009</i></div>
-    <div class="fact rv d1"><b lang="ru">$37,97 млрд</b><b lang="en">$37.97B</b><span lang="ru">мировой рынок онлайн-рекрутинга, 2025 · CAGR 7,1%</span><span lang="en">the global online recruiting market, 2025 · CAGR 7.1%</span><i>S007 · SkyQuest → C011</i></div>
-  </div>
-  <div class="note rv" lang="ru">Незанятый угол — гипотеза [C013]: 19 локалей + приватность + open source при конкурентах на EN+5 языках. Синтетика (персоны Sarah и Markus, воронка беты [S008]) помечена origin=synthetic — это гипотезы и метод-иллюстрация, не факты. Полный реестр — в <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/REPORT.md" target="_blank" rel="noopener">REPORT.md</a>.</div>
-  <div class="note rv" lang="en">The unoccupied corner is a hypothesis [C013]: 19 locales + privacy + open source, while competitors cover EN + 5 languages. Synthetic data (the Sarah and Markus personas, the beta funnel [S008]) is tagged origin=synthetic — hypotheses and method illustrations, not facts. The full registry is in <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/REPORT.md" target="_blank" rel="noopener">REPORT.md</a>.</div>
-</div></section>
-
-<section id="options"><div class="wrap">
-  <h2 class="rv" lang="ru">Варианты и red team: 5 путей, 20 ударов</h2>
-  <h2 class="rv" lang="en">Options and red team: 5 paths, 20 hits</h2>
-  <p class="lead rv d1" lang="ru">Red team — отдельный субагент, который атакует каждый вариант: 15 возражений + 5 скрытых допущений. Его удары не «прибиты», а встроены в митигации и пороги плана проверки.</p>
-  <p class="lead rv d1" lang="en">The red team is a separate subagent that attacks every option: 15 objections + 5 hidden assumptions. Its hits aren't bolted on — they are built into the mitigations and the thresholds of the validation plan.</p>
-  <table class="rv d2">
-    <tr><th lang="ru">Вариант</th><th lang="en">Option</th><th lang="ru">Суть</th><th lang="en">The idea</th><th lang="ru">ARR 12 мес (модель)</th><th lang="en">ARR 12 mo (model)</th><th lang="ru">Главный удар red team</th><th lang="en">Main red-team hit</th></tr>
-    <tr>
-      <td lang="ru"><b>A</b> · статус-кво</td><td lang="en"><b>A</b> · status quo</td>
-      <td lang="ru">бесплатный open-source, локальный режим без изменений</td><td lang="en">free open source, the local mode unchanged</td>
-      <td>$0</td>
-      <td lang="ru">«дорогое хобби»: MIT позволяет форку монетизировать ваш труд</td><td lang="en">"an expensive hobby": MIT lets a fork monetize your work</td>
-    </tr>
-    <tr>
-      <td lang="ru"><b>B</b> · hosted freemium SaaS, глобально <span style="color:var(--accent)">← выбран</span></td><td lang="en"><b>B</b> · hosted freemium SaaS, globally <span style="color:var(--accent)">← chosen</span></td>
-      <td lang="ru">тиры Free (BYOK) / Pro $12 / Unlimited $29; opt-in облако при MIT-core; честный прайсинг; волны локалей EN → DE/ES/PT-BR → JA/ZH; каналы PH, HN, SEO «open-source Jobscan alternative»</td><td lang="en">Free (BYOK) / Pro $12 / Unlimited $29 tiers; opt-in cloud on top of an MIT core; honest pricing; locale waves EN → DE/ES/PT-BR → JA/ZH; channels: PH, HN, SEO for "open-source Jobscan alternative"</td>
-      <td lang="ru">≈ $18,4 тыс run-rate к нед. 12 беты (MRR $1 537 — модель [S008])</td><td lang="en">≈ $18.4K run-rate by beta week 12 (MRR $1,537 — model [S008])</td>
-      <td lang="ru">доверие сообщества к коммерциализации MIT-core + инференс free-тира; митигации: BYOK-free, opt-in облако, честный прайсинг, пороги остановки</td><td lang="en">community trust in monetizing an MIT core + free-tier inference costs; mitigations: BYOK-free, opt-in cloud, honest pricing, stop thresholds</td>
-    </tr>
-    <tr>
-      <td lang="ru"><b>C</b> · B2B white-label</td><td lang="en"><b>C</b> · B2B white-label</td>
-      <td lang="ru">хостинг резюме-билдера под брендом партнёра</td><td lang="en">hosting the resume builder under a partner's brand</td>
-      <td lang="ru">$24–60 тыс</td><td lang="en">$24–60K</td>
-      <td lang="ru">у соло-разработчика нет продаж-компетенции — отложен</td><td lang="en">a solo developer has no sales capability — deferred</td>
-    </tr>
-    <tr>
-      <td lang="ru"><b>D</b> · dual-license</td><td lang="en"><b>D</b> · dual-license</td>
-      <td lang="ru">платная коммерческая лицензия поверх open-source</td><td lang="en">a paid commercial license on top of open source</td>
-      <td lang="ru">$10–50 тыс</td><td lang="en">$10–50K</td>
-      <td lang="ru">юридически не работает поверх MIT — отклонён</td><td lang="en">doesn't hold up legally on top of MIT — rejected</td>
-    </tr>
-    <tr>
-      <td lang="ru"><b>E</b> · закрыть коммерцию</td><td lang="en"><b>E</b> · shut down commerce</td>
-      <td lang="ru">продукт остаётся бесплатным OSS-проектом</td><td lang="en">the product stays a free OSS project</td>
-      <td>$0</td>
-      <td lang="ru">отказ от актива на растущем рынке ($1,2–2,4 млрд, AI CAGR 13,1%)</td><td lang="en">walking away from an asset on a growing market ($1.2–2.4B, AI CAGR 13.1%)</td>
-    </tr>
-  </table>
-</div></section>
-
-<section id="verdict"><div class="wrap">
-  <h2 class="rv" lang="ru">Вывод агента: вариант B и его защита</h2>
-  <h2 class="rv" lang="en">The agent's verdict: option B and its defense</h2>
-  <p class="lead rv d1" lang="ru">Рекомендация агента — не «лучший вариант вообще», а лучший при ограничениях руководителя: MIT-core сохраняется, соло-ресурсы, доверие локального режима не ломается.</p>
-  <p class="lead rv d1" lang="en">The agent's recommendation isn't "the best option in general" — it's the best one under the director's constraints: the MIT core stays, solo resources, and trust in the local mode is preserved.</p>
-  <div class="trio">
-    <div class="agent-card rv">
-      <h3 lang="ru">Вариант B — выбран</h3>
-      <h3 lang="en">Option B — chosen</h3>
-      <p lang="ru"><b>Hosted freemium SaaS, глобально:</b> тиры Free (BYOK — нулевые инференс-затраты) / Pro $12 / Unlimited $29; opt-in облако при локальном MIT-core.</p>
-      <p lang="en"><b>Hosted freemium SaaS, globally:</b> Free (BYOK — zero inference costs) / Pro $12 / Unlimited $29 tiers; opt-in cloud on top of the local MIT core.</p>
-      <p lang="ru">Честный прайсинг без автопродлений — позиционирование против конкурентов с подписными ловушками [C014].</p>
-      <p lang="en">Honest pricing with no auto-renewals — positioned against competitors with subscription traps [C014].</p>
-      <p lang="ru">Волны локалей EN → DE/ES/PT-BR → JA/ZH из 19 готовых; каналы: Product Hunt, HN, SEO «open-source Jobscan alternative».</p>
-      <p lang="en">Locale waves EN → DE/ES/PT-BR → JA/ZH out of 19 ready-made; channels: Product Hunt, HN, SEO for "open-source Jobscan alternative".</p>
+<section id="run" aria-labelledby="run-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Как работал агент</div>
+      <h2 id="run-h">Двенадцать шагов. <span class="acc">Три решения за вами.</span></h2>
+      <p>Агент вёл сам, останавливаясь только там, где решает человек: подтверждение брифа (шаг 1), выбор варианта (шаг 7), утверждение решения (шаг 11). Состояние — в файлах проекта, поэтому перерывы и смена среды не теряют работу.</p>
     </div>
-    <div class="agent-card rv d1">
-      <h3 lang="ru">Митигации red team</h3>
-      <h3 lang="en">Red-team mitigations</h3>
-      <p lang="ru"><b>BYOK-free-тир</b> — free-пользователи приносят свои ключи, переменные затраты ≈ 0.</p>
-      <p lang="en"><b>BYOK-free tier</b> — free users bring their own keys; variable costs ≈ 0.</p>
-      <p lang="ru"><b>Opt-in облако</b> — локальный режим остаётся дефолтом, доверие первого комьюнити не ломается.</p>
-      <p lang="en"><b>Opt-in cloud</b> — the local mode stays the default; first-community trust is preserved.</p>
-      <p lang="ru"><b>Честный прайсинг</b> — без автопродлений и скрытых списаний.</p>
-      <p lang="en"><b>Honest pricing</b> — no auto-renewals or hidden charges.</p>
-      <p lang="ru"><b>Пороги остановки</b> — если сообщество и метрики против, стоп → вариант E.</p>
-      <p lang="en"><b>Stop thresholds</b> — if the community and the metrics turn against it, stop → option E.</p>
+    <div class="phases">
+      <div class="ph"><h3>Исследовать</h3><ol><li class="h"><span class="n">1</span>Бриф</li><li><span class="n">2</span>Источники</li><li><span class="n">3</span>Исследование</li><li><span class="n">4</span>Сегменты</li></ol></div>
+      <div class="ph"><h3>Определить</h3><ol><li><span class="n">5</span>Картина ситуации</li><li><span class="n">6</span>Варианты и red team</li><li class="h"><span class="n">7</span>Выбор</li></ol></div>
+      <div class="ph"><h3>Разработать</h3><ol><li><span class="n">8</span>Стратегии</li><li><span class="n">9</span>План проверки</li><li><span class="n">10</span>Ревью качества</li></ol></div>
+      <div class="ph"><h3>Довести</h3><ol><li class="h"><span class="n">11</span>Решение</li><li><span class="n">12</span>Мониторинг</li></ol></div>
     </div>
-    <div class="agent-card rv d2">
-      <h3 lang="ru">Осознанные отказы</h3>
-      <h3 lang="en">Conscious rejections</h3>
-      <p lang="ru"><b>C — B2B white-label</b> ($24–60 тыс ARR): нет продаж-компетенции у соло — отложен.</p>
-      <p lang="en"><b>C — B2B white-label</b> ($24–60K ARR): no sales capability as a solo dev — deferred.</p>
-      <p lang="ru"><b>D — dual-license</b> ($10–50 тыс): юридически не работает поверх MIT — отклонён.</p>
-      <p lang="en"><b>D — dual-license</b> ($10–50K): doesn't hold up legally on top of MIT — rejected.</p>
-      <p lang="ru"><b>E — закрыть коммерцию:</b> отказ от актива на растущем рынке.</p>
-      <p lang="en"><b>E — shut down commerce:</b> walking away from an asset on a growing market.</p>
-      <p lang="ru"><b>A — статус-кво:</b> «дорогое хобби», которым может воспользоваться форк.</p>
-      <p lang="en"><b>A — status quo:</b> "an expensive hobby" a fork could exploit.</p>
+    <div class="rows" style="margin-top:44px">
+      <div class="row"><b>Шаги 1–4 · исследовать</b><p>бриф с подтверждением, 10 источников без запрещённых доменов, 20 утверждений с типом и силой, сегменты и персоны-гипотезы из синтетики.</p></div>
+      <div class="row"><b>Шаги 5–7 · определить</b><p>картина ситуации с пробелами, варианты A–E со статус-кво и закрытием, red team: 15 возражений и 5 скрытых допущений, выбор человека.</p></div>
+      <div class="row"><b>Шаги 8–10 · разработать</b><p>продуктовая и коммуникационная стратегии, план проверки с порогами, независимое ревью качества, six-pager RU и EN с книгами Excel.</p></div>
+      <div class="row"><b>Шаги 11–12 · довести</b><p>решение D001 с основаниями и датой пересмотра, мониторинг обязательств остаётся открытым после прогона.</p></div>
     </div>
   </div>
-  <div class="note rv" lang="ru"><b>Решение D001 — «Коммерческая версия CVStart: hosted freemium SaaS, глобально».</b> Основания: C019/C013/C014/C016/C005/C006. Обязательство: hosted beta в 3 EN-гео к 2026-12-15. Пересмотр: 2027-02-10. Триггер стопа → вариант E.</div>
-  <div class="note rv" lang="en"><b>Decision D001 — "Commercial version of CVStart: hosted freemium SaaS, globally".</b> Grounds: C019/C013/C014/C016/C005/C006. Commitment: a hosted beta in 3 EN geos by 2026-12-15. Review: 2027-02-10. Stop trigger → option E.</div>
-</div></section>
+</section>
 
-<section id="econ"><div class="wrap">
-  <h2 class="rv" lang="ru">Экономика модели: юнит-математика платящего</h2>
-  <h2 class="rv" lang="en">The model's economics: paying-user unit math</h2>
-  <p class="lead rv d1" lang="ru">Юнит-модель платящего подписчика на допущениях [C016]: ARPU $29/мес, переменные (инференс + инфра) 25%, CAC $60 (SEO/Product Hunt/сарафан). В Excel-книгах те же числа считаются живыми формулами — поменяйте «Ввод», пересчитается всё.</p>
-  <p class="lead rv d1" lang="en">The paying-subscriber unit model on assumptions [C016]: ARPU $29/mo, variable costs (inference + infrastructure) at 25%, CAC $60 (SEO / Product Hunt / word of mouth). The Excel workbooks compute the same numbers with live formulas — change an "Input" cell and everything recalculates.</p>
-  <div class="wf-wrap rv d2"><svg class="wf-svg" viewBox="0 0 860 300" role="img" aria-label="Экономика платящего CVStart">
-    <defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
-    <g font-size="13">
-      <g class="bar-g"><rect x="40"  y="170" width="120" height="60"  rx="8" fill="url(#wg)" opacity=".9"/><text x="100" y="162" text-anchor="middle" fill="#eef2ff" font-weight="700">$29</text></g>
-      <g class="bar-g"><rect x="230" y="200" width="120" height="30" rx="8" fill="#f472b6" opacity=".75"/><text x="290" y="192" text-anchor="middle" fill="#f472b6" font-weight="700">−$7,25</text></g>
-      <g class="bar-g"><rect x="420" y="170" width="120" height="60" rx="8" fill="url(#wg)" opacity=".9"/><text x="480" y="162" text-anchor="middle" fill="#eef2ff" font-weight="700">$21,75</text></g>
-      <g class="bar-g"><rect x="610" y="80" width="120" height="150" rx="8" fill="#818cf8" opacity=".6"/><text x="670" y="72" text-anchor="middle" fill="#eef2ff" font-weight="700">$271,88</text></g>
-      <text x="100" y="252" text-anchor="middle" fill="#9aa7bd">ARPU платящего / мес</text>
-      <text x="290" y="252" text-anchor="middle" fill="#9aa7bd">инференс + инфра ~25%</text>
-      <text x="480" y="252" text-anchor="middle" fill="#9aa7bd">вклад (CM) платящего</text>
-      <text x="670" y="252" text-anchor="middle" fill="#9aa7bd">LTV платящего (модель)</text>
-    </g>
-    <g font-size="12.5">
-      <rect x="40" y="270" width="160" height="24" rx="7" fill="rgba(45,212,191,.1)" stroke="rgba(45,212,191,.35)"/><text x="120" y="286" text-anchor="middle" fill="#2dd4bf">LTV / CAC ≈ 4,5</text>
-      <rect x="212" y="270" width="185" height="24" rx="7" fill="rgba(129,140,248,.1)" stroke="rgba(129,140,248,.35)"/><text x="304" y="286" text-anchor="middle" fill="#818cf8">окупаемость CAC ≈ 2,8 мес</text>
-      <rect x="409" y="270" width="200" height="24" rx="7" fill="rgba(244,114,182,.1)" stroke="rgba(244,114,182,.35)"/><text x="509" y="286" text-anchor="middle" fill="#f472b6">брейк-евен ≈ 69 платящих</text>
-      <rect x="621" y="270" width="199" height="24" rx="7" fill="rgba(154,167,189,.08)" stroke="rgba(154,167,189,.3)"/><text x="720" y="286" text-anchor="middle" fill="#9aa7bd">допущения помечены [C016]</text>
-    </g>
-  </svg></div>
-  <div class="note rv" lang="ru">Ожидание беты — модель, не факт: синтетическая бета-воронка (метод-иллюстрация [S008], seed=7, 12 недель) выходит на <b>53 платящих</b> и <b>MRR $1 537</b> к неделе 12. Реальная бета проверяется порогами из плана проверки ниже.</div>
-  <div class="note rv" lang="en">The beta expectation is a model, not a fact: the synthetic beta funnel (a method illustration [S008], seed=7, 12 weeks) reaches <b>53 paying users</b> and <b>$1,537 MRR</b> by week 12. The real beta is judged against the thresholds in the validation plan below.</div>
-</div></section>
-
-<section id="sixpager"><div class="wrap">
-  <h2 class="rv" lang="ru">Фрагменты six-pager: RU и EN</h2>
-  <h2 class="rv" lang="en">Six-pager excerpts: RU and EN</h2>
-  <p class="lead rv d1" lang="ru">Отчёт для комитета — в <b>формате референса стратегии роста</b>: нумерованные подпункты 1.1/1.2 и 2.1/2.2, инициативы-драйверы, матрица тактик, KPI в двух плоскостях, сноски-источники. Черновик собирается командой <code>pfs export --six-pager</code>, детализация — по промпт-спецификации <code>knowledge/templates/SIX_PAGER_PROMPT.md</code>; числа прослеживаются до утверждений C###.</p>
-  <p class="lead rv d1" lang="en">The committee report follows the <b>growth-strategy reference format</b>: numbered sub-items 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs in two planes, and source footnotes. The draft is assembled by the <code>pfs export --six-pager</code> command, with details per the prompt spec in <code>knowledge/templates/SIX_PAGER_PROMPT.md</code>; numbers trace back to claims C###.</p>
-  <div class="split2 rv d2">
-    <div class="colcard">
-      <h3><span lang="ru">Six-pager — русский</span><span lang="en">Six-pager — Russian</span></h3>
-      <div class="faq6">
-        <div class="f6"><b>1.1</b><span><b>Обзор рынка:</b> resume builders $1,2–2,4 млрд (диапазон — агрегаторы расходятся ×2, считаем по консервативной границе); AI-сегмент CAGR 13,1%; тренды: ATS-гейт найма, подписочная усталость, GenAI-стандарт · <i>S004–S007</i></span></div>
-        <div class="f6"><b>1.2</b><span><b>Конкуренты (таблица):</b> Mass-market SaaS / ATS-specialists / OSS — преимущества, стратегии роста и промо-механики, риски с оценкой Высокий–Средний–Низкий; окно возможностей — 2–3 квартала · <i>C005–C007</i></span></div>
-        <div class="f6"><b>2.1–2.2</b><span><b>Персоны и барьеры:</b> таблицы «Кто они / Что используют сегодня / Трудности» по трём сегментам + барьеры по этапам пути (поиск → выбор → резюме → постоплата) и «что сдерживает от старта» · <i>C017/C018 — гипотезы, синтетика</i></span></div>
-        <div class="f6"><b>3.1–3.3</b><span><b>Драйверы:</b> «Первый драйвер — честная монетизация» (BYOK-free), «Второй драйвер — путь „вакансия → ATS-резюме“», глобальное покрытие; UE пошагово: CM = 29 × 0,75 = 21,75 → LTV = 271,88 → LTV/CAC = 4,53 → брейк-евен 69 · <i>C016</i></span></div>
-        <div class="f6"><b>FAQ-4</b><span><b>Матрица тактик</b> «Инициатива | Фокус | Потребности | Решения»: BYOK-free-тир, страница цены без автопродлений, CV Studio (тюминг + ATS-буллеты), трекер с follow-up, волны локалей, OSS-дистрибуция</span></div>
-        <div class="f6"><b>FAQ-5–6</b><span><b>План и KPI:</b> вклад инициатив 50/30/20%; тайминг к январскому пику найма; KPI в двух плоскостях (бизнес: MRR ≥ $1 500, LTV/CAC ≥ 3 · продукт: активация ≥ 50%, churn ≤ 10%); сноски S001–S011 · <i>D001</i></span></div>
-      </div>
+<section id="market" aria-labelledby="market-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Что нашёл</div>
+      <h2 id="market-h">Рынок в цифрах <span class="acc">с источниками</span></h2>
+      <p>Каждое число реестра — с типом, силой A–D и источником. Значения карточек сверяются с текстами утверждений при каждой сборке: реестр изменился — сборка падает, а не показывает устаревшее.</p>
     </div>
-    <div class="colcard">
-      <h3>Six-pager — English</h3>
-      <div class="faq6">
-        <div class="f6"><b>1.1</b><span><b>Market overview:</b> resume builders $1.2–2.4B (a range — aggregators diverge ×2, we use the conservative floor); AI segment CAGR 13.1%; trends: the ATS gate, subscription fatigue, GenAI as standard · <i>S004–S007</i></span></div>
-        <div class="f6"><b>1.2</b><span><b>Competitors (table):</b> Mass-market SaaS / ATS-specialists / OSS — advantages, growth strategies and promo mechanics, risks rated High–Medium–Low; the window — 2–3 quarters · <i>C005–C007</i></span></div>
-        <div class="f6"><b>2.1–2.2</b><span><b>Personas and barriers:</b> "Who they are / What they use today / Difficulties" tables across three segments + stage-by-stage barriers (search → selection → resume → post-payment) and "what blocks them from starting" · <i>C017/C018 — hypotheses, synthetic</i></span></div>
-        <div class="f6"><b>3.1–3.3</b><span><b>Drivers:</b> "The first driver — honest monetization" (BYOK-free), "The second driver — the vacancy → ATS-ready resume path", global coverage; step-by-step UE: CM = 29 × 0.75 = 21.75 → LTV 271.88 → LTV/CAC 4.53 → break-even 69 · <i>C016</i></span></div>
-        <div class="f6"><b>FAQ-4</b><span><b>Tactic matrix</b> "Initiative | Focus | Needs | Solutions": BYOK-free tier, a no-auto-renewal pricing page, CV Studio (JD tuning + ATS bullets), follow-up tracker, locale waves, OSS distribution</span></div>
-        <div class="f6"><b>FAQ-5–6</b><span><b>Plan &amp; KPIs:</b> initiative contribution 50/30/20%; timing to the January hiring peak; KPIs in two planes (business: MRR ≥ $1,500, LTV/CAC ≥ 3 · product: activation ≥ 50%, churn ≤ 10%); footnotes S001–S011 · <i>D001</i></span></div>
+    <div class="mgrid">
+      <article class="mcard"><b>$1,2–2,4 млрд</b><span>рынок resume builders, 2024–2025; оценки агрегаторов расходятся вдвое — рынок записан диапазонами</span><i>S006 → C005</i></article>
+      <article class="mcard"><b>13,1%</b><span>CAGR AI-подсегмента resume builders — рост именно там, где CVStart</span><i>S006 → C005</i></article>
+      <article class="mcard"><b>$8–40/мес</b><span>семь прямых конкурентов (Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi) — freemium с агрессивными автопродлениями</span><i>S004 → C006</i></article>
+      <article class="mcard"><b>98%</b><span>компаний Fortune 500 используют ATS — резюме фильтрует робот до человека</span><i>S007 → C008</i></article>
+      <article class="mcard"><b>31–74%</b><span>соискателей применяют AI в поиске работы — разброс опросов, записанный диапазоном</span><i>S005 → C009</i></article>
+      <article class="mcard"><b>$37,97 млрд</b><span>мировой рынок онлайн-рекрутинга — база для расчёта адресуемого рынка</span><i>S007 → C011</i></article>
+    </div>
+    <div class="claim" style="margin-top:24px">
+      <div class="tags"><span class="tag">гипотеза · синтез, не факт</span></div>
+      <p>Незанятая ниша — гипотеза [C013]: мультиязычный приватный AI-резюме-билдер с открытым кодом при западных конкурентах на английском и пяти языках. Персоны-гипотезы и воронка беты помечены origin=synthetic — это гипотезы и метод-иллюстрация, не доказанный спрос.</p>
+    </div>
+  </div>
+</section>
+
+<section id="options" aria-labelledby="options-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Шаги 6–7</div>
+      <h2 id="options-h">Варианты и red team: <span class="acc">пять путей, ни одного тихого</span></h2>
+      <p>Минимум три содержательно разных варианта, включая «оставить как есть» и «закрыть». Отдельный субагент атакует каждый; удары встроены в митигации и пороги плана проверки. Полная таблица с экономикой — в <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/03_options.md" target="_blank" rel="noopener">03_options.md</a>.</p>
+    </div>
+    <div class="rows">
+      <div class="row"><b>A · статус-кво</b><p>бесплатный open-source без изменений. Удар red team: «дорогое хобби» — лицензия MIT позволяет форку монетизировать ваш труд.</p></div>
+      <div class="row"><b>B · hosted freemium SaaS <span style="color:var(--accent)">← выбран</span></b><p>тиры Free (BYOK) / Pro / Unlimited, opt-in облако при локальном MIT-core, честный прайсинг без автопродлений, волны локалей. Удар: доверие сообщества к коммерциализации — митигации: BYOK-free, opt-in, честный прайсинг, пороги остановки.</p></div>
+      <div class="row"><b>C · B2B white-label</b><p>хостинг резюме-билдера под брендом партнёра. Удар: у соло-разработчика нет продаж-компетенции — отложен.</p></div>
+      <div class="row"><b>D · dual-license</b><p>платная коммерческая лицензия поверх open-source. Удар: юридически не работает поверх MIT — отклонён.</p></div>
+      <div class="row"><b>E · закрыть коммерцию</b><p>продукт остаётся бесплатным OSS-проектом. Удар: отказ от актива на растущем рынке.</p></div>
+    </div>
+    <div class="claim" style="margin-top:24px">
+      <div class="tags"><span class="tag a">выбор · шаг 7</span><span class="tag">вариант B · Hosted freemium SaaS</span></div>
+      <p>Рекомендация агента — не «лучший вариант вообще», а лучший при ограничениях руководителя: MIT-core сохраняется, соло-ресурсы, доверие локального режима не ломается. Осознанные отказы: C — нет продаж-компетенции; D — не работает поверх MIT; E — отказ от растущего рынка; A — форк монетизирует труд.</p>
+    </div>
+  </div>
+</section>
+
+<section id="decision" aria-labelledby="decision-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Шаг 11 · решение</div>
+      <h2 id="decision-h">D001: <span class="acc">Коммерческая версия CVStart: hosted freemium SaaS, глобально</span></h2>
+      <p>Решение фиксируется с основаниями, метрикой, обязательством, триггером пересмотра и датой — <code>pfs decision add</code> записывает его в decisions.jsonl, и дальше следят <code>pfs next</code> и <code>pfs decision due</code>.</p>
+    </div>
+    <div class="claim">
+      <div class="tags"><span class="tag a">D001</span><span class="tag">основания: C019 · C013 · C014 · C016 · C005 · C006</span></div>
+      <p>Метрика: платящие hosted-беты — цель &gt;=40 к 10.02.27. Обязательство: hosted beta в 3 EN-гео (US/EU) — к 15.12.26. Пересмотр решения: 10.02.27. Триггер: paid &lt; 20 к нед. 12 при activation &lt; 35% -&gt; закрыть коммерческую ветку (вариант E); падение звёзд GitHub &gt; 30% после анонса облака -&gt; пересобрать коммуникацию opt-in.</p>
+    </div>
+  </div>
+</section>
+
+<section id="econ" aria-labelledby="econ-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Экономика</div>
+      <h2 id="econ-h">Юнит-математика платящего <span class="acc">в живых формулах</span></h2>
+      <p>Юнит-допущения демо — [C016]; значения на листе «Ввод» книги unit_economics.xlsx можно поменять — формулы пересчитаются.</p>
+    </div>
+    <div class="xl" style="max-width:560px">
+      <div class="label" style="margin-bottom:10px">Excel · лист «Ввод»</div>
+      <table>
+        <tr><td>Цена Pro</td><td>$29/мес</td></tr>
+        <tr><td>Переменные 25% → вклад на покрытие</td><td>$21,75</td></tr>
+        <tr><td>LTV</td><td>≈ $272</td></tr>
+        <tr><td>LTV / CAC</td><td>≈ 4,5</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="sixpager" aria-labelledby="six-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Документ для комитета</div>
+      <h2 id="six-h">Six-pager RU и EN <span class="acc">с книгами Excel</span></h2>
+      <p>Отчёт в структуре FAQ-1…6: рынок, сегменты, варианты с red team, тактики, план и KPI. Числа прослеживаются до утверждений реестра; все форматы — на странице материалов.</p>
+    </div>
+    <ul class="sixlist">
+      <li><b>FAQ-1</b><span>рынок и тренды: размер и коридоры оценок, ATS-гейт найма, подписочная усталость</span></li>
+      <li><b>FAQ-2</b><span>сегменты, персоны и барьеры — гипотезы, проверяемые в бете</span></li>
+      <li><b>FAQ-3</b><span>варианты A–E с возражениями red team и выбором B</span></li>
+      <li><b>FAQ-4</b><span>матрица тактик: BYOK-free, честная страница цены, CV Studio, трекер с follow-up</span></li>
+      <li><b>FAQ-5</b><span>план: 90-дневная бета с порогами продолжить / изменить / остановить</span></li>
+      <li><b>FAQ-6</b><span>KPI в двух плоскостях: бизнес и продукт</span></li>
+    </ul>
+    <div class="ctas" style="margin-top:28px;justify-content:center">
+      <a class="pill pill-a" href="materials.html" data-goal="cta_demo_click">Открыть материалы<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="pill pill-b" href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.pdf" target="_blank" rel="noopener">SIX_PAGER_RU.pdf<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    </div>
+  </div>
+</section>
+
+<section class="final" aria-labelledby="fin-h">
+  <div class="wrap">
+    <div class="box">
+      <figure class="dosfig">
+        <picture>
+          <source type="image/avif" srcset="assets/dossier-dark.avif">
+          <img src="assets/dossier-dark.webp" width="1800" height="1012" alt="Пакет решения: документы, собранные нитью в стопку, на тёмном фоне" loading="lazy" decoding="async">
+        </picture>
+      </figure>
+      <div class="eyebrow">Прогон занял один вечер человека</div>
+      <h2 id="fin-h">Повторите на <span class="acc">своей задаче</span></h2>
+      <p class="muted" style="margin:0;max-width:34em">Установите агента и опишите свою задачу как есть — бриф, варианты и решение соберутся по тем же шагам 1–12.</p>
+      <div class="ctas">
+        <a class="pill pill-a" href="index.html#install" data-goal="cta_install_click">Установить<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <a class="pill pill-b" href="https://github.com/Fighter90/product-factory-strategist" data-goal="github_click">GitHub<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
       </div>
     </div>
   </div>
-  <div class="pbtn-row rv d3">
-    <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.pdf" target="_blank" rel="noopener" class="pbtn">SIX_PAGER_RU.pdf</a>
-    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.docx" target="_blank" rel="noopener" class="pbtn ghost2">SIX_PAGER_RU.docx</a>
-    <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.pdf" target="_blank" rel="noopener" class="pbtn">SIX_PAGER_EN.pdf</a>
-    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.docx" target="_blank" rel="noopener" class="pbtn ghost2">SIX_PAGER_EN.docx</a>
-    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER.md" target="_blank" rel="noopener" class="pbtn ghost2"><span lang="ru">SIX_PAGER.md — черновик от генератора</span><span lang="en">SIX_PAGER.md — generator draft</span></a>
-    <a href="materials.html?v=9" class="pbtn ghost2"><span lang="ru">все форматы и материалы →</span><span lang="en">all formats and materials →</span></a>
-  </div>
-</div></section>
+</section>
 
-<section id="validation"><div class="wrap">
-  <h2 class="rv" lang="ru">План проверки: пороги и контр-метрики</h2>
-  <h2 class="rv" lang="en">The validation plan: thresholds and counter-metrics</h2>
-  <p class="lead rv d1" lang="ru">Hosted-бета на 90 дней в 3 EN-гео (США + ЕС). Ожидание к неделе 12: 50–60 платящих (модель: 53), MRR ≥ $1 500, активация ≥ 50% регистраций. Три порога решают судьбу стратегии без новых совещаний.</p>
-  <p class="lead rv d1" lang="en">A 90-day hosted beta in 3 EN geos (US + EU). Expected by week 12: 50–60 paying users (model: 53), MRR ≥ $1,500, activation ≥ 50% of signups. Three thresholds decide the strategy's fate without new meetings.</p>
-  <div class="trio">
-    <div class="agent-card rv">
-      <h3 lang="ru">Продолжить</h3>
-      <h3 lang="en">Continue</h3>
-      <p><b>paid ≥ 40 · activation ≥ 50% · churn ≤ 10%</b></p>
-      <p lang="ru">→ запуск волны локалей DE/ES/PT-BR из 19 готовых.</p>
-      <p lang="en">→ launch the DE/ES/PT-BR locale wave out of 19 ready-made.</p>
-    </div>
-    <div class="agent-card rv d1">
-      <h3 lang="ru">Изменить</h3>
-      <h3 lang="en">Adjust</h3>
-      <p><b>paid 20–40</b></p>
-      <p lang="ru">→ пересбор тира и цен (граница Free/Pro, ARPU), бета продолжается.</p>
-      <p lang="en">→ rework the tier and pricing (the Free/Pro boundary, ARPU); the beta continues.</p>
-    </div>
-    <div class="agent-card rv d2">
-      <h3 lang="ru">Остановить</h3>
-      <h3 lang="en">Stop</h3>
-      <p><b lang="ru">paid &lt; 20 при activation &lt; 35%</b><b lang="en">paid &lt; 20 with activation &lt; 35%</b></p>
-      <p lang="ru">→ стоп коммерции, возврат к варианту E: продукт остаётся бесплатным OSS.</p>
-      <p lang="en">→ stop commerce, fall back to option E: the product stays free OSS.</p>
-    </div>
-  </div>
-  <div class="mgrid" style="margin-top:18px">
-    <div class="fact rv"><b lang="ru">90 дней</b><b lang="en">90 days</b><span lang="ru">окно hosted-беты в 3 EN-гео (США + ЕС)</span><span lang="en">the hosted-beta window in 3 EN geos (US + EU)</span></div>
-    <div class="fact rv d1"><b>50–60</b><span lang="ru">платящих к нед. 12 — ожидание (модель: 53 [S008])</span><span lang="en">paying users by week 12 — the expectation (model: 53 [S008])</span></div>
-    <div class="fact rv d2"><b>≥ $1 500</b><span lang="ru">MRR к нед. 12 · активация ≥ 50% регистраций</span><span lang="en">MRR by week 12 · activation ≥ 50% of signups</span></div>
-    <div class="fact rv d3"><b>2026-12-15</b><span lang="ru">дедлайн беты (D001) · пересмотр 2027-02-10</span><span lang="en">the beta deadline (D001) · review on 2027-02-10</span></div>
-  </div>
-  <div class="note rv" lang="ru">Контр-метрики: звёзды/форки GitHub не должны падать; жалобы GDPR — не более 5; инференс free-тира — не дороже $200/мес; NPS — не ниже 30. Любой выход за границу — пересмотр решения D001 до даты пересмотра.</div>
-  <div class="note rv" lang="en">Counter-metrics: GitHub stars/forks must not decline; GDPR complaints — no more than 5; free-tier inference — no more than $200/mo; NPS — no lower than 30. Crossing any of these lines means revisiting decision D001 before its review date.</div>
-</div></section>
+</main>
 
-<section id="artifacts"><div class="wrap">
-  <h2 class="rv" lang="ru">Артефакты прогона</h2>
-  <h2 class="rv" lang="en">Artifacts of the run</h2>
-  <p class="lead rv d1" lang="ru">Всё лежит в открытом репозитории: <code lang="ru">projects/демо/outputs/</code>. Six-pager — в двух языках и трёх форматах; полный отчёт — REPORT.md; разбор вариантов с red team — 03_options.md.</p>
-  <p class="lead rv d1" lang="en">Everything lives in the open repository: <code lang="ru">projects/демо/outputs/</code>. The six-pager — in two languages and three formats; the full report — REPORT.md; the options analysis with red team — 03_options.md.</p>
-  <div class="cta rv">
-    <a class="btn primary" href="materials.html?v=9"><span lang="ru">Материалы демо: six-pager, Excel, источники →</span><span lang="en">Demo materials: six-pager, Excel, sources →</span></a>
-    <a class="btn ghost" href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.pdf" target="_blank" rel="noopener">SIX_PAGER_RU.pdf</a>
-    <a class="btn ghost" href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.pdf" target="_blank" rel="noopener">SIX_PAGER_EN.pdf</a>
-    <a class="btn ghost" href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.docx" target="_blank" rel="noopener">SIX_PAGER_RU.docx</a>
-    <a class="btn ghost" href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.docx" target="_blank" rel="noopener">SIX_PAGER_EN.docx</a>
-    <a class="btn ghost" href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/REPORT.md" target="_blank" rel="noopener">REPORT.md</a>
-    <a class="btn ghost" href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/03_options.md" target="_blank" rel="noopener">03_options.md</a>
+<footer>
+  <div class="wrap">
+    <span style="color:var(--strong);font-weight:500">Стратег Фабрики продуктов</span>
+    <nav aria-label="Ссылки"><a href="https://github.com/Fighter90/product-factory-strategist">GitHub</a><a href="help.html">Справка</a><a href="materials.html">Материалы демо</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/CHANGELOG.md">Changelog</a></nav>
+    <span>MIT · открытый код</span>
   </div>
-</div></section>
-
-<footer><div class="wrap">
-  <div>
-    <div class="logo"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g></svg><span class="logo-t"><span lang="ru">Стратег Фабрики продуктов</span><span lang="en">Product Factory Strategist</span></span></div>
-    <div><span lang="ru">ИИ-агент для руководителя цифрового продукта</span><span lang="en">An AI agent for digital product directors</span></div>
-  </div>
-  <div>
-    <a href="index.html"><span lang="ru">← Лендинг</span><span lang="en">← Landing page</span></a> · <a href="help.html?v=9"><span lang="ru">Справка</span><span lang="en">Help</span></a> ·
-    <a href="https://github.com/Fighter90/product-factory-strategist/wiki" target="_blank" rel="noopener">Wiki</a> ·
-    <a href="https://cvstart.org/" target="_blank" rel="noopener">cvstart.org</a>
-  </div>
-</div></footer>
+</footer>
 
 <script>
-const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const I18N = {
-  ru: { title: "Демо-разбор: CVStart — от задачи руководителя до six-pager", desc: "Сквозной разбор работы ИИ-агента на живом open-source продукте cvstart.org: задание руководителя, 12 шагов, рынок resume builders, 5 вариантов с red team, экономика платящего, six-pager RU/EN с Excel и решение D001." },
-  en: { title: "Demo walkthrough: CVStart — from a director's brief to a six-pager", desc: "An end-to-end walkthrough of the AI agent on a live open-source product, cvstart.org: the director's brief, 12 steps, the resume-builder market, 5 options with red team, paying-user economics, a RU/EN six-pager with Excel, and decision D001." }
-};
-function setLang(l, save){
-  document.body.setAttribute('data-lang', l);
-  document.documentElement.lang = l;
-  document.getElementById('btn-ru').classList.toggle('active', l==='ru');
-  document.getElementById('btn-en').classList.toggle('active', l==='en');
-  document.getElementById('btn-ru').setAttribute('aria-pressed', l==='ru');
-  document.getElementById('btn-en').setAttribute('aria-pressed', l==='en');
-  document.title = I18N[l].title;
-  var m = document.querySelector('meta[name="description"]');
-  if (m) m.setAttribute('content', I18N[l].desc);
-  if (save !== false) { try { localStorage.setItem('pfs-lang', l); } catch(e){} }
-}
 (function(){
-  var saved = null;
-  try { saved = localStorage.getItem('pfs-lang'); } catch(e){}
-  setLang(saved || ((navigator.language||'').startsWith('ru') ? 'ru' : 'en'), false);
-})();
-
-const bar = document.getElementById('bar');
-(function frame(){
-  const y = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
-  bar.style.width = (h > 0 ? (y/h*100) : 0) + '%';
-  requestAnimationFrame(frame);
-})();
-const io = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-}), {threshold:.12, rootMargin:'0px 0px -5% 0px'});
-document.querySelectorAll('.rv').forEach(el => io.observe(el));
-setTimeout(function(){document.querySelectorAll('.rv:not(.in)').forEach(function(e){ e.classList.add('in'); });}, 1400);
-if (!REDUCED && matchMedia('(pointer:fine)').matches){
-  document.querySelectorAll('.fact').forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height;
-      card.style.setProperty('--mx', (x*100)+'%'); card.style.setProperty('--my', (y*100)+'%');
+  function goal(name,params){if(window.ym&&window.YM_ID){window.ym(window.YM_ID,'reachGoal',name,params||{})}}
+  document.querySelectorAll('[data-goal]').forEach(function(el){
+    el.addEventListener('click',function(){goal(el.dataset.goal)});
+  });
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.parentNode.querySelector('code').textContent;
+      var done=function(){var o=b.textContent;b.textContent=b.dataset.ok||'OK';setTimeout(function(){b.textContent=o},1600)};
+      try{navigator.clipboard.writeText(t).then(done,done)}catch(e){done()}
+      goal('copy_command',{i:b.dataset.copy});
     });
   });
-}
+  document.querySelectorAll('.mlink').forEach(function(d){
+    d.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click',function(){d.removeAttribute('open')});
+    });
+  });
+  document.querySelectorAll('details:not(.mlink)').forEach(function(d){
+    d.addEventListener('toggle',function(){
+      if(d.open){var s=d.querySelector('summary');goal('faq_open',{q:s?s.textContent.trim().slice(0,60):''})}
+    });
+  });
+})();
 </script>
+
 </body>
 </html>

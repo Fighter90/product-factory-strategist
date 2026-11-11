@@ -1,6 +1,8 @@
 # Яндекс Метрика — ТЗ на разметку целей (PRO-66)
 
-Разметка целей уже в HTML сгенерированных страниц (`site/index.html`, `site/en/index.html`).
+Разметка целей уже в HTML сгенерированных страниц: лендинг (`site/index.html`,
+`site/en/index.html`) и подстраницы demo / help / materials в той же системе
+(`site/demo.html`, `site/help.html`, `site/materials.html` и их пары в `site/en/`).
 Сам счётчик в репозитории **не хранится**: он подключается только при сборке.
 
 ## Подключение счётчика
@@ -25,7 +27,7 @@ python3 scripts/build_site.py --ym-id <ID счётчика>
 | `cta_demo_click` | клики «Смотреть демо» и «Открыть разбор» (ведёт на `demo.html`) | `data-goal="cta_demo_click"` — hero и секция «Демо» |
 | `github_click` | переходы на репозиторий GitHub | `data-goal="github_click"` — финальный CTA |
 | `lang_switch` | переключение языка RU ↔ EN | `data-goal="lang_switch"` на ссылках `.lang a` (на каждой странице ведёт на парную) |
-| `copy_command` | копирование команды установки | кнопки `.copy` в секции «Установка»; JS отправляет `copy_command` с параметром `i` — индекс команды (`0` clone, `1` install, `2` doctor, `3` opencode) |
+| `copy_command` | копирование команды установки | кнопки `.copy` в секции «Установка» лендинга и в «Быстром старте» справки; JS отправляет `copy_command` с параметром `i` — индекс команды (`0` clone, `1` install, `2` doctor, `3` opencode) |
 | `faq_open` | открытие вопроса в FAQ | JS-обработчик `toggle` на `<details>`; параметр `q` — первые 60 символов вопроса. Меню-бургер в шапке (`<details class="mlink">`) исключён — он не вопрос и цель с пустым `q` не отправляется |
 
 ## Как работает разметка
@@ -53,7 +55,10 @@ python3 scripts/build_site.py --ym-id <ID счётчика>
 
 ## English summary
 
-Analytics markup (Yandex Metrika) is already present in the generated pages. The counter
+Analytics markup (Yandex Metrika) is already present in the generated pages: the landing
+(`site/index.html`, `site/en/index.html`) and the demo / help / materials subpages in the
+same system (`site/demo.html`, `site/help.html`, `site/materials.html` and their pairs
+under `site/en/`). The counter
 ID is **not** stored in the repository: pass it at build time via
 `python3 scripts/build_site.py --ym-id <ID>` (e.g. from a CI secret). Without the flag the
 pages build with no loader; goals are wired via `data-goal` attributes (`cta_install_click`,

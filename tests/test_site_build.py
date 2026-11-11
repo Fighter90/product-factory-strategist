@@ -177,11 +177,16 @@ class SiteBuildBase(unittest.TestCase):
         assert r.returncode == 0, f"build_site.py упал:\n{r.stdout}\n{r.stderr}"
         cls.built["ru"] = (tmp / "index.html").read_text(encoding="utf-8")
         cls.built["en"] = (tmp / "en" / "index.html").read_text(encoding="utf-8")
-        for key, rel in (("ru_demo", Path("demo.html")), (Path("en").name + "_demo", Path("en") / "demo.html"),
+        for key, rel in (("ru_demo", Path("demo.html")), ("en_demo", Path("en") / "demo.html"),
                          ("ru_help", Path("help.html")), ("en_help", Path("en") / "help.html"),
                          ("ru_mat", Path("materials.html")), ("en_mat", Path("en") / "materials.html")):
             cls.built[key] = (tmp / rel).read_text(encoding="utf-8")
         cls.tmp = tmp
+
+    def landing(self):
+        """Пары (lang, страница) только для лендинга: часть проверок относится
+        к его секциям (видео, бенто, faqlist), которых нет на подстраницах."""
+        return (("ru", self.built["ru"]), ("en", self.built["en"]))
 
 
 class TestGeneration(SiteBuildBase):
@@ -244,7 +249,7 @@ class TestDesignRules(SiteBuildBase):
         self.assertGreaterEqual(_ratio("#0A0908", v["pill"]), 4.5, "текст на pill-кнопке")
 
     def test_reduced_motion_and_video(self):
-        for lang, page in self.built.items():
+        for lang, page in self.landing():
             self.assertIn("@media (prefers-reduced-motion:reduce)", page, lang)
             m = re.search(r"<video\b[^>]*>", page)
             self.assertIsNotNone(m, lang)
@@ -266,14 +271,14 @@ class TestDesignRules(SiteBuildBase):
             self.assertIn(":focus-visible{outline:2pxsolidvar(--accent)", page.replace(" ", ""), lang)
 
     def test_bento_variety(self):
-        for lang, page in self.built.items():
+        for lang, page in self.landing():
             n_cards = len(re.findall(r'<article class="card', page))
             self.assertGreaterEqual(n_cards, 6, lang)
             self.assertIn('class="card w8"', page, lang)
             self.assertIn('class="card w6"', page, lang)
 
     def test_no_js_numbers_and_faq(self):
-        for lang, page in self.built.items():
+        for lang, page in self.landing():
             self.assertNotIn("data-target", page, lang)
             self.assertIn("<details>", page, lang)
 
@@ -371,7 +376,7 @@ class TestAnalytics(SiteBuildBase):
             self.assertIn('data-goal="lang_switch"', page, lang)
 
     def test_copy_buttons(self):
-        for lang, page in self.built.items():
+        for lang, page in self.landing():
             self.assertIn('class="copy"', page, lang)
             self.assertGreaterEqual(page.count("data-copy="), 4, lang)
 
@@ -444,18 +449,61 @@ def _fixture_demo(tmp: Path, *, options_md: str, claims: list[dict],
     """Мини-проект демо с той же структурой, что projects/демо, в tmp-каталоге.
 
     letter — выбранный в D001 вариант; должен существовать среди заголовков 03_options.md.
+    Раунд ревью 3: build() читает и дословный запрос (project.json), карточки фактов
+    рынка (C005/C006/C008/C009), описание продукта (C001) и поля D001 — фиксура
+    содержит их в тех же формулировках, что DEC_EN_MAP и MARKET_FACTS в генераторе.
     """
     demo = tmp / "demo"
     (demo / "outputs").mkdir(parents=True)
     (demo / "sources").mkdir()
+    extra = [
+        {"id": "C001", "kind": "fact", "grade": "B",
+         "text": ("Продукт CVStart (career-ops UI): скан ~129 джоб-бордов, AI-скоринг "
+                  "вакансий 0.0–5.0, CV Studio (тюминг резюме, humanize, ATS-буллеты), "
+                  "PDF/DOCX-экспорт, cover letters, трекер, карта вакансий, mock-интервью; "
+                  "100% локально; 18 LLM-провайдеров BYOK; ~7602 автотеста; лицензия MIT"),
+         "sources": ["S001"]},
+        {"id": "C005", "kind": "fact", "grade": "C",
+         "text": "Рынок resume builders: коридор оценок $1,2–2,4 млрд (2024–2025); "
+                 "AI-подсегмент $1,3→1,47 млрд, CAGR 13,1%",
+         "sources": ["S001"]},
+        {"id": "C006", "kind": "fact", "grade": "B",
+         "text": "7 прямых конкурентов (Zety, resume.io, Novoresume, Kickresume, Enhancv, "
+                 "Teal, Rezi) работают на freemium с платным тарифом $8–40/мес и "
+                 "агрессивными автопродлениями",
+         "sources": ["S001"]},
+        {"id": "C008", "kind": "fact", "grade": "B",
+         "text": "98% компаний Fortune 500 используют ATS в найме (многолетняя методология "
+                 "Jobscan: реверс-инжиниринг карьер-страниц 500 компаний ежегодно)",
+         "sources": ["S001"]},
+        {"id": "C009", "kind": "fact", "grade": "B",
+         "text": "AI в поиске работы используют 31–74% соискателей (разные опросы "
+                 "2025–2026); 84% говорят, что AI облегчило поиск",
+         "sources": ["S001"]},
+    ]
+    rows = list(claims) + [c for c in extra if c["id"] not in {c["id"] for c in claims}]
     (demo / "claims.jsonl").write_text(
-        "\n".join(json.dumps(r, ensure_ascii=False) for r in claims) + "\n", encoding="utf-8")
+        "\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
     (demo / "sources.jsonl").write_text(
         json.dumps({"id": "S001", "url": "https://example.com/a", "retrieved": "2026-01-15"},
                    ensure_ascii=False) + "\n", encoding="utf-8")
+    (demo / "project.json").write_text(
+        json.dumps({"question": VERBATIM_REQUEST}, ensure_ascii=False), encoding="utf-8")
     (demo / "decisions.jsonl").write_text(
         json.dumps({"id": "D001", "decision": f"Запустить вариант {letter}: hosted freemium SaaS",
-                    "review": {"date": "2027-02-10"}}, ensure_ascii=False) + "\n", encoding="utf-8")
+                    "title": "Коммерческая версия CVStart: hosted freemium SaaS, глобально",
+                    "grounds": ["C019", "C013", "C014", "C016", "C005", "C006"],
+                    "metrics": [{"name": "платящие hosted-беты", "baseline": "0",
+                                 "target": ">=40", "by": "2027-02-10"}],
+                    "commitments": [{"id": "K1", "what": "hosted beta в 3 EN-гео (US/EU)",
+                                     "owner": "соло-разработчик", "due": "к 2026-12-15",
+                                     "status": "open"}],
+                    "review": {"date": "2027-02-10",
+                               "triggers": ["paid < 20 к нед. 12 при activation < 35% -> "
+                                            "закрыть коммерческую ветку (вариант E); "
+                                            "падение звёзд GitHub > 30% после анонса "
+                                            "облака -> пересобрать коммуникацию opt-in"]}},
+                   ensure_ascii=False) + "\n", encoding="utf-8")
     (demo / "outputs" / "03_options.md").write_text(options_md, encoding="utf-8")
     for name in ("SIX_PAGER.md", "SIX_PAGER_EN.md"):
         (demo / "outputs" / name).write_text("## FAQ-1. Market\nMention of [C011] here.\n",
@@ -588,13 +636,24 @@ class TestMobileMenu(SiteBuildBase):
     """≤980px .links скрыты — нужна доступная с клавиатуры замена (details/summary)."""
 
     def test_details_menu_with_links(self):
-        for lang, page in self.built.items():
+        for lang, page in self.landing():
             m = re.search(r'<details class="mlink">.*?</details>', page, flags=re.S)
             self.assertIsNotNone(m, f"{lang}: нет мобильного меню")
             block = m.group(0)
             self.assertIn("<summary", block, lang)
             for anchor in ("#how", "#features", "#demo", "#install", "#faq"):
                 self.assertIn(f'href="{anchor}"', block, f"{lang}: {anchor}")
+
+    def test_details_menu_on_subpages(self):
+        # раунд ревью 3: на подстраницах пункты меню ведут на лендинг и соседние страницы
+        for key, page in self.built.items():
+            if key in ("ru", "en"):
+                continue
+            m = re.search(r'<details class="mlink">.*?</details>', page, flags=re.S)
+            self.assertIsNotNone(m, f"{key}: нет мобильного меню")
+            for href in ("index.html#how", "index.html#features", "demo.html",
+                         "help.html", "materials.html"):
+                self.assertIn(f'href="{href}"', m.group(0), f"{key}: {href}")
 
     def test_menu_labelled_per_language(self):
         self.assertIn('aria-label="Меню разделов"', self.built["ru"])
@@ -618,7 +677,7 @@ class TestOgPerLanguage(SiteBuildBase):
     """
 
     def test_pages_point_to_own_og(self):
-        for lang, page in self.built.items():
+        for lang, page in self.landing():
             refs = set(re.findall(r'property="og:image" content="([^"]+)"', page))
             self.assertEqual(refs, {f"https://strategyproduct.ru/assets/og/og-{lang}.jpg"}, lang)
 
@@ -655,7 +714,7 @@ class TestDarkAssetsUsed(SiteBuildBase):
                                 name + ext)
 
     def test_referenced_with_dimensions(self):
-        for lang, page in self.built.items():
+        for lang, page in self.landing():
             for name, (w, h) in self.PAIRS.items():
                 m = re.search(rf"<picture>.*?{name}.*?</picture>", page, flags=re.S)
                 self.assertIsNotNone(m, f"{lang}: {name} не подключён")
@@ -857,6 +916,15 @@ REAL_C011_TEXT = ("Мировой рынок онлайн-рекрутинга: 
                   "Indeed — 60+ стран, 28 языков, 685 млн профилей; "
                   "Bayt (MENA) — 59+ млн профилей")
 
+# Дословный запрос фикстуры: числа совпадают с EN-переводом в build_site
+# (129 джоб-бордов, 19 языков, Fighter90) — demo_request() сверяет их при сборке.
+VERBATIM_REQUEST = ("Разработать коммерческую версию проекта cvstart.org (open-source "
+                    "AI-конструктор резюме и поиск вакансий: скан 129 джоб-бордов, "
+                    "AI-скоринг, CV Studio, локальный пайплайн, 19 языков) — формирование "
+                    "резюме, поиск вакансий — и стратегию вывода на рынок на весь мир. "
+                    "Продукт: https://cvstart.org/, репозиторий: "
+                    "https://github.com/Fighter90/career-ops-ui")
+
 
 class TestDLabelEn(unittest.TestCase):
     """Метка выбранного варианта из русского 03_options.md не утекает на EN-страницу.
@@ -958,7 +1026,7 @@ class TestRound3Review(SiteBuildBase):
 
     def test_bento_rows_fill_twelve_columns(self):
         # десктоп: карточки бенто не оставляют пустых колонок в ряду
-        for lang, page in self.built.items():
+        for lang, page in self.landing():
             block = re.search(r'<div class="grid">(.*?)</section>', page, flags=re.S).group(1)
             widths = [int(m.group(1) or 4)
                       for m in re.finditer(r'<article class="card(?: w(\d+))?"', block)]

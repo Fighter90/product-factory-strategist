@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Help — Product Factory Strategist</title>
+<meta name="description" content="How to work with the agent: three kinds of messages, control phrases, a quick start, the twelve-step cycle, supported tools and FAQ.">
+<link rel="canonical" href="https://strategyproduct.ru/en/help.html">
+<link rel="alternate" hreflang="ru" href="https://strategyproduct.ru/help.html">
+<link rel="alternate" hreflang="en" href="https://strategyproduct.ru/en/help.html">
+<link rel="alternate" hreflang="x-default" href="https://strategyproduct.ru/help.html">
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Product Factory Strategist">
+<meta property="og:title" content="Help — Product Factory Strategist">
+<meta property="og:description" content="Control phrases, commands, the twelve-step cycle and FAQ.">
+<meta property="og:url" content="https://strategyproduct.ru/en/help.html">
+<meta property="og:image" content="https://strategyproduct.ru/assets/og/og-en.jpg">
+<meta property="og:image:width" content="1800">
+<meta property="og:image:height" content="1012">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* Warm dark v3: warm neutrals, one amber accent, pills, thin lines */
+:root{
+  --bg:#0B0A09; --bg2:#12100E; --card:#151311; --line:rgba(214,210,204,.10); --line2:rgba(214,210,204,.18);
+  --text:#D6D2CC; --strong:#F1EEE9; --muted:#8C877F; --accent:#EE8A3C; --accent-ink:#1A0E05; --pill:#BDB9B3;
+  --font:Inter,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.label{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1,h2,h3{color:var(--strong);font-weight:500;text-wrap:balance;margin:0}
+h1{font-size:clamp(40px,6.4vw,76px);line-height:1.05;letter-spacing:-.02em}
+h2{font-size:clamp(28px,3.4vw,40px);line-height:1.1;letter-spacing:-.01em}
+h3{font-size:20px;line-height:1.3}
+.acc{color:var(--accent);font-weight:400}
+.muted{color:var(--muted)}
+.skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:16px;z-index:99;background:var(--strong);color:var(--bg);padding:8px 12px;border-radius:8px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
+
+/* fixed pill header */
+.nav{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:0;right:0;z-index:50}
+.nav .bar{position:relative;display:flex;align-items:center;gap:16px;height:56px;padding:0 8px 0 18px;border:1px solid var(--line2);border-radius:18px;background:rgba(11,10,9,.72);backdrop-filter:blur(14px)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--strong);font-weight:600;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
+.brand svg{width:28px;height:28px;flex:none}
+.links{display:flex;gap:22px;margin-left:auto;font-size:14px}
+.links a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;text-decoration:none;color:var(--muted)}.links a:hover{color:var(--strong)}
+.lang{display:flex;gap:2px;font-size:12px;font-weight:500}
+.lang a,.lang b{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border-radius:10px;text-decoration:none;color:var(--muted)}
+.lang b{color:var(--strong);font-weight:500}
+.mlink{display:none}
+.mlink summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--line2);border-radius:999px;color:var(--strong)}
+.mlink summary::-webkit-details-marker{display:none}
+.mlink .b{display:block;width:16px;height:2px;border-radius:1px;background:currentColor;position:relative}
+.mlink .b::before,.mlink .b::after{content:"";position:absolute;left:0;width:16px;height:2px;border-radius:1px;background:currentColor}
+.mlink .b::before{top:-5px}.mlink .b::after{top:5px}
+.mlink[open] .b{background:transparent}
+.mlink[open] .b::before{transform:translateY(5px) rotate(45deg)}
+.mlink[open] .b::after{transform:translateY(-5px) rotate(-45deg)}
+.mlink-panel{position:absolute;top:calc(100% + 10px);left:0;right:0;display:flex;flex-direction:column;padding:8px;border:1px solid var(--line2);border-radius:18px;background:var(--card);box-shadow:0 18px 44px rgba(0,0,0,.45)}
+.mlink-panel a{display:flex;align-items:center;min-height:44px;padding:0 14px;border-radius:12px;text-decoration:none;color:var(--strong);font-weight:500;font-size:15px}
+.mlink-panel a:hover{background:var(--bg2)}
+
+/* pill buttons */
+.pill{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 6px 0 20px;border-radius:999px;font-size:16px;font-weight:500;text-decoration:none;border:0;cursor:pointer;font-family:inherit;transition:filter .2s,background .2s}
+.pill .arr{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.18)}
+.pill .arr svg{width:16px;height:16px}
+.pill-a{background:var(--accent);color:var(--accent-ink)}.pill-a:hover{filter:brightness(1.08)}
+.pill-b{background:var(--pill);color:#0A0908}.pill-b:hover{background:#D3CFC9}
+.pill-sm{min-height:44px;font-size:14px;padding-left:16px}.pill-sm .arr{width:32px;height:32px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;min-height:760px;display:flex;align-items:center;padding:150px 0 110px;text-align:center;border-bottom:1px solid var(--line)}
+.hero video{position:absolute;left:50%;top:50%;width:min(1100px,140%);transform:translate(-50%,-48%);opacity:.85;mix-blend-mode:screen;pointer-events:none}
+.hero .tint{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#F6C089 0%,#EE8A3C 38%,#8C4A1E 75%);mix-blend-mode:multiply;pointer-events:none}
+.hero .fade{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(11,10,9,.25) 0%,rgba(11,10,9,.7) 55%,var(--bg) 85%);pointer-events:none}
+.hero .inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:26px}
+.hero p.lead{max-width:36em;margin:0;color:var(--text);font-size:18px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.facts{display:flex;flex-wrap:wrap;justify-content:center;gap:0;margin-top:18px;font-size:13px;color:var(--muted)}
+.facts span{padding:0 18px;border-left:1px solid var(--line2)}.facts span:first-child{border-left:0}
+.facts b{color:var(--strong);font-weight:500}
+
+section{padding:110px 0;border-bottom:1px solid var(--line)}
+.head{display:flex;flex-direction:column;gap:14px;max-width:760px;margin-bottom:48px}
+.head p{margin:0;color:var(--muted)}
+
+/* flow: request -> evidence registry -> result */
+.flow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr);gap:0;align-items:center}
+.col{display:flex;flex-direction:column;gap:12px}
+.node{position:relative;display:flex;gap:12px;align-items:flex-start;padding:16px 18px;border:1px solid var(--line2);border-radius:14px;background:var(--card)}
+.node .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:8px}
+.node small{display:block;color:var(--muted);font-size:13px;line-height:1.45}
+.node strong{font-weight:500;color:var(--strong);font-size:15px}
+.col.in .node::after,.col.out .node::before{content:"";position:absolute;top:50%;width:44px;height:1px;background:linear-gradient(90deg,var(--line2),var(--accent))}
+.col.in .node::after{right:-45px}.col.out .node::before{left:-45px;background:linear-gradient(90deg,var(--accent),var(--line2))}
+.core{margin:0 44px;padding:30px 26px;border:1px solid rgba(238,138,60,.45);border-radius:20px;background:linear-gradient(180deg,#1A1511,#120F0D);text-align:center;display:flex;flex-direction:column;gap:14px}
+.core .name{font-size:22px;font-weight:600;color:var(--strong);letter-spacing:-.01em}
+.core ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.core li{font-size:12px;padding:5px 10px;border:1px solid var(--line2);border-radius:999px;color:var(--text)}
+
+/* comparison with a plain chat */
+.cmp{border-top:1px solid var(--line2)}
+.cmp .row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr) minmax(0,1.3fr);gap:24px;padding:20px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.cmp .row.hd{padding:12px 0}
+.cmp .what{color:var(--strong);font-weight:500}
+.cmp .yes{display:flex;gap:10px;align-items:baseline}.cmp .yes::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateY(-2px)}
+
+/* bento grid of features */
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.card{grid-column:span 4;min-width:0;padding:26px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:14px}
+.card.w6{grid-column:span 6}.card.w8{grid-column:span 8}
+.card .ic{width:36px;height:36px;border-radius:10px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.card .ic svg{width:18px;height:18px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.faqlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.faqlist li{list-style:none;padding:10px 12px;border-radius:10px;background:var(--bg2);font-size:14px}
+.faqlist b{color:var(--accent);font-weight:500;margin-right:8px}
+
+/* process */
+.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.ph{padding:22px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:12px;min-width:0}
+.ph ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.ph li{display:flex;align-items:center;gap:12px;font-size:15px}
+.ph .n{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
+.ph li.h .n{border:1.5px solid var(--accent);color:var(--accent)}
+/* badge on human-decision steps: the text comes from a per-language token to avoid leaks */
+.ph li.h::after{content:"you";margin-left:auto;font-size:11px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+
+/* evidence chain: terminal, claim, excel */
+.proof{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:24px;align-items:start}
+.proof-side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.term{border:1px solid var(--line2);border-radius:18px;background:#0D0C0A;overflow:hidden;min-width:0}
+.term .bar{display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.term .bar i{width:10px;height:10px;border-radius:50%;background:var(--line2)}
+.term pre{margin:0;padding:18px 20px;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
+.term .p{color:var(--muted)}.term .a{color:var(--strong)}.term .hi{color:var(--accent)}
+.claim{border:1px solid rgba(238,138,60,.45);border-radius:18px;background:var(--card);padding:24px;display:flex;flex-direction:column;gap:14px}
+.claim .tags{display:flex;gap:8px;flex-wrap:wrap}
+.claim .tag{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--muted)}
+.claim .tag.a{border-color:rgba(238,138,60,.5);color:var(--accent)}
+.claim p{margin:0;color:var(--text);font-size:15px}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+.chip{padding:8px 12px;border:1px solid var(--line2);border-radius:10px;background:var(--bg2);min-width:0}
+.chip.a{border-color:rgba(238,138,60,.5)}
+.chip em{font-style:normal;color:var(--accent)}
+.xl{border:1px solid var(--line2);border-radius:18px;background:var(--card);padding:20px 24px}
+.xl table{width:100%;border-collapse:collapse;font-size:14px}
+.xl td{padding:9px 0;border-bottom:1px solid var(--line);color:var(--text)}
+.xl tr:last-child td{border-bottom:0}
+.xl td:last-child{text-align:right;color:var(--strong);font-variant-numeric:tabular-nums}
+
+/* architecture */
+.stack{display:flex;flex-direction:column;max-width:760px;margin:0 auto;width:100%}
+.layer{position:relative;display:flex;gap:16px;align-items:flex-start;padding:20px 24px;border:1px solid var(--line2);border-radius:16px;background:var(--card);min-width:0}
+.layer+.layer{margin-top:26px}
+.layer+.layer::before{content:"";position:absolute;left:50%;top:-27px;width:1px;height:26px;background:linear-gradient(180deg,var(--accent),var(--line2))}
+.layer .n{flex:none;width:34px;height:34px;border-radius:10px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:13px}
+.layer b{display:block;color:var(--strong);font-weight:500;font-size:16px;margin-bottom:4px}
+.layer small{color:var(--muted);font-size:14px;line-height:1.5;display:block}
+
+/* demo */
+.demo{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line2);border:1px solid var(--line2);border-radius:18px;overflow:hidden;margin:0}
+.stats div{background:var(--card);padding:22px;display:flex;flex-direction:column-reverse;gap:6px}
+.stats b{font-size:30px;font-weight:500;color:var(--strong);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.stats span{font-size:13px;color:var(--muted)}
+
+/* install */
+.inst{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.cmd{display:flex;align-items:center;gap:10px;padding:6px 6px 6px 16px;border:1px solid var(--line2);border-radius:14px;background:var(--card)}
+.cmd code{flex:1;min-width:0;overflow-x:auto;white-space:nowrap;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--strong)}
+.copy{flex:none;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--text);font:500 13px var(--font);cursor:pointer}
+.copy:hover{border-color:var(--accent)}
+blockquote{margin:6px 0 0;padding:18px 20px;border-radius:14px;background:var(--card);border:1px solid var(--line2);color:var(--strong)}
+
+/* faq */
+.faq{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:40px}
+/* accordion styles are scoped to the FAQ section: the header details (mlink) is styled separately */
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:64px;padding:12px 0;color:var(--strong);font-size:18px;font-weight:500}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .pm{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);transition:transform .2s}
+.faq details[open] summary .pm{transform:rotate(45deg)}
+.faq details p{margin:0 0 22px;color:var(--muted);max-width:44em}
+
+/* final CTA and footer */
+.final{position:relative;overflow:hidden;text-align:center;border-bottom:0}
+.final .box{position:relative;margin:0 auto;max-width:980px;padding:80px 28px;border:1px solid rgba(238,138,60,.4);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,rgba(238,138,60,.16),rgba(11,10,9,0) 60%),var(--bg2);display:flex;flex-direction:column;align-items:center;gap:22px}
+.procfig{margin:44px auto 0;max-width:760px}
+.dosfig{margin:0 auto;width:100%;max-width:520px}
+.procfig img,.dosfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
+footer{border-top:1px solid var(--line);padding:36px 0 calc(36px + env(safe-area-inset-bottom,0px));font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}footer nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px}footer a:hover{color:var(--strong)}
+
+/* subpages (demo, help, materials): same system, hero without video */
+.subhero{padding:170px 0 72px;text-align:center;border-bottom:1px solid var(--line)}
+.subhero .inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:20px}
+.subhero p.lead{max-width:44em;margin:0;color:var(--text);font-size:18px}
+.links b{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;color:var(--strong);font-weight:500}
+p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--strong);background:var(--bg2);border:1px solid var(--line2);border-radius:6px;padding:1px 6px}
+.coverfig{margin:56px auto 0;max-width:980px}
+.coverfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
+
+/* demo page: facts, options, decision */
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.mcard{padding:24px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:10px;min-width:0}
+.mcard b{font-size:24px;font-weight:500;color:var(--strong);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.mcard span{color:var(--muted);font-size:14px;line-height:1.5}
+.mcard i{font-style:normal;font-size:12px;color:var(--accent);letter-spacing:.04em}
+.rows{border-top:1px solid var(--line2)}
+.rows .row{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:24px;padding:18px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.rows .row b{color:var(--strong);font-weight:500;font-size:16px}
+.rows .row p{margin:0;color:var(--muted);font-size:15px}
+.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.shot{margin:0;border:1px solid var(--line2);border-radius:18px;background:var(--card);padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.shot img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}
+.shot figcaption{color:var(--muted);font-size:13px;line-height:1.5}
+.sixlist{display:grid;gap:8px;max-width:760px;margin:0 auto}
+.sixlist li{list-style:none;display:flex;gap:14px;align-items:baseline;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);font-size:14px;color:var(--muted)}
+.sixlist b{flex:none;color:var(--accent);font-weight:500;min-width:64px}
+
+@media (max-width:980px){
+  .links{display:none}
+  .mlink{display:block}
+  .nav .bar{padding-right:6px}
+  .flow{grid-template-columns:minmax(0,1fr);gap:14px}.core{margin:6px 0}
+  .col.in .node::after,.col.out .node::before{display:none}
+  .card,.card.w6,.card.w8{grid-column:1/-1}
+  .phases{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .proof,.demo,.inst,.faq{grid-template-columns:minmax(0,1fr)}
+  .mgrid,.shots{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  section{padding:80px 0}
+  .hero{min-height:640px;padding:130px 0 80px}
+  .subhero{padding:140px 0 56px}
+  .phases,.faqlist,.mgrid,.shots{grid-template-columns:minmax(0,1fr)}
+  .cmp .row,.rows .row{grid-template-columns:minmax(0,1fr);gap:4px}.cmp .row.hd{display:none}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .facts span{border-left:0;padding:2px 10px}
+  .nav .bar{gap:8px}
+  .bar .pill{display:none}
+}
+@media (prefers-reduced-motion:reduce){.hero video{display:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="bar">
+      <a class="brand" href="index.html" aria-label="Product Factory Strategist — home">
+        <svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="6.5" y="11.5" width="20" height="23" rx="4" stroke="#D6D2CC" stroke-width="1.6"/><rect x="13.5" y="5.5" width="20" height="23" rx="4" fill="#0B0A09" stroke="#D6D2CC" stroke-width="1.6"/><path d="M18 12.5h11M18 16.5h11M18 20.5h6" stroke="#D6D2CC" stroke-width="1.6" stroke-linecap="round"/><circle cx="29" cy="24" r="3" fill="#EE8A3C"/></svg>
+        Strategist
+      </a>
+      <nav class="links" aria-label="Sections"><a href="index.html#how">How it works</a><a href="index.html#features">Features</a><a href="demo.html">Demo</a><b aria-current="page">Help</b><a href="materials.html">Materials</a></nav>
+      <div class="lang"><b aria-current="true">EN</b><a href="../help.html" hreflang="ru" data-goal="lang_switch">RU</a></div>
+      <a class="pill pill-a pill-sm" href="index.html#install" data-goal="cta_install_click">Start<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <details class="mlink">
+        <summary aria-label="Sections menu"><span class="b" aria-hidden="true"></span></summary>
+        <nav class="mlink-panel" aria-label="Sections"><a href="index.html#how">How it works</a><a href="index.html#features">Features</a><a href="demo.html">Demo</a><a href="help.html" aria-current="page">Help</a><a href="materials.html">Materials</a></nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="subhero" id="top" aria-labelledby="h1">
+  <div class="wrap inner">
+    <div class="eyebrow">Help</div>
+    <h1 id="h1">How to work <span class="acc">with the agent</span></h1>
+    <p class="lead">Write in plain language, as to a colleague. The agent drives steps 1–12 on its own, asks at most three questions at a time and explains what it is missing. Below: control, commands and answers to frequent questions.</p>
+    <div class="ctas">
+      <a class="pill pill-b" href="#phrases">Control phrases<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="pill pill-a" href="index.html#install" data-goal="cta_install_click">Install<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    </div>
+  </div>
+</section>
+
+<section id="points" aria-labelledby="points-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Key points</div>
+      <h2 id="points-h">The whole gist <span class="acc">in one minute</span></h2>
+    </div>
+    <div class="grid">
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 10h6M10 4v12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>Evidence, not eloquence</h3><p>Every number and conclusion: a type (fact, hypothesis, forecast, assumption, inference), an A–D grade and a source. The chain S### → C### → D### is traceable from a link to a decision.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>Twelve steps, three decisions are yours</h3><p>The agent drives: brief → sources → research → situation → options → <b>choice</b> → strategies → validation → review → <b>decision</b> → monitoring.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>Honest options</h3><p>At least three substantively distinct ones, including “keep as is” and “shut it down”. A dedicated red-team subagent attacks each.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="4" y="3" width="12" height="14" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 7h6M7 10h6M7 13h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>State lives in files</h3><p>projects/&lt;slug&gt;/ stores everything. A new chat, another tool, a break — work resumes where it stopped, with no repeats.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 8.5h13M9.5 8.5v7" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>Formula Excel</h3><p>Four workbooks: unit economics, growth, cohorts, market. The input sheet holds the parameters — change them and the formulas recalculate.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 15V9M8 15V5M12 15v-4M16 15V7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>Transparency and cost</h3><p>An action log, grounds behind conclusions, cost in tokens and money: <code>pfs cost</code>, <code>pfs next</code>, <code>pfs check --strict</code>.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="talk" aria-labelledby="talk-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Communication</div>
+      <h2 id="talk-h">Three kinds of messages, <span class="acc">never more than three questions</span></h2>
+    </div>
+    <div class="rows">
+      <div class="row"><b>A task</b><p>“Why is in-app retention dropping”, “who should we sell the new service to” — plain language, no commands.</p></div>
+      <div class="row"><b>Answers to its questions</b><p>Pick an option or reply freely — the answer is stored and grounds the next steps.</p></div>
+      <div class="row"><b>Control phrases</b><p>“stop”, “clarify: …”, “build the six-pager” — process control (table below).</p></div>
+    </div>
+    <p class="muted" style="max-width:46em;margin:18px 0 0">A good first request names the decision to make: “Help me decide whether to launch antispam as a paid subscription; here is the brief and six months of data.” A weak one (“make me a strategy”) also works — the agent clarifies the decision, audience and constraints before spending your tokens.</p>
+  </div>
+</section>
+
+<section id="phrases" aria-labelledby="phrases-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Control</div>
+      <h2 id="phrases-h">Control <span class="acc">phrases</span></h2>
+    </div>
+    <div class="rows">
+      <div class="row"><b>“stop”</b><p>pause: state saved, the agent stays quiet until a new command</p></div>
+      <div class="row"><b>“clarify: …”</b><p>adjust the task; only the affected part is redone, sources are not duplicated</p></div>
+      <div class="row"><b>“redo section X”</b><p>targeted rework of a single document section</p></div>
+      <div class="row"><b>“what should I decide now”</b><p><code>pfs next</code>: current step, overdue decisions, stale grounds, open questions</p></div>
+      <div class="row"><b>“what is due”</b><p><code>pfs decision due</code>: decisions and commitments whose review date has arrived</p></div>
+      <div class="row"><b>“what will a new source affect”</b><p><code>pfs impact</code>: which conclusions, document lines and decisions go stale</p></div>
+      <div class="row"><b>“build the six-pager”</b><p><code>pfs calc all</code> + <code>pfs export --six-pager</code>: the FAQ-1…6 report and four Excel workbooks</p></div>
+      <div class="row"><b>“recalculate Excel”</b><p><code>pfs calc all</code> — workbooks rebuilt from the current calcs.json</p></div>
+      <div class="row"><b>“build the report” / “build the deck”</b><p><code>pfs export</code> → REPORT.md; <code>pfs export --deck</code> → an HTML deck</p></div>
+      <div class="row"><b>“make it a doc”</b><p><code>pfs docx file.md</code> — Markdown to Word, dependency-free</p></div>
+      <div class="row"><b>“check the project”</b><p><code>pfs check --strict</code> — numbers, links, options</p></div>
+      <div class="row"><b>“how much did it cost”</b><p><code>pfs cost</code> — tokens and money per model</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="quickstart" aria-labelledby="qs-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Quick start</div>
+      <h2 id="qs-h">Five minutes <span class="acc">to your first task</span></h2>
+      <p>You need Python 3.9+ and one of the supported tools. No packages to install — the standard library only. Secrets (MCP keys) go to <code>.env</code> — it is git-ignored and not required for the basic loop.</p>
+    </div>
+    <ol class="steps">
+      <li><span class="label">1 · Clone the repository</span><div class="cmd"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="Copied">Copy</button></div></li>
+      <li><span class="label">2 · Install pfs</span><div class="cmd"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="Copied">Copy</button></div></li>
+      <li><span class="label">3 · Check your setup</span><div class="cmd"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="Copied">Copy</button></div></li>
+      <li><span class="label">4 · Open the folder in your tool</span><div class="cmd"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="Copied">Copy</button></div></li>
+    </ol>
+  </div>
+</section>
+
+<section id="first" aria-labelledby="first-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">First project</div>
+      <h2 id="first-h">What happens <span class="acc">after pfs new</span></h2>
+    </div>
+    <div class="proof">
+      <div class="term" aria-label="Creating a first project">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
+        <pre><span class="p">$</span> pfs new "Name" "the request verbatim"
+<span class="hi">Created projects/&lt;slug&gt; · active project · next: intake</span></pre>
+      </div>
+      <div class="claim">
+        <div class="tags"><span class="tag a">step 1 · intake</span><span class="tag">up to three questions</span></div>
+        <p>The agent classifies the scenario, asks the intake question block — up to three questions with options and a recommendation — writes the brief to <code>outputs/00_brief.md</code> and stops for your approval. That is the first of three human pauses. Switch projects with <code>pfs use</code>, list them with <code>pfs list</code>, inspect state with <code>pfs status</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cycle" aria-labelledby="cycle-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">The cycle</div>
+      <h2 id="cycle-h">Twelve steps <span class="acc">in four phases</span></h2>
+      <p>Each step has mandatory knowledge cards, a question block, quality gates and an artifact. Progress shows in one line: “Step 3/12 · research · sources · next: situation”.</p>
+    </div>
+    <div class="phases">
+      <div class="ph"><h3>Research · 1–4</h3><ol><li class="h"><span class="n">1</span>Brief</li><li><span class="n">2</span>Sources</li><li><span class="n">3</span>Research</li><li><span class="n">4</span>Segments</li></ol></div>
+      <div class="ph"><h3>Define · 5–7</h3><ol><li><span class="n">5</span>Situation</li><li><span class="n">6</span>Options and red team</li><li class="h"><span class="n">7</span>Choice</li></ol></div>
+      <div class="ph"><h3>Develop · 8–10</h3><ol><li><span class="n">8</span>Strategies</li><li><span class="n">9</span>Validation plan</li><li><span class="n">10</span>Quality review</li></ol></div>
+      <div class="ph"><h3>Deliver · 11–12</h3><ol><li class="h"><span class="n">11</span>Decision</li><li><span class="n">12</span>Monitoring</li></ol></div>
+    </div>
+    <div class="rows" style="margin-top:44px">
+      <div class="row"><b>Steps 1–4 · research</b><p>registering sources with dedup and domain checks, a plan built from questions that could change the decision, claims with type and quote, personas and JTBD. Synthetic data yields hypotheses only.</p></div>
+      <div class="row"><b>Steps 5–7 · define</b><p>what is known and from where, what is not; options with economics and red-team objections; the human choice becomes the ground for the strategies.</p></div>
+      <div class="row"><b>Steps 8–10 · develop</b><p>product and communication strategies with a “promise → product proof” table, a validation plan with five mandatory sections, an independent rubric review.</p></div>
+      <div class="row"><b>Steps 11–12 · deliver</b><p>a decision with grounds, a metric and a review date; deadline monitoring and refreshing conclusions as new data arrives.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="demo" aria-labelledby="demo-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Demo</div>
+      <h2 id="demo-h">See a live run: <span class="acc">CVStart</span></h2>
+      <p>A full end-to-end run on a live open-source product: 12 steps, options A–E with red team, a RU and EN six-pager in three formats, four Excel workbooks, decision D001. The project lives in the <code>projects/</code> folder of the repository.</p>
+    </div>
+    <div class="ctas" style="margin-bottom:28px">
+      <a class="pill pill-a" href="demo.html" data-goal="cta_demo_click">Open the walkthrough<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="pill pill-b" href="materials.html" data-goal="cta_demo_click">Run materials<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    </div>
+    <div class="term" aria-label="How to repeat the run">
+      <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
+      <pre><span class="p">$</span> pfs use demo     <span class="p"># switch to the demo project</span>
+<span class="p">$</span> pfs next        <span class="p"># what to decide now</span>
+<span class="p">$</span> pfs check --strict
+<span class="p"># your own task:</span>
+<span class="p">$</span> pfs new "Name" "The request verbatim"</pre>
+    </div>
+  </div>
+</section>
+
+<section id="envs" aria-labelledby="envs-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="label">Tools</div>
+      <h2 id="envs-h">One folder — <span class="acc">any tool</span></h2>
+    </div>
+    <div class="grid">
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7 9l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Claude Code — the full experience</h3><p>Open the repository folder — skills, subagents, hooks (context at start, domains, instruction-like phrases, cost) and CLI commands are picked up automatically. Just write the task.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="3.5" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>Cursor, Codex, OpenCode, Windsurf, Copilot</h3><p>Every tool reads <code>AGENTS.md</code>. Start with “read AGENTS.md and run <code>pfs status</code>” — the agent restores the context and continues from the same step.</p></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="7" cy="10" r="3.5" stroke="currentColor" stroke-width="1.6"/><circle cx="13" cy="10" r="3.5" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>MCP server</h3><p><code>pfs-strategist</code> works in every tool: the same instruments over MCP — state, sources, claims, document export.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="faq" aria-labelledby="faq-h">
+  <div class="wrap faq">
+    <div class="head" style="margin:0"><div class="label">FAQ</div><h2 id="faq-h">Frequently <span class="acc">asked</span></h2></div>
+    <div>
+      <details><summary>How do I resume after a break?<span class="pm" aria-hidden="true">+</span></summary><p>All state lives in projects/&lt;slug&gt;/: state.json, claims.jsonl, decisions.jsonl, log.jsonl, sources/, outputs/. A new chat in the repository folder resumes from the same step; in a tool without hooks, write “read AGENTS.md and run pfs status”. Completed steps are never repeated.</p></details>
+      <details><summary>How do I move a project between tools?<span class="pm" aria-hidden="true">+</span></summary><p>A project is a plain folder: copy projects/&lt;slug&gt;/ (or git push/pull) and open it in another tool. Secrets in .env are not carried over automatically — move them by hand and never commit them.</p></details>
+      <details><summary>What data does the agent use?<span class="pm" aria-hidden="true">+</span></summary><p>Only open sources and the materials you hand over yourself. Allowed domains are set per project and checked before each request; instructions found inside source texts are never executed — they are flagged as data.</p></details>
+      <details><summary>What does pfs check verify?<span class="pm" aria-hidden="true">+</span></summary><p>A fact without a source — error; a fact resting only on synthetic data — error; a link to a missing or retracted C###/S###/D### — error with a replacement hint; a naked number in a document — warning; fewer than three options or no “keep as is” — error; a missing mandatory validation section — error.</p></details>
+      <details><summary>What about frequent errors?<span class="pm" aria-hidden="true">+</span></summary><p>“A fact without a source is not allowed” — by design: add a source or record a hypothesis. “The domain is not in the allowed list” — edit allowed_sources in project.json. “Extracted 0 characters” — the page renders via JavaScript: save the text by hand with --text-file.</p></details>
+      <details><summary>What do C###, S### and D### mean?<span class="pm" aria-hidden="true">+</span></summary><p>S### — a source with a quote and a hash, C### — a claim with a type and an A–D grade, D### — a decision with grounds and a review date. The committee’s six-page report is the six-pager; the option attack is the red team.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final" aria-labelledby="fin-h">
+  <div class="wrap">
+    <div class="box">
+      <div class="eyebrow">Open source · MIT</div>
+      <h2 id="fin-h">Next — <span class="acc">your own task</span></h2>
+      <p class="muted" style="margin:0;max-width:34em">For a deeper dive into steps, subagents, hooks and MCP, see the README and docs in the repository. Five minutes of setup is enough to start.</p>
+      <div class="ctas">
+        <a class="pill pill-a" href="index.html#install" data-goal="cta_install_click">Install<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <a class="pill pill-b" href="https://github.com/Fighter90/product-factory-strategist" data-goal="github_click">GitHub<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span style="color:var(--strong);font-weight:500">Product Factory Strategist</span>
+    <nav aria-label="Links"><a href="https://github.com/Fighter90/product-factory-strategist">GitHub</a><a href="help.html">Help</a><a href="materials.html">Demo materials</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/CHANGELOG.md">Changelog</a></nav>
+    <span>MIT · open source</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  function goal(name,params){if(window.ym&&window.YM_ID){window.ym(window.YM_ID,'reachGoal',name,params||{})}}
+  document.querySelectorAll('[data-goal]').forEach(function(el){
+    el.addEventListener('click',function(){goal(el.dataset.goal)});
+  });
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.parentNode.querySelector('code').textContent;
+      var done=function(){var o=b.textContent;b.textContent=b.dataset.ok||'OK';setTimeout(function(){b.textContent=o},1600)};
+      try{navigator.clipboard.writeText(t).then(done,done)}catch(e){done()}
+      goal('copy_command',{i:b.dataset.copy});
+    });
+  });
+  document.querySelectorAll('.mlink').forEach(function(d){
+    d.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click',function(){d.removeAttribute('open')});
+    });
+  });
+  document.querySelectorAll('details:not(.mlink)').forEach(function(d){
+    d.addEventListener('toggle',function(){
+      if(d.open){var s=d.querySelector('summary');goal('faq_open',{q:s?s.textContent.trim().slice(0,60):''})}
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -140,7 +140,7 @@ section{padding:110px 0;border-bottom:1px solid var(--line)}
 .term{border:1px solid var(--line2);border-radius:18px;background:#0D0C0A;overflow:hidden;min-width:0}
 .term .bar{display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid var(--line)}
 .term .bar i{width:10px;height:10px;border-radius:50%;background:var(--line2)}
-.term pre{margin:0;padding:18px 20px;overflow-x:auto;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
+.term pre{margin:0;padding:18px 20px;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
 .term .p{color:var(--muted)}.term .a{color:var(--strong)}.term .hi{color:var(--accent)}
 .claim{border:1px solid rgba(238,138,60,.45);border-radius:18px;background:var(--card);padding:24px;display:flex;flex-direction:column;gap:14px}
 .claim .tags{display:flex;gap:8px;flex-wrap:wrap}
@@ -202,6 +202,33 @@ footer{border-top:1px solid var(--line);padding:36px 0 calc(36px + env(safe-area
 footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
 footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}footer nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px}footer a:hover{color:var(--strong)}
 
+/* subpages (demo, help, materials): same system, hero without video */
+.subhero{padding:170px 0 72px;text-align:center;border-bottom:1px solid var(--line)}
+.subhero .inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:20px}
+.subhero p.lead{max-width:44em;margin:0;color:var(--text);font-size:18px}
+.links b{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;color:var(--strong);font-weight:500}
+p code,li code,dt code,dd code,blockquote code{font:500 .9em ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--strong);background:var(--bg2);border:1px solid var(--line2);border-radius:6px;padding:1px 6px}
+.coverfig{margin:56px auto 0;max-width:980px}
+.coverfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
+
+/* demo page: facts, options, decision */
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.mcard{padding:24px;border:1px solid var(--line2);border-radius:18px;background:var(--card);display:flex;flex-direction:column;gap:10px;min-width:0}
+.mcard b{font-size:24px;font-weight:500;color:var(--strong);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.mcard span{color:var(--muted);font-size:14px;line-height:1.5}
+.mcard i{font-style:normal;font-size:12px;color:var(--accent);letter-spacing:.04em}
+.rows{border-top:1px solid var(--line2)}
+.rows .row{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:24px;padding:18px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.rows .row b{color:var(--strong);font-weight:500;font-size:16px}
+.rows .row p{margin:0;color:var(--muted);font-size:15px}
+.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.shot{margin:0;border:1px solid var(--line2);border-radius:18px;background:var(--card);padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.shot img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}
+.shot figcaption{color:var(--muted);font-size:13px;line-height:1.5}
+.sixlist{display:grid;gap:8px;max-width:760px;margin:0 auto}
+.sixlist li{list-style:none;display:flex;gap:14px;align-items:baseline;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);font-size:14px;color:var(--muted)}
+.sixlist b{flex:none;color:var(--accent);font-weight:500;min-width:64px}
+
 @media (max-width:980px){
   .links{display:none}
   .mlink{display:block}
@@ -211,12 +238,14 @@ footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}fo
   .card,.card.w6,.card.w8{grid-column:1/-1}
   .phases{grid-template-columns:repeat(2,minmax(0,1fr))}
   .proof,.demo,.inst,.faq{grid-template-columns:minmax(0,1fr)}
+  .mgrid,.shots{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:640px){
   section{padding:80px 0}
   .hero{min-height:640px;padding:130px 0 80px}
-  .phases,.faqlist{grid-template-columns:minmax(0,1fr)}
-  .cmp .row{grid-template-columns:minmax(0,1fr);gap:4px}.cmp .row.hd{display:none}
+  .subhero{padding:140px 0 56px}
+  .phases,.faqlist,.mgrid,.shots{grid-template-columns:minmax(0,1fr)}
+  .cmp .row,.rows .row{grid-template-columns:minmax(0,1fr);gap:4px}.cmp .row.hd{display:none}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .facts span{border-left:0;padding:2px 10px}
   .nav .bar{gap:8px}
@@ -396,7 +425,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}fo
     <div class="proof">
       <div class="term" aria-label="An excerpt of an agent session in the demo project">
         <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
-        <pre><span class="p">$</span> pfs new "CVStart: paid version" "Build a commercial version of cvstart.org and take it to market worldwide"
+        <pre><span class="p">$</span> pfs new "CVStart: paid version" "Develop a commercial version of the cvstart.org project (an open-source AI resume builder and job search: a scan of 129 job boards, AI scoring, CV Studio, a local pipeline, 19 languages) — resume creation and job search — and a strategy to take it to market worldwide. Product: https://cvstart.org/, repository: https://github.com/Fighter90/career-ops-ui"
 <span class="a">Step 1/12 · intake</span> · brief confirmed · next: sources
 <span class="a">Step 2/12 · sources</span> · 10 sources · 0 blocked domains · next: research
 <span class="p">$</span> pfs claim add "Global online recruitment market: $37.97B in 2025 with a 7.1% CAGR to 2033" --kind fact --source S007 --grade B
@@ -434,8 +463,8 @@ footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}fo
     <div class="head" style="margin:0">
       <div class="label">Demo project</div>
       <h2 id="demo-h">CVStart: <span class="acc">a paid version</span> and a go-to-market plan</h2>
-      <p>The product lead’s request, word for word: “Build a commercial version of cvstart.org and a strategy to take it to market worldwide.” Numbers come from the project, not from hands.</p>
-      <div><a class="pill pill-b pill-sm" href="../demo.html" data-goal="cta_demo_click">Open the walkthrough<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>
+      <p>The product lead’s request, word for word: “Develop a commercial version of the cvstart.org project (an open-source AI resume builder and job search: a scan of 129 job boards, AI scoring, CV Studio, a local pipeline, 19 languages) — resume creation and job search — and a strategy to take it to market worldwide. Product: https://cvstart.org/, repository: https://github.com/Fighter90/career-ops-ui” Numbers come from the project, not from hands.</p>
+      <div><a class="pill pill-b pill-sm" href="demo.html" data-goal="cta_demo_click">Open the walkthrough<span class="arr"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>
     </div>
     <div>
       <!-- numbers are substituted by scripts/build_site.py from the demo project -->
@@ -456,7 +485,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}fo
     <div class="head" style="margin:0 auto 48px;text-align:center;align-items:center">
       <div class="label">Architecture</div>
       <h2 id="arch-h">The guarantees live <span class="acc">in code and files</span>, not in prompts</h2>
-      <p>CLI automated tests (420) check the core after every change. The project state lives in files next to the code — work survives breaks and moves between tools.</p>
+      <p>CLI automated tests (459) check the core after every change. The project state lives in files next to the code — work survives breaks and moves between tools.</p>
     </div>
     <div class="stack">
       <div class="layer"><span class="n">1</span><div><b>Environment · AGENTS.md</b><small>rules: a source for every number, synthetics produce hypotheses only, a human decides what matters · skills: 121 · subagents: 8 · hooks: 5</small></div></div>
@@ -522,7 +551,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}fo
 <footer>
   <div class="wrap">
     <span style="color:var(--strong);font-weight:500">Product Factory Strategist</span>
-    <nav aria-label="Links"><a href="https://github.com/Fighter90/product-factory-strategist">GitHub</a><a href="../help.html">Help</a><a href="../materials.html">Demo materials</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/CHANGELOG.md">Changelog</a></nav>
+    <nav aria-label="Links"><a href="https://github.com/Fighter90/product-factory-strategist">GitHub</a><a href="help.html">Help</a><a href="materials.html">Demo materials</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/CHANGELOG.md">Changelog</a></nav>
     <span>MIT · open source</span>
   </div>
 </footer>

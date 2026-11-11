@@ -876,7 +876,9 @@ def _page(lang_attrs: str, title: str, desc: str, canonical: str, hreflangs: str
     # шунт PRO-66: {{BRAND}} в body мог не замениться из-за порядка ключей маппинга
     body = body.replace("{{BRAND}}", BRAND_SVG)
     full = head + body + tail
-    mapping = {"CSS": CSS, "JS": JS, "YM": tokens.pop("YM", "")}
+    # YM не pop(): один словарь языка переиспользуется всеми страницами языка —
+    # pop съедал загрузчик Метрики у всех страниц, кроме первой.
+    mapping = {"CSS": CSS, "JS": JS, "YM": tokens.get("YM", "")}
     mapping.update(tokens)
     return render(full, mapping)
 
