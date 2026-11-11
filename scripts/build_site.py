@@ -350,7 +350,10 @@ def product_facts() -> dict:
             f"Числа EN-перевода {PRODUCT_CLAIM} расходятся с реестром: "
             f"{_num_tokens(text)} != {_num_tokens(PRODUCT_DESC_EN)} — обновите "
             f"PRODUCT_DESC_EN в scripts/build_site.py")
-    return {"PRODUCT": text, "PRODUCT_EN": PRODUCT_DESC_EN}
+    sources = claim.get("sources") or []
+    if not sources:
+        raise BuildError(f"У {PRODUCT_CLAIM} нет источника — описание без цепочки")
+    return {"PRODUCT": text, "PRODUCT_EN": PRODUCT_DESC_EN, "PRODUCT_SRC": sources[0]}
 
 
 def decision_details() -> dict:
@@ -870,6 +873,8 @@ def _page(lang_attrs: str, title: str, desc: str, canonical: str, hreflangs: str
 {{YM}}
 </body>
 </html>"""
+    # шунт PRO-66: {{BRAND}} в body мог не замениться из-за порядка ключей маппинга
+    body = body.replace("{{BRAND}}", BRAND_SVG)
     full = head + body + tail
     mapping = {"CSS": CSS, "JS": JS, "YM": tokens.pop("YM", "")}
     mapping.update(tokens)
@@ -1528,18 +1533,22 @@ def _subnav(lang: str, current: str, pair: str) -> str:
     парный переключатель языка, CTA на установку. current — ключ активного пункта."""
     t = _SUB_LABELS[lang]
     other = "en" if lang == "ru" else "ru"
-    links = []
+    links: list[str] = []
+    panel: list[str] = []
     for key in _SUB_LINKS:
-        item = (f'<b aria-current="page">{t[key]}</b>' if key == current
-                else f'<a href="{_SUB_HREFS[key]}">{t[key]}</a>')
-        links.append(item)
-    panel = "".join(f'<a href="{_SUB_HREFS[key]}"{" aria-current=\"page\"" if key == current else ""}>'
-                    f'{t[key]}</a>' for key in _SUB_LINKS)
+        label = t[key]
+        href = _SUB_HREFS[key]
+        if key == current:
+            links.append('<b aria-current="page">{0}</b>'.format(label))
+            panel.append('<a href="{0}" aria-current="page">{1}</a>'.format(href, label))
+        else:
+            links.append('<a href="{0}">{1}</a>'.format(href, label))
+            panel.append('<a href="{0}">{1}</a>'.format(href, label))
     return f"""<header class="nav">
   <div class="wrap">
     <div class="bar">
       <a class="brand" href="index.html" aria-label="{t['brand_label']}">
-        {{{{BRAND}}}}
+        {BRAND_SVG}
         {t['brand']}
       </a>
       <nav class="links" aria-label="{t['nav_label']}">{''.join(links)}</nav>
@@ -1547,7 +1556,7 @@ def _subnav(lang: str, current: str, pair: str) -> str:
       <a class="pill pill-a pill-sm" href="index.html#install" data-goal="cta_install_click">{t['cta']}{ARROW}</a>
       <details class="mlink">
         <summary aria-label="{t['menu_label']}"><span class="b" aria-hidden="true"></span></summary>
-        <nav class="mlink-panel" aria-label="{t['nav_label']}">{panel}</nav>
+        <nav class="mlink-panel" aria-label="{t['nav_label']}">{''.join(panel)}</nav>
       </details>
     </div>
   </div>
@@ -1619,7 +1628,7 @@ DEMO_BODY_RU = f"""
     </div>
     <div class="claim" style="max-width:760px;margin:24px auto 0">
       <div class="tags"><span class="tag a">шаг 1 · intake</span><span class="tag">00_brief.md</span></div>
-      <p>Решение по результату брифа — выбор стратегии коммерциализации и глобального GTM. Ось сравнения: рост платящих подписчиков и ARR. Ограничения: open-source core остаётся MIT, соло-разработчик, доверие локального режима не ломается.</p>
+      <p>Задача руководителя дословно: «{{{{RQ}}}}» Решение по результату брифа — выбор стратегии коммерциализации и глобального GTM. Ось сравнения: рост платящих подписчиков и ARR. Ограничения: open-source core остаётся MIT, соло-разработчик, доверие локального режима не ломается.</p>
     </div>
   </div>
 </section>
@@ -1826,7 +1835,7 @@ DEMO_BODY_EN = f"""
     </div>
     <div class="claim" style="max-width:760px;margin:24px auto 0">
       <div class="tags"><span class="tag a">step 1 · intake</span><span class="tag">00_brief.md</span></div>
-      <p>The decision the brief targets: pick a commercialization strategy and a global go-to-market plan. Comparison axis: growth in paying subscribers and ARR. Constraints: the open-source core stays MIT, a solo developer, and trust in the local mode is preserved.</p>
+      <p>The product lead’s request, word for word: “{{{{RQ}}}}” The decision the brief targets: pick a commercialization strategy and a global go-to-market plan. Comparison axis: growth in paying subscribers and ARR. Constraints: the open-source core stays MIT, a solo developer, and trust in the local mode is preserved.</p>
     </div>
   </div>
 </section>
@@ -2330,7 +2339,7 @@ HELP_BODY_EN = f"""
     <div class="head">
       <div class="label">Demo</div>
       <h2 id="demo-h">See a live run: <span class="acc">CVStart</span></h2>
-      <p>A full end-to-end run on a live open-source product: 12 steps, options A–{{{{D_OPT_LAST}}}} with red team, a RU and EN six-pager in three formats, four Excel workbooks, decision D001. The project lives in <code>projects/демо/</code> in the repository.</p>
+      <p>A full end-to-end run on a live open-source product: 12 steps, options A–{{{{D_OPT_LAST}}}} with red team, a RU and EN six-pager in three formats, four Excel workbooks, decision D001. The project lives in the <code>projects/</code> folder of the repository.</p>
     </div>
     <div class="ctas" style="margin-bottom:28px">
       <a class="pill pill-a" href="demo.html" data-goal="cta_demo_click">Open the walkthrough{ARROW}</a>
@@ -2454,10 +2463,10 @@ MAT_BODY_RU = f"""
       <p>Книги в <code>outputs/attachments/</code>: редактируемые вводные на листе «Ввод» — формулы пересчитываются при открытии, допущения меняются на лету. Каждое значение «Ввода» прослеживается до утверждения реестра.</p>
     </div>
     <div class="grid">
-      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 8.5h13M9.5 8.5v7" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>unit_economics.xlsx</h3><p>Вклад платящего ${{{{XL_CM}}}}, LTV ≈ ${{{{XL_LTV}}}}, LTV/CAC ≈ {{{{{XL_RATIO}}}}}, чувствительность к цене и оттоку.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/unit_economics.xlsx" target="_blank" rel="noopener">Открыть книгу{ARROW}</a></div></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 8.5h13M9.5 8.5v7" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>unit_economics.xlsx</h3><p>Вклад платящего ${{{{XL_CM}}}}, LTV ≈ ${{{{XL_LTV}}}}, LTV/CAC ≈ {{{{XL_RATIO}}}}, чувствительность к цене и оттоку.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/unit_economics.xlsx" target="_blank" rel="noopener">Открыть книгу{ARROW}</a></div></article>
       <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 15V9M8 15V5M12 15v-4M16 15V7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>growth_model.xlsx</h3><p>Модель роста на 12 месяцев: воронка визиты → регистрации → активации → платящие → MRR; сверка с ожиданием беты.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/growth_model.xlsx" target="_blank" rel="noopener">Открыть книгу{ARROW}</a></div></article>
       <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h14M10 3c2.5 2.2 2.5 11.8 0 14M10 3c-2.5 2.2-2.5 11.8 0 14" stroke="currentColor" stroke-width="1.2"/></svg></div><h3>cohort_retention.xlsx</h3><p>Когорты удержания по неделям: возвращаемость активированных и платящих, база для плана проверки.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/cohort_retention.xlsx" target="_blank" rel="noopener">Открыть книгу{ARROW}</a></div></article>
-      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>market_sizing.xlsx</h3><p>Адресуемый рынок онлайн-рекрутинга: {{{{{MF5_VALUE}}}}} как база, консервативная граница коридора оценок, выход на SOM через конверсии.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/market_sizing.xlsx" target="_blank" rel="noopener">Открыть книгу{ARROW}</a></div></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>market_sizing.xlsx</h3><p>Адресуемый рынок онлайн-рекрутинга: {{{{MF5_VALUE}}}} как база, консервативная граница коридора оценок, выход на SOM через конверсии.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/market_sizing.xlsx" target="_blank" rel="noopener">Открыть книгу{ARROW}</a></div></article>
     </div>
   </div>
 </section>
@@ -2489,8 +2498,8 @@ MAT_BODY_RU = f"""
     </div>
     <div class="grid">
       <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 3h8l2 3v11H4V6l2-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div><h3>REPORT.md</h3><p>Полный документ прогона: бриф, картина ситуации, варианты, стратегии, план проверки, решение — с тегами C### у каждого числа.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/REPORT.md" target="_blank" rel="noopener">Открыть{ARROW}</a></div></article>
-      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 10h6M10 4v12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>sources/ — {{{{{D_SOURCES}}}}} источников</h3><p>Рыночные дайджесты с URL, датой извлечения и хешем; разрешённые домены заданы в project.json.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/sources" target="_blank" rel="noopener">Каталог источников{ARROW}</a></div></article>
-      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="4" y="3" width="12" height="14" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 7h6M7 10h6M7 13h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>claims.jsonl — {{{{{D_CLAIMS}}}}} утверждений</h3><p>Каждое с типом (факт, гипотеза, прогноз, допущение, вывод), силой A–D и источником. Синтетика помечена origin=synthetic — это гипотезы, не доказанный спрос.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/claims.jsonl" target="_blank" rel="noopener">Реестр{ARROW}</a></div></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 10h6M10 4v12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>sources/ — {{{{D_SOURCES}}}} источников</h3><p>Рыночные дайджесты с URL, датой извлечения и хешем; разрешённые домены заданы в project.json.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/sources" target="_blank" rel="noopener">Каталог источников{ARROW}</a></div></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="4" y="3" width="12" height="14" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 7h6M7 10h6M7 13h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>claims.jsonl — {{{{D_CLAIMS}}}} утверждений</h3><p>Каждое с типом (факт, гипотеза, прогноз, допущение, вывод), силой A–D и источником. Синтетика помечена origin=synthetic — это гипотезы, не доказанный спрос.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/claims.jsonl" target="_blank" rel="noopener">Реестр{ARROW}</a></div></article>
     </div>
     <div class="grid" style="margin-top:16px">
       <article class="card w6"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="4.5" stroke="currentColor" stroke-width="1.6"/><path d="M11.5 11.5 16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>cvstart.org — сайт продукта</h3><p>Живой продукт демо: AI-конструктор резюме и дашборд поиска работы, локальный режим, открытый код.</p><div class="ctas"><a class="pill pill-b pill-sm" href="https://cvstart.org/" target="_blank" rel="noopener" data-goal="github_click">Открыть сайт{ARROW}</a></div></article>
@@ -2584,10 +2593,10 @@ MAT_BODY_EN = f"""
       <p>The workbooks live in <code>outputs/attachments/</code>: editable inputs on the input sheet — formulas recalculate on open, assumptions change on the fly. Every input value traces back to a registry claim.</p>
     </div>
     <div class="grid">
-      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 8.5h13M9.5 8.5v7" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>unit_economics.xlsx</h3><p>Per-paying-user contribution ${{{{XL_CM}}}}, LTV ≈ ${{{{XL_LTV}}}}, LTV/CAC ≈ {{{{{XL_RATIO}}}}}, sensitivity to price and churn.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/unit_economics.xlsx" target="_blank" rel="noopener">Open workbook{ARROW}</a></div></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 8.5h13M9.5 8.5v7" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>unit_economics.xlsx</h3><p>Per-paying-user contribution ${{{{XL_CM}}}}, LTV ≈ ${{{{XL_LTV}}}}, LTV/CAC ≈ {{{{XL_RATIO}}}}, sensitivity to price and churn.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/unit_economics.xlsx" target="_blank" rel="noopener">Open workbook{ARROW}</a></div></article>
       <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 15V9M8 15V5M12 15v-4M16 15V7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>growth_model.xlsx</h3><p>A 12-month growth model: the funnel visits → signups → activations → paying users → MRR, cross-checked against the beta expectation.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/growth_model.xlsx" target="_blank" rel="noopener">Open workbook{ARROW}</a></div></article>
       <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h14M10 3c2.5 2.2 2.5 11.8 0 14M10 3c-2.5 2.2-2.5 11.8 0 14" stroke="currentColor" stroke-width="1.2"/></svg></div><h3>cohort_retention.xlsx</h3><p>Weekly retention cohorts: return rates of activated and paying users — the base for the validation plan.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/cohort_retention.xlsx" target="_blank" rel="noopener">Open workbook{ARROW}</a></div></article>
-      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>market_sizing.xlsx</h3><p>The addressable online-recruiting market: {{{{{MF5_VALUE}}}}} as the base, the conservative floor of the estimate range, and the path to SOM through conversion rates.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/market_sizing.xlsx" target="_blank" rel="noopener">Open workbook{ARROW}</a></div></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>market_sizing.xlsx</h3><p>The addressable online-recruiting market: {{{{MF5_VALUE}}}} as the base, the conservative floor of the estimate range, and the path to SOM through conversion rates.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/attachments/market_sizing.xlsx" target="_blank" rel="noopener">Open workbook{ARROW}</a></div></article>
     </div>
   </div>
 </section>
@@ -2619,8 +2628,8 @@ MAT_BODY_EN = f"""
     </div>
     <div class="grid">
       <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 3h8l2 3v11H4V6l2-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div><h3>REPORT.md</h3><p>The run’s full document: brief, situation, options, strategies, validation plan, decision — with a C### tag on every number.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/outputs/REPORT.md" target="_blank" rel="noopener">Open{ARROW}</a></div></article>
-      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 10h6M10 4v12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>sources/ — {{{{{D_SOURCES}}}}} sources</h3><p>Market digests with URLs, retrieval dates and hashes; the allowed domains are set in project.json.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/sources" target="_blank" rel="noopener">The source folder{ARROW}</a></div></article>
-      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="4" y="3" width="12" height="14" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 7h6M7 10h6M7 13h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>claims.jsonl — {{{{{D_CLAIMS}}}}} claims</h3><p>Each with a type (fact, hypothesis, forecast, assumption, inference), an A–D grade and a source. Synthetic entries are tagged origin=synthetic — hypotheses, not proven demand.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/claims.jsonl" target="_blank" rel="noopener">The registry{ARROW}</a></div></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 10h6M10 4v12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>sources/ — {{{{D_SOURCES}}}} sources</h3><p>Market digests with URLs, retrieval dates and hashes; the allowed domains are set in project.json.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/sources" target="_blank" rel="noopener">The source folder{ARROW}</a></div></article>
+      <article class="card"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="4" y="3" width="12" height="14" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 7h6M7 10h6M7 13h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>claims.jsonl — {{{{D_CLAIMS}}}} claims</h3><p>Each with a type (fact, hypothesis, forecast, assumption, inference), an A–D grade and a source. Synthetic entries are tagged origin=synthetic — hypotheses, not proven demand.</p><div class="ctas"><a class="pill pill-b pill-sm" href="{DEMO_DIR}/claims.jsonl" target="_blank" rel="noopener">The registry{ARROW}</a></div></article>
     </div>
     <div class="grid" style="margin-top:16px">
       <article class="card w6"><div class="ic"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="4.5" stroke="currentColor" stroke-width="1.6"/><path d="M11.5 11.5 16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><h3>cvstart.org — the product site</h3><p>The live product in this demo: an AI resume builder and job-search dashboard, a local mode, open source.</p><div class="ctas"><a class="pill pill-b pill-sm" href="https://cvstart.org/" target="_blank" rel="noopener" data-goal="github_click">Open the site{ARROW}</a></div></article>
@@ -2684,6 +2693,10 @@ def build(out: Path, ym_id: str | None) -> list[Path]:
     tokens.update(demo_numbers())
     tokens.update(claim_facts())
     tokens.update(excel_numbers())
+    tokens.update(demo_request())
+    tokens.update(market_facts())
+    tokens.update(product_facts())
+    tokens.update(decision_details())
     tokens["YM"] = YM_LOADER.replace("@ID@", ym_id) if ym_id else ""
 
     ru_title = "Стратег Фабрики продуктов — ИИ-агент для руководителя продукта"
@@ -2695,25 +2708,118 @@ def build(out: Path, ym_id: str | None) -> list[Path]:
                "every number, genuinely different options, a committee six-pager and follow-up "
                "after the decision.")
 
-    # Пер-языковые подстановки: KIND/TEXT/SEG/DATE/USAGE/REVIEW/YOU/префикс ассетов
-    ru = dict(tokens)
-    ru.update({"KIND": tokens["KIND_RU"], "TEXT": tokens["TEXT"], "SEG": tokens["SEG_RU"],
-               "DATE": tokens["DATE_RU"], "USAGE": tokens["USAGE_RU"], "REVIEW": tokens["REVIEW_RU"],
-               "DOM": tokens["C_DOM"], "A": "", "BRAND": BRAND_SVG, "YOU": "вы"})
-    en = dict(tokens)
-    en.update({"KIND": tokens["KIND_EN"], "TEXT": tokens["TEXT_EN"], "SEG": tokens["SEG_EN"],
-               "DATE": tokens["DATE_EN"], "USAGE": tokens["USAGE_EN"], "REVIEW": tokens["REVIEW_EN"],
-               "DOM": tokens["C_DOM"], "A": "../", "BRAND": BRAND_SVG, "YOU": "you",
-               # метка выбранного варианта — EN-перевод, не текст русского 03_options.md
-               "D_LABEL": tokens["D_LABEL_EN"]})
+    # Пер-языковые подстановки: KIND/TEXT/SEG/DATE/USAGE/REVIEW/YOU/RQ/MF*/D_* —
+    # RU берёт значения реестра как есть, EN — переводы, сверенные по числам.
+    def lang_map(lang: str) -> dict:
+        en = lang == "en"
+        m = dict(tokens)
+        m.update({
+            "KIND": tokens["KIND_EN" if en else "KIND_RU"],
+            "TEXT": tokens["TEXT_EN" if en else "TEXT"],
+            "SEG": tokens["SEG_EN" if en else "SEG_RU"],
+            "DATE": tokens["DATE_EN" if en else "DATE_RU"],
+            "USAGE": tokens["USAGE_EN" if en else "USAGE_RU"],
+            "REVIEW": tokens["REVIEW_EN" if en else "REVIEW_RU"],
+            "DOM": tokens["C_DOM"],
+            "A": "../" if en else "",
+            "BRAND": BRAND_SVG,
+            "YOU": "you" if en else "вы",
+            "RQ": tokens["RQ_EN" if en else "RQ_RU"],
+            "PRODUCT": tokens["PRODUCT_EN" if en else "PRODUCT"],
+            "PRODUCT_SRC": tokens["PRODUCT_SRC"],
+            "D_TITLE": tokens["D_TITLE_EN" if en else "D_TITLE"],
+            "D_METRIC": tokens["D_METRIC_EN" if en else "D_METRIC"],
+            "D_COMMIT": tokens["D_COMMIT_EN" if en else "D_COMMIT"],
+            "D_TRIGGER": tokens["D_TRIGGER_EN" if en else "D_TRIGGER"],
+            "D_DUE": tokens["D_DUE_EN" if en else "D_DUE_RU"],
+            "D_BY": tokens["D_BY_EN" if en else "D_BY_RU"],
+        })
+        if en:
+            # метка выбранного варианта — EN-перевод, не текст русского 03_options.md
+            m["D_LABEL"] = tokens["D_LABEL_EN"]
+        for i in range(len(MARKET_FACTS)):
+            m[f"MF{i}_VALUE"] = tokens[f"MF{i}_VALUE_EN"] if en else tokens[f"MF{i}_VALUE"]
+        return m
 
-    ru_page = _page("ru", ru_title, ru_desc, f"{BASE}/", _og("ru", ru_title, ru_desc, f"{BASE}/"),
-                    RU_BODY, ru)
-    en_page = _page("en", en_title, en_desc, f"{BASE}/en/", _og("en", en_title, en_desc, f"{BASE}/en/"),
-                    EN_BODY, en)
+    ru, en = lang_map("ru"), lang_map("en")
+
+    # Шапки подстраниц: активный пункт и парный переключатель языка — raw-токен NAV
+    ru["NAV"] = _subnav("ru", "demo", "en/demo.html")
+    en["NAV"] = _subnav("en", "demo", "../demo.html")
+    ru_demo = _page("ru", "Демо-разбор CVStart — от запроса до решения",
+                    "Сквозной прогон агента на живом open-source продукте cvstart.org: "
+                    "дословный запрос, рынок с источниками, варианты и red team, "
+                    "six-pager RU и EN и решение D001 с обязательствами.",
+                    f"{BASE}/demo.html", _hreflangs(f"{BASE}/demo.html", f"{BASE}/en/demo.html"),
+                    _og("ru", "Демо-разбор CVStart — от запроса до решения",
+                        "Дословный запрос, рынок с источниками, варианты и red team, "
+                        "six-pager RU и EN и решение D001.", f"{BASE}/demo.html"),
+                    DEMO_BODY_RU, ru)
+    en_demo = _page("en", "CVStart demo walkthrough — from a request to a decision",
+                    "An end-to-end run of the agent on the live open-source product "
+                    "cvstart.org: the verbatim request, the market with sources, red-teamed "
+                    "options, a RU and EN six-pager and decision D001 with commitments.",
+                    f"{BASE}/en/demo.html", _hreflangs(f"{BASE}/demo.html", f"{BASE}/en/demo.html"),
+                    _og("en", "CVStart demo walkthrough — from a request to a decision",
+                        "The verbatim request, the market with sources, red-teamed options, "
+                        "a six-pager in two languages and decision D001.",
+                        f"{BASE}/en/demo.html"),
+                    DEMO_BODY_EN, en)
+    ru["NAV"] = _subnav("ru", "help", "en/help.html")
+    en["NAV"] = _subnav("en", "help", "../help.html")
+    ru_help = _page("ru", "Справка — Стратег Фабрики продуктов",
+                    "Как пользоваться агентом: три вида сообщений, управляющие фразы, "
+                    "быстрый старт, цикл из 12 шагов, среды и ответы на частые вопросы.",
+                    f"{BASE}/help.html", _hreflangs(f"{BASE}/help.html", f"{BASE}/en/help.html"),
+                    _og("ru", "Справка — Стратег Фабрики продуктов",
+                        "Управляющие фразы, команды, цикл из 12 шагов и частые вопросы.",
+                        f"{BASE}/help.html"),
+                    HELP_BODY_RU, ru)
+    en_help = _page("en", "Help — Product Factory Strategist",
+                    "How to work with the agent: three kinds of messages, control phrases, "
+                    "a quick start, the twelve-step cycle, supported tools and FAQ.",
+                    f"{BASE}/en/help.html", _hreflangs(f"{BASE}/help.html", f"{BASE}/en/help.html"),
+                    _og("en", "Help — Product Factory Strategist",
+                        "Control phrases, commands, the twelve-step cycle and FAQ.",
+                        f"{BASE}/en/help.html"),
+                    HELP_BODY_EN, en)
+    ru["NAV"] = _subnav("ru", "materials", "en/materials.html")
+    en["NAV"] = _subnav("en", "materials", "../materials.html")
+    ru_mat = _page("ru", "Материалы демо CVStart — six-pager, Excel, реестры",
+                   "Все материалы прогона на cvstart.org: six-pager комитета в двух языках "
+                   "и трёх форматах, четыре книги Excel, скриншоты продукта и реестры "
+                   "источников и утверждений.",
+                   f"{BASE}/materials.html",
+                   _hreflangs(f"{BASE}/materials.html", f"{BASE}/en/materials.html"),
+                   _og("ru", "Материалы демо CVStart — six-pager, Excel, реестры",
+                       "Six-pager в двух языках и трёх форматах, книги Excel, реестры "
+                       "источников и утверждений.", f"{BASE}/materials.html"),
+                   MAT_BODY_RU, ru)
+    en_mat = _page("en", "CVStart demo materials — six-pager, Excel, registries",
+                   "Everything the CVStart run produced: a committee six-pager in two "
+                   "languages and three formats, four Excel workbooks, product screenshots "
+                   "and the source and claim registries.",
+                   f"{BASE}/en/materials.html",
+                   _hreflangs(f"{BASE}/materials.html", f"{BASE}/en/materials.html"),
+                   _og("en", "CVStart demo materials — six-pager, Excel, registries",
+                       "A six-pager in two languages and three formats, Excel workbooks, "
+                       "the source and claim registries.", f"{BASE}/en/materials.html"),
+                   MAT_BODY_EN, en)
+
+    ru_page = _page("ru", ru_title, ru_desc, f"{BASE}/", _hreflangs(f"{BASE}/", f"{BASE}/en/"),
+                    _og("ru", ru_title, ru_desc, f"{BASE}/"), RU_BODY, ru)
+    en_page = _page("en", en_title, en_desc, f"{BASE}/en/", _hreflangs(f"{BASE}/", f"{BASE}/en/"),
+                    _og("en", en_title, en_desc, f"{BASE}/en/"), EN_BODY, en)
 
     written = []
-    for rel, content in ((Path("index.html"), ru_page), (Path("en") / "index.html", en_page)):
+    for rel, content in ((Path("index.html"), ru_page),
+                         (Path("en") / "index.html", en_page),
+                         (Path("demo.html"), ru_demo),
+                         (Path("en") / "demo.html", en_demo),
+                         (Path("help.html"), ru_help),
+                         (Path("en") / "help.html", en_help),
+                         (Path("materials.html"), ru_mat),
+                         (Path("en") / "materials.html", en_mat)):
         path = out / rel
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")

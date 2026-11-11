@@ -55,17 +55,16 @@ class SubpagesBase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        if cls.built:
-            return
-        tmp = Path(tempfile.mkdtemp(prefix="pfs-subpages-"))
-        r = subprocess.run([sys.executable, str(SCRIPT), "--out", str(tmp)],
-                           cwd=ROOT, capture_output=True, text=True)
-        assert r.returncode == 0, f"сборка упала:\n{r.stdout}\n{r.stderr}"
-        cls.built["ru"] = (tmp / "index.html").read_text(encoding="utf-8")
-        cls.built["en"] = (tmp / "en" / "index.html").read_text(encoding="utf-8")
-        for key, rel in SUBPAGES.items():
-            cls.built[key] = (tmp / rel).read_text(encoding="utf-8")
-        cls.tmp = tmp
+        if not cls.built:
+            tmp = Path(tempfile.mkdtemp(prefix="pfs-subpages-"))
+            r = subprocess.run([sys.executable, str(SCRIPT), "--out", str(tmp)],
+                               cwd=ROOT, capture_output=True, text=True)
+            assert r.returncode == 0, f"сборка упала:\n{r.stdout}\n{r.stderr}"
+            cls.built["ru"] = (tmp / "index.html").read_text(encoding="utf-8")
+            cls.built["en"] = (tmp / "en" / "index.html").read_text(encoding="utf-8")
+            for key, rel in SUBPAGES.items():
+                cls.built[key] = (tmp / rel).read_text(encoding="utf-8")
+            SubpagesBase.tmp = tmp
 
 
 class TestSubpagesGenerated(SubpagesBase):
@@ -333,10 +332,11 @@ class TestInternalLinks(SubpagesBase):
         return out
 
     def test_all_links_resolve(self):
-        page_dirs = {"ru": self.tmp, "en": self.tmp / "en"}
+        # страницы деплоятся в корень site/, ассеты берутся из закоммиченного дерева
+        site = ROOT / "site"
+        page_dirs = {"ru": site, "en": site / "en"}
         for key, rel in SUBPAGES.items():
-            base = self.tmp / rel.parent
-            page_dirs[key] = base
+            page_dirs[key] = site / rel.parent
         for key, page in self.built.items():
             for target in self._targets(page, page_dirs[key]):
                 self.assertTrue(target.exists(), f"{key}: битая ссылка → {target}")
