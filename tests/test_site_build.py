@@ -46,16 +46,12 @@ def n_hooks() -> int:
 
 
 def n_tests() -> int:
-    """Число тестовых функций по AST — тот же способ, что в build_site._count_tests."""
-    import ast
+    """Единое измерение: build_site._count_tests — то же число, что идёт на сайт.
 
-    total = 0
-    for p in (ROOT / "tests").glob("test_*.py"):
-        tree = ast.parse(p.read_text(encoding="utf-8"))
-        for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test"):
-                total += 1
-    return total
+    Ревью PRO-66: своя копия «def test* по AST» — второе измерение, которое
+    может разойтись с генератором. Делегируем ровно тому счётчику, который
+    подставляет {{N_TESTS}}."""
+    return _load_build_module()._count_tests(ROOT / "tests")
 
 
 def _jsonl(path: Path) -> list[dict]:

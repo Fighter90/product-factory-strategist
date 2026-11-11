@@ -116,22 +116,52 @@ def repo_numbers() -> dict:
 
 
 def _count_tests(tests_dir: Path) -> int:
-    """Число тестовых функций по AST: строковый поиск «def test_» ловит и
-    фикстуры-строки в самих тестах (как test_x в test_build_site.py)."""
+    """Единое измерение тестов: сколько запустит `python3 -m unittest discover -s tests`.
+
+    Ревью PRO-66: подсчёт «def test*» по всему AST ловил помощников, вложенные
+    функции и методы не-TestCase классов — другое измерение, чем discovery.
+    Discovery собирает методы с префиксом «test» в классах unittest.TestCase,
+    поэтому считаем по AST методы «test_*» только в TestCase-классах —
+    напрямую или через базовые классы того же файла (SiteBuildBase и т.п.),
+    только на верхнем уровне модуля (вложенные классы discovery не видит).
+    Равенство с настоящим discovery закреплено тестом
+    tests/test_pro66_review_numbers.py::TestCountTestsOneMethod."""
     import ast
 
-    n = 0
+    def base_names(node: "ast.ClassDef") -> list[str]:
+        names = []
+        for b in node.bases:
+            name = getattr(b, "id", None) or getattr(b, "attr", None)
+            if isinstance(name, str):
+                names.append(name)
+        return names
+
+    total = 0
     for p in sorted(tests_dir.glob("test_*.py")):
         try:
             tree = ast.parse(p.read_text(encoding="utf-8"))
         except SyntaxError as e:
             raise BuildError(f"{p}: не парсится — автотесты не посчитать: {e}") from e
-        for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test"):
-                n += 1
-    if n == 0:
+        classes = {c.name: c for c in tree.body if isinstance(c, ast.ClassDef)}
+        cases: set[str] = set()
+        changed = True
+        while changed:  # разрешаем цепочки наследования любого размера
+            changed = False
+            for name, c in classes.items():
+                if name in cases:
+                    continue
+                if any(b.endswith("TestCase") or b in cases for b in base_names(c)):
+                    cases.add(name)
+                    changed = True
+        for c in classes.values():
+            if c.name not in cases:
+                continue
+            total += sum(1 for node in c.body
+                         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                         and node.name.startswith("test_"))
+    if total == 0:
         raise BuildError("В tests пусто: нет автотестов")
-    return n
+    return total
 
 
 def _require(m: "re.Match | None", what: str, where: Path) -> str:
@@ -520,19 +550,42 @@ def _num_decimals(raw: str) -> int:
 
 
 def _xlsx_values(path: Path) -> list[float]:
-    """Все числа кэша значений Excel-приложения (числа считываются из <v> узлов)."""
+    """Числа кэша значений Excel-приложения — только из числовых ячеек.
+
+    Ревью PRO-66: у строковых ячеек <c t="s"> в <v> лежит индекс общего
+    списка строк (sharedStrings), а не число; у булевых <c t="b"> — 0/1,
+    у формул-строк <c t="str"> — текст. Если парсить <v> подряд, float
+    от случайного индекса попадает в сверку и она может пройти ложно.
+    Числовыми считаем ячейки без t и с t="n"; inlineStr-текст (<is><t>)
+    и всё остальное пропускаем."""
     if not path.exists():
         raise BuildError(f"Нет Excel-приложения для сверки: {path}")
     import zipfile
+    import xml.etree.ElementTree as ET
+
+    def localname(tag: object) -> str | None:
+        # лист может быть с пространством имён (Excel) и без него
+        return tag.rsplit("}", 1)[-1] if isinstance(tag, str) else None
 
     vals: list[float] = []
     with zipfile.ZipFile(path) as z:
         for name in z.namelist():
             if not name.startswith("xl/worksheets/"):
                 continue
-            for v in re.findall(r"<v>([^<]+)</v>", z.read(name).decode("utf-8")):
+            try:
+                root = ET.fromstring(z.read(name))
+            except ET.ParseError as e:
+                raise BuildError(f"{path} / {name}: не парсится — сверка невозможна: {e}") from e
+            for el in root.iter():
+                if localname(el.tag) != "c":
+                    continue
+                if el.get("t") not in (None, "n"):
+                    continue
+                v = next((ch for ch in el if localname(ch.tag) == "v"), None)
+                if v is None or not (v.text or "").strip():
+                    continue
                 try:
-                    vals.append(float(v.replace(",", ".")))
+                    vals.append(float(v.text.strip().replace(",", ".")))
                 except ValueError:
                     continue
     if not vals:

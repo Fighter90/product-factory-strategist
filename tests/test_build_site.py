@@ -310,7 +310,13 @@ class TestRepoNumbersLoud(unittest.TestCase):
                  (".claude/skills/s1", "SKILL.md", "x"),
                  (".claude/agents", "a.md", "x"),
                  (".claude/hooks", "h.py", "x"),
-                 ("tests", "test_x.py", "def test_x(self):\n    pass\n"))
+                 # счётчик тестов = измерение unittest discovery: методы test_*
+                 # в TestCase-классе, а не «def test*» где угодно (раунд ревью)
+                 ("tests", "test_x.py",
+                  "import unittest\n"
+                  "class T(unittest.TestCase):\n"
+                  "    def test_x(self):\n"
+                  "        pass\n"))
         for rel, fname, body in files:
             d = root / rel
             d.mkdir(parents=True, exist_ok=True)
