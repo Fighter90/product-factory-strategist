@@ -10,7 +10,7 @@
 |---|---|
 | Шагов модели (step-finish) | 131 |
 | Вызовов инструментов | 141 (shell 103, write 12, websearch 12, edit 5, read 4, subagent 4, grep 1) |
-| Ошибок инструментов | 11 |
+| Ошибок инструментов | 8 |
 | Токены | вход 198 334 · выход 68 500 |
 | Стоимость | $0.00 (подписка, план) |
 | Время | 47,8 мин |
@@ -21,7 +21,7 @@
 
 ## Остановки
 
-Пауз с вопросом человеку (`pfs ask`): **12**; закрыто самим агентом в режиме автопрогона (`pfs answer`): **12**. Ручных «продолжи»: **0** — прогон шёл одной сессией.
+Пауз с вопросом человеку (`pfs ask`): **11**; закрыто самим агентом в режиме автопрогона (`pfs answer`): **11**. Ручных «продолжи»: **0** — прогон шёл одной сессией.
 
 ## Ошибки инструментов
 
@@ -31,10 +31,7 @@
 - `shell`: python3 -m tools.pfs questions research; echo ===; cat knowledge/templates/research_plan.md → Ошибка: Блок не найден: research. Шаги: intake, discovery, situation, options, choice, strategy, validation, decision | === | # План исследования: <проект> |  | > Шаг research. Строится от вопросов, которые могут изменить решение. Вопрос без влияни
 - `shell`: python3 -m tools.pfs interview guide --persona "Самохостер-энтузиаст OSS, 30–45, UK, r/selfhosted" && python3 -m tools.pfs interview guide --persona "Мейнстрим- → Ошибка: interview guide: укажите тему --topic | 
 - `shell`: python3 -m tools.pfs source add https://www.asa.org.uk/type/non_broadcast --published 2026-01-01 → Ошибка: Не удалось загрузить https://www.asa.org.uk/type/non_broadcast: HTTP Error 404: Not Found. Сохраните страницу вручную или передайте текст через --text-file | 
-- `subagent`: {'agent': 'general', 'description': 'Evidence-auditor: аудит реестра', 'prompt': 'Ты — независимый evidence-auditor. Проведи ревизию реестра улик и документов п → <subagent sessionID="ses_e36bcd03fffePQNn25w32UkeQj" state="completed"> | Шаг 9/12 · review · ревизия реестра (C001–C028, S001–S018) и документов 00–06 проведена · 13 находок, из них 1 high; до lock — 5 обязательных правок |  | # Ревизия улик: пл
 - `shell`: cd projects/платный-тариф-open-source-приложения-uk/outputs && python3 - <<'EOF' | fixes = { |  '03_options.md': [('[C007]', '[C031]'), ('[C025]', '[C038]')], |  '04_ → done | /Users/sergejemelanov/.local/bin/python3: Error while finding module specification for 'tools.pfs' (ModuleNotFoundError: No module named 'tools') | 
-- `grep`: {'pattern': 'def cmd_claim|supersede', 'path': 'tools', 'include': '*.py'} → Found 21 matches | /private/var/folders/4b/0y6yft3n5875tj4f6nys5ff80000gn/T/pfs-e2e-ru.YTweuD/clone/tools/pfs/project.py: |   Line 208:         lines.append(f"⚠ Устаревшие основания: {len(due['stale_grounds'])} — pfs decision rebase / claim sup
-- `read`: {'limit': 30, 'offset': 183, 'path': 'tools/pfs/claims.py'} → Read file tools/pfs/claims.py, lines 183-212 | 183: def supersede(pdir: Path, cid: str, text: str, kind: str | None = None, sources: list[str] | None = None, | 184:               confidence: str | None = None, reason: str = "", derived_from: li
 - `shell`: python3 -m tools.pfs claim add "Порог обязательной регистрации НДС в UK — £90,000 оборота за скользящие 12 месяцев" --kind fact --source S005 --grade A --quote  → C044 [факт] записано | C045 [факт] записано | C046 [факт] записано | C047 [факт] записано | Ошибка: Вывод (inference) должен ссылаться на утверждения: --from C001,C002 | 
 
 ## Финальные реплики агента
