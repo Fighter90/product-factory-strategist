@@ -5,311 +5,311 @@
 
 ## Problem statement (`intake`)
 
-- [AI in research — what to delegate to models, prompting, RAG and context engineering, validation of outputs](methods_en/ai-in-research.md) `M-ai-in-research` — en, summary
-- [Research brief and product hypotheses — business vs research goals, if-then format, ICE scoring, decision log](methods_en/brief-hypotheses.md) `M-brief-hypotheses` — en, summary
-- [Double Diamond — diverge/converge process frame, phase gates, mapping to the strategy workflow steps](methods_en/double-diamond.md) `M-double-diamond` — en, summary
-- [External environment — market types (B2C…B2B2C), PESTLE registry, hype vs trend, PAM–TAM–SAM–SOM potential calculation](methods_en/external-environment.md) `M-external-environment` — en, summary
-- [GenAI product — justification algorithm, autonomy modes, LLM basics (tokens, context, latency, cost), 6-stage lifecycle, model selection](methods_en/genai-product-development.md) `M-genai-product-development` — en, summary
-- [JTBD and Advanced JTBD — job statements, job graphs, value = benefit − investments, superdiscovery, expert interviews, barriers, aha-moment](methods_en/jtbd.md) `M-jtbd` — en, summary
-- [Lean Canvas — business hypotheses on one page, the riskiest cell and its cheapest test](methods_en/lean-canvas.md) `M-lean-canvas` — en, summary
-- [Problem design — problem vs symptom, root cause (5 whys), research choice, ICE/RICE/Kano scoring](methods_en/problem-design.md) `M-problem-design` — en, summary
-- [Product context — PM role, lifecycle stage detection, perimeter, strategy = stage × context](methods_en/product-context.md) `M-product-context` — en, summary
-- [Product frameworks map — which framework for which phase, prioritization methods and metric families](methods_en/product-frameworks.md) `M-product-frameworks` — en, summary
-- [Product metrics — metric validity, funnels (step vs through conversion), retention and cohorts, metric tree, NSM, guardrails, drop triage](methods_en/product-metrics.md) `M-product-metrics` — en, summary
-- [Research types and method choice — Double Diamond, CustDev, qual vs quant, desk research, benchmark](methods_en/research-types.md) `M-research-types` — en, summary
-- [Methods map — PM question → which cards to read and in what order; routes by task type, agent process phase, and product stage](methods_en/skills-map.md) `M-skills-map` — en, summary
-- [Product strategy, growth models and types — five components, unfair advantage, goal cascade, document skeleton](methods_en/strategy-growth.md) `M-strategy-growth` — en, summary
-- [Synthetic respondents (AI simulation) — permitted uses, persona spec, mandatory labeling, evidence rules](methods_en/synthetic-respondents.md) `M-synthetic-respondents` — en, summary
-- [UX research frameworks — star brief, JTBD, Job Stories and choosing the right artifact](methods_en/ux-frameworks.md) `M-ux-frameworks` — en, summary
+- [AI in research — what to delegate, risks, validation and tool categories](methods_en/ai-in-research.md) `M-ai-in-research` — ai, llm, prompting, rag, context-engineering
+- [Research brief and hypothesis formulation](methods_en/brief-hypotheses.md) `M-brief-hypotheses` — brief, hypotheses, research-goal, business-goal, ice
+- [Double Diamond — the process frame from problem to solution](methods_en/double-diamond.md) `M-double-diamond` — process, frameworks, double-diamond, diverge-converge, phase-gates
+- [External environment analysis — market types, PESTEL, trend or hype, potential calculation](methods_en/external-environment.md) `M-external-environment` — pestel, trends, hype, market-sizing, market-types
+- [GenAI product — viability, lifecycle, LLM basics and model selection](methods_en/genai-product-development.md) `M-genai-product-development` — ai, llm, genai, viability, product-lifecycle
+- [JTBD and Advanced JTBD — jobs, job graphs, expert interviews, superdiscovery, barriers, aha-moment](methods_en/jtbd.md) `M-jtbd` — jtbd, ajtbd, job-graph, value, barriers
+- [Lean Canvas — business hypotheses on one page](methods_en/lean-canvas.md) `M-lean-canvas` — business-model, lean-canvas, hypotheses, value-proposition, early-adopters
+- [Problem design — problem vs symptom, root cause, research choice, prioritization](methods_en/problem-design.md) `M-problem-design` — problem, symptom, root-cause, five-whys, problem-hypothesis
+- [Product context — PM role, product lifecycle, perimeter and the strategic slice](methods_en/product-context.md) `M-product-context` — product-context, pm-role, lifecycle, perimeter, stage-detection
+- [Product frameworks — what, when and why](methods_en/product-frameworks.md) `M-product-frameworks` — frameworks, prioritization, metrics, process, hadi
+- [Product metrics — types, funnels, retention and cohorts, the metric tree, NSM, counter-metrics](methods_en/product-metrics.md) `M-product-metrics` — metrics, funnels, retention, cohorts, nsm
+- [Research types and choosing a method for the question](methods_en/research-types.md) `M-research-types` — research, qualitative, quantitative, desk-research, benchmark
+- [Methods map: a product leader's question → which cards, and in what order](methods_en/skills-map.md) `M-skills-map` — methods-navigation, routing, skills-map, route-by-question, competency-matrix
+- [Product strategy, growth types and the structure of a strategy document](methods_en/strategy-growth.md) `M-strategy-growth` — product-strategy, growth, ansoff, cascading, unfair-advantage
+- [Synthetic respondents (AI simulation) — permitted use, persona specification, mandatory labeling](methods_en/synthetic-respondents.md) `M-synthetic-respondents` — synthetic-respondents, ai, personas, hypotheses, labeling
+- [UX research frameworks — the brief, JTBD, Job Stories and choosing an artifact](methods_en/ux-frameworks.md) `M-ux-frameworks` — ux, frameworks, brief, jtbd, job-stories
 
 ## Research (`research`)
 
-- [AI in research — what to delegate to models, prompting, RAG and context engineering, validation of outputs](methods_en/ai-in-research.md) `M-ai-in-research` — en, summary
-- [Target audience research — segmentation bases, portrait→segment→persona, recruiting with screeners and traps](methods_en/audience-research.md) `M-audience-research` — en, summary
-- [Basic statistics for product decisions — means, spread, confidence intervals, error types, power](methods_en/basic-statistics-pm.md) `M-basic-statistics-pm` — en, summary
-- [Benchmarking — reference values for retention, conversion, churn, CAC; P25–P50–P95 ranges, comparability checks, biases, triangulation](methods_en/benchmarking.md) `M-benchmarking` — en, summary
-- [Research brief and product hypotheses — business vs research goals, if-then format, ICE scoring, decision log](methods_en/brief-hypotheses.md) `M-brief-hypotheses` — en, summary
-- [Customer Journey Map — as-is and to-be, barrier and opportunity detection, layers with sources, metrics per stage](methods_en/cjm.md) `M-cjm` — en, summary
-- [Competitors — types, competitive landscape, Porter's five forces, Strategy Canvas, JTBD alternative map](methods_en/competitors.md) `M-competitors` — en, summary
-- [Continuous Discovery — opportunity solution tree and weekly touchpoints](methods_en/continuous-discovery.md) `M-continuous-discovery` — en, summary
-- [Customers and segments — who the client is, segmentation approaches, six scoring criteria, four forces of progress, target-segment choice](methods_en/customers.md) `M-customers` — en, summary
-- [Dashboards and visualization for product managers — 4-level structure, chart-per-question, honest axes, annotations](methods_en/dashboards-visualization.md) `M-dashboards-visualization` — en, summary
-- [Design thinking and UX design — Double Diamond, empathy, POV and HMW, ideation and selection, low-fi prototypes, corridor tests, CJM/User Flow/BPMN](methods_en/design-thinking.md) `M-design-thinking` — en, summary
-- [Ethnography, diary studies and dogfooding — observing what people do rather than say](methods_en/dogfooding.md) `M-dogfooding` — en, summary
-- [Double Diamond — diverge/converge process frame, phase gates, mapping to the strategy workflow steps](methods_en/double-diamond.md) `M-double-diamond` — en, summary
-- [Dual-Track Agile — discovery and delivery in parallel](methods_en/dual-track-agile.md) `M-dual-track-agile` — en, summary
-- [External environment — market types (B2C…B2B2C), PESTLE registry, hype vs trend, PAM–TAM–SAM–SOM potential calculation](methods_en/external-environment.md) `M-external-environment` — en, summary
-- [GenAI assistant as a product system — components, LLM-limit mitigations, orchestration and agent patterns](methods_en/genai-assistant-architecture.md) `M-genai-assistant-architecture` — en, summary
-- [GenAI product — justification algorithm, autonomy modes, LLM basics (tokens, context, latency, cost), 6-stage lifecycle, model selection](methods_en/genai-product-development.md) `M-genai-product-development` — en, summary
-- [In-depth interviews — four types, guide, moderation techniques, difficult respondents, ethics and consent](methods_en/in-depth-interviews.md) `M-in-depth-interviews` — en, summary
-- [Analyzing and presenting in-depth interview results — coding, categories, evidence strength, reporting](methods_en/interview-analysis.md) `M-interview-analysis` — en, summary
-- [JTBD and Advanced JTBD — job statements, job graphs, value = benefit − investments, superdiscovery, expert interviews, barriers, aha-moment](methods_en/jtbd.md) `M-jtbd` — en, summary
-- [Adjacent landscapes — marketing, tech, sales, business models and the three lenses of innovation](methods_en/landscapes.md) `M-landscapes` — en, summary
-- [Lean Startup — Build-Measure-Learn, validated learning, pivots](methods_en/lean-startup.md) `M-lean-startup` — en, summary
-- [Market sizing PAM/TAM/SAM/SOM — funnel formulas, top-down vs bottom-up, units, sanity checks](methods_en/market-sizing.md) `M-market-sizing` — en, summary
-- [Marketing research — brand health tracking, U&A, Kano, MaxDiff, TURF for attribute prioritization](methods_en/marketing-research.md) `M-marketing-research` — en, summary
-- [Product ecosystem audit — scenario-based search for platformization candidates, core vs customization](methods_en/platform-ecosystem-audit.md) `M-platform-ecosystem-audit` — en, summary
-- [Platform types and platformization criteria — ecosystem vs internal platforms, core and contracts, network effects, four criteria, anti-patterns](methods_en/platforms-types-criteria.md) `M-platforms-types-criteria` — en, summary
-- [PMF Survey (Sean Ellis) — the 40% 'very disappointed' test](methods_en/pmf-survey.md) `M-pmf-survey` — en, summary
-- [Problem design — problem vs symptom, root cause (5 whys), research choice, ICE/RICE/Kano scoring](methods_en/problem-design.md) `M-problem-design` — en, summary
-- [Product context — PM role, lifecycle stage detection, perimeter, strategy = stage × context](methods_en/product-context.md) `M-product-context` — en, summary
-- [Product frameworks map — which framework for which phase, prioritization methods and metric families](methods_en/product-frameworks.md) `M-product-frameworks` — en, summary
-- [Product metrics — metric validity, funnels (step vs through conversion), retention and cohorts, metric tree, NSM, guardrails, drop triage](methods_en/product-metrics.md) `M-product-metrics` — en, summary
-- [Quantitative methods — survey methodology, sampling and power, validity, statistical analysis, visualization](methods_en/quant-methods.md) `M-quant-methods` — en, summary
-- [Research types and method choice — Double Diamond, CustDev, qual vs quant, desk research, benchmark](methods_en/research-types.md) `M-research-types` — en, summary
-- [Methods map — PM question → which cards to read and in what order; routes by task type, agent process phase, and product stage](methods_en/skills-map.md) `M-skills-map` — en, summary
-- [Source criticism for analytical reports — evidence grades A–D, triangulation, red flags, evidence log](methods_en/source-criticism.md) `M-source-criticism` — en, summary
-- [SQL for product analytics — DAU/funnel/cohort/ARPU queries, joins and window functions (ROW_NUMBER, LAG), CTE, data-quality checklist](methods_en/sql-for-pm.md) `M-sql-for-pm` — en, summary
-- [Synthetic respondents (AI simulation) — permitted uses, persona spec, mandatory labeling, evidence rules](methods_en/synthetic-respondents.md) `M-synthetic-respondents` — en, summary
-- [Trend analysis and scenario planning — signals vs hype, three horizons, 2×2 scenarios, no-regret moves](methods_en/trends-scenarios.md) `M-trends-scenarios` — en, summary
-- [UX backlog and research knowledge base — atomic research, triage, metric links, retracting insights](methods_en/ux-backlog.md) `M-ux-backlog` — en, summary
-- [UX research frameworks — star brief, JTBD, Job Stories and choosing the right artifact](methods_en/ux-frameworks.md) `M-ux-frameworks` — en, summary
-- [Van Westendorp Price Sensitivity Meter — price perception research](methods_en/van-westendorp.md) `M-van-westendorp` — en, summary
-- [Workshops and facilitation — brief, participants, minute-by-minute scenario, divergence→convergence tools, difficult participants, protocol and follow-up](methods_en/workshops.md) `M-workshops` — en, summary
+- [AI in research — what to delegate, risks, validation and tool categories](methods_en/ai-in-research.md) `M-ai-in-research` — ai, llm, prompting, rag, context-engineering
+- [Target audience research, segmentation, personas and recruiting](methods_en/audience-research.md) `M-audience-research` — target-audience, segmentation, personas, audience-portrait, recruiting
+- [Basic statistics for product decisions — means, spread, confidence intervals, type I/II errors, power](methods_en/basic-statistics-pm.md) `M-basic-statistics-pm` — statistics, mean, median, percentile, variance
+- [Benchmarking — reference values for metrics and checking whether they apply](methods_en/benchmarking.md) `M-benchmarking` — benchmarking, retention, churn, conversion, comparability
+- [Research brief and hypothesis formulation](methods_en/brief-hypotheses.md) `M-brief-hypotheses` — brief, hypotheses, research-goal, business-goal, ice
+- [Customer Journey Map (CJM) — as-is and to-be, barriers and opportunities](methods_en/cjm.md) `M-cjm` — cjm, journey-map, as-is, to-be, barriers
+- [Competitors — types, competitive landscape, five forces, Strategy Canvas, JTBD map](methods_en/competitors.md) `M-competitors` — competitors, competitive-landscape, porter-five-forces, strategy-canvas, blue-ocean
+- [Continuous Discovery — continuous discovery: the opportunity solution tree and weekly client touchpoints](methods_en/continuous-discovery.md) `M-continuous-discovery` — discovery, opportunity-solution-tree, interviews, touchpoints, risks
+- [Customers and segments — who the client is, how to segment and choose the target segment](methods_en/customers.md) `M-customers` — segmentation, target-segment, customers, decision-maker, jtbd
+- [Visualization and dashboards for product managers — purpose, a 4-level structure, chart rules and a checklist](methods_en/dashboards-visualization.md) `M-dashboards-visualization` — visualization, dashboards, hero-kpi, funnel-chart, annotations
+- [Design thinking and user experience design](methods_en/design-thinking.md) `M-design-thinking` — design-thinking, double-diamond, empathy, point-of-view, hmw
+- [Ethnography, diary studies and dogfooding](methods_en/dogfooding.md) `M-dogfooding` — ethnography, observation, contextual-interview, shadowing, diary-studies
+- [Double Diamond — the process frame from problem to solution](methods_en/double-diamond.md) `M-double-diamond` — process, frameworks, double-diamond, diverge-converge, phase-gates
+- [Dual-Track Agile — discovery and delivery tracks in parallel](methods_en/dual-track-agile.md) `M-dual-track-agile` — discovery, delivery, sprint, parallel-tracks, definition-of-ready
+- [External environment analysis — market types, PESTEL, trend or hype, potential calculation](methods_en/external-environment.md) `M-external-environment` — pestel, trends, hype, market-sizing, market-types
+- [GenAI assistant as a product system — components, LLM-limit mitigations, orchestration and agent patterns](methods_en/genai-assistant-architecture.md) `M-genai-assistant-architecture` — genai, llm, assistant, agent, orchestration
+- [GenAI product — viability, lifecycle, LLM basics and model selection](methods_en/genai-product-development.md) `M-genai-product-development` — ai, llm, genai, viability, product-lifecycle
+- [In-depth interviews: preparation, conduct, ethics](methods_en/in-depth-interviews.md) `M-in-depth-interviews` — in-depth-interviews, interview-guide, recruiting, interview-questions, research-ethics
+- [Analysis and presentation of in-depth interview results](methods_en/interview-analysis.md) `M-interview-analysis` — interview-analysis, coding, categories, insights, evidence-strength
+- [JTBD and Advanced JTBD — jobs, job graphs, expert interviews, superdiscovery, barriers, aha-moment](methods_en/jtbd.md) `M-jtbd` — jtbd, ajtbd, job-graph, value, barriers
+- [Adjacent landscapes — marketing, technology, business model and the functions of business](methods_en/landscapes.md) `M-landscapes` — business-model, marketing, technology, sales, three-lenses
+- [Lean Startup — Build-Measure-Learn, validated learning and pivots](methods_en/lean-startup.md) `M-lean-startup` — build-measure-learn, mvp, innovation-accounting, pivot, hypotheses
+- [Market sizing (PAM / TAM / SAM / SOM) — a reproducible market funnel with sources and sanity checks](methods_en/market-sizing.md) `M-market-sizing` — market-sizing, tam, sam, som, top-down
+- [Marketing research: brand tracking, Kano, MaxDiff, TURF](methods_en/marketing-research.md) `M-marketing-research` — marketing-research, bht, brand-tracking, u-a, kano
+- [Product ecosystem audit for finding platform opportunities](methods_en/platform-ecosystem-audit.md) `M-platform-ecosystem-audit` — platforms, audit, ecosystem, product-domain, scenarios
+- [Platform types and platformization criteria](methods_en/platforms-types-criteria.md) `M-platforms-types-criteria` — platforms, platformization, core, contracts, network-effects
+- [PMF survey (Sean Ellis) — "how disappointed would you be if the product disappeared?" and working with the 40%](methods_en/pmf-survey.md) `M-pmf-survey` — pmf, survey, sean-ellis, 40-percent, segmentation
+- [Problem design — problem vs symptom, root cause, research choice, prioritization](methods_en/problem-design.md) `M-problem-design` — problem, symptom, root-cause, five-whys, problem-hypothesis
+- [Product context — PM role, product lifecycle, perimeter and the strategic slice](methods_en/product-context.md) `M-product-context` — product-context, pm-role, lifecycle, perimeter, stage-detection
+- [Product frameworks — what, when and why](methods_en/product-frameworks.md) `M-product-frameworks` — frameworks, prioritization, metrics, process, hadi
+- [Product metrics — types, funnels, retention and cohorts, the metric tree, NSM, counter-metrics](methods_en/product-metrics.md) `M-product-metrics` — metrics, funnels, retention, cohorts, nsm
+- [Quantitative methods: survey, sampling, data analysis](methods_en/quant-methods.md) `M-quant-methods` — survey, questionnaire, sampling, sample-size, representativeness
+- [Research types and choosing a method for the question](methods_en/research-types.md) `M-research-types` — research, qualitative, quantitative, desk-research, benchmark
+- [Methods map: a product leader's question → which cards, and in what order](methods_en/skills-map.md) `M-skills-map` — methods-navigation, routing, skills-map, route-by-question, competency-matrix
+- [Source criticism and analytical reports — the evidence scale, provenance tracking](methods_en/source-criticism.md) `M-source-criticism` — sources, credibility, triangulation, red-flags, evidence-log
+- [SQL for product analytics — typical queries (funnel, cohorts, ARPU), joins and window functions, data quality](methods_en/sql-for-pm.md) `M-sql-for-pm` — sql, funnel, retention, cohorts, arpu
+- [Synthetic respondents (AI simulation) — permitted use, persona specification, mandatory labeling](methods_en/synthetic-respondents.md) `M-synthetic-respondents` — synthetic-respondents, ai, personas, hypotheses, labeling
+- [Trend analysis and scenario planning](methods_en/trends-scenarios.md) `M-trends-scenarios` — trends, trend-watching, scenarios, delphi, backcasting
+- [UX backlog, research knowledge base and big picture — how to store insights so they can be reused and retracted](methods_en/ux-backlog.md) `M-ux-backlog` — ux-backlog, atomic-research, big-picture, knowledge-base, insights
+- [UX research frameworks — the brief, JTBD, Job Stories and choosing an artifact](methods_en/ux-frameworks.md) `M-ux-frameworks` — ux, frameworks, brief, jtbd, job-stories
+- [Van Westendorp Price Sensitivity Meter — a method for researching price perception (PSM)](methods_en/van-westendorp.md) `M-van-westendorp` — pricing, psm, van-westendorp, willingness-to-pay, price-sensitivity
+- [Workshops and facilitation — how to run a session that ends with a decision](methods_en/workshops.md) `M-workshops` — workshops, facilitation, hmw, divergence, convergence
 
 ## Options (`options`)
 
-- [A/B testing full cycle — hypothesis to decision, sample size and MDE, corrections, SRM, alternatives when randomization is impossible](methods_en/ab-testing.md) `M-ab-testing` — en, summary
-- [AI in research — what to delegate to models, prompting, RAG and context engineering, validation of outputs](methods_en/ai-in-research.md) `M-ai-in-research` — en, summary
-- [Auctions and marketplaces — auction mechanics (GFP/GSP/VCG), selection rules, money and market-health metrics, toxic revenue](methods_en/auctions-marketplaces.md) `M-auctions-marketplaces` — en, summary
-- [Target audience research — segmentation bases, portrait→segment→persona, recruiting with screeners and traps](methods_en/audience-research.md) `M-audience-research` — en, summary
-- [Benchmarking — reference values for retention, conversion, churn, CAC; P25–P50–P95 ranges, comparability checks, biases, triangulation](methods_en/benchmarking.md) `M-benchmarking` — en, summary
-- [Business model, PLG/MLG/SLG growth engines, lifecycle and death valley, Three Lenses of innovation](methods_en/business-models.md) `M-business-models` — en, summary
-- [Cannibalization of products, features, plans and channels — increment vs gross effect, transfer matrix, baseline calculation, modeling](methods_en/cannibalization.md) `M-cannibalization` — en, summary
-- [Customer Journey Map — as-is and to-be, barrier and opportunity detection, layers with sources, metrics per stage](methods_en/cjm.md) `M-cjm` — en, summary
-- [Competitors — types, competitive landscape, Porter's five forces, Strategy Canvas, JTBD alternative map](methods_en/competitors.md) `M-competitors` — en, summary
-- [Continuous Discovery — opportunity solution tree and weekly touchpoints](methods_en/continuous-discovery.md) `M-continuous-discovery` — en, summary
-- [Crossing the Chasm — from early enthusiasts to pragmatics](methods_en/crossing-chasm.md) `M-crossing-chasm` — en, summary
-- [Customers and segments — who the client is, segmentation approaches, six scoring criteria, four forces of progress, target-segment choice](methods_en/customers.md) `M-customers` — en, summary
-- [Design thinking and UX design — Double Diamond, empathy, POV and HMW, ideation and selection, low-fi prototypes, corridor tests, CJM/User Flow/BPMN](methods_en/design-thinking.md) `M-design-thinking` — en, summary
-- [Ethnography, diary studies and dogfooding — observing what people do rather than say](methods_en/dogfooding.md) `M-dogfooding` — en, summary
-- [Double Diamond — diverge/converge process frame, phase gates, mapping to the strategy workflow steps](methods_en/double-diamond.md) `M-double-diamond` — en, summary
-- [Dual-Track Agile — discovery and delivery in parallel](methods_en/dual-track-agile.md) `M-dual-track-agile` — en, summary
-- [External environment — market types (B2C…B2B2C), PESTLE registry, hype vs trend, PAM–TAM–SAM–SOM potential calculation](methods_en/external-environment.md) `M-external-environment` — en, summary
-- [Forecasting and traction analytics — baseline with seasonality, driver model, rollout, MAPE, forecast boundaries](methods_en/forecasting-product.md) `M-forecasting-product` — en, summary
-- [GenAI assistant as a product system — components, LLM-limit mitigations, orchestration and agent patterns](methods_en/genai-assistant-architecture.md) `M-genai-assistant-architecture` — en, summary
-- [LLM Evals — golden sets, LLM-as-judge, guardrails, degradation monitoring](methods_en/genai-evals.md) `M-genai-evals` — en, summary
-- [AI Feature Patterns — taxonomy, error cost, and UX mitigations](methods_en/genai-feature-patterns.md) `M-genai-feature-patterns` — en, summary
-- [GenAI product — justification algorithm, autonomy modes, LLM basics (tokens, context, latency, cost), 6-stage lifecycle, model selection](methods_en/genai-product-development.md) `M-genai-product-development` — en, summary
-- [GenAI prototype — problem statement, minimal build, golden-set regression testing, develop/iterate/kill decision](methods_en/genai-prototyping.md) `M-genai-prototyping` — en, summary
-- [Goals, growth drivers, streams, focuses, product bets and the initiative portfolio](methods_en/goals-drivers-bets.md) `M-goals-drivers-bets` — en, summary
-- [Growth frameworks — AARRR, HEART, Flywheel, Growth Loops, Growth Model Canvas; choosing and checking the loop math (K = i × c)](methods_en/growth-frameworks.md) `M-growth-frameworks` — en, summary
+- [A/B testing — the full cycle from hypothesis to decision, and alternatives when a classic test is impossible](methods_en/ab-testing.md) `M-ab-testing` — ab-testing, experiment-design, mde, sample-size, p-value
+- [AI in research — what to delegate, risks, validation and tool categories](methods_en/ai-in-research.md) `M-ai-in-research` — ai, llm, prompting, rag, context-engineering
+- [Auctions and marketplaces (mechanics, metrics, market health)](methods_en/auctions-marketplaces.md) `M-auctions-marketplaces` — auctions, marketplace, gsp, vcg, gfp
+- [Target audience research, segmentation, personas and recruiting](methods_en/audience-research.md) `M-audience-research` — target-audience, segmentation, personas, audience-portrait, recruiting
+- [Benchmarking — reference values for metrics and checking whether they apply](methods_en/benchmarking.md) `M-benchmarking` — benchmarking, retention, churn, conversion, comparability
+- [Business model, PLG / MLG / SLG and the Three Lenses of Innovation](methods_en/business-models.md) `M-business-models` — business-models, plg, mlg, slg, desirability
+- [Cannibalization of products, features, plans and channels](methods_en/cannibalization.md) `M-cannibalization` — cannibalization, flow-over, increment, metric-tradeoffs, plans
+- [Customer Journey Map (CJM) — as-is and to-be, barriers and opportunities](methods_en/cjm.md) `M-cjm` — cjm, journey-map, as-is, to-be, barriers
+- [Competitors — types, competitive landscape, five forces, Strategy Canvas, JTBD map](methods_en/competitors.md) `M-competitors` — competitors, competitive-landscape, porter-five-forces, strategy-canvas, blue-ocean
+- [Continuous Discovery — continuous discovery: the opportunity solution tree and weekly client touchpoints](methods_en/continuous-discovery.md) `M-continuous-discovery` — discovery, opportunity-solution-tree, interviews, touchpoints, risks
+- [Crossing the Chasm — the transition from early enthusiasts to pragmatists](methods_en/crossing-chasm.md) `M-crossing-chasm` — chasm, segmentation, beachhead, whole-product, pragmatists
+- [Customers and segments — who the client is, how to segment and choose the target segment](methods_en/customers.md) `M-customers` — segmentation, target-segment, customers, decision-maker, jtbd
+- [Design thinking and user experience design](methods_en/design-thinking.md) `M-design-thinking` — design-thinking, double-diamond, empathy, point-of-view, hmw
+- [Ethnography, diary studies and dogfooding](methods_en/dogfooding.md) `M-dogfooding` — ethnography, observation, contextual-interview, shadowing, diary-studies
+- [Double Diamond — the process frame from problem to solution](methods_en/double-diamond.md) `M-double-diamond` — process, frameworks, double-diamond, diverge-converge, phase-gates
+- [Dual-Track Agile — discovery and delivery tracks in parallel](methods_en/dual-track-agile.md) `M-dual-track-agile` — discovery, delivery, sprint, parallel-tracks, definition-of-ready
+- [External environment analysis — market types, PESTEL, trend or hype, potential calculation](methods_en/external-environment.md) `M-external-environment` — pestel, trends, hype, market-sizing, market-types
+- [Forecasting and traction analytics — baseline, seasonality, driver model, forecast accuracy and limits](methods_en/forecasting-product.md) `M-forecasting-product` — forecast, baseline, seasonality, time-series, drivers
+- [GenAI assistant as a product system — components, LLM-limit mitigations, orchestration and agent patterns](methods_en/genai-assistant-architecture.md) `M-genai-assistant-architecture` — genai, llm, assistant, agent, orchestration
+- [Evaluating the quality of LLM features (LLM evals) — golden set, LLM-as-judge, guardrails and degradation monitoring](methods_en/genai-evals.md) `M-genai-evals` — ai, llm, evals, golden-set, llm-as-judge
+- [AI feature patterns in products — a taxonomy (autocorrect → generation → classification → chat → copilot → agent), the error cost and UX mitigations](methods_en/genai-feature-patterns.md) `M-genai-feature-patterns` — ai, llm, feature-patterns, copilot, agent
+- [GenAI product — viability, lifecycle, LLM basics and model selection](methods_en/genai-product-development.md) `M-genai-product-development` — ai, llm, genai, viability, product-lifecycle
+- [Designing, building and testing a GenAI prototype — from the problem statement to the launch decision](methods_en/genai-prototyping.md) `M-genai-prototyping` — ai, llm, prototyping, golden-set, regression-testing
+- [Goals, growth drivers, streams, focus areas, product bets and the initiative portfolio](methods_en/goals-drivers-bets.md) `M-goals-drivers-bets` — goals, smart, growth-drivers, streams, focus-areas
+- [Growth frameworks: AARRR, HEART, Flywheel, Growth Loops, Growth Model Canvas](methods_en/growth-frameworks.md) `M-growth-frameworks` — aarrr, heart, flywheel, growth-loop, virality
 - [Entering a new market — GTM by country as a checklist of questions](methods_en/gtm-new-market.md) `M-gtm-new-market` — gtm, new-market, localization, vat, mor
-- [Analyzing and presenting in-depth interview results — coding, categories, evidence strength, reporting](methods_en/interview-analysis.md) `M-interview-analysis` — en, summary
-- [JTBD and Advanced JTBD — job statements, job graphs, value = benefit − investments, superdiscovery, expert interviews, barriers, aha-moment](methods_en/jtbd.md) `M-jtbd` — en, summary
-- [Adjacent landscapes — marketing, tech, sales, business models and the three lenses of innovation](methods_en/landscapes.md) `M-landscapes` — en, summary
-- [Lean Canvas — business hypotheses on one page, the riskiest cell and its cheapest test](methods_en/lean-canvas.md) `M-lean-canvas` — en, summary
-- [Lean Startup — Build-Measure-Learn, validated learning, pivots](methods_en/lean-startup.md) `M-lean-startup` — en, summary
-- [Market sizing PAM/TAM/SAM/SOM — funnel formulas, top-down vs bottom-up, units, sanity checks](methods_en/market-sizing.md) `M-market-sizing` — en, summary
-- [Marketing research — brand health tracking, U&A, Kano, MaxDiff, TURF for attribute prioritization](methods_en/marketing-research.md) `M-marketing-research` — en, summary
-- [ML for PMs — where ML is justified, 7-step ML hypothesis, model metrics vs business metrics, CUPED/uplift in A/B tests, drift and risks](methods_en/ml-for-product.md) `M-ml-for-product` — en, summary
-- [Top-down and bottom-up modeling — three projections, baseline vs growth, cohort drivers, gap interpretation](methods_en/model-topdown-bottomup.md) `M-model-topdown-bottomup` — en, summary
-- [Monetization models, value metric and pricing — maturity ladder, distributions vs averages, implicit take rate, pricing types, loyalty, auctions](methods_en/monetization.md) `M-monetization` — en, summary
-- [MVP, MLP and pilots — choosing the validation format, input/output metrics, pre-registered success criteria](methods_en/mvp-pilots.md) `M-mvp-pilots` — en, summary
-- [Platform concept — justification, core boundary, MVP vs PoC, integration patterns, defense](methods_en/platform-case-concept.md) `M-platform-case-concept` — en, summary
-- [Platform economics — TCO, six effect sources, financial model (ΔFCF, break-even, ROI/IRR/NPV), incremental effect, adoption metrics](methods_en/platform-economics.md) `M-platform-economics` — en, summary
-- [Product ecosystem audit — scenario-based search for platformization candidates, core vs customization](methods_en/platform-ecosystem-audit.md) `M-platform-ecosystem-audit` — en, summary
-- [Platform risks, concept review, pilot, scaling and adoption, investor case](methods_en/platform-risks-rollout.md) `M-platform-risks-rollout` — en, summary
-- [Platform types and platformization criteria — ecosystem vs internal platforms, core and contracts, network effects, four criteria, anti-patterns](methods_en/platforms-types-criteria.md) `M-platforms-types-criteria` — en, summary
-- [April Dunford positioning ("Obviously Awesome") — six components and market category choice](methods_en/positioning-dunford.md) `M-positioning-dunford` — en, summary
-- [Backlog prioritization — RICE, ICE, WSJF, and Kano: formulas and when to use which](methods_en/prioritization-ricews.md) `M-prioritization-ricews` — en, summary
-- [Problem design — problem vs symptom, root cause (5 whys), research choice, ICE/RICE/Kano scoring](methods_en/problem-design.md) `M-problem-design` — en, summary
-- [Product frameworks map — which framework for which phase, prioritization methods and metric families](methods_en/product-frameworks.md) `M-product-frameworks` — en, summary
-- [Research types and method choice — Double Diamond, CustDev, qual vs quant, desk research, benchmark](methods_en/research-types.md) `M-research-types` — en, summary
-- [Strategy risks — eight types, risk matrix, AATM responses, mitigation (fake door, +20% reserve), plan B with triggers, seasonality, DACI](methods_en/risks.md) `M-risks` — en, summary
+- [Analysis and presentation of in-depth interview results](methods_en/interview-analysis.md) `M-interview-analysis` — interview-analysis, coding, categories, insights, evidence-strength
+- [JTBD and Advanced JTBD — jobs, job graphs, expert interviews, superdiscovery, barriers, aha-moment](methods_en/jtbd.md) `M-jtbd` — jtbd, ajtbd, job-graph, value, barriers
+- [Adjacent landscapes — marketing, technology, business model and the functions of business](methods_en/landscapes.md) `M-landscapes` — business-model, marketing, technology, sales, three-lenses
+- [Lean Canvas — business hypotheses on one page](methods_en/lean-canvas.md) `M-lean-canvas` — business-model, lean-canvas, hypotheses, value-proposition, early-adopters
+- [Lean Startup — Build-Measure-Learn, validated learning and pivots](methods_en/lean-startup.md) `M-lean-startup` — build-measure-learn, mvp, innovation-accounting, pivot, hypotheses
+- [Market sizing (PAM / TAM / SAM / SOM) — a reproducible market funnel with sources and sanity checks](methods_en/market-sizing.md) `M-market-sizing` — market-sizing, tam, sam, som, top-down
+- [Marketing research: brand tracking, Kano, MaxDiff, TURF](methods_en/marketing-research.md) `M-marketing-research` — marketing-research, bht, brand-tracking, u-a, kano
+- [ML for product managers — where ML is justified, hypothesis validation, model quality metrics vs business metrics, ML in A/B tests, risks](methods_en/ml-for-product.md) `M-ml-for-product` — ml, machine-learning, regression, classification, ranking
+- [Top-Down and Bottom-up business modeling](methods_en/model-topdown-bottomup.md) `M-model-topdown-bottomup` — top-down, bottom-up, market-sizing, cagr, seasonality
+- [Monetization models, value metric and pricing (with an auctions section)](methods_en/monetization.md) `M-monetization` — monetization, pricing, value-metric, take-rate, cpa
+- [MVP, MLP and pilots — choosing the validation format, metrics, success criteria, conclusions](methods_en/mvp-pilots.md) `M-mvp-pilots` — mvp, mlp, pilot, prototype, traction-model
+- [Platform concept — justification, boundaries, MVP, patterns, defense](methods_en/platform-case-concept.md) `M-platform-case-concept` — platforms, platform-concept, platform-boundary, platform-mvp, integration-patterns
+- [Platform economics: TCO, effects, financial model, metrics](methods_en/platform-economics.md) `M-platform-economics` — platforms, tco, financial-model, dcf, irr
+- [Product ecosystem audit for finding platform opportunities](methods_en/platform-ecosystem-audit.md) `M-platform-ecosystem-audit` — platforms, audit, ecosystem, product-domain, scenarios
+- [Platform risks, concept review, pilot, scaling and adoption, investor case](methods_en/platform-risks-rollout.md) `M-platform-risks-rollout` — platforms, risks, risk-register, pilot, adoption
+- [Platform types and platformization criteria](methods_en/platforms-types-criteria.md) `M-platforms-types-criteria` — platforms, platformization, core, contracts, network-effects
+- [Positioning by April Dunford ("Obviously Awesome") — six components and the category choice](methods_en/positioning-dunford.md) `M-positioning-dunford` — positioning, dunford, market-category, differentiation, competitive-alternatives
+- [Backlog prioritization — RICE, ICE, WSJF and Kano: formulas and which method to use when](methods_en/prioritization-ricews.md) `M-prioritization-ricews` — prioritization, rice, ice, wsjf, kano
+- [Problem design — problem vs symptom, root cause, research choice, prioritization](methods_en/problem-design.md) `M-problem-design` — problem, symptom, root-cause, five-whys, problem-hypothesis
+- [Product frameworks — what, when and why](methods_en/product-frameworks.md) `M-product-frameworks` — frameworks, prioritization, metrics, process, hadi
+- [Research types and choosing a method for the question](methods_en/research-types.md) `M-research-types` — research, qualitative, quantitative, desk-research, benchmark
+- [Strategy risks — identification, assessment, AATM, mitigation and plan B](methods_en/risks.md) `M-risks` — risks, risk-matrix, accept-avoid-transfer-mitigate, plan-b, trigger-metric
 - [Scenario modeling of impact — pessimistic, base and optimistic scenarios, sensitivity](methods_en/scenario-modeling.md) `M-scenario-modeling` — scenarios, sensitivity, modeling, forecast, risk
 - [Six-pager etalon — structure walkthrough with "good and bad" for every FAQ](methods_en/six-pager-etalon.md) `M-six-pager-etalon` — six-pager, committee, document-structure, report, quality
-- [Six-pager — six-FAQ strategic report with Excel appendices for committee defense](methods_en/six-pager.md) `M-six-pager` — en, summary
-- [Methods map — PM question → which cards to read and in what order; routes by task type, agent process phase, and product stage](methods_en/skills-map.md) `M-skills-map` — en, summary
-- [Solution design — solution hypotheses, RICE scoring, five risk types, cheapest-validation chain, post-mortem](methods_en/solution-design.md) `M-solution-design` — en, summary
-- [Source criticism for analytical reports — evidence grades A–D, triangulation, red flags, evidence log](methods_en/source-criticism.md) `M-source-criticism` — en, summary
-- [Product strategy, growth models and types — five components, unfair advantage, goal cascade, document skeleton](methods_en/strategy-growth.md) `M-strategy-growth` — en, summary
-- [Synthetic respondents (AI simulation) — permitted uses, persona spec, mandatory labeling, evidence rules](methods_en/synthetic-respondents.md) `M-synthetic-respondents` — en, summary
-- [Traction model (growth model) — 4 hypothesis layers, top-down vs bottom-up, baseline, effects (discounting, elasticity, cannibalization), validation](methods_en/traction-model.md) `M-traction-model` — en, summary
-- [Trend analysis and scenario planning — signals vs hype, three horizons, 2×2 scenarios, no-regret moves](methods_en/trends-scenarios.md) `M-trends-scenarios` — en, summary
-- [Unit economics — LTV, CAC, payback, contribution margin, seven LTV methods, cohort accounting](methods_en/unit-economics.md) `M-unit-economics` — en, summary
+- [Six-pager — a six-page strategic report with Excel appendices](methods_en/six-pager.md) `M-six-pager` — six-pager, report, committee, excel-appendices, strategy-review
+- [Methods map: a product leader's question → which cards, and in what order](methods_en/skills-map.md) `M-skills-map` — methods-navigation, routing, skills-map, route-by-question, competency-matrix
+- [Solution design — solution hypotheses, scoring, risks, validation and post-mortem](methods_en/solution-design.md) `M-solution-design` — solution-hypothesis, rice, solution-risks, fake-door, ab-test
+- [Source criticism and analytical reports — the evidence scale, provenance tracking](methods_en/source-criticism.md) `M-source-criticism` — sources, credibility, triangulation, red-flags, evidence-log
+- [Product strategy, growth types and the structure of a strategy document](methods_en/strategy-growth.md) `M-strategy-growth` — product-strategy, growth, ansoff, cascading, unfair-advantage
+- [Synthetic respondents (AI simulation) — permitted use, persona specification, mandatory labeling](methods_en/synthetic-respondents.md) `M-synthetic-respondents` — synthetic-respondents, ai, personas, hypotheses, labeling
+- [Traction model (growth model): building, effects, validation](methods_en/traction-model.md) `M-traction-model` — traction-model, growth-model, baseline, top-down, bottom-up
+- [Trend analysis and scenario planning](methods_en/trends-scenarios.md) `M-trends-scenarios` — trends, trend-watching, scenarios, delphi, backcasting
+- [Unit economics (LTV, CAC, payback)](methods_en/unit-economics.md) `M-unit-economics` — unit-economics, ltv, cac, payback, margin
 - [Usability testing — prototypes, moderated and unmoderated tests, metrics](methods_en/usability-testing.md) `M-usability-testing` — usability, ux-testing, prototype, moderated, unmoderated
-- [USP and value proposition — Job Story + Value Proposition Canvas, copyability filter, Value × Effort bet](methods_en/usp.md) `M-usp` — en, summary
-- [UX research frameworks — star brief, JTBD, Job Stories and choosing the right artifact](methods_en/ux-frameworks.md) `M-ux-frameworks` — en, summary
-- [Heuristic UI evaluation — visible-evidence-only findings, V/I/H confidence levels, 0–4 severity scale](methods_en/ux-heuristics.md) `M-ux-heuristics` — en, summary
-- [Van Westendorp Price Sensitivity Meter — price perception research](methods_en/van-westendorp.md) `M-van-westendorp` — en, summary
-- [Wardley Mapping — component evolution and build/buy/rent](methods_en/wardley-mapping.md) `M-wardley-mapping` — en, summary
+- [Formulating a USP and value proposition (Job Story + Value Proposition Canvas)](methods_en/usp.md) `M-usp` — usp, value-proposition, vpc, job-story, jtbd
+- [UX research frameworks — the brief, JTBD, Job Stories and choosing an artifact](methods_en/ux-frameworks.md) `M-ux-frameworks` — ux, frameworks, brief, jtbd, job-stories
+- [Heuristic UI evaluation — visible-evidence-only findings, V/I/H confidence levels, 0–4 severity scale](methods_en/ux-heuristics.md) `M-ux-heuristics` — heuristics, nielsen, shneiderman, norman, expert-review
+- [Van Westendorp Price Sensitivity Meter — a method for researching price perception (PSM)](methods_en/van-westendorp.md) `M-van-westendorp` — pricing, psm, van-westendorp, willingness-to-pay, price-sensitivity
+- [Wardley Mapping — a map of component evolution and the build/buy/rent decision](methods_en/wardley-mapping.md) `M-wardley-mapping` — wardley-mapping, evolution, genesis, commodity, build-buy-rent
 - [Weighted scoring of options and filters — a transparent comparison of alternatives](methods_en/weighted-scoring.md) `M-weighted-scoring` — scoring, prioritization, criteria, weights, filters
-- [Workshops and facilitation — brief, participants, minute-by-minute scenario, divergence→convergence tools, difficult participants, protocol and follow-up](methods_en/workshops.md) `M-workshops` — en, summary
+- [Workshops and facilitation — how to run a session that ends with a decision](methods_en/workshops.md) `M-workshops` — workshops, facilitation, hmw, divergence, convergence
 
 ## Strategy (`strategy`)
 
-- [A/B testing full cycle — hypothesis to decision, sample size and MDE, corrections, SRM, alternatives when randomization is impossible](methods_en/ab-testing.md) `M-ab-testing` — en, summary
-- [Auctions and marketplaces — auction mechanics (GFP/GSP/VCG), selection rules, money and market-health metrics, toxic revenue](methods_en/auctions-marketplaces.md) `M-auctions-marketplaces` — en, summary
-- [Target audience research — segmentation bases, portrait→segment→persona, recruiting with screeners and traps](methods_en/audience-research.md) `M-audience-research` — en, summary
-- [Business model, PLG/MLG/SLG growth engines, lifecycle and death valley, Three Lenses of innovation](methods_en/business-models.md) `M-business-models` — en, summary
-- [Cannibalization of products, features, plans and channels — increment vs gross effect, transfer matrix, baseline calculation, modeling](methods_en/cannibalization.md) `M-cannibalization` — en, summary
-- [Customer Journey Map — as-is and to-be, barrier and opportunity detection, layers with sources, metrics per stage](methods_en/cjm.md) `M-cjm` — en, summary
-- [Competitors — types, competitive landscape, Porter's five forces, Strategy Canvas, JTBD alternative map](methods_en/competitors.md) `M-competitors` — en, summary
-- [Crossing the Chasm — from early enthusiasts to pragmatics](methods_en/crossing-chasm.md) `M-crossing-chasm` — en, summary
-- [Customers and segments — who the client is, segmentation approaches, six scoring criteria, four forces of progress, target-segment choice](methods_en/customers.md) `M-customers` — en, summary
-- [DACI roles and the decision journal — drivers, approvers, contributors, revision conditions](methods_en/decision-daci.md) `M-decision-daci` — en, summary
-- [Delivery — from scope to release: MoSCoW/RICE, acceptance criteria, feature flags, canary, alerts, DORA, release trains, security](methods_en/delivery.md) `M-delivery` — en, summary
-- [Design thinking and UX design — Double Diamond, empathy, POV and HMW, ideation and selection, low-fi prototypes, corridor tests, CJM/User Flow/BPMN](methods_en/design-thinking.md) `M-design-thinking` — en, summary
-- [Double Diamond — diverge/converge process frame, phase gates, mapping to the strategy workflow steps](methods_en/double-diamond.md) `M-double-diamond` — en, summary
-- [External environment — market types (B2C…B2B2C), PESTLE registry, hype vs trend, PAM–TAM–SAM–SOM potential calculation](methods_en/external-environment.md) `M-external-environment` — en, summary
-- [Forecasting and traction analytics — baseline with seasonality, driver model, rollout, MAPE, forecast boundaries](methods_en/forecasting-product.md) `M-forecasting-product` — en, summary
-- [GenAI assistant as a product system — components, LLM-limit mitigations, orchestration and agent patterns](methods_en/genai-assistant-architecture.md) `M-genai-assistant-architecture` — en, summary
-- [Goals, growth drivers, streams, focuses, product bets and the initiative portfolio](methods_en/goals-drivers-bets.md) `M-goals-drivers-bets` — en, summary
-- [Growth frameworks — AARRR, HEART, Flywheel, Growth Loops, Growth Model Canvas; choosing and checking the loop math (K = i × c)](methods_en/growth-frameworks.md) `M-growth-frameworks` — en, summary
-- [Go-to-Market — launch tiers (T1/T2/T3), launch audience segmentation, channels, launch metrics and checklist](methods_en/gtm-launch.md) `M-gtm-launch` — en, summary
+- [A/B testing — the full cycle from hypothesis to decision, and alternatives when a classic test is impossible](methods_en/ab-testing.md) `M-ab-testing` — ab-testing, experiment-design, mde, sample-size, p-value
+- [Auctions and marketplaces (mechanics, metrics, market health)](methods_en/auctions-marketplaces.md) `M-auctions-marketplaces` — auctions, marketplace, gsp, vcg, gfp
+- [Target audience research, segmentation, personas and recruiting](methods_en/audience-research.md) `M-audience-research` — target-audience, segmentation, personas, audience-portrait, recruiting
+- [Business model, PLG / MLG / SLG and the Three Lenses of Innovation](methods_en/business-models.md) `M-business-models` — business-models, plg, mlg, slg, desirability
+- [Cannibalization of products, features, plans and channels](methods_en/cannibalization.md) `M-cannibalization` — cannibalization, flow-over, increment, metric-tradeoffs, plans
+- [Customer Journey Map (CJM) — as-is and to-be, barriers and opportunities](methods_en/cjm.md) `M-cjm` — cjm, journey-map, as-is, to-be, barriers
+- [Competitors — types, competitive landscape, five forces, Strategy Canvas, JTBD map](methods_en/competitors.md) `M-competitors` — competitors, competitive-landscape, porter-five-forces, strategy-canvas, blue-ocean
+- [Crossing the Chasm — the transition from early enthusiasts to pragmatists](methods_en/crossing-chasm.md) `M-crossing-chasm` — chasm, segmentation, beachhead, whole-product, pragmatists
+- [Customers and segments — who the client is, how to segment and choose the target segment](methods_en/customers.md) `M-customers` — segmentation, target-segment, customers, decision-maker, jtbd
+- [DACI and the decision journal — roles, owners, revision conditions](methods_en/decision-daci.md) `M-decision-daci` — daci, decisions, roles, accountability, decision-journal
+- [Delivery — from scope to release: what to account for when committing to a plan](methods_en/delivery.md) `M-delivery` — delivery, scope, moscow, rice, acceptance-criteria
+- [Design thinking and user experience design](methods_en/design-thinking.md) `M-design-thinking` — design-thinking, double-diamond, empathy, point-of-view, hmw
+- [Double Diamond — the process frame from problem to solution](methods_en/double-diamond.md) `M-double-diamond` — process, frameworks, double-diamond, diverge-converge, phase-gates
+- [External environment analysis — market types, PESTEL, trend or hype, potential calculation](methods_en/external-environment.md) `M-external-environment` — pestel, trends, hype, market-sizing, market-types
+- [Forecasting and traction analytics — baseline, seasonality, driver model, forecast accuracy and limits](methods_en/forecasting-product.md) `M-forecasting-product` — forecast, baseline, seasonality, time-series, drivers
+- [GenAI assistant as a product system — components, LLM-limit mitigations, orchestration and agent patterns](methods_en/genai-assistant-architecture.md) `M-genai-assistant-architecture` — genai, llm, assistant, agent, orchestration
+- [Goals, growth drivers, streams, focus areas, product bets and the initiative portfolio](methods_en/goals-drivers-bets.md) `M-goals-drivers-bets` — goals, smart, growth-drivers, streams, focus-areas
+- [Growth frameworks: AARRR, HEART, Flywheel, Growth Loops, Growth Model Canvas](methods_en/growth-frameworks.md) `M-growth-frameworks` — aarrr, heart, flywheel, growth-loop, virality
+- [Go-to-Market — launch tiers (T1/T2/T3), launch audience segmentation, channels, metrics and the launch checklist](methods_en/gtm-launch.md) `M-gtm-launch` — gtm, product-launch, launch-tiers, audiences, channels
 - [Entering a new market — GTM by country as a checklist of questions](methods_en/gtm-new-market.md) `M-gtm-new-market` — gtm, new-market, localization, vat, mor
-- [JTBD and Advanced JTBD — job statements, job graphs, value = benefit − investments, superdiscovery, expert interviews, barriers, aha-moment](methods_en/jtbd.md) `M-jtbd` — en, summary
-- [Landing page design — typography with personality, bold colour systems, atmospheric backgrounds, animation patterns, anti-patterns](methods_en/landing-design.md) `M-landing-design` — en, summary
-- [Adjacent landscapes — marketing, tech, sales, business models and the three lenses of innovation](methods_en/landscapes.md) `M-landscapes` — en, summary
-- [Lean Canvas — business hypotheses on one page, the riskiest cell and its cheapest test](methods_en/lean-canvas.md) `M-lean-canvas` — en, summary
-- [Market sizing PAM/TAM/SAM/SOM — funnel formulas, top-down vs bottom-up, units, sanity checks](methods_en/market-sizing.md) `M-market-sizing` — en, summary
-- [Marketing research — brand health tracking, U&A, Kano, MaxDiff, TURF for attribute prioritization](methods_en/marketing-research.md) `M-marketing-research` — en, summary
+- [JTBD and Advanced JTBD — jobs, job graphs, expert interviews, superdiscovery, barriers, aha-moment](methods_en/jtbd.md) `M-jtbd` — jtbd, ajtbd, job-graph, value, barriers
+- [Landing page design — typography with personality, bold colour systems, atmospheric backgrounds, animation patterns, anti-patterns](methods_en/landing-design.md) `M-landing-design` — landing-page, design, typography, colour, composition
+- [Adjacent landscapes — marketing, technology, business model and the functions of business](methods_en/landscapes.md) `M-landscapes` — business-model, marketing, technology, sales, three-lenses
+- [Lean Canvas — business hypotheses on one page](methods_en/lean-canvas.md) `M-lean-canvas` — business-model, lean-canvas, hypotheses, value-proposition, early-adopters
+- [Market sizing (PAM / TAM / SAM / SOM) — a reproducible market funnel with sources and sanity checks](methods_en/market-sizing.md) `M-market-sizing` — market-sizing, tam, sam, som, top-down
+- [Marketing research: brand tracking, Kano, MaxDiff, TURF](methods_en/marketing-research.md) `M-marketing-research` — marketing-research, bht, brand-tracking, u-a, kano
 - [Communication strategy — message house, proof behind promises, the comprehension barrier](methods_en/message-house.md) `M-message-house` — communication, message-house, promises, positioning, channels
-- [ML for PMs — where ML is justified, 7-step ML hypothesis, model metrics vs business metrics, CUPED/uplift in A/B tests, drift and risks](methods_en/ml-for-product.md) `M-ml-for-product` — en, summary
-- [Top-down and bottom-up modeling — three projections, baseline vs growth, cohort drivers, gap interpretation](methods_en/model-topdown-bottomup.md) `M-model-topdown-bottomup` — en, summary
-- [Model validation — backtest, benchmarks, sensitivity analysis, scenarios and bias control](methods_en/model-validation.md) `M-model-validation` — en, summary
-- [Monetization models, value metric and pricing — maturity ladder, distributions vs averages, implicit take rate, pricing types, loyalty, auctions](methods_en/monetization.md) `M-monetization` — en, summary
-- [North Star Playbook — one value metric and an input-metric tree](methods_en/north-star-playbook.md) `M-north-star-playbook` — en, summary
-- [Strategy timing and outcome roadmap — phases, gate criteria, stop signals, resources and hiring](methods_en/outcome-roadmap.md) `M-outcome-roadmap` — en, summary
-- [Platform concept — justification, core boundary, MVP vs PoC, integration patterns, defense](methods_en/platform-case-concept.md) `M-platform-case-concept` — en, summary
-- [Platform economics — TCO, six effect sources, financial model (ΔFCF, break-even, ROI/IRR/NPV), incremental effect, adoption metrics](methods_en/platform-economics.md) `M-platform-economics` — en, summary
-- [Platform types and platformization criteria — ecosystem vs internal platforms, core and contracts, network effects, four criteria, anti-patterns](methods_en/platforms-types-criteria.md) `M-platforms-types-criteria` — en, summary
-- [Scaling and Product-Market Fit — go/wait/fix gates, Superhuman PMF engine, traffic-light metrics](methods_en/pmf-scaling.md) `M-pmf-scaling` — en, summary
-- [April Dunford positioning ("Obviously Awesome") — six components and market category choice](methods_en/positioning-dunford.md) `M-positioning-dunford` — en, summary
-- [Product communication and defense — decision memo, traction doc, gates, MECE, traffic-light dashboard, 10-slide pitch, stakeholders, post-mortem](methods_en/product-communication.md) `M-product-communication` — en, summary
-- [Product context — PM role, lifecycle stage detection, perimeter, strategy = stage × context](methods_en/product-context.md) `M-product-context` — en, summary
-- [Product frameworks map — which framework for which phase, prioritization methods and metric families](methods_en/product-frameworks.md) `M-product-frameworks` — en, summary
-- [Strategy by product life-cycle stage](methods_en/product-lifecycle-strategy.md) `M-product-lifecycle-strategy` — en, summary
-- [Product metrics — metric validity, funnels (step vs through conversion), retention and cohorts, metric tree, NSM, guardrails, drop triage](methods_en/product-metrics.md) `M-product-metrics` — en, summary
-- [Strategy risks — eight types, risk matrix, AATM responses, mitigation (fake door, +20% reserve), plan B with triggers, seasonality, DACI](methods_en/risks.md) `M-risks` — en, summary
-- [Roadmap — structure, outcome-based rows, OKR link, capacity, decision points, quality rubric](methods_en/roadmap.md) `M-roadmap` — en, summary
-- [Six-pager — six-FAQ strategic report with Excel appendices for committee defense](methods_en/six-pager.md) `M-six-pager` — en, summary
-- [Methods map — PM question → which cards to read and in what order; routes by task type, agent process phase, and product stage](methods_en/skills-map.md) `M-skills-map` — en, summary
-- [Source criticism for analytical reports — evidence grades A–D, triangulation, red flags, evidence log](methods_en/source-criticism.md) `M-source-criticism` — en, summary
-- [Product strategy, growth models and types — five components, unfair advantage, goal cascade, document skeleton](methods_en/strategy-growth.md) `M-strategy-growth` — en, summary
-- [Success metrics — North Star Metric (8 criteria), metric pyramid NSM→Outcome→Output→Input, metric tree, AARRR blocks, OKR with proven links](methods_en/success-metrics.md) `M-success-metrics` — en, summary
+- [ML for product managers — where ML is justified, hypothesis validation, model quality metrics vs business metrics, ML in A/B tests, risks](methods_en/ml-for-product.md) `M-ml-for-product` — ml, machine-learning, regression, classification, ranking
+- [Top-Down and Bottom-up business modeling](methods_en/model-topdown-bottomup.md) `M-model-topdown-bottomup` — top-down, bottom-up, market-sizing, cagr, seasonality
+- [Model validation (backtest, benchmarks, sensitivity)](methods_en/model-validation.md) `M-model-validation` — model-validation, backtest, benchmarks, sensitivity, scenarios
+- [Monetization models, value metric and pricing (with an auctions section)](methods_en/monetization.md) `M-monetization` — monetization, pricing, value-metric, take-rate, cpa
+- [North Star Playbook — the North Star metric and the input-metric tree (the Amplitude approach)](methods_en/north-star-playbook.md) `M-north-star-playbook` — nsm, north-star-metric, input-metrics, metric-tree, goal
+- [Strategy timing and the outcome roadmap — phases, gate criteria, stop signals](methods_en/outcome-roadmap.md) `M-outcome-roadmap` — roadmap, outcome-roadmap, phases, pilot, validation
+- [Platform concept — justification, boundaries, MVP, patterns, defense](methods_en/platform-case-concept.md) `M-platform-case-concept` — platforms, platform-concept, platform-boundary, platform-mvp, integration-patterns
+- [Platform economics: TCO, effects, financial model, metrics](methods_en/platform-economics.md) `M-platform-economics` — platforms, tco, financial-model, dcf, irr
+- [Platform types and platformization criteria](methods_en/platforms-types-criteria.md) `M-platforms-types-criteria` — platforms, platformization, core, contracts, network-effects
+- [Scaling and Product-Market Fit — when to grow, how to measure PMF (the Superhuman engine)](methods_en/pmf-scaling.md) `M-pmf-scaling` — pmf, scaling, unit-economics, retention, nps
+- [Positioning by April Dunford ("Obviously Awesome") — six components and the category choice](methods_en/positioning-dunford.md) `M-positioning-dunford` — positioning, dunford, market-category, differentiation, competitive-alternatives
+- [Product communication and defense — from roadmap to stakeholder decision](methods_en/product-communication.md) `M-product-communication` — product-defense, decision-memo, one-pager, stakeholders, gates
+- [Product context — PM role, product lifecycle, perimeter and the strategic slice](methods_en/product-context.md) `M-product-context` — product-context, pm-role, lifecycle, perimeter, stage-detection
+- [Product frameworks — what, when and why](methods_en/product-frameworks.md) `M-product-frameworks` — frameworks, prioritization, metrics, process, hadi
+- [Strategy by life-cycle stage — introduction, growth, maturity, decline](methods_en/product-lifecycle-strategy.md) `M-product-lifecycle-strategy` — lifecycle, stage, introduction, growth, maturity
+- [Product metrics — types, funnels, retention and cohorts, the metric tree, NSM, counter-metrics](methods_en/product-metrics.md) `M-product-metrics` — metrics, funnels, retention, cohorts, nsm
+- [Strategy risks — identification, assessment, AATM, mitigation and plan B](methods_en/risks.md) `M-risks` — risks, risk-matrix, accept-avoid-transfer-mitigate, plan-b, trigger-metric
+- [Roadmap — how it is structured, how it is built and how it is checked for quality](methods_en/roadmap.md) `M-roadmap` — roadmap, okr, prioritization, dependencies, capacity
+- [Six-pager — a six-page strategic report with Excel appendices](methods_en/six-pager.md) `M-six-pager` — six-pager, report, committee, excel-appendices, strategy-review
+- [Methods map: a product leader's question → which cards, and in what order](methods_en/skills-map.md) `M-skills-map` — methods-navigation, routing, skills-map, route-by-question, competency-matrix
+- [Source criticism and analytical reports — the evidence scale, provenance tracking](methods_en/source-criticism.md) `M-source-criticism` — sources, credibility, triangulation, red-flags, evidence-log
+- [Product strategy, growth types and the structure of a strategy document](methods_en/strategy-growth.md) `M-strategy-growth` — product-strategy, growth, ansoff, cascading, unfair-advantage
+- [Success metrics — North Star Metric, metric tree, AARRR and OKR](methods_en/success-metrics.md) `M-success-metrics` — nsm, north-star-metric, metric-tree, aarrr, okr
 - [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder-pricing.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
-- [Team and people — composition by stage, hiring vs outsourcing, org structure, stakeholders, neighbors](methods_en/team.md) `M-team` — en, summary
-- [Traction model (growth model) — 4 hypothesis layers, top-down vs bottom-up, baseline, effects (discounting, elasticity, cannibalization), validation](methods_en/traction-model.md) `M-traction-model` — en, summary
-- [Trend analysis and scenario planning — signals vs hype, three horizons, 2×2 scenarios, no-regret moves](methods_en/trends-scenarios.md) `M-trends-scenarios` — en, summary
-- [Unit economics — LTV, CAC, payback, contribution margin, seven LTV methods, cohort accounting](methods_en/unit-economics.md) `M-unit-economics` — en, summary
-- [USP and value proposition — Job Story + Value Proposition Canvas, copyability filter, Value × Effort bet](methods_en/usp.md) `M-usp` — en, summary
-- [UX backlog and research knowledge base — atomic research, triage, metric links, retracting insights](methods_en/ux-backlog.md) `M-ux-backlog` — en, summary
-- [Van Westendorp Price Sensitivity Meter — price perception research](methods_en/van-westendorp.md) `M-van-westendorp` — en, summary
-- [Wardley Mapping — component evolution and build/buy/rent](methods_en/wardley-mapping.md) `M-wardley-mapping` — en, summary
-- [Workshops and facilitation — brief, participants, minute-by-minute scenario, divergence→convergence tools, difficult participants, protocol and follow-up](methods_en/workshops.md) `M-workshops` — en, summary
+- [Team and people — composition by stage, hiring, org structure, stakeholders and neighboring teams](methods_en/team.md) `M-team` — team, hiring, outsourcing, stakeholders, org-structure
+- [Traction model (growth model): building, effects, validation](methods_en/traction-model.md) `M-traction-model` — traction-model, growth-model, baseline, top-down, bottom-up
+- [Trend analysis and scenario planning](methods_en/trends-scenarios.md) `M-trends-scenarios` — trends, trend-watching, scenarios, delphi, backcasting
+- [Unit economics (LTV, CAC, payback)](methods_en/unit-economics.md) `M-unit-economics` — unit-economics, ltv, cac, payback, margin
+- [Formulating a USP and value proposition (Job Story + Value Proposition Canvas)](methods_en/usp.md) `M-usp` — usp, value-proposition, vpc, job-story, jtbd
+- [UX backlog, research knowledge base and big picture — how to store insights so they can be reused and retracted](methods_en/ux-backlog.md) `M-ux-backlog` — ux-backlog, atomic-research, big-picture, knowledge-base, insights
+- [Van Westendorp Price Sensitivity Meter — a method for researching price perception (PSM)](methods_en/van-westendorp.md) `M-van-westendorp` — pricing, psm, van-westendorp, willingness-to-pay, price-sensitivity
+- [Wardley Mapping — a map of component evolution and the build/buy/rent decision](methods_en/wardley-mapping.md) `M-wardley-mapping` — wardley-mapping, evolution, genesis, commodity, build-buy-rent
+- [Workshops and facilitation — how to run a session that ends with a decision](methods_en/workshops.md) `M-workshops` — workshops, facilitation, hmw, divergence, convergence
 
 ## Validation plan (`validation`)
 
-- [A/B testing full cycle — hypothesis to decision, sample size and MDE, corrections, SRM, alternatives when randomization is impossible](methods_en/ab-testing.md) `M-ab-testing` — en, summary
-- [AI in research — what to delegate to models, prompting, RAG and context engineering, validation of outputs](methods_en/ai-in-research.md) `M-ai-in-research` — en, summary
-- [Auctions and marketplaces — auction mechanics (GFP/GSP/VCG), selection rules, money and market-health metrics, toxic revenue](methods_en/auctions-marketplaces.md) `M-auctions-marketplaces` — en, summary
-- [Basic statistics for product decisions — means, spread, confidence intervals, error types, power](methods_en/basic-statistics-pm.md) `M-basic-statistics-pm` — en, summary
-- [Benchmarking — reference values for retention, conversion, churn, CAC; P25–P50–P95 ranges, comparability checks, biases, triangulation](methods_en/benchmarking.md) `M-benchmarking` — en, summary
-- [Research brief and product hypotheses — business vs research goals, if-then format, ICE scoring, decision log](methods_en/brief-hypotheses.md) `M-brief-hypotheses` — en, summary
-- [Business model, PLG/MLG/SLG growth engines, lifecycle and death valley, Three Lenses of innovation](methods_en/business-models.md) `M-business-models` — en, summary
-- [Cannibalization of products, features, plans and channels — increment vs gross effect, transfer matrix, baseline calculation, modeling](methods_en/cannibalization.md) `M-cannibalization` — en, summary
-- [Customer Journey Map — as-is and to-be, barrier and opportunity detection, layers with sources, metrics per stage](methods_en/cjm.md) `M-cjm` — en, summary
-- [Competitors — types, competitive landscape, Porter's five forces, Strategy Canvas, JTBD alternative map](methods_en/competitors.md) `M-competitors` — en, summary
-- [Customers and segments — who the client is, segmentation approaches, six scoring criteria, four forces of progress, target-segment choice](methods_en/customers.md) `M-customers` — en, summary
-- [DACI roles and the decision journal — drivers, approvers, contributors, revision conditions](methods_en/decision-daci.md) `M-decision-daci` — en, summary
-- [Delivery — from scope to release: MoSCoW/RICE, acceptance criteria, feature flags, canary, alerts, DORA, release trains, security](methods_en/delivery.md) `M-delivery` — en, summary
-- [Design thinking and UX design — Double Diamond, empathy, POV and HMW, ideation and selection, low-fi prototypes, corridor tests, CJM/User Flow/BPMN](methods_en/design-thinking.md) `M-design-thinking` — en, summary
-- [Ethnography, diary studies and dogfooding — observing what people do rather than say](methods_en/dogfooding.md) `M-dogfooding` — en, summary
-- [Double Diamond — diverge/converge process frame, phase gates, mapping to the strategy workflow steps](methods_en/double-diamond.md) `M-double-diamond` — en, summary
-- [Event taxonomy for product analytics — naming conventions (object-action), tracking plan, properties and anti-patterns](methods_en/event-taxonomy.md) `M-event-taxonomy` — en, summary
-- [Forecasting and traction analytics — baseline with seasonality, driver model, rollout, MAPE, forecast boundaries](methods_en/forecasting-product.md) `M-forecasting-product` — en, summary
-- [GenAI assistant as a product system — components, LLM-limit mitigations, orchestration and agent patterns](methods_en/genai-assistant-architecture.md) `M-genai-assistant-architecture` — en, summary
-- [LLM Evals — golden sets, LLM-as-judge, guardrails, degradation monitoring](methods_en/genai-evals.md) `M-genai-evals` — en, summary
-- [AI Feature Patterns — taxonomy, error cost, and UX mitigations](methods_en/genai-feature-patterns.md) `M-genai-feature-patterns` — en, summary
-- [GenAI product — justification algorithm, autonomy modes, LLM basics (tokens, context, latency, cost), 6-stage lifecycle, model selection](methods_en/genai-product-development.md) `M-genai-product-development` — en, summary
-- [GenAI prototype — problem statement, minimal build, golden-set regression testing, develop/iterate/kill decision](methods_en/genai-prototyping.md) `M-genai-prototyping` — en, summary
-- [Goals, growth drivers, streams, focuses, product bets and the initiative portfolio](methods_en/goals-drivers-bets.md) `M-goals-drivers-bets` — en, summary
-- [In-depth interviews — four types, guide, moderation techniques, difficult respondents, ethics and consent](methods_en/in-depth-interviews.md) `M-in-depth-interviews` — en, summary
-- [Analyzing and presenting in-depth interview results — coding, categories, evidence strength, reporting](methods_en/interview-analysis.md) `M-interview-analysis` — en, summary
-- [Adjacent landscapes — marketing, tech, sales, business models and the three lenses of innovation](methods_en/landscapes.md) `M-landscapes` — en, summary
-- [Lean Canvas — business hypotheses on one page, the riskiest cell and its cheapest test](methods_en/lean-canvas.md) `M-lean-canvas` — en, summary
-- [Lean Startup — Build-Measure-Learn, validated learning, pivots](methods_en/lean-startup.md) `M-lean-startup` — en, summary
+- [A/B testing — the full cycle from hypothesis to decision, and alternatives when a classic test is impossible](methods_en/ab-testing.md) `M-ab-testing` — ab-testing, experiment-design, mde, sample-size, p-value
+- [AI in research — what to delegate, risks, validation and tool categories](methods_en/ai-in-research.md) `M-ai-in-research` — ai, llm, prompting, rag, context-engineering
+- [Auctions and marketplaces (mechanics, metrics, market health)](methods_en/auctions-marketplaces.md) `M-auctions-marketplaces` — auctions, marketplace, gsp, vcg, gfp
+- [Basic statistics for product decisions — means, spread, confidence intervals, type I/II errors, power](methods_en/basic-statistics-pm.md) `M-basic-statistics-pm` — statistics, mean, median, percentile, variance
+- [Benchmarking — reference values for metrics and checking whether they apply](methods_en/benchmarking.md) `M-benchmarking` — benchmarking, retention, churn, conversion, comparability
+- [Research brief and hypothesis formulation](methods_en/brief-hypotheses.md) `M-brief-hypotheses` — brief, hypotheses, research-goal, business-goal, ice
+- [Business model, PLG / MLG / SLG and the Three Lenses of Innovation](methods_en/business-models.md) `M-business-models` — business-models, plg, mlg, slg, desirability
+- [Cannibalization of products, features, plans and channels](methods_en/cannibalization.md) `M-cannibalization` — cannibalization, flow-over, increment, metric-tradeoffs, plans
+- [Customer Journey Map (CJM) — as-is and to-be, barriers and opportunities](methods_en/cjm.md) `M-cjm` — cjm, journey-map, as-is, to-be, barriers
+- [Competitors — types, competitive landscape, five forces, Strategy Canvas, JTBD map](methods_en/competitors.md) `M-competitors` — competitors, competitive-landscape, porter-five-forces, strategy-canvas, blue-ocean
+- [Customers and segments — who the client is, how to segment and choose the target segment](methods_en/customers.md) `M-customers` — segmentation, target-segment, customers, decision-maker, jtbd
+- [DACI and the decision journal — roles, owners, revision conditions](methods_en/decision-daci.md) `M-decision-daci` — daci, decisions, roles, accountability, decision-journal
+- [Delivery — from scope to release: what to account for when committing to a plan](methods_en/delivery.md) `M-delivery` — delivery, scope, moscow, rice, acceptance-criteria
+- [Design thinking and user experience design](methods_en/design-thinking.md) `M-design-thinking` — design-thinking, double-diamond, empathy, point-of-view, hmw
+- [Ethnography, diary studies and dogfooding](methods_en/dogfooding.md) `M-dogfooding` — ethnography, observation, contextual-interview, shadowing, diary-studies
+- [Double Diamond — the process frame from problem to solution](methods_en/double-diamond.md) `M-double-diamond` — process, frameworks, double-diamond, diverge-converge, phase-gates
+- [Event taxonomy for product analytics — naming conventions (object-action), tracking plan, properties and anti-patterns](methods_en/event-taxonomy.md) `M-event-taxonomy` — event-taxonomy, analytics, events, tracking-plan, naming
+- [Forecasting and traction analytics — baseline, seasonality, driver model, forecast accuracy and limits](methods_en/forecasting-product.md) `M-forecasting-product` — forecast, baseline, seasonality, time-series, drivers
+- [GenAI assistant as a product system — components, LLM-limit mitigations, orchestration and agent patterns](methods_en/genai-assistant-architecture.md) `M-genai-assistant-architecture` — genai, llm, assistant, agent, orchestration
+- [Evaluating the quality of LLM features (LLM evals) — golden set, LLM-as-judge, guardrails and degradation monitoring](methods_en/genai-evals.md) `M-genai-evals` — ai, llm, evals, golden-set, llm-as-judge
+- [AI feature patterns in products — a taxonomy (autocorrect → generation → classification → chat → copilot → agent), the error cost and UX mitigations](methods_en/genai-feature-patterns.md) `M-genai-feature-patterns` — ai, llm, feature-patterns, copilot, agent
+- [GenAI product — viability, lifecycle, LLM basics and model selection](methods_en/genai-product-development.md) `M-genai-product-development` — ai, llm, genai, viability, product-lifecycle
+- [Designing, building and testing a GenAI prototype — from the problem statement to the launch decision](methods_en/genai-prototyping.md) `M-genai-prototyping` — ai, llm, prototyping, golden-set, regression-testing
+- [Goals, growth drivers, streams, focus areas, product bets and the initiative portfolio](methods_en/goals-drivers-bets.md) `M-goals-drivers-bets` — goals, smart, growth-drivers, streams, focus-areas
+- [In-depth interviews: preparation, conduct, ethics](methods_en/in-depth-interviews.md) `M-in-depth-interviews` — in-depth-interviews, interview-guide, recruiting, interview-questions, research-ethics
+- [Analysis and presentation of in-depth interview results](methods_en/interview-analysis.md) `M-interview-analysis` — interview-analysis, coding, categories, insights, evidence-strength
+- [Adjacent landscapes — marketing, technology, business model and the functions of business](methods_en/landscapes.md) `M-landscapes` — business-model, marketing, technology, sales, three-lenses
+- [Lean Canvas — business hypotheses on one page](methods_en/lean-canvas.md) `M-lean-canvas` — business-model, lean-canvas, hypotheses, value-proposition, early-adopters
+- [Lean Startup — Build-Measure-Learn, validated learning and pivots](methods_en/lean-startup.md) `M-lean-startup` — build-measure-learn, mvp, innovation-accounting, pivot, hypotheses
 - [Loyalty research and customer metrics (NPS, CSAT, CES, SUS, UMUX, SUPR-Q)](methods_en/loyalty-metrics.md) `M-loyalty-metrics` — nps, csat, ces, sus, umux
-- [Market sizing PAM/TAM/SAM/SOM — funnel formulas, top-down vs bottom-up, units, sanity checks](methods_en/market-sizing.md) `M-market-sizing` — en, summary
-- [ML for PMs — where ML is justified, 7-step ML hypothesis, model metrics vs business metrics, CUPED/uplift in A/B tests, drift and risks](methods_en/ml-for-product.md) `M-ml-for-product` — en, summary
-- [Top-down and bottom-up modeling — three projections, baseline vs growth, cohort drivers, gap interpretation](methods_en/model-topdown-bottomup.md) `M-model-topdown-bottomup` — en, summary
-- [Model validation — backtest, benchmarks, sensitivity analysis, scenarios and bias control](methods_en/model-validation.md) `M-model-validation` — en, summary
-- [Monetization models, value metric and pricing — maturity ladder, distributions vs averages, implicit take rate, pricing types, loyalty, auctions](methods_en/monetization.md) `M-monetization` — en, summary
-- [MVP, MLP and pilots — choosing the validation format, input/output metrics, pre-registered success criteria](methods_en/mvp-pilots.md) `M-mvp-pilots` — en, summary
-- [North Star Playbook — one value metric and an input-metric tree](methods_en/north-star-playbook.md) `M-north-star-playbook` — en, summary
-- [Strategy timing and outcome roadmap — phases, gate criteria, stop signals, resources and hiring](methods_en/outcome-roadmap.md) `M-outcome-roadmap` — en, summary
+- [Market sizing (PAM / TAM / SAM / SOM) — a reproducible market funnel with sources and sanity checks](methods_en/market-sizing.md) `M-market-sizing` — market-sizing, tam, sam, som, top-down
+- [ML for product managers — where ML is justified, hypothesis validation, model quality metrics vs business metrics, ML in A/B tests, risks](methods_en/ml-for-product.md) `M-ml-for-product` — ml, machine-learning, regression, classification, ranking
+- [Top-Down and Bottom-up business modeling](methods_en/model-topdown-bottomup.md) `M-model-topdown-bottomup` — top-down, bottom-up, market-sizing, cagr, seasonality
+- [Model validation (backtest, benchmarks, sensitivity)](methods_en/model-validation.md) `M-model-validation` — model-validation, backtest, benchmarks, sensitivity, scenarios
+- [Monetization models, value metric and pricing (with an auctions section)](methods_en/monetization.md) `M-monetization` — monetization, pricing, value-metric, take-rate, cpa
+- [MVP, MLP and pilots — choosing the validation format, metrics, success criteria, conclusions](methods_en/mvp-pilots.md) `M-mvp-pilots` — mvp, mlp, pilot, prototype, traction-model
+- [North Star Playbook — the North Star metric and the input-metric tree (the Amplitude approach)](methods_en/north-star-playbook.md) `M-north-star-playbook` — nsm, north-star-metric, input-metrics, metric-tree, goal
+- [Strategy timing and the outcome roadmap — phases, gate criteria, stop signals](methods_en/outcome-roadmap.md) `M-outcome-roadmap` — roadmap, outcome-roadmap, phases, pilot, validation
 - [Paid subscription retention and win-back — renewals, dunning, save offers, winning back churned users](methods_en/paid-retention-winback.md) `M-paid-retention` — retention, subscriptions, churn, win-back, dunning
-- [Platform economics — TCO, six effect sources, financial model (ΔFCF, break-even, ROI/IRR/NPV), incremental effect, adoption metrics](methods_en/platform-economics.md) `M-platform-economics` — en, summary
-- [Platform risks, concept review, pilot, scaling and adoption, investor case](methods_en/platform-risks-rollout.md) `M-platform-risks-rollout` — en, summary
-- [Scaling and Product-Market Fit — go/wait/fix gates, Superhuman PMF engine, traffic-light metrics](methods_en/pmf-scaling.md) `M-pmf-scaling` — en, summary
-- [PMF Survey (Sean Ellis) — the 40% 'very disappointed' test](methods_en/pmf-survey.md) `M-pmf-survey` — en, summary
-- [Backlog prioritization — RICE, ICE, WSJF, and Kano: formulas and when to use which](methods_en/prioritization-ricews.md) `M-prioritization-ricews` — en, summary
-- [Product communication and defense — decision memo, traction doc, gates, MECE, traffic-light dashboard, 10-slide pitch, stakeholders, post-mortem](methods_en/product-communication.md) `M-product-communication` — en, summary
-- [Product frameworks map — which framework for which phase, prioritization methods and metric families](methods_en/product-frameworks.md) `M-product-frameworks` — en, summary
-- [Product metrics — metric validity, funnels (step vs through conversion), retention and cohorts, metric tree, NSM, guardrails, drop triage](methods_en/product-metrics.md) `M-product-metrics` — en, summary
-- [Quantitative methods — survey methodology, sampling and power, validity, statistical analysis, visualization](methods_en/quant-methods.md) `M-quant-methods` — en, summary
-- [Research types and method choice — Double Diamond, CustDev, qual vs quant, desk research, benchmark](methods_en/research-types.md) `M-research-types` — en, summary
-- [Retention curves — smile curve, plateau, decay; how to read them, cohort curves and industry benchmarks](methods_en/retention-curves.md) `M-retention-curves` — en, summary
-- [Strategy risks — eight types, risk matrix, AATM responses, mitigation (fake door, +20% reserve), plan B with triggers, seasonality, DACI](methods_en/risks.md) `M-risks` — en, summary
-- [Roadmap — structure, outcome-based rows, OKR link, capacity, decision points, quality rubric](methods_en/roadmap.md) `M-roadmap` — en, summary
+- [Platform economics: TCO, effects, financial model, metrics](methods_en/platform-economics.md) `M-platform-economics` — platforms, tco, financial-model, dcf, irr
+- [Platform risks, concept review, pilot, scaling and adoption, investor case](methods_en/platform-risks-rollout.md) `M-platform-risks-rollout` — platforms, risks, risk-register, pilot, adoption
+- [Scaling and Product-Market Fit — when to grow, how to measure PMF (the Superhuman engine)](methods_en/pmf-scaling.md) `M-pmf-scaling` — pmf, scaling, unit-economics, retention, nps
+- [PMF survey (Sean Ellis) — "how disappointed would you be if the product disappeared?" and working with the 40%](methods_en/pmf-survey.md) `M-pmf-survey` — pmf, survey, sean-ellis, 40-percent, segmentation
+- [Backlog prioritization — RICE, ICE, WSJF and Kano: formulas and which method to use when](methods_en/prioritization-ricews.md) `M-prioritization-ricews` — prioritization, rice, ice, wsjf, kano
+- [Product communication and defense — from roadmap to stakeholder decision](methods_en/product-communication.md) `M-product-communication` — product-defense, decision-memo, one-pager, stakeholders, gates
+- [Product frameworks — what, when and why](methods_en/product-frameworks.md) `M-product-frameworks` — frameworks, prioritization, metrics, process, hadi
+- [Product metrics — types, funnels, retention and cohorts, the metric tree, NSM, counter-metrics](methods_en/product-metrics.md) `M-product-metrics` — metrics, funnels, retention, cohorts, nsm
+- [Quantitative methods: survey, sampling, data analysis](methods_en/quant-methods.md) `M-quant-methods` — survey, questionnaire, sampling, sample-size, representativeness
+- [Research types and choosing a method for the question](methods_en/research-types.md) `M-research-types` — research, qualitative, quantitative, desk-research, benchmark
+- [Retention curves — shapes (smile curve, plateau, decay), how to read them, cohort curves and industry benchmarks](methods_en/retention-curves.md) `M-retention-curves` — retention, retention-curves, cohorts, smile-curve, plateau
+- [Strategy risks — identification, assessment, AATM, mitigation and plan B](methods_en/risks.md) `M-risks` — risks, risk-matrix, accept-avoid-transfer-mitigate, plan-b, trigger-metric
+- [Roadmap — how it is structured, how it is built and how it is checked for quality](methods_en/roadmap.md) `M-roadmap` — roadmap, okr, prioritization, dependencies, capacity
 - [Scenario modeling of impact — pessimistic, base and optimistic scenarios, sensitivity](methods_en/scenario-modeling.md) `M-scenario-modeling` — scenarios, sensitivity, modeling, forecast, risk
-- [Six-pager — six-FAQ strategic report with Excel appendices for committee defense](methods_en/six-pager.md) `M-six-pager` — en, summary
-- [Methods map — PM question → which cards to read and in what order; routes by task type, agent process phase, and product stage](methods_en/skills-map.md) `M-skills-map` — en, summary
-- [Solution design — solution hypotheses, RICE scoring, five risk types, cheapest-validation chain, post-mortem](methods_en/solution-design.md) `M-solution-design` — en, summary
-- [Source criticism for analytical reports — evidence grades A–D, triangulation, red flags, evidence log](methods_en/source-criticism.md) `M-source-criticism` — en, summary
-- [SQL for product analytics — DAU/funnel/cohort/ARPU queries, joins and window functions (ROW_NUMBER, LAG), CTE, data-quality checklist](methods_en/sql-for-pm.md) `M-sql-for-pm` — en, summary
-- [Product strategy, growth models and types — five components, unfair advantage, goal cascade, document skeleton](methods_en/strategy-growth.md) `M-strategy-growth` — en, summary
-- [Success metrics — North Star Metric (8 criteria), metric pyramid NSM→Outcome→Output→Input, metric tree, AARRR blocks, OKR with proven links](methods_en/success-metrics.md) `M-success-metrics` — en, summary
-- [Synthetic respondents (AI simulation) — permitted uses, persona spec, mandatory labeling, evidence rules](methods_en/synthetic-respondents.md) `M-synthetic-respondents` — en, summary
+- [Six-pager — a six-page strategic report with Excel appendices](methods_en/six-pager.md) `M-six-pager` — six-pager, report, committee, excel-appendices, strategy-review
+- [Methods map: a product leader's question → which cards, and in what order](methods_en/skills-map.md) `M-skills-map` — methods-navigation, routing, skills-map, route-by-question, competency-matrix
+- [Solution design — solution hypotheses, scoring, risks, validation and post-mortem](methods_en/solution-design.md) `M-solution-design` — solution-hypothesis, rice, solution-risks, fake-door, ab-test
+- [Source criticism and analytical reports — the evidence scale, provenance tracking](methods_en/source-criticism.md) `M-source-criticism` — sources, credibility, triangulation, red-flags, evidence-log
+- [SQL for product analytics — typical queries (funnel, cohorts, ARPU), joins and window functions, data quality](methods_en/sql-for-pm.md) `M-sql-for-pm` — sql, funnel, retention, cohorts, arpu
+- [Product strategy, growth types and the structure of a strategy document](methods_en/strategy-growth.md) `M-strategy-growth` — product-strategy, growth, ansoff, cascading, unfair-advantage
+- [Success metrics — North Star Metric, metric tree, AARRR and OKR](methods_en/success-metrics.md) `M-success-metrics` — nsm, north-star-metric, metric-tree, aarrr, okr
+- [Synthetic respondents (AI simulation) — permitted use, persona specification, mandatory labeling](methods_en/synthetic-respondents.md) `M-synthetic-respondents` — synthetic-respondents, ai, personas, hypotheses, labeling
 - [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder-pricing.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
-- [Team and people — composition by stage, hiring vs outsourcing, org structure, stakeholders, neighbors](methods_en/team.md) `M-team` — en, summary
-- [Traction model (growth model) — 4 hypothesis layers, top-down vs bottom-up, baseline, effects (discounting, elasticity, cannibalization), validation](methods_en/traction-model.md) `M-traction-model` — en, summary
-- [Unit economics — LTV, CAC, payback, contribution margin, seven LTV methods, cohort accounting](methods_en/unit-economics.md) `M-unit-economics` — en, summary
+- [Team and people — composition by stage, hiring, org structure, stakeholders and neighboring teams](methods_en/team.md) `M-team` — team, hiring, outsourcing, stakeholders, org-structure
+- [Traction model (growth model): building, effects, validation](methods_en/traction-model.md) `M-traction-model` — traction-model, growth-model, baseline, top-down, bottom-up
+- [Unit economics (LTV, CAC, payback)](methods_en/unit-economics.md) `M-unit-economics` — unit-economics, ltv, cac, payback, margin
 - [Usability testing — prototypes, moderated and unmoderated tests, metrics](methods_en/usability-testing.md) `M-usability-testing` — usability, ux-testing, prototype, moderated, unmoderated
-- [USP and value proposition — Job Story + Value Proposition Canvas, copyability filter, Value × Effort bet](methods_en/usp.md) `M-usp` — en, summary
-- [UX backlog and research knowledge base — atomic research, triage, metric links, retracting insights](methods_en/ux-backlog.md) `M-ux-backlog` — en, summary
-- [Heuristic UI evaluation — visible-evidence-only findings, V/I/H confidence levels, 0–4 severity scale](methods_en/ux-heuristics.md) `M-ux-heuristics` — en, summary
+- [Formulating a USP and value proposition (Job Story + Value Proposition Canvas)](methods_en/usp.md) `M-usp` — usp, value-proposition, vpc, job-story, jtbd
+- [UX backlog, research knowledge base and big picture — how to store insights so they can be reused and retracted](methods_en/ux-backlog.md) `M-ux-backlog` — ux-backlog, atomic-research, big-picture, knowledge-base, insights
+- [Heuristic UI evaluation — visible-evidence-only findings, V/I/H confidence levels, 0–4 severity scale](methods_en/ux-heuristics.md) `M-ux-heuristics` — heuristics, nielsen, shneiderman, norman, expert-review
 
 ## After the decision (`after-decision`)
 
-- [Auctions and marketplaces — auction mechanics (GFP/GSP/VCG), selection rules, money and market-health metrics, toxic revenue](methods_en/auctions-marketplaces.md) `M-auctions-marketplaces` — en, summary
-- [Basic statistics for product decisions — means, spread, confidence intervals, error types, power](methods_en/basic-statistics-pm.md) `M-basic-statistics-pm` — en, summary
-- [Benchmarking — reference values for retention, conversion, churn, CAC; P25–P50–P95 ranges, comparability checks, biases, triangulation](methods_en/benchmarking.md) `M-benchmarking` — en, summary
-- [Cannibalization of products, features, plans and channels — increment vs gross effect, transfer matrix, baseline calculation, modeling](methods_en/cannibalization.md) `M-cannibalization` — en, summary
-- [Dashboards and visualization for product managers — 4-level structure, chart-per-question, honest axes, annotations](methods_en/dashboards-visualization.md) `M-dashboards-visualization` — en, summary
-- [DACI roles and the decision journal — drivers, approvers, contributors, revision conditions](methods_en/decision-daci.md) `M-decision-daci` — en, summary
-- [Delivery — from scope to release: MoSCoW/RICE, acceptance criteria, feature flags, canary, alerts, DORA, release trains, security](methods_en/delivery.md) `M-delivery` — en, summary
-- [Forecasting and traction analytics — baseline with seasonality, driver model, rollout, MAPE, forecast boundaries](methods_en/forecasting-product.md) `M-forecasting-product` — en, summary
+- [Auctions and marketplaces (mechanics, metrics, market health)](methods_en/auctions-marketplaces.md) `M-auctions-marketplaces` — auctions, marketplace, gsp, vcg, gfp
+- [Basic statistics for product decisions — means, spread, confidence intervals, type I/II errors, power](methods_en/basic-statistics-pm.md) `M-basic-statistics-pm` — statistics, mean, median, percentile, variance
+- [Benchmarking — reference values for metrics and checking whether they apply](methods_en/benchmarking.md) `M-benchmarking` — benchmarking, retention, churn, conversion, comparability
+- [Cannibalization of products, features, plans and channels](methods_en/cannibalization.md) `M-cannibalization` — cannibalization, flow-over, increment, metric-tradeoffs, plans
+- [Visualization and dashboards for product managers — purpose, a 4-level structure, chart rules and a checklist](methods_en/dashboards-visualization.md) `M-dashboards-visualization` — visualization, dashboards, hero-kpi, funnel-chart, annotations
+- [DACI and the decision journal — roles, owners, revision conditions](methods_en/decision-daci.md) `M-decision-daci` — daci, decisions, roles, accountability, decision-journal
+- [Delivery — from scope to release: what to account for when committing to a plan](methods_en/delivery.md) `M-delivery` — delivery, scope, moscow, rice, acceptance-criteria
+- [Forecasting and traction analytics — baseline, seasonality, driver model, forecast accuracy and limits](methods_en/forecasting-product.md) `M-forecasting-product` — forecast, baseline, seasonality, time-series, drivers
 - [Loyalty research and customer metrics (NPS, CSAT, CES, SUS, UMUX, SUPR-Q)](methods_en/loyalty-metrics.md) `M-loyalty-metrics` — nps, csat, ces, sus, umux
-- [Marketing research — brand health tracking, U&A, Kano, MaxDiff, TURF for attribute prioritization](methods_en/marketing-research.md) `M-marketing-research` — en, summary
-- [Model validation — backtest, benchmarks, sensitivity analysis, scenarios and bias control](methods_en/model-validation.md) `M-model-validation` — en, summary
-- [Monetization models, value metric and pricing — maturity ladder, distributions vs averages, implicit take rate, pricing types, loyalty, auctions](methods_en/monetization.md) `M-monetization` — en, summary
-- [MVP, MLP and pilots — choosing the validation format, input/output metrics, pre-registered success criteria](methods_en/mvp-pilots.md) `M-mvp-pilots` — en, summary
-- [Strategy timing and outcome roadmap — phases, gate criteria, stop signals, resources and hiring](methods_en/outcome-roadmap.md) `M-outcome-roadmap` — en, summary
+- [Marketing research: brand tracking, Kano, MaxDiff, TURF](methods_en/marketing-research.md) `M-marketing-research` — marketing-research, bht, brand-tracking, u-a, kano
+- [Model validation (backtest, benchmarks, sensitivity)](methods_en/model-validation.md) `M-model-validation` — model-validation, backtest, benchmarks, sensitivity, scenarios
+- [Monetization models, value metric and pricing (with an auctions section)](methods_en/monetization.md) `M-monetization` — monetization, pricing, value-metric, take-rate, cpa
+- [MVP, MLP and pilots — choosing the validation format, metrics, success criteria, conclusions](methods_en/mvp-pilots.md) `M-mvp-pilots` — mvp, mlp, pilot, prototype, traction-model
+- [Strategy timing and the outcome roadmap — phases, gate criteria, stop signals](methods_en/outcome-roadmap.md) `M-outcome-roadmap` — roadmap, outcome-roadmap, phases, pilot, validation
 - [Paid subscription retention and win-back — renewals, dunning, save offers, winning back churned users](methods_en/paid-retention-winback.md) `M-paid-retention` — retention, subscriptions, churn, win-back, dunning
-- [Platform risks, concept review, pilot, scaling and adoption, investor case](methods_en/platform-risks-rollout.md) `M-platform-risks-rollout` — en, summary
-- [Scaling and Product-Market Fit — go/wait/fix gates, Superhuman PMF engine, traffic-light metrics](methods_en/pmf-scaling.md) `M-pmf-scaling` — en, summary
-- [Product communication and defense — decision memo, traction doc, gates, MECE, traffic-light dashboard, 10-slide pitch, stakeholders, post-mortem](methods_en/product-communication.md) `M-product-communication` — en, summary
-- [Product frameworks map — which framework for which phase, prioritization methods and metric families](methods_en/product-frameworks.md) `M-product-frameworks` — en, summary
-- [Product metrics — metric validity, funnels (step vs through conversion), retention and cohorts, metric tree, NSM, guardrails, drop triage](methods_en/product-metrics.md) `M-product-metrics` — en, summary
-- [Quantitative methods — survey methodology, sampling and power, validity, statistical analysis, visualization](methods_en/quant-methods.md) `M-quant-methods` — en, summary
-- [Strategy risks — eight types, risk matrix, AATM responses, mitigation (fake door, +20% reserve), plan B with triggers, seasonality, DACI](methods_en/risks.md) `M-risks` — en, summary
-- [Roadmap — structure, outcome-based rows, OKR link, capacity, decision points, quality rubric](methods_en/roadmap.md) `M-roadmap` — en, summary
+- [Platform risks, concept review, pilot, scaling and adoption, investor case](methods_en/platform-risks-rollout.md) `M-platform-risks-rollout` — platforms, risks, risk-register, pilot, adoption
+- [Scaling and Product-Market Fit — when to grow, how to measure PMF (the Superhuman engine)](methods_en/pmf-scaling.md) `M-pmf-scaling` — pmf, scaling, unit-economics, retention, nps
+- [Product communication and defense — from roadmap to stakeholder decision](methods_en/product-communication.md) `M-product-communication` — product-defense, decision-memo, one-pager, stakeholders, gates
+- [Product frameworks — what, when and why](methods_en/product-frameworks.md) `M-product-frameworks` — frameworks, prioritization, metrics, process, hadi
+- [Product metrics — types, funnels, retention and cohorts, the metric tree, NSM, counter-metrics](methods_en/product-metrics.md) `M-product-metrics` — metrics, funnels, retention, cohorts, nsm
+- [Quantitative methods: survey, sampling, data analysis](methods_en/quant-methods.md) `M-quant-methods` — survey, questionnaire, sampling, sample-size, representativeness
+- [Strategy risks — identification, assessment, AATM, mitigation and plan B](methods_en/risks.md) `M-risks` — risks, risk-matrix, accept-avoid-transfer-mitigate, plan-b, trigger-metric
+- [Roadmap — how it is structured, how it is built and how it is checked for quality](methods_en/roadmap.md) `M-roadmap` — roadmap, okr, prioritization, dependencies, capacity
 - [Scenario modeling of impact — pessimistic, base and optimistic scenarios, sensitivity](methods_en/scenario-modeling.md) `M-scenario-modeling` — scenarios, sensitivity, modeling, forecast, risk
-- [Methods map — PM question → which cards to read and in what order; routes by task type, agent process phase, and product stage](methods_en/skills-map.md) `M-skills-map` — en, summary
-- [Solution design — solution hypotheses, RICE scoring, five risk types, cheapest-validation chain, post-mortem](methods_en/solution-design.md) `M-solution-design` — en, summary
-- [SQL for product analytics — DAU/funnel/cohort/ARPU queries, joins and window functions (ROW_NUMBER, LAG), CTE, data-quality checklist](methods_en/sql-for-pm.md) `M-sql-for-pm` — en, summary
-- [Success metrics — North Star Metric (8 criteria), metric pyramid NSM→Outcome→Output→Input, metric tree, AARRR blocks, OKR with proven links](methods_en/success-metrics.md) `M-success-metrics` — en, summary
+- [Methods map: a product leader's question → which cards, and in what order](methods_en/skills-map.md) `M-skills-map` — methods-navigation, routing, skills-map, route-by-question, competency-matrix
+- [Solution design — solution hypotheses, scoring, risks, validation and post-mortem](methods_en/solution-design.md) `M-solution-design` — solution-hypothesis, rice, solution-risks, fake-door, ab-test
+- [SQL for product analytics — typical queries (funnel, cohorts, ARPU), joins and window functions, data quality](methods_en/sql-for-pm.md) `M-sql-for-pm` — sql, funnel, retention, cohorts, arpu
+- [Success metrics — North Star Metric, metric tree, AARRR and OKR](methods_en/success-metrics.md) `M-success-metrics` — nsm, north-star-metric, metric-tree, aarrr, okr
 - [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder-pricing.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
-- [Team and people — composition by stage, hiring vs outsourcing, org structure, stakeholders, neighbors](methods_en/team.md) `M-team` — en, summary
-- [Traction model (growth model) — 4 hypothesis layers, top-down vs bottom-up, baseline, effects (discounting, elasticity, cannibalization), validation](methods_en/traction-model.md) `M-traction-model` — en, summary
-- [Unit economics — LTV, CAC, payback, contribution margin, seven LTV methods, cohort accounting](methods_en/unit-economics.md) `M-unit-economics` — en, summary
+- [Team and people — composition by stage, hiring, org structure, stakeholders and neighboring teams](methods_en/team.md) `M-team` — team, hiring, outsourcing, stakeholders, org-structure
+- [Traction model (growth model): building, effects, validation](methods_en/traction-model.md) `M-traction-model` — traction-model, growth-model, baseline, top-down, bottom-up
+- [Unit economics (LTV, CAC, payback)](methods_en/unit-economics.md) `M-unit-economics` — unit-economics, ltv, cac, payback, margin
 - [Usability testing — prototypes, moderated and unmoderated tests, metrics](methods_en/usability-testing.md) `M-usability-testing` — usability, ux-testing, prototype, moderated, unmoderated
-- [UX backlog and research knowledge base — atomic research, triage, metric links, retracting insights](methods_en/ux-backlog.md) `M-ux-backlog` — en, summary
-- [Heuristic UI evaluation — visible-evidence-only findings, V/I/H confidence levels, 0–4 severity scale](methods_en/ux-heuristics.md) `M-ux-heuristics` — en, summary
-- [Workshops and facilitation — brief, participants, minute-by-minute scenario, divergence→convergence tools, difficult participants, protocol and follow-up](methods_en/workshops.md) `M-workshops` — en, summary
+- [UX backlog, research knowledge base and big picture — how to store insights so they can be reused and retracted](methods_en/ux-backlog.md) `M-ux-backlog` — ux-backlog, atomic-research, big-picture, knowledge-base, insights
+- [Heuristic UI evaluation — visible-evidence-only findings, V/I/H confidence levels, 0–4 severity scale](methods_en/ux-heuristics.md) `M-ux-heuristics` — heuristics, nielsen, shneiderman, norman, expert-review
+- [Workshops and facilitation — how to run a session that ends with a decision](methods_en/workshops.md) `M-workshops` — workshops, facilitation, hmw, divergence, convergence
 
 ## All cards by course
 

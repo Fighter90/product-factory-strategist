@@ -4,6 +4,7 @@
 Запуск: python3 -m unittest tests.test_kb_lint -v
 """
 import os
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -142,6 +143,35 @@ class KbCardPathEnTests(unittest.TestCase):
             if ru.exists():
                 ru_meta = kb.frontmatter(ru.read_text(encoding="utf-8"))
                 self.assertEqual(meta.get("id"), ru_meta.get("id"), p.name)
+
+
+class KbLintRealKbTests(unittest.TestCase):
+    """PRO-60: реальная база знаний зелёная — lint пустой, CLI выходит с 0."""
+
+    def test_lint_clean_on_real_kb(self):
+        self.assertEqual(kb.lint(), [])
+
+    def test_cli_kb_lint_exits_zero(self):
+        import subprocess
+        r = subprocess.run([sys.executable, "-m", "tools.pfs", "kb", "lint"],
+                           cwd=core.ROOT, capture_output=True, text=True,
+                           env={**os.environ, "PFS_PROJECTS_DIR": tempfile.mkdtemp(prefix="pfs-lint-cli-")})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("проблем: 0", r.stdout)
+
+    def test_new_strategy_cards_have_en_mirrors(self):
+        for cid in ("M-six-pager-etalon", "M-committee-style", "M-tariff-ladder", "M-gtm-new-market",
+                    "M-paid-retention", "M-message-house", "M-scenario-modeling", "M-weighted-scoring"):
+            p = kb.card_path(cid + "-en")
+            meta = kb.frontmatter(p.read_text(encoding="utf-8"))
+            self.assertEqual(meta.get("id"), cid, p.name)
+            self.assertEqual(meta.get("lang"), "en", p.name)
+
+    def test_stage_cards_reference_existing_ids(self):
+        ids = {c.get("id") for c in kb.cards()}
+        for stage, cards in kb.STAGE_CARDS.items():
+            for cid in cards:
+                self.assertIn(cid, ids, f"{stage}: {cid}")
 
 
 class KbIndexEnTests(unittest.TestCase):
