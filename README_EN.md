@@ -27,7 +27,7 @@ cd product-factory-strategist
 ./scripts/install.sh                            # uv tool install -e . (or venv+symlink)
 pfs --help                                      # CLI installed: works from any folder
 python3 -m tools.pfs doctor                     # environment check: Python, pdftotext, knowledge base
-python3 -m unittest discover -s tests           # 373 tests
+python3 -m unittest discover -s tests           # 380 tests
 ```
 
 Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INSTALL_EN.md](docs/INSTALL_EN.md).
@@ -305,7 +305,7 @@ consent and no personal data · the validator refuses a fact based on synthetic/
 ```
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
-  skills/ (120: base 13 · product-skills 27 · personal library · integrations)
+  skills/ (121: base 13 · product-skills 27 · personal library · integrations)
   agents/ (8) · hooks/ (5) · settings.json
 .cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
@@ -317,5 +317,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/ (355) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/ (380) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```

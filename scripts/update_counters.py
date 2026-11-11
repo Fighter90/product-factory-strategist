@@ -9,8 +9,10 @@ docs/HELP_EN.md. Запуск вручную перед релизом или в
     python3 scripts/update_counters.py --check   # только проверить: 0 — актуально, 1 — разъехалось
 
 Что подставляется:
-- число тестов (`python3 -m unittest discover -s tests`) — строки с `unittest discover`;
-- число навыков — каталоги `.claude/skills`;
+- число тестов (`python3 -m unittest discover -s tests`) — строки с `unittest discover`
+  и «голый» счётчик `tests/ (N)` в таблице структуры репозитория;
+- число навыков — каталоги `.claude/skills`: словесные («121 навык», «121 skills in»)
+  и «голые» `skills/ (N` / `**Структура (N)**`;
 - число карт знаний — `knowledge/methods/*.md` (RU) и `knowledge/methods_en/*.md` (EN-зеркала),
   рядом с словами «карт/карта» и «EN-зеркал/EN mirrors»;
 - число субагентов — `.claude/agents/*.md`.
@@ -94,6 +96,23 @@ def sub_number(text: str, lookbehind: str, value: int) -> tuple[str, int]:
     return pattern.sub(repl, text), changed
 
 
+def sub_bare(text: str, token: str, value: int) -> tuple[str, int]:
+    r"""«Голый» счётчик `(N` сразу ПОСЛЕ токена (`tests/`, `skills/`, «Структура») → value.
+
+    Закрывающая часть скобки не трогается: `skills/ (120: base 13 …)` → `skills/ (121: …)`.
+    """
+    pattern = re.compile(re.escape(token) + r"(\s*)\((\d+)")
+    changed = 0
+
+    def repl(m: re.Match) -> str:
+        nonlocal changed
+        if m.group(2) != str(value):
+            changed += 1
+        return f"{token}{m.group(1)}({value}"
+
+    return pattern.sub(repl, text), changed
+
+
 def update_file(path: Path, c: dict) -> int:
     """Возвращает число замен; тесты — только на строках с `unittest discover`."""
     text = path.read_text(encoding="utf-8")
@@ -113,12 +132,19 @@ def update_file(path: Path, c: dict) -> int:
                         total += n
                         break
         for word, val in (("навык", c["skills"]), ("навыка", c["skills"]), ("навыков", c["skills"]),
+                          ("skills", c["skills"]),
                           ("карт", c["cards_ru"]), ("карты", c["cards_ru"]), ("карта", c["cards_ru"]),
                           ("EN-зеркал", c["cards_en"]), ("EN mirrors", c["cards_en"]),
                           ("субагентов", c["subagents"]), ("субагента", c["subagents"]),
                           ("subagents", c["subagents"])):
             if re.search(r"\d+\s+" + re.escape(word), line):
                 line, n = sub_number(line, word, val)
+                total += n
+        # «Голые» счётчики структуры: tests/ (N) · skills/ (N… · **Структура (N)**.
+        for token, val in (("tests/", c["tests"]), ("skills/", c["skills"]),
+                           ("Структура", c["skills"])):
+            if re.search(re.escape(token) + r"\s*\(\d+", line):
+                line, n = sub_bare(line, token, val)
                 total += n
         lines[i] = line
     new_text = "".join(lines)

@@ -28,7 +28,7 @@ cd product-factory-strategist
 ./scripts/install.sh                            # uv tool install -e . (или venv+symlink)
 pfs --help                                      # CLI установлен: работает из любой папки
 python3 -m tools.pfs doctor                     # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests           # 373 теста
+python3 -m unittest discover -s tests           # 380 тестов
 ```
 
 Детали, PEP 668, обновление, удаление, тестирование и troubleshooting — [docs/INSTALL.md](docs/INSTALL.md).
@@ -364,7 +364,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 
 ```
 AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject.toml
-.claude/skills/      (120)  базовые 13 · product-skills 27 · личная 74 · интеграции 6
+.claude/skills/      (121)  базовые 13 · product-skills 27 · личная 75 · интеграции 6
 .claude/agents/      (8)    researcher · red-team · evidence-auditor · synthetic-respondent ·
                             data-analyst · ux-analyst · comms-strategist · router
 .claude/hooks/       (5)    session_start (SessionStart-контекст) · pre_web (домены до запроса) ·
@@ -382,5 +382,5 @@ projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl �
 site/                index.html · demo.html · materials.html · help.html (RU/EN)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
-tests/               (355)
+tests/               (380)
 ```
