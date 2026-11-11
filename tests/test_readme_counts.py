@@ -1,4 +1,4 @@
-"""PRO-66: числа README согласованы с генератором сайта.
+"""PRO-66: числа README и docs/COMPLIANCE.md согласованы с генератором сайта.
 
 Раунд ревью 2: README.md и README_EN.md публикуют число автотестов «tests/ (N)»,
 а scripts/build_site.py::repo_numbers() подставляет то же число на лендинг
@@ -6,6 +6,12 @@
 (README «420», сайт «459», qa-отчёт «459 зелёные») ловится тестом.
 Плюс README_EN.md должен описывать новую структуру site/ (генератор,
 en/index.html, site/ANALYTICS.md) зеркально русскому README.
+
+Раунд ревью 3: docs/COMPLIANCE.md называл «475» в таблице счётчиков и в разделе
+«Как проверить», когда измерение генератора уже было 481 — четвёртое место
+с тем же числом оставалось без контроля. Теперь оба упоминания в COMPLIANCE.md
+сверяются с тем же измерением: единое измерение — _count_tests, ни одного
+числа, вбитого руками вне теста.
 """
 from __future__ import annotations
 
@@ -17,6 +23,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 TESTS_CLAIM = re.compile(r"^tests/\s+\((\d+)\)", re.M)
+# docs/COMPLIANCE.md: строка таблицы «| Тесты | N (`OK`) |» и команда из раздела
+# «Как проверить» — «# 1. Тесты инструментов (N, без установки пакетов)».
+COMPLIANCE_ROW = re.compile(r"\|\s*Тесты\s*\|\s*(\d+)")
+COMPLIANCE_HOWTO = re.compile(r"Тесты инструментов \((\d+)")
 
 
 def generator_test_count() -> int:
@@ -44,6 +54,35 @@ class TestReadmeTestCounts(unittest.TestCase):
 
     def test_readme_en_tests_count_matches_generator(self):
         self.assertEqual(self._claim("README_EN.md"), generator_test_count())
+
+
+class TestComplianceTestCounts(unittest.TestCase):
+    """docs/COMPLIANCE.md называет то же измерение, что генератор.
+
+    Одно измерение — scripts/build_site.py::_count_tests (AST по tests/test_*.py).
+    COMPLIANCE.md упоминает число в двух местах (таблица счётчиков и раздел
+    «Как проверить»), оба обязаны совпадать: ручное число «475» протухло
+    и дожило до ревью, потому что нигде не проверялось."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.compliance = (ROOT / "docs" / "COMPLIANCE.md").read_text(encoding="utf-8")
+
+    def _claim(self, pattern: re.Pattern, what: str) -> int:
+        found = pattern.findall(self.compliance)
+        self.assertEqual(
+            len(found), 1,
+            f"в docs/COMPLIANCE.md ровно одно упоминание ({what}) числа тестов, "
+            f"найдено: {found}")
+        return int(found[0])
+
+    def test_compliance_table_count_matches_generator(self):
+        self.assertEqual(self._claim(COMPLIANCE_ROW, "таблица счётчиков"),
+                         generator_test_count())
+
+    def test_compliance_howto_count_matches_generator(self):
+        self.assertEqual(self._claim(COMPLIANCE_HOWTO, "раздел «Как проверить»"),
+                         generator_test_count())
 
 
 class TestReadmeEnSiteLayout(unittest.TestCase):

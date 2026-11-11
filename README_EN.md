@@ -318,5 +318,5 @@ site/       index.html · en/index.html — generator scripts/build_site.py (RU/
             numbers from the repository, Metrika: site/ANALYTICS.md) · demo.html ·
             materials.html · help.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/ (481) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/ (483) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```
