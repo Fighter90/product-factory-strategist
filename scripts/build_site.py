@@ -34,6 +34,30 @@ BASE = "https://strategyproduct.ru"
 
 CLAIM_ID = "C011"
 
+# Метка выбранного варианта для EN-страницы. «03_options.md» пишется по-русски,
+# поэтому D_LABEL из него нельзя подставлять на EN как есть — это утечка RU.
+# Перевод держим картой по точному тексту метки: формулировка в документе
+# изменилась — сборка падает громко, а не показывает русский текст на EN.
+D_LABEL_EN_MAP = {
+    "Оставить как есть": "Keep as is",
+    "Hosted freemium SaaS": "Hosted freemium SaaS",
+    "B2B white-label": "B2B white-label",
+    "Open-core dual-license": "Open-core dual-license",
+    "Закрыть коммерческую ветку": "Shut down the commercial track",
+}
+_CYRILLIC = re.compile(r"[\u0400-\u04FF]")
+
+
+def _label_en(label: str) -> str:
+    if label not in D_LABEL_EN_MAP:
+        raise BuildError(
+            f"Нет EN-перевода метки выбранного варианта: {label!r} — "
+            f"добавьте её в D_LABEL_EN_MAP в scripts/build_site.py")
+    en = D_LABEL_EN_MAP[label]
+    if _CYRILLIC.search(en):
+        raise BuildError(f"EN-метка варианта содержит кириллицу: {en!r}")
+    return en
+
 
 class BuildError(Exception):
     """Недостающие или испорченные данные репозитория — сборка падает громко."""
@@ -139,6 +163,7 @@ def demo_numbers() -> dict:
         "D_ASM": assumptions,
         "D_LETTER": letter,
         "D_LABEL": label,
+        "D_LABEL_EN": _label_en(label),
         "REVIEW_RU": f"{review[8:]}.{review[5:7]}.{review[2:4]}",
         "REVIEW_EN": review,
     }
@@ -1187,7 +1212,9 @@ def build(out: Path, ym_id: str | None) -> list[Path]:
     en = dict(tokens)
     en.update({"KIND": tokens["KIND_EN"], "TEXT": tokens["TEXT_EN"], "SEG": tokens["SEG_EN"],
                "DATE": tokens["DATE_EN"], "USAGE": tokens["USAGE_EN"], "REVIEW": tokens["REVIEW_EN"],
-               "DOM": tokens["C_DOM"], "A": "../", "BRAND": BRAND_SVG, "YOU": "you"})
+               "DOM": tokens["C_DOM"], "A": "../", "BRAND": BRAND_SVG, "YOU": "you",
+               # метка выбранного варианта — EN-перевод, не текст русского 03_options.md
+               "D_LABEL": tokens["D_LABEL_EN"]})
 
     ru_page = _page("ru", ru_title, ru_desc, f"{BASE}/", _og("ru", ru_title, ru_desc, f"{BASE}/"),
                     RU_BODY, ru)
