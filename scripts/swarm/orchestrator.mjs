@@ -30,6 +30,10 @@ const flag = (name) => args.includes(name);
 const num = (name, def) => { const i = args.indexOf(name); return i >= 0 ? Number(args[i + 1]) || def : def; };
 const MAX_TASKS = num('--max', 1);
 const MAX_ROUNDS = num('--rounds', 3);
+// краш-безопасность (PRO-68): задача In Progress с меткой swarm, чей клейм старше
+// STUCK_MIN минут (или без клейм-метки — краш до записи), считается зависшей и
+// реqueue'ится в Todo; свежий клейм не трогаем — защита от перехвата чужой свежей работы
+const STUCK_MIN = num('--stuck-min', 30);
 const DRY = flag('--dry-run');
 const NO_RELEASE = flag('--no-release');
 const PIN = process.env.SWARM_PIN_ISSUE || '';
@@ -107,6 +111,11 @@ const after = (text, marker, until) => {
   return text.slice(i + marker.length, j > 0 ? j : undefined).trim();
 };
 
+// pyproject: fallback-инкремент (тегов нет — не должно случаться) и синхронизация
+// вычисленной из тегов версии (PRO-68: pyproject отставал от тегов → коллизии)
+const PY_BUMP = String.raw`python3 -c 'import pathlib,re; p=pathlib.Path("pyproject.toml"); m=re.search(r"version = \"(\d+)\.(\d+)\.(\d+)\"", p.read_text()); ver=m.group(1)+"."+m.group(2)+"."+str(int(m.group(3))+1); p.write_text(re.sub(r"version = \"\d+\.\d+\.\d+\"", "version = \""+ver+"\"", p.read_text(), count=1)); print(ver)'`;
+const PY_SET = (v) => String.raw`python3 -c 'import pathlib,re,sys; p=pathlib.Path("pyproject.toml"); p.write_text(re.sub(r"version = \"\d+\.\d+\.\d+\"", "version = \""+sys.argv[1]+"\"", p.read_text(), count=1))' ` + JSON.stringify(v);
+
 // ---------- Linear (детерминированно, GraphQL) ----------
 async function gql(query, variables = {}) {
   const r = await fetch('https://api.linear.app/graphql', {
@@ -136,6 +145,14 @@ async function pickIssue() {
   if (PIN && (n.state.name !== 'Todo' || !n.labels.nodes.some((l) => l.name === LABEL))) return null;
   return { id: n.id, identifier: n.identifier, title: n.title, description: n.description || '' };
 }
+// зависшие In Progress с меткой swarm: пикер берёт только Todo, поэтому задача, брошенная
+// In Progress крашем прошлого прогона, была невидима до ручного requeue (PRO-68:
+// застревали PRO-53/54/55/59/60/61/63). Решение о «завислости» — по возрасту клейма.
+const stuckIssues = async () => {
+  const d = await gql(`query($f: IssueFilter!) { issues(filter: $f, first: 10) { nodes { id identifier title state { name } labels { nodes { name } } } } }`,
+    { f: { team: { key: { eq: TEAM_KEY } }, labels: { name: { eq: LABEL } }, state: { name: { eq: 'In Progress' } } } });
+  return d.issues.nodes;
+};
 const comment = (issueId, body) => gql('mutation($i:String!,$b:String!){ commentCreate(input:{issueId:$i, body:$b}){ success } }', { i: issueId, b: body });
 const setState = async (issueId, name) => comment && gql('mutation($id:String!,$s:String!){ issueUpdate(id:$id, input:{stateId:$s}){ success } }', { id: issueId, s: (await states())[name] });
 const claimIssue = (i) => setState(i.id, 'In Progress').then(() => comment(i.id, '🎯 Swarm claimed this issue — orchestrator starting (dev → gates → review → release → prod-QA).'));
@@ -220,6 +237,24 @@ async function main() {
       return n;
     };
     const triesOf = (id) => attempts.get(id)?.n || 0;
+    // клейм-метки: когда оркестратор забрал задачу (identifier → ts мс). Нужны пик-секции,
+    // чтобы отличить «зависла In Progress после краша» от свежего клейма (PRO-68).
+    // Пишется ДО перевода в In Progress: краш между записью и setState безвреден
+    // (Todo + лишняя запись), наоборот — In Progress без метки (возраст неизвестен).
+    const claimedFile = resolve(STATE, 'claimed.json');
+    const claims = (() => {
+      try { return JSON.parse(readFileSync(claimedFile, 'utf8')); }
+      catch (e) {
+        if (e && e.code !== 'ENOENT') log(`claimed: файл не прочитан (${short(String(e), 120)}) — считаем клеймы неизвестными`);
+        return {}; // нет файла — норма для первого запуска
+      }
+    })();
+    const saveClaims = () => {
+      try { writeFileSync(claimedFile, JSON.stringify(claims, null, 2)); }
+      catch (e) { log(`claimed: НЕ СОХРАНЕНО (${short(String(e), 120)}) — зависшие In Progress могут быть не замечены`); }
+    };
+    const noteClaim = (id) => { claims[id] = Date.now(); saveClaims(); };
+    const forgetClaim = (id) => { if (id in claims) { delete claims[id]; saveClaims(); } };
     for (let n = 0; n < MAX_TASKS; n++) {
       logFile = resolve(LOGS, `cycle-${Date.now()}.log`);
       log(`=== task ${n + 1}/${MAX_TASKS} ===`);
@@ -232,12 +267,29 @@ async function main() {
       if (clean.out.trim()) throw new Error('working tree is not clean — aborting before pick');
       await sh('git fetch origin -q && git checkout -q --detach origin/main');
 
+      // краш-безопасность (PRO-68): single-instance lock гарантирует, что в момент
+      // pick ни один прогон задачу не держит — всё In Progress с меткой swarm висит
+      // после краша. Зависшая (клейма нет или старше STUCK_MIN минут) → Todo.
+      for (const n of await stuckIssues()) {
+        const t = claims[n.identifier];
+        const ageMs = Date.now() - (typeof t === 'number' ? t : 0);
+        const stale = typeof t !== 'number' || ageMs > STUCK_MIN * 60_000;
+        if (!stale) continue;
+        try {
+          await setState(n.id, 'Todo');
+          await comment(n.id, `♻️ Swarm: stuck In Progress for ${typeof t === 'number' ? Math.round(ageMs / 60000) : 'unknown'} min (crash after claim) — requeued to Todo (crash-safety).`);
+          forgetClaim(n.identifier);
+          log(`requeued stuck ${n.identifier} (In Progress, claim ${typeof t === 'number' ? Math.round(ageMs / 60000) + ' min ago' : 'unknown age'})`);
+        } catch (e) { log(`  stuck-requeue failed for ${n.identifier}: ${short(String(e), 120)}`); }
+      }
+
       // задачи с 2 проваленными попытками уходят в Backlog — очередь не зацикливается;
       // счётчик персистентен, но затухает (TTL 7 дней) — старые провалы не паркан навсегда
       let issue = await pickIssue();
       while (issue && triesOf(issue.identifier) >= 2) {
         await setState(issue.id, 'Backlog');
         await comment(issue.id, '🏁 Swarm: 2 attempts failed (review/gates; counter persists across runs, decays after 7 days) — parked in Backlog for human review. Branch kept.');
+        forgetClaim(issue.identifier); // может остаться от краша прошлого прогона
         log(`parked ${issue.identifier} (2 failed attempts) — skipping`);
         issue = await pickIssue();
       }
@@ -249,10 +301,12 @@ async function main() {
       let accepted = null, devStatus = null, devSummary = '', story = null, mergedDone = false, gatesLine = '?';
 
       try {
+        // claim внутри общего try: падение ПОСЛЕ перевода в In Progress (например,
+        // комментарий не прошёл) обязано вернуть задачу в Todo — иначе пикер её
+        // не видит и задача висит до ручного requeue (PRO-68: 53/54/55/59/60/61/63)
+        noteClaim(issue.identifier);
         await claimIssue(issue);
-      } catch (e) { throw new Error(`claim: ${short(String(e))}`); }
 
-      try {
         // ---- develop (executor ↔ reviewer loop, детерминированные гейты между раундами)
         let reviewNotes = '';
         let round = 0;
@@ -261,14 +315,18 @@ async function main() {
           await sh(`git checkout -q ${branch} 2>/dev/null || git checkout -q -B ${branch} origin/main`);
           // rebase на свежий main: убирает дрейф merge-base — иначе дифф тащит
           // уже смерженный объём и ревью вечно требует «разделить скоуп».
-          // Пуленепробиваемо: чистим хвосты прошлых rebase, editor выключен,
-          // при конфликте — abort и работаем как раньше (без rebase).
-          await sh(
+          // PRO-68: при конфликте ветка ПЕРЕСОЗДАЁТСЯ на свежем main (прежде было
+          // «abort и работаем как раньше» — та ветка конфликтовала на релизном
+          // squash-merge и роняла конвейер циклом). Исполнитель переприменит
+          // работу по описанию задачи в этом же раунде — уже на чистой базе.
+          const devRb = await sh(
             'git rebase --abort 2>/dev/null; ' +
-            'GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true git rebase origin/main 2>&1 | tail -1; ' +
-            'if [ -d "$(git rev-parse --git-dir)/rebase-merge" ] || [ -d "$(git rev-parse --git-dir)/rebase-apply" ]; then git rebase --abort 2>/dev/null; echo rebase-skipped; fi',
+            'if ! GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true git rebase origin/main; then ' +
+            'git rebase --abort 2>/dev/null; git checkout -q --detach HEAD 2>/dev/null; ' +
+            `git checkout -q -B ${branch} origin/main; echo branch-recreated-on-fresh-main; fi`,
             { timeoutMs: 180_000 }
           );
+          if (devRb.all.includes('branch-recreated-on-fresh-main')) log(`  branch ${branch} recreated on fresh main (rebase conflict) — executor re-applies on clean base`);
           const dev = await worker('executor', {
             IDENTIFIER: issue.identifier, TITLE: issue.title, ROUND: String(round + 1),
             DESCRIPTION: issue.description || '(см. задачу в Linear)',
@@ -293,6 +351,7 @@ async function main() {
               const ev = `**Already merged to main** — the executor's work is commit ${mergedSha.slice(0, 9)} (an ancestor of origin/main). Nothing left to ship.`;
               await doneIssue(issue, ev);
               attempts.delete(issue.identifier); saveAttempts();
+              forgetClaim(issue.identifier);
               log(`already merged: ${mergedSha.slice(0, 9)} — issue closed as Done`);
               mergedDone = true; break;
             }
@@ -322,7 +381,7 @@ async function main() {
             await failIssue(issue, 'gates', `failed after ${MAX_ROUNDS} rounds`);
             const tr = bumpAttempts(issue.identifier);
             log(`finished: ${issue.identifier} — gates failed (attempt ${tr}/2); moving on`);
-            if (tr < 2) { try { await setState(issue.id, 'Todo'); } catch {} }
+            if (tr < 2) { try { await setState(issue.id, 'Todo'); forgetClaim(issue.identifier); } catch {} }
             devStatus = 'gates-failed';
             break;
           }
@@ -354,17 +413,18 @@ async function main() {
             const stash = await sh('git stash push --include-untracked -q -m ' + JSON.stringify(`blocked executor leftovers ${issue.identifier}`), { timeoutMs: 60_000 });
             log(`  tree cleaned: stash ${stash.code === 0 ? 'ok' : 'nothing to stash'}`);
             log(`finished: ${issue.identifier} — executor blocked; moving on`);
-            try { await setState(issue.id, 'Todo'); } catch {}
+            try { await setState(issue.id, 'Todo'); forgetClaim(issue.identifier); } catch {}
             continue;
           }
           await cancelIssue(issue, `executor reported "${devStatus}"`);
+          forgetClaim(issue.identifier);
           log(`finished: ${devStatus} — issue canceled`); continue;
         }
         if (!accepted) {
           await failIssue(issue, 'review', `no ACCEPT in ${MAX_ROUNDS} rounds; branch ${branch} kept for human review`);
           const tr = bumpAttempts(issue.identifier);
           log(`finished: ${issue.identifier} — review failed (attempt ${tr}/2); moving on`);
-          if (tr < 2) { try { await setState(issue.id, 'Todo'); } catch {} }
+          if (tr < 2) { try { await setState(issue.id, 'Todo'); forgetClaim(issue.identifier); } catch {} }
           continue;
         }
 
@@ -387,43 +447,84 @@ async function main() {
         log('-- release manager: PR');
         const prBody = resolve(STATE, `pr-body-${issue.identifier}.md`);
         writeFileSync(prBody, `Closes ${issue.identifier}\n\n${story}\n\nSwarm cycle: dev(${MAX_ROUNDS} rounds max) → gates → review(ACCEPT) → release.`);
-        const push = await sh(`git push -q origin ${branch} 2>&1`, { timeoutMs: 120_000 });
-        log(`  branch pushed: ${short(push.all, 120)}`);
-        let pr = await sh(`gh pr create --head ${branch} --base main --title ${JSON.stringify(`${issue.identifier}: ${issue.title}`)} --body-file ${JSON.stringify(prBody)}`, { timeoutMs: 120_000 });
-        let prUrl = (pr.out.match(/https:\/\/github\.com\/\S+/) || [])[0];
-        if (!prUrl) {
-          // фолбэк: PR не создался (например, «no commits») — прямой squash-merge ветки в main
-          log(`  gh pr create failed (${short(pr.all, 160)}) — fallback: локальный squash-merge в main`);
-          await sh('git checkout -q --detach origin/main');
-          const mg = await sh(`git merge --squash ${branch} && git commit -q -m ${JSON.stringify(`${issue.identifier}: ${issue.title} (squash)`)}`, { timeoutMs: 120_000 });
-          if (mg.code !== 0) throw new Error(`squash merge failed: ${short(mg.all)}`);
+        // PRO-68: ребейз ветки на свежий main ДО пуша/PR — пока шла разработка, могли
+        // уйти другие релизы, и squash конфликтовал (AGENTS.md, README.md, CHANGELOG.md,
+        // docs/HELP.md). Конфликты *.md разрешаем union-merge (обе стороны — типовой
+        // случай: CHANGELOG/README дописали с обеих сторон); конфликт в коде не молчим —
+        // ошибка (её поймает краш-безопасный catch, попытка учтётся). Прежний fallback
+        // с флагом стратегии union при --squash был невалиден (fatal: unknown strategy
+        // option) и ронял оркестратор.
+        const rebaseOntoMain = () =>
+          'git fetch origin -q; git rebase --abort 2>/dev/null; ' +
+          // ребейз застрял на конфликте — состояние ЖИВОЕ, разрешаем прямо в нём;
+          // abort здесь убил бы ребейз вместе с конфликтом («Нет перемещения в процессе»)
+          'if ! GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true git rebase origin/main; then ' +
+          'while IFS= read -r f; do ' +
+          'case "$f" in *.md) ;; *) echo "non-doc conflict: $f"; exit 1;; esac; ' +
+          'git show ":1:$f" > /tmp/swarm-base.md; git show ":2:$f" > /tmp/swarm-ours.md; git show ":3:$f" > /tmp/swarm-theirs.md; ' +
+          'git merge-file --union /tmp/swarm-ours.md /tmp/swarm-base.md /tmp/swarm-theirs.md || exit 1; ' +
+          'cp /tmp/swarm-ours.md "$f"; git add -- "$f"; ' +
+          'done < <(git diff --name-only --diff-filter=U); ' +
+          'GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true git rebase --continue || exit 1; fi';
+        const localSquash = async (why) => {
+          log(`  ${why} — локальный squash-merge`);
+          const sm = await sh(rebaseOntoMain() + ` && git checkout -q --detach origin/main && git merge --squash ${branch} && git commit -q -m ${JSON.stringify(`${issue.identifier}: ${issue.title} (squash)`)}`, { timeoutMs: 180_000 });
+          if (sm.code !== 0) throw new Error(`fallback squash failed (ребейз не снял конфликт): ${short(sm.all)}`);
           const pp = await sh('git push -q origin HEAD:main', { timeoutMs: 300_000 });
-          if (pp.code !== 0) throw new Error(`direct push failed: ${short(pp.all)}`);
+          if (pp.code !== 0) throw new Error(`fallback push failed: ${short(pp.all)}`);
           log('  merged via direct squash push (без PR)');
-        } else {
-          log(`  PR: ${prUrl}`);
-          const mg = await sh(`gh pr merge ${prUrl.split('/').pop()} --squash --delete-branch`, { timeoutMs: 300_000 });
+        };
+        const rb = await sh(rebaseOntoMain(), { timeoutMs: 180_000 });
+        if (rb.code !== 0 || /non-doc conflict/.test(rb.all)) throw new Error(`release rebase failed: ${short(rb.all)}`);
+        log(`  branch rebased on fresh main: ${short(rb.all, 120)}`);
+        const push = await sh(`git push -q --force-with-lease origin ${branch} 2>&1`, { timeoutMs: 120_000 });
+        log(`  branch pushed: ${short(push.all, 120)}`);
+        // существующий PR ветки мержим, а не создаём новый (PRO-68): повторный
+        // gh pr create падал «already exists» → fallback конфликтовал → краш-цикл
+        let prNum = (await sh(`gh pr list --head ${branch} --state open --json number --jq '.[0].number'`, { timeoutMs: 60_000 })).out.trim();
+        let prUrl = '';
+        if (!/^\d+$/.test(prNum)) {
+          const pr = await sh(`gh pr create --head ${branch} --base main --title ${JSON.stringify(`${issue.identifier}: ${issue.title}`)} --body-file ${JSON.stringify(prBody)}`, { timeoutMs: 120_000 });
+          prUrl = (pr.out.match(/https:\/\/github\.com\/\S+/) || [])[0] || '';
+          prNum = /^\d+$/.test(prUrl.split('/').pop() || '') ? prUrl.split('/').pop() : '';
+        }
+        if (/^\d+$/.test(prNum)) {
+          log(`  PR: #${prNum}${prUrl ? ` (${prUrl})` : ' (существующий, мержим его)'}`);
+          const mg = await sh(`gh pr merge ${prNum} --squash --delete-branch`, { timeoutMs: 300_000 });
           if (mg.code !== 0) {
-            // rc!=0 ≠ провал (бывает «already merged»), проверяем факт; не слит — локальный squash с union-разрешением CHANGELOG
-            const chk = await sh(`gh pr view ${prUrl.split('/').pop()} --json state --jq .state`, { timeoutMs: 60_000 });
-            if (!/MERGED/.test(chk.out)) {
-              log(`  merge failed (${short(mg.all, 120)}) — fallback: локальный squash-merge`);
-              await sh('git checkout -q --detach origin/main');
-              const sm = await sh(`git merge -X union --squash ${branch} && git commit -q -m ${JSON.stringify(`${issue.identifier}: ${issue.title} (squash)`)}`, { timeoutMs: 120_000 });
-              if (sm.code !== 0) throw new Error(`fallback squash failed: ${short(sm.all)}`);
-              const pp = await sh('git push -q origin HEAD:main', { timeoutMs: 300_000 });
-              if (pp.code !== 0) throw new Error(`fallback push failed: ${short(pp.all)}`);
-            }
+            // rc!=0 ≠ провал (бывает «already merged»), проверяем факт; не слит —
+            // локальный squash (ветка только что на свежем main, конфликтов быть не должно)
+            const chk = await sh(`gh pr view ${prNum} --json state --jq .state`, { timeoutMs: 60_000 });
+            if (!/MERGED/.test(chk.out)) await localSquash(`merge failed (${short(mg.all, 120)})`);
           }
+        } else {
+          await localSquash('gh pr create failed');
         }
 
         await sh('git fetch origin -q && git checkout -q --detach origin/main');
-        const verOut = await sh(`python3 -c "import pathlib,re; p=pathlib.Path('pyproject.toml'); t=p.read_text(); v=re.search(r'version = \\"(\\d+)\\.(\\d+)\\.(\\d+)\\"', t); ver=f'{v.group(1)}.{v.group(2)}.{int(v.group(3))+1}'; p.write_text(re.sub(r'version = \\"\\d+\\.\\d+\\.\\d+\\"', f'version = \\"{ver}\\"', t, count=1)); print(ver)"`);
-        const ver = verOut.out.trim().split('\n').pop().replace(/^v/, '');
-        if (!/^\d+\.\d+\.\d+$/.test(ver)) throw new Error(`version bump failed: ${short(verOut.all)}`);
+        // PRO-68: версия = max(существующих тегов) + patch — pyproject отставал от тегов
+        // (считал 1.2.20/1.2.21 при существующих v1.2.20–v1.2.24) → коллизии тегов и CHANGELOG
+        await sh('git fetch --tags -q');
+        const maxTag = (await sh(`git tag --list 'v*' --sort=-v:refname | head -1`)).out.trim();
+        const mv = /^v(\d+)\.(\d+)\.(\d+)$/.exec(maxTag);
+        let ver = mv ? `${mv[1]}.${mv[2]}.${Number(mv[3]) + 1}` : '';
+        if (!ver) {
+          // тегов нет (не должно случаться) — прежнее поведение: pyproject + 1
+          const verOut = await sh(PY_BUMP);
+          ver = verOut.out.trim().split('\n').pop().replace(/^v/, '');
+        }
+        // страховка от коллизии: если v<ver> вдруг существует — наращиваем patch дальше
+        for (let i = 0; i < 10 && (await sh(`git rev-parse -q --verify refs/tags/v${ver}`)).out.trim(); i++) {
+          const pv = ver.split('.'); ver = `${pv[0]}.${pv[1]}.${Number(pv[2]) + 1}`;
+        }
+        if (!/^\d+\.\d+\.\d+$/.test(ver)) throw new Error('version bump failed: no v-tags and pyproject fallback failed');
+        const sync = await sh(`${PY_SET(ver)} && grep -q '^version = "${ver}"$' pyproject.toml`);
+        if (sync.code !== 0) throw new Error(`pyproject version sync failed: ${short(sync.all)}`);
         log(`-- release manager: v${ver} (CHANGELOG + QA-заметка)`);
 
-        const today = new Date().toISOString().slice(0, 10);
+        // локальная дата (не UTC): UTC-дата отставала от локальной — запись CHANGELOG
+        // датировалась прошлым днём (факт PRO-68: «1.2.20 — 2026-11-11»)
+        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
         const changelog = readFileSync('CHANGELOG.md', 'utf8');
         const entry = `## ${ver} — ${today} · swarm ${issue.identifier}: ${short(issue.title, 60)}\n\n### Fixed\n${fixed}\n\n### Notes\n${notes}\n\n> ${story}\n\n`;
         writeFileSync('CHANGELOG.md', changelog.replace(/^# Changelog\n(\nФормат[^\n]*\n[^\n]*\n)/, `# Changelog\n$1\n${entry}`));
@@ -454,15 +555,32 @@ async function main() {
         if (prodOk !== 4) throw new Error(`prod QA: страниц 200 = ${prodOk}/4`);
         log(`  prod QA: 4/4 страниц 200`);
 
-        const evidence = `**Shipped by the agent swarm in v${ver}** (${today})\n\n- Issue: ${issue.identifier} — ${issue.title}\n- PR: ${prUrl} (squash-merged)\n- Gates: unittest ${gatesLine} + pfs doctor OK\n- Release: tag v${ver} → Pages deploy success → prod QA 4/4 страниц 200\n- Story: ${short(story, 300)}`;
+        const evidence = `**Shipped by the agent swarm in v${ver}** (${today})\n\n- Issue: ${issue.identifier} — ${issue.title}\n- PR: ${prNum ? `#${prNum}` : 'direct squash push'} (squash-merged)\n- Gates: unittest ${gatesLine} + pfs doctor OK\n- Release: tag v${ver} → Pages deploy success → prod QA 4/4 страниц 200\n- Story: ${short(story, 300)}`;
         await doneIssue(issue, evidence);
         attempts.delete(issue.identifier); saveAttempts();
+        forgetClaim(issue.identifier);
         await sh(`git branch -D ${branch}`);
         log(`=== DONE: ${issue.identifier} shipped as v${ver} ===`);
       } catch (e) {
+        // краш-безопасность (PRO-68): любой выход после claim обязан вернуть задачу
+        // в Todo (пикер берёт только Todo — иначе In Progress висит до ручного requeue),
+        // учесть попытку (иначе краш-цикл бесконечен: PRO-63 горела 4+ циклов) и
+        // продолжить очередь: дерево чистим (merge/rebase могли остаться в конфликте),
+        // бросать наружу не бросаем — прогон продолжает движение сам, без watchdog-перезапуска.
         await failIssue(issue, 'pipeline', String(e));
-        try { await setState(issue.id, 'Todo'); } catch {}
-        throw e;
+        try { await setState(issue.id, 'Todo'); forgetClaim(issue.identifier); } catch {}
+        const tr = bumpAttempts(issue.identifier);
+        if (tr >= 2) {
+          try {
+            await setState(issue.id, 'Backlog');
+            await comment(issue.id, '🏁 Swarm: 2 attempts failed (pipeline crash; counter persists across runs, decays after 7 days) — parked in Backlog for human review. Branch kept.');
+          } catch {}
+        }
+        await sh('git merge --abort 2>/dev/null; git rebase --abort 2>/dev/null; ' +
+          'git stash push --include-untracked -q -m ' + JSON.stringify(`crash leftovers ${issue.identifier}`) + ' 2>/dev/null; ' +
+          'git checkout -q --detach HEAD 2>/dev/null; true', { timeoutMs: 120_000 });
+        log(`finished: ${issue.identifier} — pipeline crash (attempt ${tr}/2); queue continues`);
+        continue;
       }
     }
   } finally {
