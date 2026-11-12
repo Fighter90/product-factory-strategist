@@ -19,6 +19,29 @@ def _p(args) -> Path:
     return core.project_dir(getattr(args, "project", None))
 
 
+def _p_or_hint(args) -> Path | None:
+    """Каталог проекта для status/next: без проекта — подсказка вместо ошибки (PRO-67).
+
+    На чистом клоне указателя нет вовсе, а в старых клонах лежит закоммиченный
+    битый .active — оба случая не ошибка: печатаем доступные проекты и как
+    начать, битый указатель сбрасываем. Явный --project с ошибкой остаётся ошибкой.
+    """
+    explicit = getattr(args, "project", None)
+    if explicit:
+        return core.project_dir(explicit)
+    try:
+        return core.project_dir(None)
+    except core.PfsError:
+        stale = core.active_slug()
+        if stale:
+            core.clear_active()
+        available = ", ".join(p["slug"] for p in project.list_projects()) or "нет"
+        stale_note = f" ({stale})" if stale else ""
+        print(f"Активный проект не найден{stale_note}, доступные: {available}.")
+        print("Создайте новый: pfs new \"<название>\" \"<запрос>\" или выберите: pfs use <slug>")
+        return None
+
+
 def _split(v: str | None) -> list[str]:
     return [x.strip() for x in (v or "").split(",") if x.strip()]
 
@@ -56,7 +79,10 @@ def cmd_list(a):
 
 
 def cmd_status(a):
-    print(project.status_text(_p(a), brief=a.brief))
+    pdir = _p_or_hint(a)
+    if pdir is None:
+        return
+    print(project.status_text(pdir, brief=a.brief))
 
 
 def cmd_step(a):
@@ -71,7 +97,10 @@ def cmd_step(a):
 
 
 def cmd_next(a):
-    print(project.next_text(_p(a)))
+    pdir = _p_or_hint(a)
+    if pdir is None:
+        return
+    print(project.next_text(pdir))
 
 
 def cmd_questions(a):
@@ -517,7 +546,16 @@ def cmd_doctor(a):
     except ImportError:
         print("pypdf: нет (необязательно)")
     projects = project.list_projects()
-    print(f"Карт в базе знаний: {len(kb.cards())}; проектов: {len(projects)}; активный: {core.active_slug()}")
+    active = core.active_slug()
+    print(f"Карт в базе знаний: {len(kb.cards())}; проектов: {len(projects)}; активный: {active}")
+    if active and active not in {p["slug"] for p in projects}:
+        # PRO-67: закоммиченный .active с чужим slug'ом ломал чистый клон
+        print(f"⚠ Активный проект '{active}' не найден в {core.projects_dir()} — указатель projects/.active битый")
+        if getattr(a, "fix", False):
+            core.clear_active()
+            print("  исправлено: указатель сброшен — создайте проект (pfs new) или выберите (pfs use <slug>)")
+        else:
+            print("  исправление: pfs doctor --fix")
     print(f"Профиль моделей: {models.load().get('active_profile')}")
     problems = 0
     for meta in projects:
@@ -690,7 +728,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--no-deck", action="store_true", help="не собирать HTML-деку")
     s.add_argument("--en", action="store_true", help="дополнительно EN-версия six-pager (SIX_PAGER_EN.md + DOCX)")
     s.set_defaults(f=cmd_finish)
-    sp.add_parser("doctor", help="проверка установки, окружения и реестров источников").set_defaults(f=cmd_doctor)
+    s = sp.add_parser("doctor", help="проверка установки, окружения и реестров источников")
+    s.add_argument("--fix", action="store_true",
+                   help="автоисправление: сбросить битый указатель активного проекта (PRO-67)")
+    s.set_defaults(f=cmd_doctor)
     return ap
 
 
