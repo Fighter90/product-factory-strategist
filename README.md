@@ -8,7 +8,7 @@
 за обязательствами и пересматривает выводы при новых данных.
 
 Это папка-репозиторий: инструкции, наборы знаний по категориям (стратегия · экономика · продукт · UX ·
-данные · платформы · Gen AI), 100 навыков, 8 субагентов, 4 хука
+данные · платформы · Gen AI), 100 навыков, 8 субагентов, 6 хуков
 и CLI/MCP-инструменты на чистом Python (ноль зависимостей). Работает в Claude Code, Cursor, Codex, OpenCode,
 Windsurf, Copilot.
 
@@ -35,7 +35,7 @@ pfs --help
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 499 тестов
+python3 -m unittest discover -s tests          # 531 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -190,7 +190,7 @@ flowchart TB
   subgraph ENV["LLM-среда (Claude Code / Cursor / OpenCode / Codex…)"]
     AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 100<br/>(базовые 13 + product-skills 27 + личная 57 + интеграции 3: sdd · deck · premortem)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
-    AG --> HK["hooks: 5<br/>SessionStart · PreWeb-домены · PostTool-журнал · Stop-стоимость (+ общий модуль)"]
+    AG --> HK["hooks: 6<br/>SessionStart · PreWeb-домены · PreGuard-реестры · PostTool-журнал · Stop-стоимость (+ общий модуль)"]
   end
   ENV -->|"CLI: pfs … · MCP: pfs-strategist"| TOOLS
   subgraph TOOLS["tools/pfs — детерминированные гарантии (stdlib only)"]
@@ -325,7 +325,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 | `pfs ask / answer / question` | паузы с человеком |
 | `pfs source add/list/show [--text-file --url --origin --force]` | источники S### |
 | `pfs source refresh S###` | обновить web-источник: sha256-дельта, бэкап, impact |
-| `pfs claim add/list/supersede/retract/rebase [--kind --source --from --grade]` | реестр C### |
+| `pfs claim add/list/supersede/retract/rebase/retag [--kind --source --from --grade]` | реестр C###; `retag --from C003 --to C059` — перенумерация тегов во всех outputs одной командой |
 | `pfs check [--strict --json] · pfs impact C###` | качество и влияние изменений |
 | `pfs review lock` | lock вердикта review; правки реестра после lock → «вердикт review устарел» в check/status/export |
 | `pfs decision add/list/due/done/status/rebase` | решения и мониторинг |
@@ -367,7 +367,8 @@ AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject
 .claude/skills/      (100)  базовые 13 · product-skills 27 · личная 57 · интеграции 3
 .claude/agents/      (8)    researcher · red-team · evidence-auditor · synthetic-respondent ·
                             data-analyst · ux-analyst · comms-strategist · router
-.claude/hooks/       (5)    session_start (SessionStart-контекст) · pre_web (домены до запроса) ·
+.claude/hooks/       (6)    session_start (SessionStart-контекст) · pre_web (домены до запроса) ·
+                            pre_guard (реестры только через pfs; чтение вне репо — ask) ·
                             post_tool (журнал и автопроверка) · stop (стоимость) · _common
 .claude/settings.json
 .cursor/rules/       .github/ (Pages workflow) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable · rea)
@@ -384,5 +385,5 @@ site/                index.html · en/index.html — генератор scripts/
                      materials.html · help.html (RU/EN)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
-tests/               (499)
+tests/               (531)
 ```

@@ -119,14 +119,17 @@ def cmd_source(a):
         # относительные пути резолвятся от каталога проекта, если файла там нет — от cwd (PRO-36)
         is_url = bool(a.target and re.match(r"^https?://", a.target))
         target = a.target if is_url else (str(core.resolve_input(a.target, pdir)) if a.target else None)
-        text_file = str(core.resolve_input(a.text_file, pdir)) if a.text_file else None
-        text = sources.assert_safe_local(Path(text_file)).read_text(encoding="utf-8") if text_file else None
+        text_path = core.resolve_input(a.text_file, pdir) if a.text_file else None
+        text = sources.assert_safe_local(text_path).read_text(encoding="utf-8") if text_path else None
         rec, new = sources.add(pdir, target, text=text, url=a.url, title=a.title, origin=a.origin or "public",
-                               note=a.note, published=a.published, force=a.force)
+                               note=a.note, published=a.published, force=a.force, text_path=text_path)
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
         print(f"{'Добавлен' if new else 'Уже есть (повтор пропущен)'}: {rec['id']} — {rec['title']} ({rec['chars']} зн.){flag}")
-        if text_file or (not is_url and target):
-            print(f"Файл: {Path(text_file or target).resolve()}")
+        if rec.get("external_path"):
+            print(f"⚠ Файл лежал вне проекта ({rec['external_path']}) — копия сохранена в {rec['path']}. "
+                  "Материал должен быть явно передан пользователем.")
+        if (text_path or (not is_url and target)) and rec.get("path"):
+            print(f"Файл: {(pdir / rec['path']).resolve()}")  # копия в sources/raw/ — след в проекте (PRO-58)
     elif a.action == "fetch":
         rec, new, channel = sources.fetch(pdir, a.target, title=a.title, origin=a.origin,
                                           note=a.note, published=a.published, force=a.force)
@@ -156,7 +159,7 @@ def cmd_source(a):
 def cmd_claim(a):
     pdir = _p(a)
     if a.action == "add":
-        c = claims.add(pdir, a.text, a.kind, _split(a.source), _split(a.derived_from), a.confidence, a.note, a.quote, grade=a.grade)
+        c = claims.add(pdir, a.text, a.kind, _split(a.source), _split(a.from_ref), a.confidence, a.note, a.quote, grade=a.grade)
         print(f"{c['id']} [{claims.KIND_RU[c['kind']]}] записано")
     elif a.action == "add-batch":
         res = claims.add_batch(pdir, core.resolve_input(a.text, pdir))
@@ -175,9 +178,13 @@ def cmd_claim(a):
             ch = claims.rebase(pdir, cid)
             if ch:
                 print(f"{cid}: {', '.join(ch)}")
+    elif a.action == "retag":
+        res = claims.retag(pdir, a.from_ref, a.to)
+        print(f"Перенумерация тегов: [{res['from']}] → [{res['to']}] — файлов {res['files']}, вхождений {res['replacements']}")
+        print("Сверка ссылок и реестра: pfs check · влияние: pfs impact " + res["to"])
     elif a.action == "supersede":
         new = claims.supersede(pdir, a.id, a.text, a.kind, _split(a.source) or None, a.confidence, a.reason or "",
-                               _split(a.derived_from) if a.derived_from else None, grade=a.grade)
+                               _split(a.from_ref) if a.from_ref else None, grade=a.grade)
         print(f"{a.id} замещено {new['id']}")
         print(impact.impact_text(impact.impact(pdir, a.id)))
 
@@ -543,11 +550,13 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(f=cmd_source)
 
     s = sp.add_parser("claim", help="утверждения")
-    s.add_argument("action", choices=["add", "add-batch", "list", "retract", "supersede", "rebase"],
+    s.add_argument("action", choices=["add", "add-batch", "list", "retract", "supersede", "rebase", "retag"],
                    help="add-batch — пачка из JSONL-файла (text/kind/source/grade/quote/from); "
-                        "невалидная строка отменяет весь батч")
+                        "невалидная строка отменяет весь батч; retag — перенумерация тегов [C###] "
+                        "во всех outputs одной командой (--from C003 --to C059) с журналом")
     s.add_argument("text", nargs="?"); s.add_argument("--id"); s.add_argument("--kind", choices=claims.KINDS)
-    s.add_argument("--source"); s.add_argument("--from", dest="derived_from"); s.add_argument("--confidence", default="medium")
+    s.add_argument("--source"); s.add_argument("--from", dest="from_ref"); s.add_argument("--to")
+    s.add_argument("--confidence", default="medium")
     s.add_argument("--note"); s.add_argument("--quote"); s.add_argument("--reason"); s.add_argument("--all", action="store_true")
     s.add_argument("--grade", choices=claims.GRADES, help="сила доказательства A–D")
     s.set_defaults(f=cmd_claim)

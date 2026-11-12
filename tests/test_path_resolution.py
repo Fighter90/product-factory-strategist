@@ -75,7 +75,8 @@ class CliPathResolutionTests(unittest.TestCase):
         finally:
             os.chdir(old)
         self.assertEqual(rc, 0)
-        self.assertIn(str((self.pdir / "raw" / "x.md").resolve()), out)
+        # PRO-58: в выводе — копия в sources/raw/ (след в проекте), не исходный путь
+        self.assertIn(str((self.pdir / "sources" / "raw" / "x.md").resolve()), out)
         rows = (self.pdir / "sources.jsonl").read_text(encoding="utf-8").splitlines()
         self.assertTrue(any('"path": "sources/raw/x.md"' in r for r in rows))
 
@@ -89,7 +90,9 @@ class CliPathResolutionTests(unittest.TestCase):
         finally:
             os.chdir(old)
         self.assertEqual(rc, 0)
-        self.assertIn(str((self.empty / "doc.md").resolve()), out)
+        # PRO-58: файл был вне проекта (cwd ≠ проект) — в выводе копия в sources/raw/ + пометка
+        self.assertIn(str((self.pdir / "sources" / "raw" / "doc.md").resolve()), out)
+        self.assertIn("вне проекта", out)
 
     def test_docx_resolves_relative_to_project_dir(self):
         (self.pdir / "notes").mkdir()

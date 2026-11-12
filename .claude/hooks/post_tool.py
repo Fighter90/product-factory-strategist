@@ -1,7 +1,11 @@
 """PostToolUse: журнал действий, проверка внешних данных на внедрённые инструкции, автопроверка документов."""
 import json
+import re
 
 from _common import active_pdir, core, emit, guard, read_input
+
+# Признаки правки файла в Bash-команде (sed -i, perl, перенаправление, tee…).
+BASH_EDIT = (r"\bsed\b.*(?:\s-i\b|--in-place)", r"\bperl\s+-(?:i|pe)\b", r"(?<![\d&])>(?!&)", r"\btee\b")
 
 
 def main():
@@ -36,6 +40,11 @@ def main():
                 errs = [e for e in res["errors"] if e.startswith(name) or e.startswith("C")]
                 if errs:
                     notes.append(f"[pfs check] {name}: {len(errs)} ошибок: " + "; ".join(errs[:6]))
+    elif tool == "Bash":
+        # Ручная правка outputs из Bash (sed -i и т.п.) не проходит через Write/Edit — фиксируем отдельно (PRO-58).
+        command = inp.get("command", "")
+        if re.search(r"outputs/\S*\.md", command) and any(re.search(pat, command) for pat in BASH_EDIT):
+            core.log(pdir, "tool", f"ручная правка outputs (Bash): {command[:150]}", tool="Bash")
     if notes:
         emit({"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "\n".join(notes)}})
 
