@@ -41,6 +41,14 @@ STAGES: tuple[dict[str, Any], ...] = (
 )
 STAGE_IDS = tuple(s["id"] for s in STAGES)
 
+# PRO-53: EN-версия six-pager пишется, а не переводится. Каркас-черновик помечен
+# pending-строками с этим префиксом (пишет six-pager-writer из того же пакета данных);
+# линтер и сверка тегов RU↔EN распознают по нему недописанный черновик. Маркер
+# RU_SOURCE_MARK — запрещённый артефакт старого «каркаса-на-перевод»: линтер ловит
+# его в SIX_PAGER_EN.md как дефект.
+EN_DRAFT_MARK = "> EN draft — pending"
+RU_SOURCE_MARK = "[RU source — translate]"
+
 
 class PfsError(Exception):
     """Ошибка, понятная пользователю (печатается без трейсбека)."""

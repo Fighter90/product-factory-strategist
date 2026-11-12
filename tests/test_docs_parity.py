@@ -30,11 +30,20 @@ DOC_TO_TEMPLATE = {
 
 class TemplatesParityTests(unittest.TestCase):
     def test_every_ru_template_has_en_counterpart(self):
-        # STYLE_RU.md — стайлгайд русского языка (PRO-52), EN-версии не имеет по определению
+        # STYLE_RU.md — стайлгайд русского языка (PRO-52); SIX_PAGER_PROMPT_EN.md и
+        # STYLE_EN.md — EN-only артефакты (PRO-31/PRO-53), EN-пар им не заводят
         missing = [p.name for p in sorted(TEMPLATES_RU.glob("*.md"))
-                   if p.name not in ("SIX_PAGER_PROMPT_EN.md", "STYLE_RU.md")
+                   if p.name not in ("SIX_PAGER_PROMPT_EN.md", "STYLE_RU.md", "STYLE_EN.md")
                    and not (TEMPLATES_EN / p.name).is_file()]
         self.assertEqual(missing, [], f"нет EN-версий шаблонов: {missing}")
+
+    def test_en_only_templates_are_nonempty_markdown(self):
+        for name in ("SIX_PAGER_PROMPT_EN.md", "STYLE_EN.md"):
+            p = TEMPLATES_RU / name
+            self.assertTrue(p.is_file(), f"нет EN-only шаблона {name}")
+            text = p.read_text(encoding="utf-8")
+            self.assertGreater(len(text), 200, f"{name}: шаблон подозрительно короткий")
+            self.assertTrue(text.lstrip().startswith("#"), f"{name}: нет заголовка")
 
     def test_en_templates_are_nonempty_markdown(self):
         for p in sorted(TEMPLATES_EN.glob("*.md")):

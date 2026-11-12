@@ -41,7 +41,17 @@ STR: dict[str, dict[str, str]] = {
         "warn_stale_grounds": "{cid}: основания {stale} замещены/отозваны — пересмотрите вывод (pfs claim supersede --from …)",
         "warn_no_grounds": "{cid}: {kind} без оснований — укажите, откуда она",
         "warn_injection": "Источники с фразами-инструкциями (проигнорированы как команды): {ids}",
-        "warn_en_sync": "SIX_PAGER_EN.md отстал от RU: нет тегов {tags} — пересоберите пару: pfs export --six-pager --en",
+        "warn_en_sync": "SIX_PAGER_EN.md отстал от RU: нет тегов {tags} — EN-версия пишется агентом "
+                        "из того же пакета данных (spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
+        "warn_en_cyrillic": "SIX_PAGER_EN.md:{lines}: кириллица ({n} стр.): «{sample}» — EN-версия "
+                            "пишется по-английски из того же пакета данных, RU-текст не вставляется "
+                            "(spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
+        "warn_en_dec_comma": "SIX_PAGER_EN.md:{lines}: русская десятичная запятая ({n} стр.): "
+                             "«{sample}» — в EN числа пишутся 1,234.5: точка — разделитель, "
+                             "запятая отделяет тысячи",
+        "warn_en_translate_marker": "SIX_PAGER_EN.md:{lines}: маркер «[RU source — translate]» "
+                                    "({n} шт.): «{sample}» — EN-версия пишется, а не переводится "
+                                    "(spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
         "warn_num_title_mismatch": "{cid}/{sid}: числа заголовка источника ({tnums}) не совпадают с числами утверждения ({cnums}); число подтверждено текстом sources/{sid}.md — возможно, разные показатели",
         "warn_num_serious": "{cid}/{sid}: числа утверждения ({cnums}) не совпадают с числами заголовка источника ({tnums}) и отсутствуют в его тексте — серьёзное расхождение, сверьте утверждение с источником",
         "warn_quote_numbers": "{cid}/{sid}: числа из цитаты ({nums}) отсутствуют в тексте источника — проверьте цитату против sources/{sid}.md",
@@ -161,7 +171,17 @@ STR: dict[str, dict[str, str]] = {
         "warn_stale_grounds": "{cid}: grounds {stale} superseded/retracted — revisit the conclusion (pfs claim supersede --from …)",
         "warn_no_grounds": "{cid}: {kind} without grounds — state where it comes from",
         "warn_injection": "Sources containing instruction phrases (ignored as commands): {ids}",
-        "warn_en_sync": "SIX_PAGER_EN.md lags behind RU: missing tags {tags} — rebuild the pair: pfs export --six-pager --en",
+        "warn_en_sync": "SIX_PAGER_EN.md lags behind RU: missing tags {tags} — the EN six-pager is "
+                        "written by the agent from the same data package (spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
+        "warn_en_cyrillic": "SIX_PAGER_EN.md:{lines}: Cyrillic text ({n} lines): \"{sample}\" — the EN "
+                            "six-pager is written in English from the same data package; RU text is never "
+                            "pasted (spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
+        "warn_en_dec_comma": "SIX_PAGER_EN.md:{lines}: Russian decimal comma ({n} lines): \"{sample}\" — "
+                             "EN numbers read 1,234.5: the dot is the decimal separator, the comma "
+                             "separates thousands",
+        "warn_en_translate_marker": "SIX_PAGER_EN.md:{lines}: marker \"[RU source — translate]\" ({n}): "
+                                    "\"{sample}\" — the EN six-pager is written, not translated "
+                                    "(spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
         "warn_num_title_mismatch": "{cid}/{sid}: numbers in the source title ({tnums}) do not match the claim numbers ({cnums}); the number is confirmed by the text of sources/{sid}.md — possibly different metrics",
         "warn_num_serious": "{cid}/{sid}: claim numbers ({cnums}) do not match the source title numbers ({tnums}) and are absent from its text — serious discrepancy, verify the claim against the source",
         "warn_quote_numbers": "{cid}/{sid}: numbers from the quote ({nums}) are absent from the source text — check the quote against sources/{sid}.md",

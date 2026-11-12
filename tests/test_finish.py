@@ -92,14 +92,14 @@ class FinishTests(unittest.TestCase):
         self.assertTrue((self.pdir / "outputs" / "SIX_PAGER.docx").exists())
         self.assertEqual(len(res["artifacts"]), 8)
 
-    def test_en_flag_builds_en_draft_and_keeps_ru(self):
+    def test_en_flag_builds_en_version_and_keeps_ru(self):
         finish.run(self.pdir, en=True)
         en = (self.pdir / "outputs" / "SIX_PAGER_EN.md").read_text(encoding="utf-8")
-        self.assertIn("Six-pager (EN draft)", en)
+        self.assertIn("# Six-pager (EN)", en)
         self.assertIn("## FAQ-1. Current state analysis", en)
         self.assertIn("## Sources (footnotes)", en)
         self.assertIn("## Appendices (Excel)", en)
-        self.assertIn("unit_economics.xlsx", en)  # приложения тоже в EN-версии
+        self.assertIn("unit_economics.xlsx", en)  # приложения упомянуты и в EN-версии
         ru = (self.pdir / "outputs" / "SIX_PAGER.md").read_text(encoding="utf-8")
         self.assertIn("## FAQ-1. Анализ текущего состояния", ru)  # RU не пострадала
         self.assertTrue((self.pdir / "outputs" / "SIX_PAGER_EN.docx").exists())
@@ -120,7 +120,8 @@ class FinishTests(unittest.TestCase):
 
     def test_six_pager_faq1_fallback_ru_text_unchanged(self):
         # Ревью PRO-31 (п.2): RU-заглушка FAQ-1 — исходный текст («…буллетами с жирными заголовками»),
-        # ключ в _EN совпадает с ним дословно, поэтому EN-черновик переводит именно его.
+        # ключ в _EN совпадает с ним дословно. PRO-53: EN вместо RU-вставок/заглушек —
+        # pending-строки «> EN draft — pending: …» (секции пишет writer на английском).
         key = ("> Раздел появится после шага «situation» (02_situation.md): объём и динамика рынка "
                "диапазонами, ключевые тренды буллетами с жирными заголовками.")
         self.assertIn(key, export._EN)
@@ -128,7 +129,8 @@ class FinishTests(unittest.TestCase):
         ru = export.build_six_pager(self.pdir, with_calcs=False).read_text(encoding="utf-8")
         en = export.build_six_pager(self.pdir, with_calcs=False, lang="en").read_text(encoding="utf-8")
         self.assertIn("буллетами с жирными заголовками", ru)
-        self.assertIn("key trends as bold bullets", en)
+        self.assertIn(core.EN_DRAFT_MARK, en, "EN без секций — pending-строка writer'у")
+        self.assertNotIn("[RU source", en)
 
     def test_strict_gate_blocks_build_on_check_errors(self):
         out = self.pdir / "outputs"

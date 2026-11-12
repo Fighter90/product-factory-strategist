@@ -2,12 +2,17 @@
 
 > 🇷🇺 Русская версия: knowledge/templates/SIX_PAGER_PROMPT.md
 
-> The canonical prompt the agent uses to assemble the growth strategy six-pager
+> The canonical prompt the agent uses to produce the growth strategy six-pager
 > (`pfs export --six-pager` → manual detailing per this specification).
 > The format reference is the "Strategy Example" (Goods Marketplace case, the course "Growth Strategies
 > for Business and Product," HSE): FAQ-1…FAQ-6 with numbered sub-points, persona
 > and competitor tables, pains by journey stage, a tactics matrix, and KPIs in two
-> planes. If the format changes, this file is edited first.
+> dimensions. If the format changes, this file is edited first.
+>
+> PRO-53: the EN version (`outputs/SIX_PAGER_EN.md`) is **written in English, not
+> translated**. The skeleton assembled by `pfs export --six-pager --en` contains
+> pending lines ("EN draft — pending: …"); the six-pager-writer replaces each of
+> them with English prose built from the same data package.
 
 ## Role
 
@@ -16,6 +21,41 @@ who will **argue with you**: every number has provenance (a C###/S###
 tag or an explicit assumption), every conclusion has an explicit chain of "data → grounds → calculation →
 conclusion." Screenshots and images are **forbidden** — the committee's evidence format is tables,
 formulas, calculations, and footnotes to sources.
+
+## Language and authoring (PRO-53)
+
+1. **Write from the data package, not from the RU text.** The inputs are the claim
+   registry (claims.jsonl), the sources (sources.jsonl, sources/S###.md), the
+   calculations (calcs.json, outputs/attachments/*.xlsx), and documents 00–07 as
+   RU *reference material*. Read them, then write the section in English — never
+   paste RU text into `SIX_PAGER_EN.md`, and never leave the `[RU source — translate]`
+   marker: `pfs check` flags Cyrillic, Russian decimal commas, and that marker.
+2. **Plain English per the style guide.** `knowledge/templates/STYLE_EN.md` is
+   binding: short sentences, active voice, one term per concept, numbers `1,234.5`
+   (dot decimal, comma thousands), currency `€24.95`, growth `y/y`, dates
+   `1 June 2026`, no calques ("a fallback to B/E", "the hosted launch", "KPIs in
+   two planes" are defects, not style).
+3. **Same evidence, same figures.** The EN document cites the same C###/S###/D###
+   tags as the RU six-pager; numbers match to the sign. `pfs check` compares the
+   tag sets: a finished EN document missing RU tags warns.
+4. **Terminology table** (see STYLE_EN.md for the full trap list): "KPIs in two
+   dimensions (business and product)", "Solutions (tactics)", "launch the hosted
+   version", "fall back to option B/E", "a shortage indicator of 1.1 for «IT
+   engineers»". Artifact names (02_situation.md, C### tags, sheet labels) stay
+   as-is and are explained at first mention.
+5. **Provenance wording in English**: "Data — …" → "Grounds (tags)" → "Calculation
+   (formula → substitution → result)" → "Conclusion (inference)" — with "therefore /
+   this means" introducing the conclusion.
+
+## Editor pass
+
+- After writing, run a dedicated editor pass with `knowledge/templates/STYLE_EN.md`:
+  read **for language only**; tags, numbers, units, and table structure are
+  untouchable.
+- Rubric: sample 3 sections and score each 1–5 on "reads like it was written in
+  English by a native speaker"; accept at **≥ 4/5 on every sampled section**;
+  otherwise rewrite the weak sections.
+- Finish with `pfs check`: zero `SIX_PAGER_EN.md` warnings.
 
 ## Structure (mandatory, with numbered sub-points)
 
@@ -75,9 +115,9 @@ slogans.
 - Parallel tracks (community/partnerships) — what runs outside the main line;
 - A D### decision with a commitment, deadline, review date, and a stop trigger.
 
-### FAQ-6: Success metrics. KPIs for evaluating the strategy's effectiveness.
+### FAQ-6: Success metrics. KPIs in two dimensions.
 
-KPIs in **two planes**:
+KPIs in **two dimensions**:
 1) **Business** — money and base: revenue/MRR by the deadline, paying users, conversion to payment,
    share of annual/local plans, share of the new wave, actual LTV/CAC;
 2) **Product** — activation, time to first value, reduction in the number of actions
@@ -96,10 +136,13 @@ per red-team hit) with alarm thresholds and a recorded action.
    the conservative bound.
 4. **Red team** — across all options (FAQ-3 intro) and counter-metrics for each hit.
 5. **Source footnotes** at the bottom of the document (as in the reference): a numbered list
-   of S### + title + URL; in the text — tags.
+   of S### + title + URL; in the text — tags. Footnote titles are written in English;
+   the source ID stays S###.
 6. **No screenshots or illustrations.** The committee's visual format is tables, formulas,
    calculations; the product is shown live or via a link.
-7. **RU and EN** — a complete synchronous translation; three formats: MD (the evidence register),
+7. **RU and EN** — the RU six-pager remains the evidence canon; the EN version is
+   written in English from the same package with identical figures and tags
+   (see "Language and authoring"). Three formats: MD (the evidence register),
    PDF (A4 print layout), DOCX (Word).
 
 ## Self-check checklist
@@ -109,7 +152,10 @@ per red-team hit) with alarm thresholds and a recorded action.
 - [ ] FAQ-3 — driver initiatives with "The first/second driver —", key directions, and a calculation.
 - [ ] FAQ-4 — the "Initiative | Focus | Needs | Solutions" matrix.
 - [ ] FAQ-5 — contribution distribution in %, tactic priorities, season timing, D###.
-- [ ] FAQ-6 — KPIs in two planes (business/product) with baseline, target, and action threshold.
-- [ ] At the bottom — source footnotes S### + URL.
-- [ ] No screenshots; no untagged numbers; RU and EN in sync.
+- [ ] FAQ-6 — KPIs in two dimensions (business/product) with baseline, target, and action threshold.
+- [ ] At the bottom — source footnotes S### + URL, titles in English.
+- [ ] No screenshots; no untagged numbers; figures and tags match the RU registry.
+- [ ] No Cyrillic, no Russian decimal commas, no `[RU source — translate]` marker;
+      no "EN draft — pending" lines left.
+- [ ] Editor pass done: 3 sampled sections score ≥ 4/5 on "reads like written in English".
 - [ ] `pfs check --strict` — 0 errors, 0 warnings.

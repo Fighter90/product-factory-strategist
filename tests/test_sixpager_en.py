@@ -1,9 +1,11 @@
-"""PRO-29: pfs export --six-pager --en — каркас EN-версии six-pager.
+"""PRO-29/PRO-53: pfs export --six-pager --en — EN-версия six-pager.
 
-Три требования выпуска:
-1. одним вызовом CLI собирается SIX_PAGER_EN.md (скелет на английском, числа/теги — как в RU);
-2. секции, взятые из документов 00–07 дословно, помечены «[RU source — translate]»;
-3. check предупреждает, если EN-каркас отстал от RU (драйверы/теги добавлены в RU после сборки EN).
+Контракт после PRO-53 («EN-версия пишется, а не переводится»):
+1. одним вызовом CLI собирается SIX_PAGER_EN.md — каркас на английском;
+2. секции из документов 00–07 НЕ вставляются (RU-текст — вход писателя): каркас
+   содержит pending-строки «> EN draft — pending: …» и остаётся чистым по линтеру;
+3. check предупреждает, если дописанный EN-документ отстал от RU по тегам
+   (драйверы/теги добавлены в RU, EN не переписан); каркас-черновик — не «отстал».
 
 Запуск: python3 -m unittest tests.test_sixpager_en -v
 """
@@ -16,15 +18,10 @@ os.environ["PFS_PROJECTS_DIR"] = TMP
 
 from pathlib import Path  # noqa: E402
 
-from tools.pfs import check, claims, cli, export, project, sources  # noqa: E402
+from tools.pfs import check, claims, cli, core, export, project, sources  # noqa: E402
 
-MARK = "[RU source — translate]"
-
-
-def section_markers(text: str) -> list[str]:
-    """Строки-маркеры секций («> [RU source — translate] 02_situation.md»); упоминание
-    маркера в шапке-скелете не считается."""
-    return [ln for ln in text.splitlines() if ln.startswith(f"> {MARK} ")]
+MARK = core.RU_SOURCE_MARK  # запрещённый артефакт старого каркаса-на-перевод
+DRAFT = core.EN_DRAFT_MARK
 
 
 def make_docs(pdir: Path) -> None:
@@ -69,46 +66,37 @@ class SixPagerEnTests(unittest.TestCase):
         self.assertEqual(rc, 0)
         ru = self.pdir / "outputs" / "SIX_PAGER.md"
         en = self.pdir / "outputs" / "SIX_PAGER_EN.md"
-        self.assertTrue(en.exists(), "один вызов собрал EN-каркас")
+        self.assertTrue(en.exists(), "один вызов собрал EN-версию")
         self.assertTrue(ru.exists(), "RU-версия не потерялась")
         entext = en.read_text(encoding="utf-8")
-        self.assertIn("Six-pager (EN draft)", entext)
+        self.assertIn("# Six-pager (EN)", entext)
+        self.assertIn(DRAFT, entext, "каркас помечен pending-строками для writer'а")
         self.assertIn("## FAQ-1. Current state analysis", entext)
         self.assertIn("## Appendices (Excel)", entext)
 
-    def test_en_tags_and_numbers_match_ru(self):
+    def test_en_skeleton_carries_package_pointers(self):
+        """EN-каркас не вставляет RU-контент, но показывает writer'у те же входы:
+        имена документов-источников и pending-инструкцию; RU-версия не тронута."""
         ru, en = build_pair(self.pdir)
         rutext, entext = ru.read_text(encoding="utf-8"), en.read_text(encoding="utf-8")
-        # теги: множества совпадают (EN собирается из того же реестра и тех же документов)
-        from tools.pfs.impact import TAG
-        self.assertEqual(sorted(set(TAG.findall(rutext))), sorted(set(TAG.findall(entext))))
-        self.assertIn("C001", entext)
-        # числа: контент документов вставлен дословно — числа совпадают с RU
-        self.assertIn("Рынок 40 млрд [C001]", entext)
-        self.assertIn("с 38% до 45%", entext)
+        self.assertNotIn("Рынок 40 млрд", entext, "RU-контент не вставляется в EN")
+        self.assertNotIn(MARK, entext, "маркер перевода не вставляется")
+        self.assertIn("02_situation.md", entext, "указан вход writer'а")
+        self.assertIn("SIX_PAGER_PROMPT_EN.md", entext)
+        self.assertIn("Рынок 40 млрд [C001]", rutext, "RU-версия не пострадала")
+        self.assertEqual(rutext.count(MARK), 0, "RU-версия без маркеров перевода")
 
-    def test_en_marks_document_sections_with_translate_marker(self):
+    def test_en_skeleton_is_linter_clean_with_docs(self):
         _, en = build_pair(self.pdir)
-        entext = en.read_text(encoding="utf-8")
-        # каждая секция из документов помечена; рядом — имя файла-источника
-        marks = "\n".join(section_markers(entext))
-        self.assertIn(f"{MARK} 02_situation.md", marks)
-        self.assertIn(f"{MARK} 03_options.md", marks)
-        self.assertIn(f"{MARK} 04_product_strategy.md", marks)
-        self.assertIn(f"{MARK} 06_validation_plan.md", marks)
-        # маркер стоит выше вставленного контента
-        marker_pos = entext.index(f"> {MARK}")
-        content_pos = entext.index("Рынок 40 млрд [C001]")
-        self.assertLess(marker_pos, content_pos)
-        # RU-версия без маркеров перевода
-        ru = export.build_six_pager(self.pdir, with_calcs=False).read_text(encoding="utf-8")
-        self.assertEqual(section_markers(ru), [])
+        warns = [w for w in check.run(self.pdir)["warnings"] if "SIX_PAGER_EN.md" in w]
+        self.assertEqual(warns, [], "собранный каркас чист: кириллицы/запятых/маркеров нет")
+        self.assertIn(DRAFT, en.read_text(encoding="utf-8"))
 
-    def test_en_without_docs_has_no_markers(self):
+    def test_en_without_docs_has_pending_lines(self):
         pdir2 = project.create("EN пустой", "Что делать?", slug=slug_unique())
         _, en = build_pair(pdir2)
         entext = en.read_text(encoding="utf-8")
-        self.assertEqual(section_markers(entext), [], "заглушки-скелет без маркеров")
+        self.assertIn(DRAFT, entext, "pending-строки есть и без документов")
         self.assertIn("## FAQ-1. Current state analysis", entext)
 
 
@@ -129,11 +117,16 @@ class CheckEnSyncTests(unittest.TestCase):
     def _warnings(self) -> list[str]:
         return [w for w in check.run(self.pdir)["warnings"] if "SIX_PAGER_EN" in w]
 
-    def test_in_sync_no_warning(self):
+    def test_skeleton_draft_not_flagged(self):
+        # каркас-черновик (pending-строки) — не «отставшая» версия: его допишет writer
         self.assertEqual(self._warnings(), [])
 
-    def test_en_lags_ru_after_driver_added(self):
-        # драйвер добавлен в RU после сборки EN — check предупреждает
+    def test_written_en_lags_ru_after_driver_added(self):
+        # writer дописал EN (маркера каркаса нет, есть тег C001) — сверка активна
+        en_path = self.pdir / "outputs" / "SIX_PAGER_EN.md"
+        en_path.write_text("# Six-pager (EN)\n\nThe market is large [C001].\n", encoding="utf-8")
+        self.assertEqual(self._warnings(), [])
+        # драйвер добавлен в RU после того, как EN дописан — check предупреждает
         claims.add(self.pdir, "Драйвер: семейный пакет даёт +5 п.п. удержания", "hypothesis", ["S001"], grade="C")
         out = self.pdir / "outputs" / "03_options.md"
         out.write_text(out.read_text(encoding="utf-8")
@@ -141,10 +134,10 @@ class CheckEnSyncTests(unittest.TestCase):
                          "- **Первый драйвер:** семейный пакет [C002]\n", encoding="utf-8")
         export.build_six_pager(self.pdir, with_calcs=False)  # пересобрали только RU
         warns = self._warnings()
-        self.assertTrue(warns, "check предупреждает, что EN отстал от RU")
+        self.assertTrue(warns, "check предупреждает, что дописанный EN отстал от RU")
         self.assertIn("C002", warns[0])
-        self.assertIn("pfs export --six-pager --en", warns[0])
-        # пересборка EN снимает предупреждение
+        self.assertIn("SIX_PAGER_PROMPT_EN.md", warns[0], "подсказка — EN-спецификация")
+        # пересборка EN даёт каркас-черновик — предупреждение снято (EN переделывают)
         export.build_six_pager(self.pdir, with_calcs=False, lang="en")
         self.assertEqual(self._warnings(), [])
 
