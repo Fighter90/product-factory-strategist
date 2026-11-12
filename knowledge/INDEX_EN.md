@@ -190,7 +190,7 @@
 - [Source criticism and analytical reports — the evidence scale, provenance tracking](methods_en/source-criticism.md) `M-source-criticism` — sources, credibility, triangulation, red-flags, evidence-log
 - [Product strategy, growth types and the structure of a strategy document](methods_en/strategy-growth.md) `M-strategy-growth` — product-strategy, growth, ansoff, cascading, unfair-advantage
 - [Success metrics — North Star Metric, metric tree, AARRR and OKR](methods_en/success-metrics.md) `M-success-metrics` — nsm, north-star-metric, metric-tree, aarrr, okr
-- [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder-pricing.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
+- [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
 - [Team and people — composition by stage, hiring, org structure, stakeholders and neighboring teams](methods_en/team.md) `M-team` — team, hiring, outsourcing, stakeholders, org-structure
 - [Traction model (growth model): building, effects, validation](methods_en/traction-model.md) `M-traction-model` — traction-model, growth-model, baseline, top-down, bottom-up
 - [Trend analysis and scenario planning](methods_en/trends-scenarios.md) `M-trends-scenarios` — trends, trend-watching, scenarios, delphi, backcasting
@@ -242,7 +242,7 @@
 - [MVP, MLP and pilots — choosing the validation format, metrics, success criteria, conclusions](methods_en/mvp-pilots.md) `M-mvp-pilots` — mvp, mlp, pilot, prototype, traction-model
 - [North Star Playbook — the North Star metric and the input-metric tree (the Amplitude approach)](methods_en/north-star-playbook.md) `M-north-star-playbook` — nsm, north-star-metric, input-metrics, metric-tree, goal
 - [Strategy timing and the outcome roadmap — phases, gate criteria, stop signals](methods_en/outcome-roadmap.md) `M-outcome-roadmap` — roadmap, outcome-roadmap, phases, pilot, validation
-- [Paid subscription retention and win-back — renewals, dunning, save offers, winning back churned users](methods_en/paid-retention-winback.md) `M-paid-retention` — retention, subscriptions, churn, win-back, dunning
+- [Paid subscription retention and win-back — renewals, dunning, save offers, winning back churned users](methods_en/paid-retention.md) `M-paid-retention` — retention, subscriptions, churn, win-back, dunning
 - [Platform economics: TCO, effects, financial model, metrics](methods_en/platform-economics.md) `M-platform-economics` — platforms, tco, financial-model, dcf, irr
 - [Platform risks, concept review, pilot, scaling and adoption, investor case](methods_en/platform-risks-rollout.md) `M-platform-risks-rollout` — platforms, risks, risk-register, pilot, adoption
 - [Scaling and Product-Market Fit — when to grow, how to measure PMF (the Superhuman engine)](methods_en/pmf-scaling.md) `M-pmf-scaling` — pmf, scaling, unit-economics, retention, nps
@@ -265,7 +265,7 @@
 - [Product strategy, growth types and the structure of a strategy document](methods_en/strategy-growth.md) `M-strategy-growth` — product-strategy, growth, ansoff, cascading, unfair-advantage
 - [Success metrics — North Star Metric, metric tree, AARRR and OKR](methods_en/success-metrics.md) `M-success-metrics` — nsm, north-star-metric, metric-tree, aarrr, okr
 - [Synthetic respondents (AI simulation) — permitted use, persona specification, mandatory labeling](methods_en/synthetic-respondents.md) `M-synthetic-respondents` — synthetic-respondents, ai, personas, hypotheses, labeling
-- [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder-pricing.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
+- [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
 - [Team and people — composition by stage, hiring, org structure, stakeholders and neighboring teams](methods_en/team.md) `M-team` — team, hiring, outsourcing, stakeholders, org-structure
 - [Traction model (growth model): building, effects, validation](methods_en/traction-model.md) `M-traction-model` — traction-model, growth-model, baseline, top-down, bottom-up
 - [Unit economics (LTV, CAC, payback)](methods_en/unit-economics.md) `M-unit-economics` — unit-economics, ltv, cac, payback, margin
@@ -290,7 +290,7 @@
 - [Monetization models, value metric and pricing (with an auctions section)](methods_en/monetization.md) `M-monetization` — monetization, pricing, value-metric, take-rate, cpa
 - [MVP, MLP and pilots — choosing the validation format, metrics, success criteria, conclusions](methods_en/mvp-pilots.md) `M-mvp-pilots` — mvp, mlp, pilot, prototype, traction-model
 - [Strategy timing and the outcome roadmap — phases, gate criteria, stop signals](methods_en/outcome-roadmap.md) `M-outcome-roadmap` — roadmap, outcome-roadmap, phases, pilot, validation
-- [Paid subscription retention and win-back — renewals, dunning, save offers, winning back churned users](methods_en/paid-retention-winback.md) `M-paid-retention` — retention, subscriptions, churn, win-back, dunning
+- [Paid subscription retention and win-back — renewals, dunning, save offers, winning back churned users](methods_en/paid-retention.md) `M-paid-retention` — retention, subscriptions, churn, win-back, dunning
 - [Platform risks, concept review, pilot, scaling and adoption, investor case](methods_en/platform-risks-rollout.md) `M-platform-risks-rollout` — platforms, risks, risk-register, pilot, adoption
 - [Scaling and Product-Market Fit — when to grow, how to measure PMF (the Superhuman engine)](methods_en/pmf-scaling.md) `M-pmf-scaling` — pmf, scaling, unit-economics, retention, nps
 - [Product communication and defense — from roadmap to stakeholder decision](methods_en/product-communication.md) `M-product-communication` — product-defense, decision-memo, one-pager, stakeholders, gates
@@ -304,7 +304,7 @@
 - [Solution design — solution hypotheses, scoring, risks, validation and post-mortem](methods_en/solution-design.md) `M-solution-design` — solution-hypothesis, rice, solution-risks, fake-door, ab-test
 - [SQL for product analytics — typical queries (funnel, cohorts, ARPU), joins and window functions, data quality](methods_en/sql-for-pm.md) `M-sql-for-pm` — sql, funnel, retention, cohorts, arpu
 - [Success metrics — North Star Metric, metric tree, AARRR and OKR](methods_en/success-metrics.md) `M-success-metrics` — nsm, north-star-metric, metric-tree, aarrr, okr
-- [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder-pricing.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
+- [Tariff ladder pricing — ARPU mix, freemium, paying-user CAC, annual plans](methods_en/tariff-ladder.md) `M-tariff-ladder` — pricing, tariff-plans, arpu, freemium, cac
 - [Team and people — composition by stage, hiring, org structure, stakeholders and neighboring teams](methods_en/team.md) `M-team` — team, hiring, outsourcing, stakeholders, org-structure
 - [Traction model (growth model): building, effects, validation](methods_en/traction-model.md) `M-traction-model` — traction-model, growth-model, baseline, top-down, bottom-up
 - [Unit economics (LTV, CAC, payback)](methods_en/unit-economics.md) `M-unit-economics` — unit-economics, ltv, cac, payback, margin

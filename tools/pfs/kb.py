@@ -234,6 +234,9 @@ def _lint_file(fm: dict, body_text: str, lang: str, name: str, known_ids: set[st
             problems.append(f"{label}: id должен начинаться с M- (сейчас: {cid})")
         if lang == "en" and cid.endswith("-en"):
             problems.append(f"{cid}: id EN-карты не должен иметь суффикс -en")
+        if cid.startswith("M-") and name != cid[2:] + ".md":
+            problems.append(f"{cid}: имя файла «{name}» не соответствует id "
+                            f"(правило: имя = id без префикса M-, ожидается «{cid[2:]}.md»)")
     for key in REQUIRED_FM:
         val = fm.get(key)
         if val is None or val == "" or val == []:

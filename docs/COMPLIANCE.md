@@ -7,7 +7,7 @@
 
 | Счётчик | Значение | Проверка |
 |---|---|---|
-| Тесты | 115 (`OK`) | `python3 -m unittest discover -s tests` |
+| Тесты | 412 (`OK`) | `python3 -m unittest discover -s tests` |
 | Карты знаний | 97 RU (`knowledge/methods/`) + 97 EN-зеркал — полная двуязычная база (`knowledge/methods_en/`, `lang: en`) + `knowledge/INDEX_EN.md`; PRO-60: единая схема имён (имя = id без `M-`), `pfs kb lint` проверяет ссылки, теги, разделы и паритет RU/EN (объём ≥ 80%) | `ls knowledge/methods \| wc -l` → 97; `ls knowledge/methods_en \| wc -l` → 97; `python3 -m tools.pfs kb lint` → 0 проблем |
 | Навыки | 121 | `ls .claude/skills \| wc -l` → 121 |
 | Субагенты | 8 | `ls .claude/agents \| wc -l` → 8 |
@@ -88,7 +88,7 @@ PDF/DOCX, cover letters, трекер, карта вакансий; 100% лок�
 ## 4. Как проверить
 
 ```bash
-# 1. Тесты инструментов (115, без установки пакетов)
+# 1. Тесты инструментов (412, без установки пакетов)
 python3 -m unittest discover -s tests
 
 # 2. Quality gate демо-проекта (100/100)
@@ -101,8 +101,8 @@ python3 -m tools.pfs --project демо status
 ls .claude/skills | wc -l          # 121
 ls .claude/agents | wc -l          # 8
 ls .claude/hooks | wc -l           # 5
-ls knowledge/methods | wc -l       # 89
-ls knowledge/methods_en | wc -l    # 89
+ls knowledge/methods | wc -l       # 97
+ls knowledge/methods_en | wc -l    # 97
 
 # 5. Сайт документации (RU/EN) — открыть локально
 open site/index.html

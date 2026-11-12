@@ -151,7 +151,7 @@ body[data-lang=ru] [lang=en]{display:none}
   <p class="sub" lang="ru">Полная документация: как общаться с агентом, все 12 шагов процесса, доказательства S### → C### → D###, Excel-модели и six-pager, инструменты (CLI, MCP, навыки, субагенты, хуки), среды и интеграции, безопасность, глоссарий и частые проблемы.</p>
   <p class="sub" lang="en">Full documentation: talking to the agent, all 12 process steps, evidence S### → C### → D###, Excel models and the six-pager, tooling (CLI, MCP, skills, subagents, hooks), environments and integrations, security, glossary and troubleshooting.</p>
   <div class="meta" lang="ru">12 шагов · 97 карт знаний (RU + EN-индекс) · 121 навык · 8 субагентов · 4 хука · 18 MCP-инструментов · 0 зависимостей</div>
-  <div class="meta" lang="en">12 steps · 89 knowledge cards · 121 skills · 8 subagents · 4 hooks · 18 MCP tools · 0 dependencies</div>
+  <div class="meta" lang="en">12 steps · 97 knowledge cards · 121 skills · 8 subagents · 4 hooks · 18 MCP tools · 0 dependencies</div>
   <div class="search"><input id="q" type="search" placeholder="Поиск по справке… / Search the help…" aria-label="Поиск по справке / Search the help"></div>
 </div></div>
 
@@ -272,12 +272,12 @@ body[data-lang=ru] [lang=en]{display:none}
       <pre lang="ru">$ git clone https://github.com/Fighter90/product-factory-strategist.git
 $ cd product-factory-strategist
 $ python3 -m tools.pfs doctor      # проверка окружения
-$ python3 -m unittest discover -s tests   # 115 тестов, опционально
+$ python3 -m unittest discover -s tests   # 412 тестов, опционально
 $ pfs new "Почему падает удержание" "запрос дословно"</pre>
       <pre lang="en">$ git clone https://github.com/Fighter90/product-factory-strategist.git
 $ cd product-factory-strategist
 $ python3 -m tools.pfs doctor      # environment check
-$ python3 -m unittest discover -s tests   # 115 tests, optional
+$ python3 -m unittest discover -s tests   # 412 tests, optional
 $ pfs new "Why is retention dropping" "the request verbatim"</pre>
       <p lang="ru">Требования: Python 3.9+ и любая поддерживаемая среда. Пакеты не устанавливаются — только стандартная библиотека. Секреты (ключи Linear и других MCP) кладутся в <code>.env</code> — он не коммитится и не обязателен для базового цикла.</p>
       <p lang="en">Requirements: Python 3.9+ and any supported environment. No packages to install — standard library only. Secrets (Linear and other MCP keys) go to <code>.env</code> — it is git-ignored and not required for the basic loop.</p></div>

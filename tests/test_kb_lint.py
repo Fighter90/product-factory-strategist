@@ -106,6 +106,11 @@ class KbLintSyntheticTests(unittest.TestCase):
         problems = self.lint(en_name="alpha-en.md", en_skip=False)
         self.assertTrue(any("alpha-en.md" in p for p in problems), problems)
 
+    def test_card_filename_must_equal_id_without_m_prefix(self):
+        """PRO-60, раунд 4: имя файла = id без префикса M- (правило CHANGELOG), для RU и EN."""
+        problems = self.lint(ru_name="alpha-note.md", en_name="alpha-note.md")
+        self.assertTrue(any("M-alpha" in p and "alpha.md" in p for p in problems), problems)
+
     def test_lang_field_values(self):
         problems = self.lint(en_fm=EN_FM.replace("lang: en", "lang: ru"))
         self.assertTrue(any("lang" in p and "alpha.md" in p for p in problems), problems)
@@ -174,6 +179,23 @@ class KbLintRealKbTests(unittest.TestCase):
             for cid in cards:
                 self.assertIn(cid, ids, f"{stage}: {cid}")
 
+    def test_real_card_filenames_match_ids(self):
+        """PRO-60, раунд 4: имя файла каждой карты = id без префикса M- (RU и EN зеркала)."""
+        for sub in ("methods", "methods_en"):
+            for p in (core.KNOWLEDGE / sub).glob("*.md"):
+                cid = str(kb.frontmatter(p.read_text(encoding="utf-8")).get("id"))
+                self.assertEqual(p.name, cid[2:] + ".md", f"{sub}/{p.name}")
+
+    def test_cli_kb_lint_exits_nonzero_on_findings(self):
+        """PRO-60, раунд 4: lint с находками — ненулевой код выхода, чтобы CI-шаг гейтил."""
+        from types import SimpleNamespace
+        from tools.pfs import cli
+        ns = SimpleNamespace(action="lint", query=None)
+        with mock.patch.object(kb, "lint", lambda: ["M-alpha: битая [[ссылка]] M-ghost"]):
+            with self.assertRaises(SystemExit) as cm:
+                cli.cmd_kb(ns)
+        self.assertEqual(cm.exception.code, 1)
+
 
 class KbLintStagesAndEncodingTests(unittest.TestCase):
     """PRO-60, раунд 3: stages без шагов процесса, байты U+FFFD в картах и INDEX, счётчики в доках."""
@@ -235,13 +257,33 @@ class KbDocsCardCountsTests(unittest.TestCase):
         ("README.md", [(r"(\d+) карт по категориям", "ru"),
                        (r"\((\d+) карт RU\)", "ru"),
                        (r"(\d+) EN-зеркал", "en")]),
-        ("docs/COMPLIANCE.md", [(r"(\d+) карт RU", "ru"), (r"(\d+) EN-зеркал", "en")]),
+        ("docs/COMPLIANCE.md", [(r"(\d+) карт RU", "ru"), (r"(\d+) EN-зеркал", "en"),
+                                (r"methods \| wc -l\s+#\s*(\d+)", "ru"),
+                                (r"methods_en \| wc -l\s+#\s*(\d+)", "en")]),
         ("docs/HELP.md", [(r"(\d+) карт методов \(RU\)", "ru"), (r"(\d+) EN-зеркал", "en")]),
         ("docs/HELP_EN.md", [(r"(\d+) method cards \(RU\)", "ru"), (r"(\d+) EN mirrors", "en")]),
         ("docs/SUBMISSION.md", [(r"(\d+) карт(?: RU| \(RU\))?", "ru"), (r"(\d+) EN-зеркал", "en")]),
         ("docs/lovable-brief.md", [(r"(\d+) карт знаний", "ru"), (r"(\d+)\+(\d+) карт", "ru_en"),
                                    (r"(\d+) карт \(\+", "ru"), (r"(\d+) EN-зеркал", "en")]),
-        ("site/help.html", [(r"(\d+) карт[а-яё]*", "ru"), (r"(\d+) cards", "ru")]),
+        ("site/help.html", [(r"(\d+) карт[а-яё]*", "ru"), (r"(\d+) cards", "ru"),
+                            (r"(\d+) knowledge cards", "ru")]),
+        ("README_EN.md", [(r"— (\d+) cards across categories", "ru"),
+                          (r"\((\d+) cards across categories", "ru"),
+                          (r"categories \(RU\) \+ (\d+) EN mirrors", "en"),
+                          (r"\((\d+) RU cards\)", "ru"),
+                          (r"methods_en/ \((\d+) EN mirrors", "en")]),
+        ("knowledge/README.md", [(r"\((\d+) карт RU", "ru"),
+                                 (r"карт RU \+ (\d+) EN-зеркал", "en"),
+                                 (r"\((\d+) EN, course", "en")]),
+        ("site/index.html", [(r'data-target="(\d+)">0</span></b><span lang="ru">карт методик', "ru"),
+                             (r"карт методик \(RU \+ (\d+) EN\)", "en"),
+                             (r"— (\d+) карт / cards", "ru"),
+                             (r"поиск по (\d+) картам", "ru"),
+                             (r"across (\d+) cards", "ru"),
+                             (r"база из (\d+) карт методик", "ru"),
+                             (r"knowledge base of (\d+) method cards", "ru"),
+                             (r"базой знаний из (\d+) методических карт", "ru"),
+                             (r"\(RU \+ (\d+) EN-зеркал", "en")]),
     ]
 
     def test_claimed_counts_match_knowledge_base(self):
@@ -261,6 +303,15 @@ class KbDocsCardCountsTests(unittest.TestCase):
                         self.assertEqual(int(m.group(1)), expected[kind],
                                          f"{rel}: «{m.group(0)}» ≠ {expected[kind]}")
 
+    def test_compliance_test_count_matches_suite(self):
+        """PRO-60, раунд 4: «Тесты | N» в COMPLIANCE — фактическое число тестов, не ручное."""
+        n = sum(len(re.findall(r"(?m)^    def test_", p.read_text(encoding="utf-8")))
+                for p in sorted((core.ROOT / "tests").glob("test_*.py")))
+        text = (core.ROOT / "docs/COMPLIANCE.md").read_text(encoding="utf-8")
+        m = re.search(r"\| Тесты \| (\d+) ", text)
+        self.assertTrue(m, "docs/COMPLIANCE.md: нет строки счётчика «Тесты»")
+        self.assertEqual(int(m.group(1)), n)
+
 
 class KbIndexEnTests(unittest.TestCase):
     def test_build_index_en_groups_by_stages_and_reports_broken_links(self):
@@ -274,6 +325,24 @@ class KbIndexEnTests(unittest.TestCase):
         self.assertIn("(methods_en/alpha.md)", written)
         self.assertIn("`M-alpha`", written)
         self.assertEqual(problems, [])
+
+    def test_index_rebuild_rewrites_both_index_files(self):
+        """PRO-60, раунд 4: `kb index` перегенерирует оба файла — INDEX.md и INDEX_EN.md."""
+        root = Path(tempfile.mkdtemp(prefix="pfs-test-kblint-idx2-"))
+        make_pair(root)
+        (root / "INDEX.md").write_text("STALE-RU\n", encoding="utf-8")
+        (root / "INDEX_EN.md").write_text("STALE-EN\n", encoding="utf-8")
+        with mock.patch.object(core, "KNOWLEDGE", root):
+            kb.build_index()
+            kb.build_index_en()
+        ru = (root / "INDEX.md").read_text(encoding="utf-8")
+        en = (root / "INDEX_EN.md").read_text(encoding="utf-8")
+        self.assertNotIn("STALE-RU", ru)
+        self.assertIn("Навигация по методическим картам", ru)
+        self.assertIn("(methods/alpha.md)", ru)
+        self.assertNotIn("STALE-EN", en)
+        self.assertIn("English mirrors", en)
+        self.assertIn("(methods_en/alpha.md)", en)
 
 
 if __name__ == "__main__":
