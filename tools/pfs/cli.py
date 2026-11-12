@@ -119,14 +119,17 @@ def cmd_source(a):
         # относительные пути резолвятся от каталога проекта, если файла там нет — от cwd (PRO-36)
         is_url = bool(a.target and re.match(r"^https?://", a.target))
         target = a.target if is_url else (str(core.resolve_input(a.target, pdir)) if a.target else None)
-        text_file = str(core.resolve_input(a.text_file, pdir)) if a.text_file else None
-        text = sources.assert_safe_local(Path(text_file)).read_text(encoding="utf-8") if text_file else None
+        text_path = core.resolve_input(a.text_file, pdir) if a.text_file else None
+        text = sources.assert_safe_local(text_path).read_text(encoding="utf-8") if text_path else None
         rec, new = sources.add(pdir, target, text=text, url=a.url, title=a.title, origin=a.origin or "public",
-                               note=a.note, published=a.published, force=a.force)
+                               note=a.note, published=a.published, force=a.force, text_path=text_path)
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
         print(f"{'Добавлен' if new else 'Уже есть (повтор пропущен)'}: {rec['id']} — {rec['title']} ({rec['chars']} зн.){flag}")
-        if text_file or (not is_url and target):
-            print(f"Файл: {Path(text_file or target).resolve()}")
+        if rec.get("external_path"):
+            print(f"⚠ Файл лежал вне проекта ({rec['external_path']}) — копия сохранена в {rec['path']}. "
+                  "Материал должен быть явно передан пользователем.")
+        if (text_path or (not is_url and target)) and rec.get("path"):
+            print(f"Файл: {(pdir / rec['path']).resolve()}")  # копия в sources/raw/ — след в проекте (PRO-58)
     elif a.action == "fetch":
         rec, new, channel = sources.fetch(pdir, a.target, title=a.title, origin=a.origin,
                                           note=a.note, published=a.published, force=a.force)

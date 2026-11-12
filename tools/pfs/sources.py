@@ -108,6 +108,10 @@ def _source_md(rec: dict, body: str, flags: list[str]) -> str:
         header.append("- ⚠ СИНТЕТИЧЕСКИЙ материал (ИИ-респондент). Годится только для гипотез, не доказывает спрос.")
     if origin == "excerpt":
         header.append(f"- ⚠ {EXCERPT_MARK}: текст получен не напрямую с сайта — сверяйте с оригиналом.")
+    if rec.get("external_path"):
+        # Файл-выписка лежал вне проекта (PRO-58): в реестре виден оригинал, текст — в sources/raw/.
+        header.append(f"- ⚠ Файл зарегистрирован вне проекта: {rec['external_path']}. "
+                      f"Копия сохранена в {rec.get('path')} — материал должен быть явно передан пользователем.")
     if rec.get("via") and rec["via"] in VIA_LABELS:
         header.append(f"- Канал получения: {VIA_LABELS[rec['via']]}")
     if flags:
@@ -115,17 +119,40 @@ def _source_md(rec: dict, body: str, flags: list[str]) -> str:
     return "\n".join(header) + "\n\n---\n\n" + body + "\n"
 
 
+def _local_excerpt(pdir: Path, path: Path | None) -> tuple[Path | None, Path | None]:
+    """Файл-выписка → (raw-копия в sources/raw/, оригинал если он вне проекта) (PRO-58).
+
+    Выписки живут в projects/<slug>/sources/raw/: файл оттуда не копируется повторно,
+    из другого места проекта — копируется, из-за пределов проекта — копируется и
+    помечается external_path (пометка в файле источника и записи реестра).
+    """
+    if path is None:
+        return None, None
+    rp = Path(path).expanduser().resolve()
+    raw_path = pdir / "sources" / "raw" / rp.name
+    if rp != raw_path.resolve():
+        shutil.copy2(rp, raw_path)
+    external = None if rp.is_relative_to(pdir.resolve()) else rp  # оригинал вне проекта → пометка
+    return raw_path, external
+
+
 def add(pdir: Path, target: str | None = None, *, text: str | None = None, url: str | None = None,
         title: str | None = None, origin: str = "public", note: str | None = None,
-        published: str | None = None, force: bool = False) -> tuple[dict, bool]:
-    """Добавить источник. Возвращает (запись, создан_ли_новый). Повтор не создаёт дубль."""
+        published: str | None = None, force: bool = False, text_path: Path | None = None) -> tuple[dict, bool]:
+    """Добавить источник. Возвращает (запись, создан_ли_новый). Повтор не создаёт дубль.
+
+    text_path — файл, из которого прочитан text (--text-file): копируется в sources/raw/
+    (PRO-58); если он вне проекта, запись получает пометку external_path.
+    """
     if origin not in ORIGINS:
         raise PfsError(f"origin: {', '.join(ORIGINS)}")
     rows = load(pdir)
     meta = core.read_json(pdir / "project.json", {})
     raw_path = None
+    external_path = None
     if text is not None:
         kind, body = "text", text
+        raw_path, external_path = _local_excerpt(pdir, text_path)
     elif target and re.match(r"^https?://", target):
         url = target
         ok, why = _domain_ok(meta, url)
@@ -142,9 +169,7 @@ def add(pdir: Path, target: str | None = None, *, text: str | None = None, url: 
         if not path.exists():
             raise PfsError(f"Файл не найден: {path}")
         kind, body = extract.file_to_text(path)
-        raw_path = pdir / "sources" / "raw" / path.name
-        if path.resolve() != raw_path.resolve():
-            shutil.copy2(path, raw_path)
+        raw_path, external_path = _local_excerpt(pdir, path)
         title = title or path.stem
     else:
         raise PfsError("Укажите файл, ссылку или --text-file")
@@ -156,7 +181,8 @@ def add(pdir: Path, target: str | None = None, *, text: str | None = None, url: 
         raise PfsError(f"Из {url or target} извлечено {len(body.strip())} знаков — страница, вероятно, отрисовывается "
                        "JavaScript или это скан. Сохраните текст вручную и добавьте: pfs source add --text-file <файл> --url <ссылка>")
     rec, created = _register_web(pdir, url=url, kind=kind, body=body, title=title, origin=origin,
-                                 note=note, published=published, raw_path=raw_path)
+                                 note=note, published=published, raw_path=raw_path,
+                                 external_path=external_path)
     return rec, created
 
 
@@ -208,7 +234,8 @@ def audit(pdir: Path) -> list[str]:
 
 def _register_web(pdir: Path, *, url: str | None, kind: str, body: str, title: str | None, origin: str,
                   note: str | None, published: str | None, raw_path: Path | None = None,
-                  via: str | None = None, tool: str = "pfs source add") -> tuple[dict, bool]:
+                  external_path: Path | None = None, via: str | None = None,
+                  tool: str = "pfs source add") -> tuple[dict, bool]:
     """Записать источник в реестр (дедуп по sha256/url → повтор пропускается). Общий хвост add и fetch.
 
     Вся критическая секция «перечитать реестр → дедуп → выделить ID → записать файл и строку»
@@ -230,6 +257,8 @@ def _register_web(pdir: Path, *, url: str | None, kind: str, body: str, title: s
         }
         if via:
             rec["via"] = via
+        if external_path is not None:
+            rec["external_path"] = str(external_path)
         core.atomic_write(pdir / "sources" / f"{sid}.md", _source_md(rec, body, flags))
         core.append_jsonl(pdir / "sources.jsonl", rec)
     core.log(pdir, "source", f"{sid} добавлен: {rec['title'][:80]}", tool=tool, url=url,
