@@ -37,12 +37,10 @@ Use this skill when you need:
 **When creating documents with this skill, always consider adding scientific diagrams and schematics to enhance visual communication.**
 
 If your document does not already contain schematics or diagrams:
-- Use the **scientific-schematics** skill to generate AI-powered publication-quality diagrams
+- Use the **generate-image** skill to generate AI-powered publication-quality diagrams
 - Simply describe your desired diagram in natural language
 
-```bash
-python scripts/generate_schematic.py "your diagram description" -o figures/output.png
-```
+Ask the generate-image skill for the diagram and save the result to `figures/output.png`.
 
 ---
 
@@ -456,9 +454,9 @@ This skill enhances scientific writing by providing:
 | URL content extraction | `parallel-cli extract` (parallel-web skill) |
 | Deep research (exhaustive) | `research-lookup` via Parallel Chat API or `parallel-web` deep research |
 | Academic paper search | `research-lookup` (auto-routes to Perplexity) |
-| Google Scholar search | `citation-management` skill |
-| PubMed search | `citation-management` skill |
-| DOI to BibTeX | `citation-management` skill |
+| Google Scholar search | `literature-review` skill |
+| PubMed search | `literature-review` skill |
+| DOI to BibTeX | `literature-review` skill |
 | Metadata verification | `parallel-cli extract` (parallel-web skill) |
 
 ---

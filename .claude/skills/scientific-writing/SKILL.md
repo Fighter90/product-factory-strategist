@@ -33,11 +33,11 @@ This skill should be used when:
 
 ## Visual Enhancement with Scientific Schematics
 
-**⚠️ MANDATORY: Every scientific paper MUST include a graphical abstract plus 1-2 additional AI-generated figures using the scientific-schematics skill.**
+**⚠️ MANDATORY: Every scientific paper MUST include a graphical abstract plus 1-2 additional AI-generated figures using the generate-image skill.**
 
 This is not optional. Scientific papers without visual elements are incomplete. Before finalizing any document:
 1. **ALWAYS generate a graphical abstract** as the first visual element
-2. Generate at minimum ONE additional schematic or diagram using scientific-schematics
+2. Generate at minimum ONE additional schematic or diagram using generate-image
 3. Prefer 3-4 total figures for comprehensive papers (graphical abstract + methods flowchart + results visualization + conceptual diagram)
 
 ### Graphical Abstract (REQUIRED)
@@ -49,9 +49,7 @@ This is not optional. Scientific papers without visual elements are incomplete. 
 - Uses landscape orientation (typically 1200x600px)
 
 **Generate the graphical abstract FIRST:**
-```bash
-python scripts/generate_schematic.py "Graphical abstract for [paper title]: [brief description showing workflow from input → methods → key findings → conclusions]" -o figures/graphical_abstract.png
-```
+Describe the graphical abstract to the generate-image skill — paper title plus the workflow from input → methods → key findings → conclusions — and save the result to `figures/graphical_abstract.png` (landscape, typically 1200x600px).
 
 **Graphical Abstract Requirements:**
 - **Content**: Visual summary showing workflow, key methods, main findings, and conclusions
@@ -62,7 +60,7 @@ python scripts/generate_schematic.py "Graphical abstract for [paper title]: [bri
 
 ### Additional Figures (GENERATE EXTENSIVELY)
 
-**⚠️ CRITICAL: Use BOTH scientific-schematics AND generate-image EXTENSIVELY throughout all documents.**
+**⚠️ CRITICAL: Use generate-image EXTENSIVELY throughout all documents.**
 
 Every document should be richly illustrated. Generate figures liberally - when in doubt, add a visual.
 
@@ -78,10 +76,8 @@ Every document should be richly illustrated. Generate figures liberally - when i
 | Grants | 4 | 5-7 |
 | Clinical Reports | 3 | 4-6 |
 
-**Use scientific-schematics EXTENSIVELY for technical diagrams:**
-```bash
-python scripts/generate_schematic.py "your diagram description" -o figures/output.png
-```
+**Use generate-image EXTENSIVELY for technical diagrams:**
+Describe the diagram to the generate-image skill and save the result to `figures/output.png`.
 
 - Study design and methodology flowcharts (CONSORT, PRISMA, STROBE)
 - Conceptual framework diagrams
@@ -95,9 +91,7 @@ python scripts/generate_schematic.py "your diagram description" -o figures/outpu
 - Any technical concept that benefits from schematic visualization
 
 **Use generate-image EXTENSIVELY for visual content:**
-```bash
-python scripts/generate_image.py "your image description" -o figures/output.png
-```
+Describe the image to the generate-image skill and save the result to `figures/output.png`.
 
 - Photorealistic illustrations of concepts
 - Medical/anatomical illustrations
@@ -121,7 +115,7 @@ The AI will automatically:
 - Comparison → generate a comparison diagram
 - Reader benefit → generate a visual
 
-For detailed guidance, refer to the scientific-schematics and generate-image skill documentation.
+For detailed guidance, refer to the generate-image skill documentation.
 
 ---
 
@@ -383,8 +377,8 @@ For research reports, technical reports, white papers, and other professional do
 - Feasibility studies and project deliverables
 
 **When NOT to Use (Use Venue-Specific Formatting Instead):**
-- Journal manuscripts → Use `venue-templates` skill
-- Conference papers → Use `venue-templates` skill
+- Journal manuscripts → Follow the target journal's author guidelines
+- Conference papers → Follow the conference's paper requirements
 - Academic theses → Use institutional templates
 
 **The `scientific_report.sty` Style Package Provides:**
@@ -650,7 +644,7 @@ This skill works effectively with:
 - **Statistical analysis**: For determining appropriate statistical presentations
 - **Literature review skills**: For contextualizing research
 - **Figure creation tools**: For developing publication-quality visualizations
-- **Venue-templates skill**: For venue-specific writing styles and formatting (journal manuscripts)
+- **Venue author guidelines**: For venue-specific writing styles and formatting (journal manuscripts)
 - **scientific_report.sty**: For professional reports, white papers, and technical documents
 
 ### Professional Reports vs. Journal Manuscripts
@@ -659,8 +653,8 @@ This skill works effectively with:
 
 | Document Type | Formatting Approach |
 |---------------|---------------------|
-| Journal manuscripts | Use `venue-templates` skill |
-| Conference papers | Use `venue-templates` skill |
+| Journal manuscripts | Follow the target journal's author guidelines |
+| Conference papers | Follow the conference's paper requirements |
 | Research reports | Use `scientific_report.sty` (this skill) |
 | White papers | Use `scientific_report.sty` (this skill) |
 | Technical reports | Use `scientific_report.sty` (this skill) |
@@ -668,7 +662,7 @@ This skill works effectively with:
 
 ### Venue-Specific Writing Styles
 
-**Before writing for a specific venue, consult the venue-templates skill for writing style guides:**
+**Before writing for a specific venue, consult its official author guidelines and house style:**
 
 Different venues have dramatically different writing expectations:
 - **Nature/Science**: Accessible, story-driven, broad significance
@@ -677,12 +671,9 @@ Different venues have dramatically different writing expectations:
 - **ML conferences (NeurIPS, ICML)**: Contribution bullets, ablation studies
 - **CS conferences (CHI, ACL)**: Field-specific conventions
 
-The venue-templates skill provides:
-- `venue_writing_styles.md`: Master style comparison
-- Venue-specific guides: `nature_science_style.md`, `cell_press_style.md`, `medical_journal_styles.md`, `ml_conference_style.md`, `cs_conference_style.md`
-- `reviewer_expectations.md`: What reviewers look for at each venue
+Each venue publishes its style expectations and reviewer priorities in its author guidelines — check the current guides before drafting.
 
-**Workflow**: First use this skill for general scientific writing principles (IMRAD, clarity, citations), then consult venue-templates for venue-specific style adaptation.
+**Workflow**: First use this skill for general scientific writing principles (IMRAD, clarity, citations), then apply the venue's author guidelines for style adaptation.
 
 ## References
 
@@ -711,7 +702,7 @@ This skill includes LaTeX style packages and templates for professional report f
 - Scientific notation commands for p-values, effect sizes, confidence intervals
 - Professional headers and footers
 
-**For venue-specific writing styles** (tone, voice, abstract format, reviewer expectations), see the **venue-templates** skill which provides comprehensive style guides for Nature/Science, Cell Press, medical journals, ML conferences, and CS conferences.
+**For venue-specific writing styles** (tone, voice, abstract format, reviewer expectations), follow the target venue's author guidelines — Nature/Science, Cell Press, medical journals, ML conferences, and CS conferences each publish comprehensive style guides.
 
 Load these references as needed when working on specific aspects of scientific writing.
 

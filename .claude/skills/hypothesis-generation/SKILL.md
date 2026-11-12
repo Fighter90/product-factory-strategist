@@ -25,21 +25,19 @@ This skill should be used when:
 
 ## Visual Enhancement with Scientific Schematics
 
-**⚠️ MANDATORY: Every hypothesis generation report MUST include at least 1-2 AI-generated figures using the scientific-schematics skill.**
+**⚠️ MANDATORY: Every hypothesis generation report MUST include at least 1-2 AI-generated figures using the generate-image skill.**
 
 This is not optional. Hypothesis reports without visual elements are incomplete. Before finalizing any document:
 1. Generate at minimum ONE schematic or diagram (e.g., hypothesis framework showing competing explanations)
 2. Prefer 2-3 figures for comprehensive reports (mechanistic pathway, experimental design flowchart, prediction decision tree)
 
 **How to generate figures:**
-- Use the **scientific-schematics** skill to generate AI-powered publication-quality diagrams
+- Use the **generate-image** skill to generate AI-powered publication-quality diagrams
 - Simply describe your desired diagram in natural language
 - Nano Banana Pro will automatically generate, review, and refine the schematic
 
 **How to generate schematics:**
-```bash
-python scripts/generate_schematic.py "your diagram description" -o figures/output.png
-```
+Ask the generate-image skill for the diagram and save the result to `figures/output.png`.
 
 The AI will automatically:
 - Create publication-quality images with proper formatting
@@ -56,7 +54,7 @@ The AI will automatically:
 - Theoretical model visualizations
 - Any complex concept that benefits from visualization
 
-For detailed guidance on creating schematics, refer to the scientific-schematics skill documentation.
+For detailed guidance on creating schematics, refer to the generate-image skill documentation.
 
 ---
 
@@ -290,8 +288,7 @@ Ensure all generated hypotheses meet these standards:
 
 ### Related Skills
 
-When preparing hypothesis-driven research for publication, consult the **venue-templates** skill for writing style guidance:
-- `venue_writing_styles.md` - Master guide comparing styles across venues
-- Venue-specific guides for Nature/Science, Cell Press, medical journals, and ML/CS conferences
-- `reviewer_expectations.md` - What reviewers look for when evaluating research hypotheses
+When preparing hypothesis-driven research for publication, follow the target venue's author guidelines for writing style guidance:
+- Style expectations are published per venue — Nature/Science, Cell Press, medical journals, and ML/CS conferences
+- Reviewer priorities and evidence language differ by venue; check the current author guides before drafting
 

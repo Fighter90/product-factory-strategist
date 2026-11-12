@@ -8,7 +8,7 @@
 за обязательствами и пересматривает выводы при новых данных.
 
 Это папка-репозиторий: инструкции, наборы знаний по категориям (стратегия · экономика · продукт · UX ·
-данные · платформы · Gen AI), 121 навык, 8 субагентов, 4 хука
+данные · платформы · Gen AI), 100 навыков, 8 субагентов, 4 хука
 и CLI/MCP-инструменты на чистом Python (ноль зависимостей). Работает в Claude Code, Cursor, Codex, OpenCode,
 Windsurf, Copilot.
 
@@ -35,7 +35,7 @@ pfs --help
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 355 тестов
+python3 -m unittest discover -s tests          # 429 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -188,7 +188,7 @@ flowchart TD
 flowchart TB
   U["Руководитель продукта"] -->|"запрос · ответы на блоки вопросов"| ENV
   subgraph ENV["LLM-среда (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 120<br/>(базовые 13 + product-skills 27 + личная 74 + интеграции 6: sdd · deck · premortem · board-of-directors · hallmark · rea)"]
+    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 100<br/>(базовые 13 + product-skills 27 + личная 57 + интеграции 3: sdd · deck · premortem)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 5<br/>SessionStart · PreWeb-домены · PostTool-журнал · Stop-стоимость (+ общий модуль)"]
   end
@@ -219,36 +219,35 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  SK["121 навык"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
+  SK["100 навыков"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: процедуры методов<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
-  SK --> L["Личная библиотека 75<br/>дизайн · маркетинг · наука · документы/медиа · режимы мышления · мета"]
-  SK --> INT["Интеграции 6<br/>hallmark · board-of-directors · premortem · rea · sdd · deck"]
+  SK --> L["Личная библиотека 57<br/>дизайн · маркетинг · наука · документы/медиа · мета"]
+  SK --> INT["Интеграции 3<br/>premortem · sdd · deck"]
   B & P & L & INT --> INV["Вызов: авто по триггерам · явно «используй skill X» · по шагам процесса"]
 ```
 
-**Структура (121):** четыре группы.
+**Структура (100):** четыре группы.
 - **Базовые 13** — шаги процесса: intake, research, situation, options, strategy, validation-plan,
   decision-support, data-analysis, interviews, ux-review, six-pager, deep-research, strategist.
 - **Product-skills 27** — процедуры методов: market-sizing, unit-economics, traction-modeling,
   solution-design, mvp-pilot-launch, problem-design…
-- **Личная библиотека 75** — дизайн: design-ui, refero-design, frontend-design, claudable-landing, make-interfaces-feel-better,
-  emil-design-eng, web-design-guidelines; маркетинг: ads, ad-creative, seo-audit, ai-seo, cro, pricing,
-  offers, cold-email, emails, launch, content-strategy, competitors, analytics, programmatic-seo,
-  directory-submissions, customer-research, marketing-psychology, prospecting, sales-enablement, signup, onboarding, paywalls, revops; наука: paper-lookup,
-  research-lookup, literature-review, scientific-writing, scientific-critical-thinking, peer-review,
-  statistical-analysis, statsmodels, scikit-learn, hypothesis-generation, pydeseq2, biopython, rdkit;
-  документы/медиа: pdf, docx, pptx, xlsx, markitdown, officecli, generate-image, video, infographics,
-  scientific-slides, scientific-schematics, scientific-visualization, latex-posters, matplotlib, seaborn;
-  режимы мышления: consciousness-council, balanced, what-if-oracle, dhdna-profiler; мета:
-  find-skills, shap, watch, transcribe.
-- **Интеграции 6** — hallmark, board-of-directors, premortem, rea, sdd, deck.
+- **Личная библиотека 57** — дизайн: refero-design, design-ui, claudable-landing, frontend-design,
+  make-interfaces-feel-better, emil-design-eng, web-design-guidelines; маркетинг: ad-creative, ads,
+  ai-seo, analytics, churn-prevention, co-marketing, competitors, content-strategy, copywriting, cro,
+  customer-research, emails, launch, marketing-psychology, offers, onboarding, paywalls, pricing,
+  programmatic-seo, prospecting, revops, sales-enablement, seo-audit, signup, site-architecture;
+  наука и данные: company-research, research-lookup, defuddle, literature-review, hypothesis-generation,
+  statistical-analysis, exploratory-data-analysis, scientific-critical-thinking, peer-review,
+  scientific-writing, transcribe, watch; документы/медиа: markitdown, docx, pdf, xlsx, pptx, officecli,
+  matplotlib, scientific-visualization, generate-image, infographics, video; мета: balanced, find-skills.
+- **Интеграции 3** — premortem, sdd, deck.
 
 **Как вызывать — три способа:**
 1. **Автоматически** — среда читает `description` навыка и подключает его по формулировке задачи
    («сделай premortem», «оцени лендинг по веб-гайдлайнам»).
 2. **Явно** — «используй skill `<имя>`: `<задача>`».
 3. **В процессе агента** — навык шага подключает нужные: `pfs step` печатает обязательные карты, а skills
-   включаются на шагах (options → options + red-team + board-of-directors; decision → decision-support +
+   включаются на шагах (options → options + red-team; decision → decision-support +
    premortem). Примеры команд: `pfs questions options`, `pfs export --deck`.
 
 **Правило согласования:** при конфликте методология в `knowledge/` (карты) приоритетнее процедуры навыка.
@@ -365,7 +364,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 
 ```
 AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject.toml
-.claude/skills/      (120)  базовые 13 · product-skills 27 · личная 74 · интеграции 6
+.claude/skills/      (100)  базовые 13 · product-skills 27 · личная 57 · интеграции 3
 .claude/agents/      (8)    researcher · red-team · evidence-auditor · synthetic-respondent ·
                             data-analyst · ux-analyst · comms-strategist · router
 .claude/hooks/       (5)    session_start (SessionStart-контекст) · pre_web (домены до запроса) ·
@@ -385,5 +384,5 @@ site/                index.html · en/index.html — генератор scripts/
                      materials.html · help.html (RU/EN)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
-tests/               (355)
+tests/               (429)
 ```

@@ -1,6 +1,6 @@
 ---
 name: statistical-analysis
-description: Guided statistical analysis with test selection and reporting. Use when you need help choosing appropriate tests for your data, assumption checking, power analysis, and APA-formatted results. Best for academic research reporting, test selection guidance. For implementing specific models programmatically use statsmodels.
+description: Guided statistical analysis with test selection and reporting. Use when you need help choosing appropriate tests for your data, assumption checking, power analysis, and APA-formatted results. Best for academic research reporting, test selection guidance. For product data profiling, cohorts and funnels use `pfs data`.
 license: MIT license
 metadata:
     skill-author: K-Dense Inc.
@@ -190,7 +190,6 @@ See `references/assumptions_and_diagnostics.md` for comprehensive guidance.
 
 Primary libraries for statistical analysis:
 - **scipy.stats**: Core statistical tests
-- **statsmodels**: Advanced regression and diagnostics
 - **pingouin**: User-friendly statistical testing with effect sizes
 - **pymc**: Bayesian statistical modeling
 - **arviz**: Bayesian visualization and diagnostics
