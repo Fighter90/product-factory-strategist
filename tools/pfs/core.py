@@ -146,6 +146,11 @@ def set_active(slug: str) -> None:
     atomic_write(projects_dir() / ".active", slug + "\n")
 
 
+def clear_active() -> None:
+    """Сбросить указатель активного проекта (PRO-67: битый .active не должен ломать чистый клон)."""
+    (projects_dir() / ".active").unlink(missing_ok=True)
+
+
 def project_dir(slug: str | None = None) -> Path:
     slug = slug or active_slug()
     if not slug:
