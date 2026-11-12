@@ -150,8 +150,8 @@ body[data-lang=ru] [lang=en]{display:none}
   <h1 lang="ru">Справка <span class="grad">·</span> агент</h1><h1 lang="en">Agent <span class="grad">help</span></h1>
   <p class="sub" lang="ru">Полная документация: как общаться с агентом, все 12 шагов процесса, доказательства S### → C### → D###, Excel-модели и six-pager, инструменты (CLI, MCP, навыки, субагенты, хуки), среды и интеграции, безопасность, глоссарий и частые проблемы.</p>
   <p class="sub" lang="en">Full documentation: talking to the agent, all 12 process steps, evidence S### → C### → D###, Excel models and the six-pager, tooling (CLI, MCP, skills, subagents, hooks), environments and integrations, security, glossary and troubleshooting.</p>
-  <div class="meta" lang="ru">12 шагов · 89 карт знаний (RU + EN-индекс) · 121 навык · 8 субагентов · 4 хука · 18 MCP-инструментов · 0 зависимостей</div>
-  <div class="meta" lang="en">12 steps · 89 knowledge cards · 121 skills · 8 subagents · 4 hooks · 18 MCP tools · 0 dependencies</div>
+  <div class="meta" lang="ru">12 шагов · 89 карт знаний (RU + EN-индекс) · 100 навыков · 8 субагентов · 4 хука · 18 MCP-инструментов · 0 зависимостей</div>
+  <div class="meta" lang="en">12 steps · 89 knowledge cards · 100 skills · 8 subagents · 4 hooks · 18 MCP tools · 0 dependencies</div>
   <div class="search"><input id="q" type="search" placeholder="Поиск по справке… / Search the help…" aria-label="Поиск по справке / Search the help"></div>
 </div></div>
 
@@ -191,7 +191,7 @@ body[data-lang=ru] [lang=en]{display:none}
     <div class="cap" lang="ru">Инструменты</div><div class="cap" lang="en">Tooling</div>
     <a href="#h-cli" lang="ru">CLI: все группы</a><a href="#h-cli" lang="en">CLI: all groups</a>
     <a href="#h-mcp" lang="ru">MCP: 18 инструментов</a><a href="#h-mcp" lang="en">MCP: 18 tools</a>
-    <a href="#h-skills" lang="ru">Навыки (120)</a><a href="#h-skills" lang="en">Skills (120)</a>
+    <a href="#h-skills" lang="ru">Навыки (100)</a><a href="#h-skills" lang="en">Skills (100)</a>
     <a href="#h-subagents" lang="ru">Субагенты (8)</a><a href="#h-subagents" lang="en">Subagents (8)</a>
     <a href="#h-hooks" lang="ru">Хуки (4)</a><a href="#h-hooks" lang="en">Hooks (4)</a>
     <a href="#h-models" lang="ru">Модели и маршрутизация</a><a href="#h-models" lang="en">Models &amp; routing</a>
@@ -272,12 +272,12 @@ body[data-lang=ru] [lang=en]{display:none}
       <pre lang="ru">$ git clone https://github.com/Fighter90/product-factory-strategist.git
 $ cd product-factory-strategist
 $ python3 -m tools.pfs doctor      # проверка окружения
-$ python3 -m unittest discover -s tests   # 115 тестов, опционально
+$ python3 -m unittest discover -s tests   # 429 тестов, опционально
 $ pfs new "Почему падает удержание" "запрос дословно"</pre>
       <pre lang="en">$ git clone https://github.com/Fighter90/product-factory-strategist.git
 $ cd product-factory-strategist
 $ python3 -m tools.pfs doctor      # environment check
-$ python3 -m unittest discover -s tests   # 115 tests, optional
+$ python3 -m unittest discover -s tests   # 429 tests, optional
 $ pfs new "Why is retention dropping" "the request verbatim"</pre>
       <p lang="ru">Требования: Python 3.9+ и любая поддерживаемая среда. Пакеты не устанавливаются — только стандартная библиотека. Секреты (ключи Linear и других MCP) кладутся в <code>.env</code> — он не коммитится и не обязателен для базового цикла.</p>
       <p lang="en">Requirements: Python 3.9+ and any supported environment. No packages to install — standard library only. Secrets (Linear and other MCP keys) go to <code>.env</code> — it is git-ignored and not required for the basic loop.</p></div>
@@ -553,11 +553,11 @@ pfs decision rebase --id D001 --note "основания обновлены"</pr
       </table>
     </div>
 
-    <div class="faq rv" id="h-skills"><h3 lang="ru">Навыки (120): структура и три способа вызова</h3><h3 lang="en">Skills (120): structure and three ways to invoke</h3>
-      <p lang="ru"><b>Структура:</b> базовые по шагам процесса (13) · product-skills, процедуры методов (27) · личная библиотека ~59 (дизайн, маркетинг, наука, документы и медиа, режимы мышления, мета) · интеграции. Каждая папка <code>.claude/skills/&lt;имя&gt;/SKILL.md</code> — инструкции + скрипты + референсы.</p>
-      <p lang="en"><b>Structure:</b> base per-step skills (13) · product-skills, method procedures (27) · a personal library of ~59 (design, marketing, science, documents &amp; media, thinking modes, meta) · integrations. Each folder <code>.claude/skills/&lt;name&gt;/SKILL.md</code> holds instructions + scripts + references.</p>
-      <p lang="ru"><b>Вызов:</b> 1) автоматически — по триггерам в описании (агент сам подключит skill при совпадении задачи); 2) явно — «используй skill <code>&lt;имя&gt;</code>: <code>&lt;задача&gt;</code>»; 3) по шагам процесса — <code>pfs step</code> печатает обязательные карты и подсказывает навык шага. Правило приоритета: методология проекта (карты БЗ) важнее общего навыка. Примеры интеграций: <code>hallmark</code> — анти-слоп-гейты страниц, <code>board-of-directors</code> — совет 5 перспектив + Red Team на шаге options, <code>premortem</code> — предразбор провала перед утверждением решения, <code>rea</code> — reverse-engineering JS-страниц и закрытых форматов, <code>sdd</code> — дисциплина разработки, <code>deck</code> — презентация из six-pager, <code>deep-research</code> — литобзор через Feynman. Полный реестр: <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/SKILLS.md">docs/SKILLS.md</a>.</p>
-      <p lang="en"><b>Invocation:</b> 1) automatic — description triggers; 2) explicit — "use skill <code>&lt;name&gt;</code>: <code>&lt;task&gt;</code>"; 3) per step — <code>pfs step</code> prints mandatory cards. Priority rule: project methodology (KB maps) outranks generic skills. Integration examples: hallmark (anti-slop page gates), board-of-directors (5-perspective council + Red Team at options), premortem (failure pre-mortem before approval), rea (reverse-engineering JS pages and closed formats), sdd (development discipline), deck (six-pager presentation), deep-research (literature review via Feynman). Full registry: docs/SKILLS.md.</p></div>
+    <div class="faq rv" id="h-skills"><h3 lang="ru">Навыки (100): структура и три способа вызова</h3><h3 lang="en">Skills (100): structure and three ways to invoke</h3>
+      <p lang="ru"><b>Структура:</b> базовые по шагам процесса (13) · product-skills, процедуры методов (27) · личная библиотека ~57 (дизайн, маркетинг, наука, документы и медиа, мета) · интеграции. Каждая папка <code>.claude/skills/&lt;имя&gt;/SKILL.md</code> — инструкции + скрипты + референсы.</p>
+      <p lang="en"><b>Structure:</b> base per-step skills (13) · product-skills, method procedures (27) · a personal library of ~57 (design, marketing, science, documents &amp; media, meta) · integrations. Each folder <code>.claude/skills/&lt;name&gt;/SKILL.md</code> holds instructions + scripts + references.</p>
+      <p lang="ru"><b>Вызов:</b> 1) автоматически — по триггерам в описании (агент сам подключит skill при совпадении задачи); 2) явно — «используй skill <code>&lt;имя&gt;</code>: <code>&lt;задача&gt;</code>»; 3) по шагам процесса — <code>pfs step</code> печатает обязательные карты и подсказывает навык шага. Правило приоритета: методология проекта (карты БЗ) важнее общего навыка. Примеры интеграций: <code>premortem</code> — предразбор провала перед утверждением решения, <code>sdd</code> — дисциплина разработки, <code>deck</code> — презентация из six-pager, <code>deep-research</code> — литобзор через Feynman. Полный реестр: <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/SKILLS.md">docs/SKILLS.md</a>.</p>
+      <p lang="en"><b>Invocation:</b> 1) automatic — description triggers; 2) explicit — "use skill <code>&lt;name&gt;</code>: <code>&lt;task&gt;</code>"; 3) per step — <code>pfs step</code> prints mandatory cards. Priority rule: project methodology (KB maps) outranks generic skills. Integration examples: premortem (failure pre-mortem before approval), sdd (development discipline), deck (six-pager presentation), deep-research (literature review via Feynman). Full registry: docs/SKILLS.md.</p></div>
 
     <div class="faq rv" id="h-subagents"><h3 lang="ru">Субагенты (8)</h3><h3 lang="en">Subagents (8)</h3>
       <table lang="ru">
@@ -608,8 +608,8 @@ pfs data stats file.csv --col revenue --group seg              # статист�
       <p lang="en"><code>pfs media add shot.png --desc "what is visible" --title "…"</code> copies the media to <code>sources/raw/</code> and turns the description into a text source: the agent analyzes exactly what is described. <code>pfs ux scaffold S003 --focus "onboarding"</code> builds a heuristics + journey scaffold bound to the material; the <code>ux-analyst</code> subagent fills it without inventing beyond the screenshots.</p></div>
 
     <div class="faq rv" id="h-env-claude"><h3 lang="ru">Среда: Claude Code — полный опыт</h3><h3 lang="en">Environment: Claude Code — the full experience</h3>
-      <p lang="ru">Откройте папку репозитория в Claude Code — всё подхватится автоматически: 121 навык, 8 субагентов, 4 хука (контекст при старте, домены, инъекции, стоимость), команды CLI (<code>pfs …</code>) и MCP-инструменты. Просто напишите задачу — дальше агент ведёт сам.</p>
-      <p lang="en">Open the repo folder in Claude Code — everything auto-loads: 121 skills, 8 subagents, 4 hooks, the CLI (<code>pfs …</code>) and MCP tools. Just state the task — the agent takes it from there.</p></div>
+      <p lang="ru">Откройте папку репозитория в Claude Code — всё подхватится автоматически: 100 навыков, 8 субагентов, 4 хука (контекст при старте, домены, инъекции, стоимость), команды CLI (<code>pfs …</code>) и MCP-инструменты. Просто напишите задачу — дальше агент ведёт сам.</p>
+      <p lang="en">Open the repo folder in Claude Code — everything auto-loads: 100 skills, 8 subagents, 4 hooks, the CLI (<code>pfs …</code>) and MCP tools. Just state the task — the agent takes it from there.</p></div>
 
     <div class="faq rv" id="h-env-others"><h3 lang="ru">Среды: Cursor, Codex, OpenCode, Windsurf, Copilot</h3><h3 lang="en">Environments: Cursor, Codex, OpenCode, Windsurf, Copilot</h3>
       <p lang="ru">Все среды читают <code>AGENTS.md</code>. <b>Cursor</b> — правило <code>.cursor/rules</code> + MCP из <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — без хуков: начните с «прочитай AGENTS.md и выполни <code>pfs status</code>» — агент восстановит контекст и продолжит. MCP <code>pfs-strategist</code> работает во всех (launcher с sys.path не зависит от папки запуска).</p>

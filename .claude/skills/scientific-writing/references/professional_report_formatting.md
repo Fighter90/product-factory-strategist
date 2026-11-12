@@ -20,8 +20,8 @@ This reference guide covers professional formatting for scientific reports, tech
 
 ### Do NOT Use This Style For:
 
-- **Journal manuscripts** → Use `venue-templates` skill for journal-specific formatting
-- **Conference papers** → Use `venue-templates` skill for conference requirements
+- **Journal manuscripts** → Follow the target journal's author guidelines for formatting requirements
+- **Conference papers** → Follow the conference's paper requirements
 - **Academic theses/dissertations** → Use institutional templates
 - **Peer-reviewed submissions** → Follow journal author guidelines
 
@@ -652,8 +652,8 @@ Before finalizing your report, verify:
 
 ### Related Skills
 
-- `venue-templates` - For journal manuscripts and conference papers
-- `scientific-schematics` - For generating diagrams and figures
+- Venue author guidelines - For journal manuscripts and conference papers
+- `generate-image` - For generating diagrams and figures
 - `generate-image` - For creating illustrations and graphics
 
 ### External Resources
