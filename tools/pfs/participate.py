@@ -39,25 +39,23 @@ def guide(pdir: Path, persona: str, topic: str, out: Path | None = None) -> Path
     """Каркас гайда интервью: interviews/synthetic/guide_<slug(persona)>.md. Idempotent.
     Шаблон — по языку проекта (PRO-57): knowledge/templates[/en]/interview_guide.md."""
     if not persona.strip() or not topic.strip():
-        raise PfsError("Укажите персону и тему интервью")
+        raise PfsError(i18n.t(i18n.lang_of(pdir), "err_need_persona_topic"))
     out = out or pdir / "interviews" / "synthetic" / f"guide_{core.slugify(persona)}.md"
     if out.exists():
         return out  # повтор: существующий гайд (возможно, правленый агентом) не перезаписываем
+    tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
     tpl = GUIDE_TEMPLATE if i18n.lang_of(pdir) == "ru" else \
         core.KNOWLEDGE / "templates" / "en" / "interview_guide.md"
     if not tpl.exists():
-        raise PfsError(f"Шаблон гайда не найден: {tpl}")
+        raise PfsError(tr("err_guide_template_missing", tpl=tpl))
     body = tpl.read_text(encoding="utf-8").strip().splitlines()
     # Свой H1 у каркаса — заголовок шаблона не дублируем, остальное встраиваем как есть.
     if body and body[0].startswith("# "):
         body = body[1:]
     skeleton = "\n".join(body).strip()
-    text = (f"# Гайд интервью: {topic}\n\n"
-            f"- Персона: {persona}\n"
-            f"- Тема: {topic}\n"
-            f"- Дата: {core.today()}\n\n"
-            "> Каркас вопросов — заполните агентом до сессии. Ответы ИИ-респондентов\n"
-            "> (interviews/synthetic) дают только гипотезы и не доказывают спрос.\n\n"
+    text = (f"{tr('guide_title', topic=topic)}\n\n"
+            f"{tr('guide_meta', persona=persona, topic=topic, date=core.today())}\n\n"
+            f"{tr('guide_note')}\n\n"
             f"{skeleton}\n")
     core.atomic_write(out, text)
     core.log(pdir, "action", f"Создан каркас гайда интервью: {out.name} (персона: {persona})",

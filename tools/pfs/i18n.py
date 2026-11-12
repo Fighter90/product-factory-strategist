@@ -87,6 +87,53 @@ STR: dict[str, dict[str, str]] = {
                         "проверки: {gate}",
         "lang_set": "Язык проекта: {lang} (было: {old}) — инструкции: {agents}, шаблоны: {templates}, "
                     "проверки: {gate}",
+        # ---------- REPORT.md (pfs export) ----------
+        "report_title": "# {title}: стратегия и обоснование",
+        "report_built": "> Собрано {ts} командой `pfs export`. Теги [C###] — утверждения, "
+                        "[S###] — источники, [D###] — решения (см. приложения).",
+        "report_sixpager_note": "> Авто-черновик: собран командой `pfs export --six-pager`; "
+                                "детализируйте по spec — {spec}.\n\n",
+        "appx_a_claims": "# Приложение A. Реестр утверждений",
+        "appx_b_sources": "# Приложение B. Источники",
+        "appx_sources_header": "| ID | Название | Ссылка / файл | Происхождение | Получено |",
+        "appx_c_decisions": "# Приложение C. Решения и обязательства",
+        "appx_d_transparency": "# Приложение D. Прозрачность",
+        "appx_e_excel": "# Приложение E. Excel-расчёты",
+        # ---------- cost.summary_text ----------
+        "cost_total": "Итого: фактически ${usd:.2f} (~{rub:.0f} ₽) "
+                      "| эквивалент по API-ценам ${usd_eq:.2f} (~{rub_eq:.0f} ₽) "
+                      "| сессий {sessions} | токенов {tokens} "
+                      "| время сессий {tmin:.0f} мин "
+                      "| время человека {hmin:.0f} мин",
+        "cost_plan": "подписочный план ({prov}): фактическая оплата ${usd:.2f} — покрыта "
+                     "подпиской; эквивалент по API-ценам ${usd_eq:.2f} — сколько "
+                     "стоили бы те же токены по прайсу провайдера",
+        "cost_plan_default": "подписка",
+        "cost_by_models": "По моделям:",
+        "cost_by_model_row": "  {model:<24} ${usd:.2f} | токены {tokens} "
+                             "(вход {inp} · выход {outp} "
+                             "· кэш {cr}/{cw})",
+        "cost_by_steps": "По шагам:",
+        "cost_by_step_row": "  {step:<12} токены {tokens} · эквивалент ${usd:.2f}",
+        "cost_retries": "Повторы: {n} {word}{tail}",
+        "cost_retries_tail_tokens": " · {tokens} токенов",
+        "cost_retries_tail_unknown": " · токены неизвестны (агрегат сессии)",
+        "cost_retries_tail_equiv": " · эквивалент ${usd:.2f}",
+        "cost_plan_share": "доля подписки ({head}${month_usd:g}/мес × {days} дн): ${usd:.2f}",
+        # ---------- finish.summary_text ----------
+        "finish_built": "Собрано ({n}):",
+        "finish_missing_docs": "Нет документов (заглушки в six-pager/REPORT): ",
+        "finish_all_docs": "Документы 00–07: все на месте",
+        "finish_stale": "До сборки реестр менялся — снято свежей пересборкой: ",
+        "finish_gate_error": "pfs finish: автопроверка нашла ошибки — пакет не собран:\n- {errs}"
+                             "\nИсправьте (pfs check) и повторите: pfs finish",
+        # ---------- participate ----------
+        "err_need_persona_topic": "Укажите персону и тему интервью",
+        "err_guide_template_missing": "Шаблон гайда не найден: {tpl}",
+        "guide_title": "# Гайд интервью: {topic}",
+        "guide_meta": "- Персона: {persona}\n- Тема: {topic}\n- Дата: {date}",
+        "guide_note": "> Каркас вопросов — заполните агентом до сессии. Ответы ИИ-респондентов\n"
+                      "> (interviews/synthetic) дают только гипотезы и не доказывают спрос.",
     },
     "en": {
         "check_header": "Quality check: {score}/100 | errors {errors}, warnings {warnings}",
@@ -155,6 +202,54 @@ STR: dict[str, dict[str, str]] = {
                         "checks: {gate}",
         "lang_set": "Project language: {lang} (was: {old}) — instructions: {agents}, templates: {templates}, "
                     "checks: {gate}",
+        # ---------- REPORT.md (pfs export) ----------
+        "report_title": "# {title}: strategy and rationale",
+        "report_built": "> Assembled {ts} by `pfs export`. Tags [C###] — claims, "
+                        "[S###] — sources, [D###] — decisions (see appendices).",
+        "report_sixpager_note": "> Auto-draft: assembled by `pfs export --six-pager`; detail it "
+                                "per the spec — {spec}.\n\n",
+        "appx_a_claims": "# Appendix A. Claims registry",
+        "appx_b_sources": "# Appendix B. Sources",
+        "appx_sources_header": "| ID | Title | Link / file | Origin | Retrieved |",
+        "appx_c_decisions": "# Appendix C. Decisions and commitments",
+        "appx_d_transparency": "# Appendix D. Transparency",
+        "appx_e_excel": "# Appendix E. Excel workbooks",
+        # ---------- cost.summary_text ----------
+        "cost_total": "Total: actual ${usd:.2f} (~{rub:.0f} ₽) "
+                      "| API-price equivalent ${usd_eq:.2f} (~{rub_eq:.0f} ₽) "
+                      "| sessions {sessions} | tokens {tokens} "
+                      "| session time {tmin:.0f} min "
+                      "| human time {hmin:.0f} min",
+        "cost_plan": "subscription plan ({prov}): actual payment ${usd:.2f} — covered by the "
+                     "subscription; API-price equivalent ${usd_eq:.2f} — what the same tokens "
+                     "would cost at the provider's list price",
+        "cost_plan_default": "subscription",
+        "cost_by_models": "By models:",
+        "cost_by_model_row": "  {model:<24} ${usd:.2f} | tokens {tokens} "
+                             "(input {inp} · output {outp} "
+                             "· cache {cr}/{cw})",
+        "cost_by_steps": "By steps:",
+        "cost_by_step_row": "  {step:<12} tokens {tokens} · equivalent ${usd:.2f}",
+        "cost_retries": "Retries: {n} {word}{tail}",
+        "cost_retries_tail_tokens": " · {tokens} tokens",
+        "cost_retries_tail_unknown": " · tokens unknown (session aggregate)",
+        "cost_retries_tail_equiv": " · equivalent ${usd:.2f}",
+        "cost_plan_share": "subscription share ({head}${month_usd:g}/mo × {days} d): ${usd:.2f}",
+        # ---------- finish.summary_text ----------
+        "finish_built": "Assembled ({n}):",
+        "finish_missing_docs": "Missing documents (stubs in six-pager/REPORT): ",
+        "finish_all_docs": "Documents 00–07: all present",
+        "finish_stale": "The registry changed before the build — cleared by the fresh rebuild: ",
+        "finish_gate_error": "pfs finish: the quality check found errors — the pack was not built:\n- {errs}"
+                             "\nFix them (pfs check) and retry: pfs finish",
+        # ---------- participate ----------
+        "err_need_persona_topic": "Specify the interview persona and topic",
+        "err_guide_template_missing": "Interview guide template not found: {tpl}",
+        "guide_title": "# Interview guide: {topic}",
+        "guide_meta": "- Persona: {persona}\n- Topic: {topic}\n- Date: {date}",
+        "guide_note": "> Question skeleton — have the agent fill it in before the session. "
+                      "AI-respondent answers (interviews/synthetic) yield hypotheses only and "
+                      "do not prove demand.",
     },
 }
 

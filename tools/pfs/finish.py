@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import calc, check, core, docx, export
+from . import calc, check, core, docx, export, i18n
 
 
 def run(pdir: Path, no_deck: bool = False, en: bool = False) -> dict:
@@ -27,9 +27,9 @@ def run(pdir: Path, no_deck: bool = False, en: bool = False) -> dict:
     stale = export.freshness_warnings(pdir)  # предупреждение о несвежих основаниях — до сборки
     qc = check.run(pdir)
     if qc["errors"]:  # строгий затвор: любая ошибка check останавливает сборку (см. докстрингу)
-        raise core.PfsError("pfs finish: автопроверка нашла ошибки — пакет не собран:\n- "
-                            + "\n- ".join(qc["errors"])
-                            + "\nИсправьте (pfs check) и повторите: pfs finish")
+        tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
+        raise core.PfsError(tr("finish_gate_error",
+                               errs="\n- ".join(qc["errors"])))
     artifacts: list[Path] = list(calc.run(pdir, "all"))            # 1. Excel — до REPORT
     artifacts.append(export.build(pdir))                           # 2. REPORT: Приложение E уже полно
     artifacts.append(export.build_six_pager(pdir, with_calcs=False))  # 3. SIX_PAGER
@@ -47,16 +47,16 @@ def run(pdir: Path, no_deck: bool = False, en: bool = False) -> dict:
     return {"check": qc, "artifacts": artifacts, "missing_docs": missing, "stale_warnings": stale}
 
 
-def summary_text(res: dict) -> str:
-    """Сводка «что собрано + что устарело»: артефакты, недостающие документы, несвежие основания."""
-    lines = ["Собрано ({}):".format(len(res["artifacts"]))
+def summary_text(res: dict, lang: str = "ru") -> str:
+    """Сводка «что собрано + что устарело»: артефакты, недостающие документы, несвежие основания.
+    Язык — параметр (по умолчанию ru; PRO-57: сводка pfs finish — по языку проекта)."""
+    tr = lambda key, **kw: i18n.t(lang, key, **kw)
+    lines = [tr("finish_built", n=len(res["artifacts"]))
              + "".join(f"\n- {p}" for p in res["artifacts"])]
     if res["missing_docs"]:
-        lines.append("Нет документов (заглушки в six-pager/REPORT): "
-                     + ", ".join(res["missing_docs"]))
+        lines.append(tr("finish_missing_docs") + ", ".join(res["missing_docs"]))
     else:
-        lines.append("Документы 00–07: все на месте")
+        lines.append(tr("finish_all_docs"))
     if res["stale_warnings"]:
-        lines.append("До сборки реестр менялся — снято свежей пересборкой: "
-                     + " ".join(res["stale_warnings"]))
+        lines.append(tr("finish_stale") + " ".join(res["stale_warnings"]))
     return "\n".join(lines)

@@ -272,7 +272,7 @@ def cmd_cost(a):
         s = cost.record_session(pdir, path.stem, path, a.since, a.until)
         print(f"Транскрипт: {path.name}")
         print(_session_line(s))
-    print(cost.summary_text(pdir))
+    print(cost.summary_text(pdir, i18n.lang_of(pdir)))
 
 
 def _session_line(s: dict) -> str:
@@ -440,7 +440,7 @@ def cmd_finish(a):
     res = finish.run(pdir, no_deck=a.no_deck, en=a.en)
     # предупреждения о несвежем реестре печатает summary_text (PRO-41: без дублей)
     print(check.report_text(res["check"], i18n.lang_of(pdir)))
-    print(finish.summary_text(res))
+    print(finish.summary_text(res, i18n.lang_of(pdir)))
 
 
 DIST_NAME = "product-factory-strategist"  # имя пакета в importlib.metadata (PRO-44)
