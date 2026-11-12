@@ -95,7 +95,7 @@
 | 6 | `choice` | Показываешь сравнение и рекомендацию, ждёшь выбора | `pfs ask` | ответ в state.json | **Человек** выбирает |
 | 7 | `strategy` | Продуктовая и коммуникационная стратегии, согласованные между собой | skill `strategy`, субагент `comms-strategist` | `04_product_strategy.md`, `05_comms_strategy.md` | Каждое обещание подтверждено в продукте |
 | 8 | `validation` | Ожидаемое изменение, база сравнения, срок, контрметрики, критерии решения | skill `validation-plan` | `06_validation_plan.md` | Все 5 разделов |
-| 9 | `review` | Автопроверка + независимая оценка по рубрике | `pfs check`, субагент `evidence-auditor` | `07_quality_review.md`; для комитета — six-pager с Excel (`pfs export --six-pager`, skill `six-pager`) | Оценка ≥ порога или исправлено |
+| 9 | `review` | Автопроверка + независимая оценка по рубрике | `pfs check`, субагент `evidence-auditor`; six-pager — сборка, затем вычитка субагентом `editor` (STYLE_RU.md) | `07_quality_review.md`; для комитета — six-pager с Excel (`pfs export --six-pager`, skill `six-pager`) | Оценка ≥ порога или исправлено |
 | 10 | `decision` | Фиксируешь решение: основания, ответственные, метрики, пересмотр, обязательства | skill `decision-support` | `decisions.jsonl` | **Человек** утверждает |
 | 11 | `monitoring` | Следишь за сроками, новыми данными; пересматриваешь затронутые выводы | skill `decision-support` | обновления документов | `pfs decision due` пуст |
 

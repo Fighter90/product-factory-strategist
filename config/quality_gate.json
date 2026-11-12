@@ -29,7 +29,52 @@
       }
     },
     "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|п\\.п\\.|₽|руб|млн|млрд|тыс|\\$|раз[а]?\\b|пользоват|абонент)",
-    "exempt_line_markers": ["<!-- no-tag -->", "|---", "Цель:", "Срок наблюдения:"]
+    "exempt_line_markers": ["<!-- no-tag -->", "|---", "Цель:", "Срок наблюдения:"],
+    "_banned_terms_comment": "PRO-52: языковой линтер документа комитета (outputs/SIX_PAGER.md). replace — англицизм/жаргон, всегда заменяем (термин → как писать по-русски, глоссарий в knowledge/templates/STYLE_RU.md); decode — допустимо только с расшифровкой при первом упоминании: «SERP (страница результатов поиска)» или «SERP — страница результатов поиска». Слова ищутся с учётом формы (replace — любое окончание), аббревиатуры — точным токеном.",
+    "banned_terms": {
+      "replace": {
+        "тоннальность": "тональность",
+        "гейт": "контрольная точка",
+        "фидбек": "обратная связь",
+        "асап": "как можно скорее"
+      },
+      "decode": {
+        "SERP": "страница результатов поиска",
+        "SEO": "поисковое продвижение",
+        "hreflang": "атрибут hreflang (языково-региональная версия страницы)",
+        "OSS": "открытый код (open source)",
+        "BYOK": "использование своего ключа (bring your own key)",
+        "MoR": "ставка монетизации — доля выручки, оставляемая платформой (merchant of record)",
+        "KD": "сложность ключевого запроса (keyword difficulty)",
+        "DR": "доменный рейтинг (domain rating)",
+        "SC": "Search Console — панель вебмастера поисковой системы",
+        "WBS": "структура декомпозиции работ (work breakdown structure)",
+        "NSM": "метрика «северная звезда» (north star metric)",
+        "trial-trap": "ловушка триала — пробный период, который не конвертирует в оплату",
+        "answer-first": "сначала ответ — вывод в первом абзаце, детали дальше",
+        "CAC": "стоимость привлечения клиента (customer acquisition cost)",
+        "LTV": "пожизненная ценность клиента (lifetime value)",
+        "MRR": "месячная регулярная выручка (monthly recurring revenue)",
+        "ARR": "годовая регулярная выручка (annual recurring revenue)",
+        "DAU": "дневная активная аудитория (daily active users)",
+        "MAU": "месячная активная аудитория (monthly active users)",
+        "CTR": "доля кликов (click-through rate)",
+        "CPA": "цена за действие (cost per action)",
+        "ROAS": "окупаемость расходов на рекламу (return on ad spend)",
+        "KPI": "ключевой показатель эффективности (key performance indicator)",
+        "NPS": "индекс готовности рекомендовать (net promoter score)",
+        "UGC": "пользовательский контент (user generated content)",
+        "GTM": "стратегия выхода на рынок (go-to-market)",
+        "JTBD": "работа, на которую «нанимают» продукт (jobs to be done)",
+        "PMF": "соответствие продукта рынку (product-market fit)",
+        "MVP": "минимальный жизнеспособный продукт (minimum viable product)",
+        "TAM": "объём всего рынка (total addressable market)",
+        "SAM": "объём доступного рынка (serviceable addressable market)",
+        "SOM": "объём реально достижимого рынка (serviceable obtainable market)",
+        "OKR": "цели и ключевые результаты (objectives and key results)",
+        "CPL": "цена за лид (cost per lead)"
+      }
+    }
   },
   "en": {
     "documents": {

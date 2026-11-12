@@ -104,7 +104,7 @@ with `--override`.
 | 6 | `choice` | Present the comparison and recommendation, wait for the choice | `pfs ask` | answer in state.json | **The human** chooses |
 | 7 | `strategy` | Product and communication strategies, aligned with each other | skill `strategy`, subagent `comms-strategist` | `04_product_strategy.md`, `05_comms_strategy.md` | Every promise is backed by the product |
 | 8 | `validation` | Expected change, comparison baseline, observation window, counter-metrics, decision criteria | skill `validation-plan` | `06_validation_plan.md` | All 5 sections |
-| 9 | `review` | Auto-check + independent scoring against the rubric | `pfs check`, subagent `evidence-auditor` | `07_quality_review.md`; for the committee — a six-pager with Excel (`pfs export --six-pager`, skill `six-pager`) | Score ≥ threshold, or fixed |
+| 9 | `review` | Auto-check + independent scoring against the rubric | `pfs check`, subagent `evidence-auditor`; six-pager — assemble, then proofread via the `editor` subagent (STYLE_RU.md) | `07_quality_review.md`; for the committee — a six-pager with Excel (`pfs export --six-pager`, skill `six-pager`) | Score ≥ threshold, or fixed |
 | 10 | `decision` | Record the decision: grounds, owners, metrics, review date, commitments | skill `decision-support` | `decisions.jsonl` | **The human** approves |
 | 11 | `monitoring` | Track deadlines and new data; revisit affected conclusions | skill `decision-support` | document updates | `pfs decision due` is empty |
 

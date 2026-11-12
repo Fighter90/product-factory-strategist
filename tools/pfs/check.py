@@ -218,8 +218,35 @@ def run(pdir: Path) -> dict:
     # 6. PRO-26: числовой кросс-чек — числа активных утверждений против заголовков источников,
     #    числа цитат против текста источников (sources/S###.md)
     warnings.extend(numeric_warnings(pdir, claims, srcs))
+    # 7. PRO-52: языковой линтер документа комитета — запрещённые англицизмы, жаргон
+    #    и аббревиатуры без расшифровки (quality_gate.json → banned_terms)
+    warnings.extend(language_warnings(pdir, block, tr))
     score = max(0, 100 - 10 * len(errors) - 2 * len(warnings))
     return {"errors": errors, "warnings": warnings, "passed": passed, "score": score}
+
+
+def language_warnings(pdir: Path, block: dict, tr) -> list[str]:
+    """PRO-52: языковой линтер документа комитета — запрещённые англицизмы, жаргон
+    и аббревиатуры без расшифровки. Список — quality_gate.json → banned_terms:
+    «replace» — всегда заменяем (термин → как писать по-русски), «decode» — допустимо
+    только с расшифровкой при первом упоминании: «SERP (страница результатов поиска)»
+    или «SERP — страница результатов поиска». Сканируется outputs/SIX_PAGER.md
+    (то, что читает комитет); инлайн-код и формулы не язык документа."""
+    banned = block.get("banned_terms") if isinstance(block.get("banned_terms"), dict) else None
+    page = pdir / "outputs" / "SIX_PAGER.md"
+    if not banned or not page.exists():
+        return []
+    text = re.sub(r"`[^`]*`", " ", page.read_text(encoding="utf-8"))
+    out: list[str] = []
+    for term, instead in (banned.get("replace") or {}).items():
+        if re.search(rf"(?<![\w-]){re.escape(term)}\w*", text, re.IGNORECASE):
+            out.append(tr("warn_banned_term", name=page.name, term=term, instead=instead))
+    for abbr, hint in (banned.get("decode") or {}).items():
+        if not re.search(rf"(?<![A-Za-z]){re.escape(abbr)}(?![A-Za-z])", text):
+            continue
+        if not re.search(rf"{re.escape(abbr)}\s*(?:\(|—|–)\s*\S", text):
+            out.append(tr("warn_abbrev_undecoded", name=page.name, term=abbr, hint=hint))
+    return out
 
 
 def report_text(res: dict, lang: str = "ru") -> str:
