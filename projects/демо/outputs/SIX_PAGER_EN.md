@@ -204,7 +204,8 @@ accumulated statistics; locale waves — into the next peak.
 
 Decision D001 [C019]: beta in 3 EN geos by 2026-12-15 · 90 days of observation · review 2027-02-10 ·
 continue branch: paid ≥ 40 by week 12 with activation ≥ 50% → scale channels, open the DE/ES/PT-BR
-wave · change branch: paid 20–40 → rebuild the tier/price ($19?), strengthen activation onboarding ·
+wave · change branch: paid 20–40, or paid < 20 with activation ≥ 35% (activation is there, payment is
+weak) → rebuild the tier/price ($19?), strengthen activation onboarding ·
 stop trigger: paid < 20 with activation < 35% → close the commercial branch, the project stays OSS.
 
 ## FAQ-6: Success metrics. KPIs for evaluating the strategy

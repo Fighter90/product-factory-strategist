@@ -340,7 +340,7 @@
   "k129": "paid ≥ {{PAID_TARGET}} · activation ≥ {{ACT_TARGET}}% · churn ≤ {{CHURN_MAX}}%",
   "k130": "→ launch the DE/ES/PT-BR locale wave out of 19 ready-made.",
   "k131": "Adjust",
-  "k132": "paid {{PAID_LOW}}–{{PAID_HIGH}}, or paid < {{PAID_LOW}} with activation ≥ {{ACT_STOP}}%",
+  "k132": "paid {{PAID_LOW}}–{{PAID_HIGH}}, or paid < {{PAID_CHANGE_LOW}} with activation ≥ {{ACT_CHANGE}}%",
   "k133": "→ rework the tier and pricing (the Free/Pro boundary, ARPU), strengthen onboarding — the beta continues: the stop trigger is not met.",
   "k134": "Stop",
   "k135": "paid < {{PAID_LOW}} with activation < {{ACT_STOP}}%",

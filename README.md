@@ -28,7 +28,7 @@ cd product-factory-strategist
 ./scripts/install.sh                            # uv tool install -e . (или venv+symlink)
 pfs --help                                      # CLI установлен: работает из любой папки
 python3 -m tools.pfs doctor                     # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests           # 415 тестов
+python3 -m unittest discover -s tests           # 418 тестов
 ```
 
 Детали, PEP 668, обновление, удаление, тестирование и troubleshooting — [docs/INSTALL.md](docs/INSTALL.md).
@@ -386,5 +386,5 @@ site/                src/ (4 двуязычных шаблона страниц)
                      текста — src и i18n, а не готовые html
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
-tests/               (415)
+tests/               (418)
 ```

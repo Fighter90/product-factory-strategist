@@ -401,6 +401,45 @@ class TestNumbersMatchDemo(_BuiltSite):
         self.assertIn("1,537", self._en("demo"))
 
 
+class TestChangeCaseFromDemo(unittest.TestCase):
+    """Ревью PRO-61, круг 2: случай «платящих < 20 при activation ≥ 35 %» показан
+    на сайте, поэтому он обязан существовать в видимых артефактах демо
+    (06_validation_plan.md и триггер пересмотра D001) и подставляться в сайт
+    из них, а не набиваться в site/i18n (критерий №2 «числа сайта = демо»)."""
+
+    DEMO = ROOT / "projects" / "демо"
+
+    def _plan(self):
+        return (self.DEMO / "outputs" / "06_validation_plan.md").read_text("utf-8")
+
+    def test_validation_plan_has_change_case(self):
+        self.assertIsNotNone(
+            re.search(r"paid < (\d+) к нед\. \d+ при activation ≥ (\d+)%", self._plan()),
+            "в 06_validation_plan.md демо нет случая «paid < N к нед. M при activation ≥ K%» — "
+            "сайт его показывает, а демо-проект нет (критерий «числа сайта = демо» нарушен)")
+
+    def test_decision_trigger_has_change_case(self):
+        dec = json.loads((self.DEMO / "decisions.jsonl")
+                         .read_text("utf-8").splitlines()[0])
+        triggers = " ; ".join(dec["review"].get("triggers", []))
+        self.assertRegex(
+            triggers, r"paid < \d+ .*activation ≥ \d+%",
+            "в триггерах пересмотра D001 нет случая «paid < N при activation ≥ K%»")
+
+    def test_change_row_is_substituted_from_demo(self):
+        m = re.search(r"paid < (\d+) к нед\. \d+ при activation ≥ (\d+)%", self._plan())
+        paid, act = (int(m.group(i)) for i in (1, 2))
+        data = bs.load_demo_data()
+        self.assertEqual(data["paid_change"], paid)
+        self.assertEqual(data["act_change"], act)
+        for lang in ("ru", "en"):
+            i18n = json.loads((ROOT / "site" / "i18n" / f"{lang}.json").read_text("utf-8"))
+            # строка ветки «изменить» собирается из демо-чисел, а не набита руками
+            self.assertIn("{{PAID_CHANGE_LOW}}", i18n["demo"]["k132"], lang)
+            self.assertIn("{{ACT_CHANGE}}", i18n["demo"]["k132"], lang)
+            self.assertNotIn("{{ACT_STOP}}", i18n["demo"]["k132"], lang)
+
+
 class TestNoJsVisibility(_BuiltSite):
     """Counters and quick start must be visible without JavaScript."""
 

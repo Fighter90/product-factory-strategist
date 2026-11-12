@@ -74,10 +74,11 @@ def _plan_numbers(demo: Path) -> dict:
     plan = (demo / "outputs" / "06_validation_plan.md").read_text(encoding="utf-8")
     m_cont = re.search(r"paid ≥ (\d+) к нед\. (\d+), activation ≥ (\d+)%, churn платящих ≤ (\d+)%", plan)
     m_stop = re.search(r"paid < (\d+) к нед\. \d+ при activation < (\d+)%", plan)
+    m_change = re.search(r"paid < (\d+) к нед\. \d+ при activation ≥ (\d+)%", plan)
     m_high = re.search(r"paid (\d+)–(\d+)", plan)
     m_model = re.search(r"модель: (\d+)\), MRR ≥ \$([\d\s]+)", plan)
     m_mrr12 = re.search(r"\(MRR \$([\d\s]+)\)", plan)
-    if not (m_cont and m_stop and m_high and m_model and m_mrr12):
+    if not (m_cont and m_stop and m_change and m_high and m_model and m_mrr12):
         raise SystemExit("build_site: не удалось разобрать пороги из 06_validation_plan.md")
     paid_target, funnel_weeks, act_target, churn_max = (int(m_cont.group(i)) for i in range(1, 5))
     mrr_w12 = int(m_mrr12.group(1).replace(" ", "").replace("\u00a0", ""))
@@ -88,6 +89,8 @@ def _plan_numbers(demo: Path) -> dict:
         "churn_max": churn_max,
         "paid_low": int(m_stop.group(1)),
         "act_stop": int(m_stop.group(2)),
+        "paid_change": int(m_change.group(1)),
+        "act_change": int(m_change.group(2)),
         "paid_high": int(m_high.group(2)),
         "paid_w12": int(m_model.group(1)),
         "mrr_target": int(m_model.group(2).replace(" ", "").replace("\u00a0", "")),
@@ -210,9 +213,11 @@ def demo_placeholders(data: dict) -> dict:
         "BETA_WEEKS": ("int", data["beta_weeks"]),
         "PAID_TARGET": ("int", data["paid_target"]),
         "PAID_LOW": ("int", data["paid_low"]),
+        "PAID_CHANGE_LOW": ("int", data["paid_change"]),
         "PAID_HIGH": ("int", data["paid_high"]),
         "ACT_TARGET": ("int", data["act_target"]),
         "ACT_STOP": ("int", data["act_stop"]),
+        "ACT_CHANGE": ("int", data["act_change"]),
         "CHURN_MAX": ("int", data["churn_max"]),
         "FUNNEL_WEEKS": ("int", data["funnel_weeks"]),
         "PAID_W12": ("int", data["paid_w12"]),
