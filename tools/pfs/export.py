@@ -300,17 +300,20 @@ def _sources_footnotes(pdir: Path) -> str | None:
 # по спецификации SIX_PAGER_PROMPT.md делает агент, не CLI (вне возможностей stdlib).
 
 _EN: dict[str, str] = {
-    "# {title}: six-pager": "# {title}: Six-pager (EN draft)",
+    "# {title}: six-pager": "# Six-pager (EN)",
     "> Собрано {ts} командой `pfs export --six-pager` по спецификации "
     "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
     "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
     "Теги [C###]/[S###] — происхождение чисел; сноски-источники — в конце документа.":
-        "> Assembled {ts} by `pfs export --six-pager` per the spec `knowledge/templates/"
-        "SIX_PAGER_PROMPT.md` (growth-strategy reference format: FAQ-1…6 with numbered "
-        "sub-items, a tactics matrix, KPI in two planes). Tags [C###]/[S###] mark where "
-        "numbers come from; source footnotes are at the end. Skeleton only: sections sourced "
-        "verbatim from documents 00–07 are marked [RU source — translate] for the translator.",
-    "**Запрос:** {q}": "**Request:** {q}",
+        core.EN_DRAFT_MARK + " the EN six-pager is written in plain English by the "
+        "six-pager-writer from the SAME data package (claims, sources, calculations; "
+        "documents 00–07 are RU inputs — never pasted verbatim), per the spec "
+        "`knowledge/templates/SIX_PAGER_PROMPT_EN.md`, style guide "
+        "`knowledge/templates/STYLE_EN.md` (plain English, numbers 1,234.5, no calque). "
+        "Restate the project title and question in English (project.json: title, question). "
+        "Assembled {ts} by `pfs export --six-pager`. Tags [C###]/[S###] mark number "
+        "provenance; source footnotes at the end.",
+    "**Запрос:** {q}": "**Request:** — write in English; RU source: project.json → question.",
     "## FAQ-1. Анализ текущего состояния": "## FAQ-1. Current state analysis",
     "### 1.1 Обзор рынка: тренды, вызовы и возможности":
         "### 1.1 Market overview: trends, challenges and opportunities",
@@ -393,7 +396,7 @@ _EN: dict[str, str] = {
         "Tactic order: high → medium → base priority. Timing follows market seasons. Parallel "
         "tracks: community/partnerships — off the main line.",
     "## FAQ-6. Метрики успеха. KPI в двух плоскостях":
-        "## FAQ-6. Success metrics. KPI in two planes",
+        "## FAQ-6. Success metrics. KPIs in two dimensions",
     "> Добавьте метрики успеха в 04/06 документы — таблица KPI соберётся "
     "автоматически из сводных таблиц 06_validation_plan.md.":
         "> Add success metrics to the 04/06 documents — the KPI table is assembled "
@@ -403,23 +406,28 @@ _EN: dict[str, str] = {
     "время до первой ценности, число действий до результата, churn, CSAT/NPS. "
     "У каждого KPI: база → цель к сроку → порог действия. Контр-метрики — по одной "
     "на удар red team.":
-        "KPI in two planes: **1) Business** — money and base (revenue/MRR, paying users, "
+        "KPIs in two dimensions: **1) Business** — money and base (revenue/MRR, paying users, "
         "payment conversion, plan mix, actual LTV/CAC); **2) Product** — activation, "
         "time to first value, actions to result, churn, CSAT/NPS. Each KPI: baseline → target "
         "by deadline → action threshold. Counter-metrics — one per red-team hit.",
     "## Источники (сноски)": "## Sources (footnotes)",
     "## Приложения (Excel)": "## Appendices (Excel)",
-    "> Ещё нет: `pfs calc all`.": "> Not yet: `pfs calc all`.",
+    "> Ещё нет: `pfs calc all`.":
+        "> Appendices are built by `pfs calc all` into outputs/attachments/: unit_economics.xlsx, "
+        "growth_model.xlsx, cohort_retention.xlsx, market_sizing.xlsx. Formulas recalculate on "
+        "open (Excel / Numbers / LibreOffice); the input sheet inside each workbook carries RU "
+        "labels — edit the values there.",
     "> Формулы пересчитываются при открытии (Excel / Numbers / LibreOffice). "
     "Детализация по спецификации — knowledge/templates/SIX_PAGER_PROMPT.md. "
     "Полная версия с доказательствами — REPORT.md.":
         "> Formulas recalculate on open (Excel / Numbers / LibreOffice). Detailing per the "
-        "spec: knowledge/templates/SIX_PAGER_PROMPT.md. Full evidence version — REPORT.md.",
+        "spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md. Full evidence version — REPORT.md.",
     # юнит-экономика — все записи ниже живые: их читает _unit_econ_block (таблица формул
     # и чувствительность); записей-синонимов (ключ → тот же ключ) здесь нет.
     "Допущения: {note}": "Assumptions: {note}",
     "Допущения [укажите теги]: ARPU, переменные, CAC, churn — лист «Ввод» unit_economics.xlsx.":
-        "Assumptions [add C-tags]: ARPU, variable costs, CAC, churn — the «Ввод» sheet of unit_economics.xlsx.",
+        "Assumptions [add C-tags]: ARPU, variable costs, CAC, churn — the input sheet of "
+        "unit_economics.xlsx.",
     "| Формула | Расчёт | Результат |": "| Formula | Calculation | Result |",
     "CM = ARPU × (1 − доля переменных)": "CM = ARPU × (1 − variable share)",
     "Средняя жизнь платящего = 1 / churn": "Average paying lifetime = 1 / churn",
@@ -431,11 +439,11 @@ _EN: dict[str, str] = {
     "(каждый порог — при прочих равных; сетка — лист «Чувствительность»).":
         "**Conclusion (inference):** LTV/CAC ≥ 3 holds up to churn ≈ {churn} %/mo, "
         "CAC ≈ €{cac}, variable-cost share ≈ {vc} % "
-        "(each threshold — all else equal; grid — the «Чувствительность» sheet).",
+        "(each threshold — all else equal; grid — the sensitivity sheet).",
     "**Вывод (умозаключение):** запас прочности модели — какой допуск выдерживает "
     "каждое допущение (см. лист «Чувствительность»).":
         "**Conclusion (inference):** safety margin — which deviation each assumption survives "
-        "(see the «Чувствительность» sheet).",
+        "(see the sensitivity sheet).",
     # решение
     "**Решение {did}** — {title}.": "**Decision {did}** — {title}.",
     " Обязательство: {commit}.": " Commitment: {commit}.",
@@ -443,10 +451,10 @@ _EN: dict[str, str] = {
     "промежуточный пересмотр {date}": "interim review {date}",
     # матрица тактик и KPI
     "| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |":
-        "| Strategic initiative | Focus | User needs and expectations | Decisions (tactics) |",
+        "| Strategic initiative | Focus | User needs and expectations | Solutions (tactics) |",
     " **Результат:** {gate}": " **Outcome:** {gate}",
     "| Плоскость | Гипотеза | Метрика | База → цель к сроку | Порог действия (остановить) |":
-        "| Plane | Hypothesis | Metric | Baseline → target by deadline | Action threshold (stop) |",
+        "| Dimension | Hypothesis | Metric | Baseline → target by deadline | Action threshold (stop) |",
     "Бизнес": "Business",
     "Продукт": "Product",
     "база — 06_validation_plan.md": "baseline — 06_validation_plan.md",
@@ -458,16 +466,17 @@ def _t(s: str, lang: str = "ru") -> str:
     return _EN.get(s, s) if lang == "en" else s
 
 
-RU_SOURCE = "[RU source — translate]"
+RU_SOURCE = core.RU_SOURCE_MARK
 
 
-def _mark_ru(text: str | None, lang: str, fname: str) -> str | None:
-    """EN-каркас: секция, вставленная из документа 00–07 дословно, помечается маркером
-    «[RU source — translate]» (переводит агент, не CLI); RU-версия и заглушки-скелет
-    без маркера. Маркер идёт строкой-цитатой ПЕРЕД контентом с именем файла-источника."""
-    if lang != "en" or not text:
-        return text
-    return f"> {RU_SOURCE} {fname}\n\n{text}"
+def _en_pending(what: str) -> str:
+    """PRO-53: pending-строка EN-каркаса. EN-версия six-pager пишется, а не переводится:
+    секцию составляет six-pager-writer на английском из того же пакета данных
+    (утверждения, источники, расчёты); документы 00–07 — RU-вход, в EN не вставляется.
+    Префикс EN_DRAFT_MARK распознаёт черновик в линтере и сверке тегов RU↔EN."""
+    return (f"{core.EN_DRAFT_MARK}: write this section in English from the same data "
+            f"package ({what}); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, "
+            f"style: knowledge/templates/STYLE_EN.md.")
 
 
 def _unit_econ_block(pdir: Path, lang: str = "ru") -> str | None:
@@ -480,7 +489,8 @@ def _unit_econ_block(pdir: Path, lang: str = "ru") -> str | None:
         return None
 
     def n(x: float) -> str:
-        return f"{x:.2f}".replace(".", ",")
+        # RU: десятичная запятая; EN (PRO-53): 1,234.5 — точка-разделитель, запятая — тысячи
+        return f"{x:,.2f}" if lang == "en" else f"{x:.2f}".replace(".", ",")
 
     cm = arpu * (1 - vc)
     ltv = cm / churn
@@ -647,9 +657,11 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
     (бизнес/продукт). Документы 03/04/06 вставляются целиком с понижением заголовков
     на 2 уровня; секции, уже попавшие в вывод через _grab, повторно не вставляются;
     резка — только по границам секций. Сноски-источники — полный список sources.jsonl.
-    lang="en" — EN-черновик: скелет инструмента на английском (_EN), содержимое
-    документов 00–07 вставляется дословно с пометкой «[RU source — translate]»
-    (переводит агент, не CLI) → outputs/SIX_PAGER_EN.md.
+    lang="en" (PRO-53) — EN-версия пишется, а не переводится: каркас инструмента на
+    английском с pending-строками (_en_pending); секции составляет six-pager-writer
+    на английском из того же пакета данных (спецификация SIX_PAGER_PROMPT_EN.md,
+    стиль STYLE_EN.md), RU-контент документов и сноски с RU-названиями не вставляются,
+    числа — EN-формат (1,234.5) → outputs/SIX_PAGER_EN.md.
     Спецификация детализации: knowledge/templates/SIX_PAGER_PROMPT.md."""
     if with_calcs:
         calc.run(pdir, "all")
@@ -666,15 +678,17 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
     def grab(fname: str, sections: tuple[str, ...], cap: int = 6000, require_section: bool = False):
         return _grab(pdir, fname, sections, cap, require_section, reg)
 
-    faq1 = _mark_ru(grab("02_situation.md", ("Короткий ответ", "Что известно", "Рынок", "Тренды",
-                                             "Противоречия", "Чего не знаем"), 8000), lang, "02_situation.md")
+    faq1 = _en_pending("02_situation.md — short answer, what we know, market, trends, "
+                       "contradictions, unknowns") if lang == "en" else \
+        grab("02_situation.md", ("Короткий ответ", "Что известно", "Рынок", "Тренды",
+                                 "Противоречия", "Чего не знаем"), 8000)
     parts += [_t("## FAQ-1. Анализ текущего состояния", lang), "",
               _t("### 1.1 Обзор рынка: тренды, вызовы и возможности", lang), "",
               faq1 or _t("> Раздел появится после шага «situation» (02_situation.md): объём и динамика "
                          "рынка диапазонами, ключевые тренды буллетами с жирными заголовками.", lang), "",
               _t("### 1.2 Ключевые конкуренты и анализ их стратегий роста и промо-механик", lang), "",
-              _mark_ru(grab("02_situation.md", ("Конкуренты", "Конкурентный анализ"), 3000, True),
-                       lang, "02_situation.md")
+              (_en_pending("02_situation.md — competitor groups table") if lang == "en" else
+               grab("02_situation.md", ("Конкуренты", "Конкурентный анализ"), 3000, True))
               or _t("Сравнительная таблица групп конкурентов (заполните после конкурентного анализа):", lang), "",
               _t("| | Группа 1 | Группа 2 | Группа 3 |", lang),
               "|---|---|---|---|",
@@ -682,12 +696,15 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
               _t("| **Стратегия роста и промо-механики** | … | … | … |", lang),
               _t("| **Риски для компании** | … — Высокий/Средний/Низкий | … | … |", lang), "",
               _t("> **Вывод (умозаключение):** окно возможностей и его срок — заполните по данным 1.1–1.2.", lang), ""]
-    faq2 = grab("02_situation.md", ("Сегменты", "Персоны", "Аудитория"), 3000)
-    faq2_src = "02_situation.md"
-    if not faq2 or len(faq2) < 120:
-        faq2 = grab("04_product_strategy.md", ("Аудитория",), 3000)
-        faq2_src = "04_product_strategy.md"
-    faq2 = _mark_ru(faq2, lang, faq2_src)
+    if lang == "en":
+        faq2, faq2_src = _en_pending("02_situation.md — segments/personas "
+                                     "(fallback: 04_product_strategy.md — audience)"), "02_situation.md"
+    else:
+        faq2 = grab("02_situation.md", ("Сегменты", "Персоны", "Аудитория"), 3000)
+        faq2_src = "02_situation.md"
+        if not faq2 or len(faq2) < 120:
+            faq2 = grab("04_product_strategy.md", ("Аудитория",), 3000)
+            faq2_src = "04_product_strategy.md"
     parts += [_t("## FAQ-2. User Persona. Кто является целевой аудиторией?", lang), "",
               _t("### 2.1 Сегменты", lang), "",
               faq2 or _t("> Добавьте сегменты/персоны в 02_situation.md.", lang), "",
@@ -711,7 +728,8 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
               _t("| Сегмент 1 | … | … |", lang), "",
               _t("> **Вывод (умозаключение):** сегментация по барьеру входа; лестница тиров "
                  "обслуживает все барьеры; приоритизация — по ёмкости/CAC/конкуренции (расчёт — выше).", lang), ""]
-    doc03 = _mark_ru(_insert_doc(pdir, "03_options.md", reg=reg), lang, "03_options.md")
+    doc03 = _en_pending("03_options.md — chosen direction, initiatives (drivers)") \
+        if lang == "en" else _insert_doc(pdir, "03_options.md", reg=reg)
     parts += [_t("## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.", lang), "",
               doc03 or _t("> Раздел появится после шага «options» (03_options.md).", lang), "",
               _t("### Инициативы выбранного направления (драйверы)", lang), "",
@@ -721,8 +739,9 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
     ue = _unit_econ_block(pdir, lang)
     if ue:
         parts += [_t("Юнит-экономика — расчёт пошагово:", lang), "", ue, ""]
-    doc04 = _mark_ru(_insert_doc(pdir, "04_product_strategy.md", reg=reg), lang, "04_product_strategy.md")
-    matrix = _tactics_matrix(pdir, lang)
+    doc04 = _en_pending("04_product_strategy.md — tactics per initiative") \
+        if lang == "en" else _insert_doc(pdir, "04_product_strategy.md", reg=reg)
+    matrix = None if lang == "en" else _tactics_matrix(pdir, lang)
     parts += [_t("## FAQ-4. Тактики. Детализируйте каждую инициативу до конкретных тактик.", lang), "",
               doc04 or _t("> Добавьте тактики по каждой инициативе в 04_product_strategy.md.", lang), ""]
     if matrix:
@@ -733,7 +752,8 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
                   "|---|---|---|---|",
                   _t("| Инициатива 1 | … | … | … |", lang),
                   _t("| Инициатива 2 | … | … | … |", lang), ""]
-    doc06 = _mark_ru(_insert_doc(pdir, "06_validation_plan.md", reg=reg), lang, "06_validation_plan.md")
+    doc06 = _en_pending("06_validation_plan.md — expected change, comparison base, deadlines") \
+        if lang == "en" else _insert_doc(pdir, "06_validation_plan.md", reg=reg)
     parts += [_t("## FAQ-5. Высокоуровневый план реализации", lang), "",
               doc06 or _t("> Раздел появится после шага «validation» (06_validation_plan.md).", lang), "",
               _t("Ожидаемое распределение вклада инициатив в общий результат (сумма 100%):", lang), "",
@@ -742,16 +762,19 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
               _t("- __% — Инициатива 3.", lang), "",
               _t("Порядок тактик: высокий → средний → базовый приоритет. Тайминг — к сезонам рынка. "
                  "Параллельные треки: комьюнити/партнёрства — вне основной линии.", lang), ""]
-    dec = _decision_block(pdir, lang)
+    dec = None if lang == "en" else _decision_block(pdir, lang)
     if dec:
         parts += [dec, ""]
-    faq6 = grab("04_product_strategy.md", ("Метрики", "Показатели"), 3000)
-    faq6_src = "04_product_strategy.md"
-    if not faq6:
-        faq6 = grab("06_validation_plan.md", ("Ожидаемое изменение", "Критерии решения"), 3000)
-        faq6_src = "06_validation_plan.md"
-    faq6 = _mark_ru(faq6, lang, faq6_src)
-    kpi = _kpi_table(pdir, lang)
+    if lang == "en":
+        faq6, faq6_src = _en_pending("04/06 — success metrics tables (baseline → target → "
+                                     "action threshold, counter-metrics)"), "04_product_strategy.md"
+    else:
+        faq6 = grab("04_product_strategy.md", ("Метрики", "Показатели"), 3000)
+        faq6_src = "04_product_strategy.md"
+        if not faq6:
+            faq6 = grab("06_validation_plan.md", ("Ожидаемое изменение", "Критерии решения"), 3000)
+            faq6_src = "06_validation_plan.md"
+    kpi = None if lang == "en" else _kpi_table(pdir, lang)
     parts += [_t("## FAQ-6. Метрики успеха. KPI в двух плоскостях", lang), ""]
     if faq6:
         parts += [faq6, ""]
@@ -766,10 +789,15 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
                  "У каждого KPI: база → цель к сроку → порог действия. Контр-метрики — по одной "
                  "на удар red team.", lang), ""]
     src = _sources_footnotes(pdir)
-    if src:
+    if lang == "en":
+        parts += [_t("## Источники (сноски)", lang), "",
+                  _en_pending("source footnotes — numbered S### + title + URL from "
+                              "sources.jsonl; titles in English"), ""]
+    elif src:
         parts += [_t("## Источники (сноски)", lang), "", src, ""]
+    appendix = attachments_table(pdir) if lang != "en" else None
     parts += [_t("## Приложения (Excel)", lang), "",
-              attachments_table(pdir) or _t("> Ещё нет: `pfs calc all`.", lang), "",
+              appendix or _t("> Ещё нет: `pfs calc all`.", lang), "",
               "", _t("> Формулы пересчитываются при открытии (Excel / Numbers / LibreOffice). "
                      "Детализация по спецификации — knowledge/templates/SIX_PAGER_PROMPT.md. "
                      "Полная версия с доказательствами — REPORT.md.", lang)]

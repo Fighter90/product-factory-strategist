@@ -39,18 +39,55 @@ def _section_body(text: str, name: str) -> str:
 
 def en_sync_warnings(pdir: Path) -> list[str]:
     """Сверка тегов RU↔EN: обе версии six-pager собраны, но в RU появились теги
-    (C###/S###/D###), которых в EN ещё нет — EN-каркас отстал от RU (типовой случай:
-    драйверы добавили в 03/04 после сборки EN) и подлежит пересборке. EN нет или
-    теги совпадают — предупреждений нет (EN-черновик опционален)."""
+    (C###/S###/D###), которых в EN ещё нет — дописанный EN-документ отстал от RU и
+    подлежит переписыванию (EN пишется агентом из того же пакета данных, PRO-53).
+    EN нет, теги совпадают или EN — каркас-черновик (EN_DRAFT_MARK, его допишет
+    writer) — предупреждений нет."""
     ru, en = pdir / "outputs" / "SIX_PAGER.md", pdir / "outputs" / "SIX_PAGER_EN.md"
     if not (ru.exists() and en.exists()):
         return []
+    en_text = en.read_text(encoding="utf-8")
+    if core.EN_DRAFT_MARK in en_text:
+        return []
     missing = sorted(set(TAG.findall(ru.read_text(encoding="utf-8")))
-                     - set(TAG.findall(en.read_text(encoding="utf-8"))),
+                     - set(TAG.findall(en_text)),
                      key=lambda t: (t[0], int(t[1:])))
     if not missing:
         return []
     return [i18n.t(i18n.lang_of(pdir), "warn_en_sync", tags=", ".join(missing))]
+
+
+# PRO-53: EN-линтер. Кириллица — любой русский символ; русская десятичная запятая —
+# цифра, запятая и 1–2 цифры НЕ в составе тысячного разряда: «8,5» — нарушение,
+# «42,635» (тысячи) и «1,234.5» (EN-формат) — нет.
+_CYRILLIC = re.compile(r"[а-яёА-ЯЁ]")
+_RU_DECIMAL = re.compile(r"\d,\d{1,2}(?!\d)")
+
+
+def en_style_warnings(pdir: Path) -> list[str]:
+    """PRO-53: линтер EN-вывода — в SIX_PAGER_EN.md нет кириллицы, русских десятичных
+    запятых и маркера «[RU source — translate]»: EN-версия пишется по-английски из того
+    же пакета данных, а не переводится (правила — knowledge/templates/STYLE_EN.md).
+    Файла нет — проверять нечего; [] — чисто."""
+    path = pdir / "outputs" / "SIX_PAGER_EN.md"
+    if not path.exists():
+        return []
+    tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
+    lines = path.read_text(encoding="utf-8").splitlines()
+    out: list[str] = []
+
+    def hit(regex: re.Pattern, key: str) -> None:
+        found = [i for i, ln in enumerate(lines, 1) if regex.search(ln)]
+        if not found:
+            return
+        shown = ", ".join(map(str, found[:5])) + (", …" if len(found) > 5 else "")
+        sample = lines[found[0] - 1].strip()[:90]
+        out.append(tr(key, lines=shown, n=len(found), sample=sample))
+
+    hit(_CYRILLIC, "warn_en_cyrillic")
+    hit(_RU_DECIMAL, "warn_en_dec_comma")
+    hit(re.compile(re.escape(core.RU_SOURCE_MARK)), "warn_en_translate_marker")
+    return out
 
 
 def _numbers(text: str) -> dict[float, str]:
@@ -211,8 +248,10 @@ def run(pdir: Path) -> dict:
     # 3. Гэп-трекинг: пробел закрыт в 02, но строка 01 всё ещё «открыт»
     for w in gaps.sync_warnings(pdir):
         warnings.append(w)
-    # 4. Сверка тегов RU↔EN: EN-каркас six-pager отстал от RU после правок документов
+    # 4. Сверка тегов RU↔EN: дописанный EN six-pager отстал от RU после правок документов
     warnings.extend(en_sync_warnings(pdir))
+    # 4a. PRO-53: линтер EN-вывода — кириллица, русские десятичные запятые, маркер перевода
+    warnings.extend(en_style_warnings(pdir))
     # 5. PRO-27: реестр изменился после lock вердикта review — вердикт устарел
     warnings.extend(review.stale_warnings(pdir))
     # 6. PRO-26: числовой кросс-чек — числа активных утверждений против заголовков источников,

@@ -409,7 +409,7 @@ def cmd_export(a):
         return
     if a.six_pager:
         print(f"Six-pager: {export.build_six_pager(pdir, with_calcs=not a.no_calcs)}")
-        if a.en:  # EN-каркас в одном вызове: те же структура/числа/теги, скелет на английском
+        if a.en:  # EN-версия в одном вызове: каркас на английском, секции пишет writer (PRO-53)
             print(f"Six-pager EN: {export.build_six_pager(pdir, with_calcs=not a.no_calcs, lang='en')}")
     else:
         print(f"Отчёт: {export.build(pdir)}")
@@ -669,8 +669,8 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--deck", action="store_true", help="HTML-дека 16:9 из SIX_PAGER.md")
     s.add_argument("--six-pager", action="store_true", help="six-pager FAQ-1…6 + Excel-приложения")
     s.add_argument("--en", action="store_true",
-                   help="вместе с --six-pager собрать EN-каркас (SIX_PAGER_EN.md): скелет на английском, "
-                        "секции из документов — с пометкой «[RU source — translate]»")
+                   help="вместе с --six-pager собрать EN-версию (SIX_PAGER_EN.md): каркас на английском, "
+                        "секции пишет six-pager-writer из того же пакета данных (spec: SIX_PAGER_PROMPT_EN.md)")
     s.add_argument("--no-calcs", action="store_true", help="не перегенерировать Excel")
     s.set_defaults(f=cmd_export)
     s = sp.add_parser("calc", help="Excel-приложения: юнит-экономика, модель роста, когорты, рынок")
@@ -688,7 +688,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(f=cmd_questions)
     s = sp.add_parser("finish", help="собрать финальный пакет одной цепочкой: Excel → REPORT → six-pager → DOCX → deck")
     s.add_argument("--no-deck", action="store_true", help="не собирать HTML-деку")
-    s.add_argument("--en", action="store_true", help="дополнительно EN-черновик six-pager (SIX_PAGER_EN.md + DOCX)")
+    s.add_argument("--en", action="store_true", help="дополнительно EN-версия six-pager (SIX_PAGER_EN.md + DOCX)")
     s.set_defaults(f=cmd_finish)
     sp.add_parser("doctor", help="проверка установки, окружения и реестров источников").set_defaults(f=cmd_doctor)
     return ap
