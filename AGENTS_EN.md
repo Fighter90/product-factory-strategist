@@ -18,6 +18,21 @@ The tooling is the CLI `python3 -m tools.pfs …` (referred to below as `pfs …
 
 ---
 
+## 0. Project language (RU/EN)
+
+The project language is stored in `projects/<slug>/project.json → lang`: set it at creation
+(`pfs new --lang en "…" "…"`) or by switching the active project — `pfs lang en` (show the current one: `pfs lang`).
+The default is `ru`.
+
+- `lang: ru` — the instructions in AGENTS.md (the Russian canonical file — read it instead of this one),
+  templates `knowledge/templates/`, RU headings in the checks (`config/quality_gate.json → "ru"`),
+  `pfs status/next/check` messages in Russian.
+- `lang: en` — the instructions in this file; run the whole engagement in English: templates
+  `knowledge/templates/en/`, all outputs and CLI messages in English, `pfs check` expects the
+  EN headings (`config/quality_gate.json → "en"`).
+
+---
+
 ## 1. Non-negotiable rules
 
 1. **Every material statement comes with a source.** First `pfs source add`, then `pfs claim add … --source S###`.
@@ -136,7 +151,8 @@ Take methods from the maps: `pfs kb search "<what you need>"` → open 1–3 of 
 ## 6. Command cheat sheet
 
 ```
-pfs new "<title>" "<request verbatim>"       pfs status | pfs list | pfs use <slug>
+pfs new "<title>" "<request verbatim>" [--lang ru|en]   pfs status | pfs list | pfs use <slug>
+pfs lang [ru|en]                              # project language: CLI messages, templates and check headings (PRO-57)
 pfs route ["request"] [--override X]         pfs models [pick|escalate|use|sync] <task>
 pfs step <step> in_progress|done --next "…"  pfs ask "question" --options "A,B,C" | pfs answer "…"
 pfs next                                     # "what to decide now": step, commitments, reviews, open questions

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import core
+from . import core, i18n
 from .core import PfsError, STAGES, STAGE_IDS
 
 OUTPUT_FILES = {
@@ -35,27 +35,53 @@ BRIEF_TEMPLATE = """# Бриф: {title}
 | Дедлайн | ? |
 """
 
+# PRO-57: EN-бриф для проектов с project.json → lang=en (`pfs new --lang en`)
+BRIEF_TEMPLATE_EN = """# Brief: {title}
 
-def create(title: str, question: str, slug: str | None = None, owner_role: str = "руководитель продукта") -> Path:
+> Filled in at the intake step. Fields with "?" are open questions to the product leader.
+
+| Field | Value |
+|---|---|
+| Verbatim request | {question} |
+| Refined question | ? |
+| Decision to be made from this work | ? |
+| Goal and success criterion | ? |
+| Recipient of the result and format | ? |
+| Constraints (deadline, budget, regulation, brand) | ? |
+| Available data and materials | ? |
+| Permitted sources | open sources + materials provided by the user |
+| What is out of scope | ? |
+| Deadline | ? |
+"""
+
+
+def create(title: str, question: str, slug: str | None = None, owner_role: str = "руководитель продукта",
+           lang: str = "ru") -> Path:
+    lang = lang if lang in i18n.LANGS else "ru"
     slug = slug or core.slugify(title)
     pdir = core.projects_dir() / slug
     if (pdir / "project.json").exists():
-        raise PfsError(f"Проект '{slug}' уже существует — продолжите его: pfs use {slug} && pfs status")
+        tr = lambda key, **kw: i18n.t(lang, key, **kw)
+        raise PfsError(tr("err_project_exists", slug=slug))
     for sub in ("sources/raw", "outputs", "interviews/real", "interviews/synthetic", "analysis"):
         (pdir / sub).mkdir(parents=True, exist_ok=True)
     core.write_json(pdir / "project.json", {
-        "slug": slug, "title": title, "question": question, "owner_role": owner_role,
+        "slug": slug, "title": title, "question": question, "owner_role": owner_role, "lang": lang,
         "created": core.now(),
         "allowed_sources": {"domains": [], "deny_domains": [], "note": "пусто = любые открытые источники"},
         "stale_after_days": 180,
     })
+    next_intake = ("Уточнить запрос: вопрос, решение, получатель, ограничения, данные (шаг intake)"
+                   if lang == "ru" else
+                   "Clarify the request: question, decision, recipient, constraints, data (intake step)")
     core.write_json(pdir / "state.json", {
         "stage": "intake",
         "steps": {sid: {"status": "pending"} for sid in STAGE_IDS},
-        "next_action": "Уточнить запрос: вопрос, решение, получатель, ограничения, данные (шаг intake)",
+        "next_action": next_intake,
         "open_questions": [], "awaiting_human": None, "updated": core.now(),
     })
-    core.atomic_write(pdir / "outputs" / OUTPUT_FILES["intake"], BRIEF_TEMPLATE.format(title=title, question=question))
+    tpl = BRIEF_TEMPLATE if lang == "ru" else BRIEF_TEMPLATE_EN
+    core.atomic_write(pdir / "outputs" / OUTPUT_FILES["intake"], tpl.format(title=title, question=question))
     for name in ("sources.jsonl", "claims.jsonl", "decisions.jsonl", "log.jsonl"):
         (pdir / name).touch()
     core.set_active(slug)
@@ -73,10 +99,11 @@ def save_state(pdir: Path, state: dict) -> None:
 
 
 def set_step(pdir: Path, step: str, status: str, note: str | None = None, next_action: str | None = None) -> dict:
+    tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
     if step not in STAGE_IDS:
-        raise PfsError(f"Неизвестный шаг '{step}'. Шаги: {', '.join(STAGE_IDS)}")
+        raise PfsError(tr("err_unknown_step", step=step, stages=", ".join(STAGE_IDS)))
     if status not in ("pending", "in_progress", "done", "skipped"):
-        raise PfsError("Статус: pending | in_progress | done | skipped")
+        raise PfsError(tr("err_bad_status"))
     state = load_state(pdir)
     entry = state["steps"].setdefault(step, {})
     if entry.get("status") == "done" and status == "done":
@@ -124,23 +151,25 @@ def add_open_question(pdir: Path, text: str, close: bool = False) -> None:
 
 
 def status_text(pdir: Path, brief: bool = False) -> str:
-    """Сводка для продолжения работы: где остановились и что делать дальше."""
+    """Сводка для продолжения работы: где остановились и что делать дальше.
+    Язык — от проекта (project.json → lang, PRO-57)."""
     from . import claims as claims_mod, cost as cost_mod
+    tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
     meta = core.read_json(pdir / "project.json", {})
     state = load_state(pdir)
-    lines = [f"ПРОЕКТ: {meta.get('title')}  [{meta.get('slug')}]",
-             f"Запрос: {meta.get('question')}"]
+    lines = [tr("status_project", title=meta.get("title"), slug=meta.get("slug")),
+             tr("status_question", question=meta.get("question"))]
     marks = {"done": "✔", "in_progress": "▶", "skipped": "–", "pending": "·"}
     bar = " ".join(f"{marks.get(state['steps'].get(s['id'], {}).get('status', 'pending'), '·')}{s['id']}"
                    for s in STAGES)
-    lines.append(f"Шаги: {bar}")
-    lines.append(f"Текущий шаг: {state.get('stage')} | Следующее действие: {state.get('next_action')}")
+    lines.append(tr("status_steps", bar=bar))
+    lines.append(tr("status_stage", stage=state.get("stage"), next=state.get("next_action")))
     if state.get("awaiting_human"):
         ah = state["awaiting_human"]
-        opts = f" Варианты: {' / '.join(ah['options'])}" if ah.get("options") else ""
-        lines.append(f"⏸ ЖДЁМ РЕШЕНИЯ РУКОВОДИТЕЛЯ: {ah['question']}.{opts}")
+        opts = tr("status_options", options=" / ".join(ah["options"])) if ah.get("options") else ""
+        lines.append(tr("status_awaiting", question=ah["question"], options=opts))
     if state.get("open_questions"):
-        lines.append("Открытые вопросы: " + "; ".join(state["open_questions"][:6]))
+        lines.append(tr("status_open_questions", items="; ".join(state["open_questions"][:6])))
     srcs = core.read_jsonl(pdir / "sources.jsonl")
     cl = claims_mod.load(pdir)
     active = [c for c in cl if c.get("status") == "active"]
@@ -148,7 +177,8 @@ def status_text(pdir: Path, brief: bool = False) -> str:
     for c in active:
         by_kind[c["kind"]] = by_kind.get(c["kind"], 0) + 1
     decs = core.read_jsonl(pdir / "decisions.jsonl")
-    lines.append(f"Источники: {len(srcs)} | Утверждения: {len(active)} {by_kind} | Решения: {len(decs)}")
+    lines.append(tr("status_counts", sources=len(srcs), claims=len(active), by_kind=by_kind,
+                    decisions=len(decs)))
     from . import export as export_mod, review as review_mod
     lines += export_mod.freshness_warnings(pdir)
     # PRO-27: вердикт review устарел после правок реестра; префикс — здесь, на месте вывода
@@ -156,18 +186,18 @@ def status_text(pdir: Path, brief: bool = False) -> str:
     total = cost_mod.summary(pdir)
     if total.get("plan"):
         # PRO-62: $0.00 при миллионах токенов выглядит как ошибка учёта — показываем эквивалент
-        lines.append(f"Стоимость: ${total['usd']:.2f} — подписочный план; эквивалент по API-ценам "
-                     f"${total['usd_equivalent']:.2f} (~{total['rub_equivalent']:.0f} ₽), "
-                     f"токенов {total['tokens']:,}".replace(",", " "))
+        lines.append(tr("status_cost_plan", usd=total["usd"], usd_eq=total["usd_equivalent"],
+                        rub_eq=total["rub_equivalent"], tokens=f"{total['tokens']:,}".replace(",", " ")))
     else:
-        lines.append(f"Стоимость: ${total['usd']:.2f} (~{total['rub']:.0f} ₽), токенов {total['tokens']:,}".replace(",", " "))
+        lines.append(tr("status_cost", usd=total["usd"], rub=total["rub"],
+                        tokens=f"{total['tokens']:,}".replace(",", " ")))
     if not brief:
         logs = core.read_jsonl(pdir / "log.jsonl")[-8:]
         if logs:
-            lines.append("Последние действия:")
+            lines.append(tr("status_recent"))
             lines += [f"  {r['ts'][:16]} [{r['kind']}] {r['msg'][:110]}" for r in logs]
         outs = sorted(p.name for p in (pdir / "outputs").glob("*.md"))
-        lines.append("Документы: " + ", ".join(outs))
+        lines.append(tr("status_documents", docs=", ".join(outs)))
     return "\n".join(lines)
 
 
@@ -186,44 +216,46 @@ def six_pager_due(pdir: Path) -> bool:
 
 
 def next_text(pdir: Path) -> str:
-    """«Что решать сейчас»: шаг, ожидания человека, обязательства, пересмотры, открытые вопросы."""
+    """«Что решать сейчас»: шаг, ожидания человека, обязательства, пересмотры, открытые вопросы.
+    Язык — от проекта (project.json → lang, PRO-57)."""
     from . import decisions as decisions_mod
+    tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
     state = load_state(pdir)
     meta = core.read_json(pdir / "project.json", {})
-    lines = [f"ЧТО РЕШАТЬ СЕЙЧАС — {meta.get('title')} [{meta.get('slug')}]"]
-    lines.append(f"Шаг: {state.get('stage')} · Далее: {state.get('next_action')}")
+    lang = i18n.lang_of(pdir)
+    lines = [tr("next_header", title=meta.get("title"), slug=meta.get("slug"))]
+    lines.append(tr("next_stage", stage=state.get("stage"), next=state.get("next_action")))
     if six_pager_due(pdir):
         # PRO-32: six-pager собирают на review — напоминаем первым пунктом, пока его нет.
-        lines.append("📋 Собрать комитет-пакет: pfs calc scaffold → pfs calc all → pfs export "
-                     "--six-pager (spec: knowledge/templates/SIX_PAGER_PROMPT.md)")
+        lines.append(tr("next_sixpager", spec=i18n.SIX_PAGER_SPEC[lang]))
     if state.get("awaiting_human"):
         ah = state["awaiting_human"]
         opts = f" ({' / '.join(ah['options'])})" if ah.get("options") else ""
-        lines.append(f"⏸ Ждём вашего ответа: {ah['question']}{opts}")
+        lines.append(tr("next_waiting", question=ah["question"], options=opts))
     due = decisions_mod.due(pdir)
     if due.get("overdue"):
-        lines.append(f"⏰ Просроченные обязательства: {len(due['overdue'])}")
+        lines.append(tr("next_overdue", n=len(due["overdue"])))
         for o in due["overdue"][:3]:
             label = o.get("commitment") or o.get("text") or str(o) if isinstance(o, dict) else str(o)
             lines.append(f"  · {str(label)[:120]}")
     if due.get("stale_sources"):
         # PRO-28: источники в основаниях решений, не проверявшиеся дольше нормы, — с готовой командой
-        lines.append(f"♻ Источники в основаниях решений не проверялись дольше {due.get('stale_days', 180)} дн.:")
+        lines.append(tr("next_stale_sources", days=due.get("stale_days", 180)))
         lines += ["  · " + decisions_mod.stale_source_line(s) for s in due["stale_sources"][:6]]
     if due.get("stale_grounds"):
-        lines.append(f"⚠ Устаревшие основания: {len(due['stale_grounds'])} — pfs decision rebase / claim supersede")
+        lines.append(tr("next_stale_grounds", n=len(due["stale_grounds"])))
     if due.get("review_now"):
         ids = [d.get("id", d) if isinstance(d, dict) else str(d) for d in due["review_now"]]
-        lines.append(f"🔎 К пересмотру решений: {', '.join(map(str, ids[:3]))}")
+        lines.append(tr("next_review_now", ids=", ".join(map(str, ids[:3]))))
     if due.get("review_soon"):
-        lines.append("📅 Пересмотр в ближайшие 14 дней: " + "; ".join(map(str, due["review_soon"][:3])))
+        lines.append(tr("next_review_soon", items="; ".join(map(str, due["review_soon"][:3]))))
     oq = state.get("open_questions", [])
     if oq:
-        lines.append(f"❓ Открытые вопросы: {len(oq)}")
+        lines.append(tr("next_open_questions", n=len(oq)))
         lines += ["  · " + q[:120] for q in oq[:3]]
     if len(lines) == 2:
-        lines.append("Долгов нет. Текущий шаг процесса — см. pfs status.")
-    lines.append("Обновить источники после изменений: pfs source refresh <S###>")
+        lines.append(tr("next_clear"))
+    lines.append(tr("next_refresh"))
     return "\n".join(lines)
 
 
