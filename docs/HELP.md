@@ -36,7 +36,7 @@
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor     # проверка окружения
-python3 -m unittest discover -s tests   # самопроверка (411 тестов)
+python3 -m unittest discover -s tests   # самопроверка (398 тестов)
 ```
 
 `doctor` показывает: способ установки (editable/venv/source), версию пакета, путь до `pfs` (which), здоровье PATH, расположение projects dir, версию Python, наличие pdftotext/pypdf, число карт в базе знаний, активный проект.
@@ -298,30 +298,31 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
 
 ## Навыки: структура и вызов
 
-У агента 100 навыков (skills): базовые 13 по шагам процесса · 27 product-skills · 57 из личной библиотеки · 3 интеграции.
+У агента 121 навык (skills): базовые 13 по шагам процесса · 27 product-skills · 75 из личной библиотеки · 6 интеграций.
 Навыки не заменяют процесс и `pfs` — это библиотека техник, которые подключаются там, где нужны.
 
 **Группы:**
 
 - **Базовые (13)** — по шагам процесса: intake, research, situation, options, strategy, validation-plan, decision-support и др.
 - **Product-skills (27)** — продуктовые методики (маркет-сайзинг, юнит-экономика, трекшн-модели, роадмапы…).
-- **Личная библиотека (57):**
+- **Личная библиотека (75):**
   - *дизайн*: `design-ui`, `refero-design`, `frontend-design`, `claudable-landing`, `make-interfaces-feel-better`, `emil-design-eng`, `web-design-guidelines`
-  - *маркетинг и коммуникации*: `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `emails`, `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`, `customer-research`, `marketing-psychology`, `prospecting`, `sales-enablement`, `signup`, `onboarding`, `paywalls`, `revops` и др.
-  - *ресёрч и наука*: `research-lookup`, `literature-review`, `scientific-writing`, `scientific-critical-thinking`, `peer-review`, `hypothesis-generation`, `defuddle`
-  - *данные*: `statistical-analysis`, `exploratory-data-analysis`, `matplotlib`, `scientific-visualization`
-  - *документы/медиа*: `pdf`, `docx`, `pptx`, `xlsx`, `markitdown`, `officecli`, `generate-image`, `video`, `infographics`, `watch`, `transcribe`
-  - *режимы мышления/мета*: `balanced`, `find-skills`
-- **Интеграции:** `premortem` — предразбор провала; `sdd` — дисциплина разработки агента; `deck` — презентация из six-pager.
+  - *маркетинг*: `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `cold-email`, `emails`, `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`, `directory-submissions`, `customer-research`, `marketing-psychology`, `prospecting` и др.
+  - *наука*: `paper-lookup`, `research-lookup`, `literature-review`, `scientific-writing`, `scientific-critical-thinking`, `peer-review`, `statistical-analysis`, `statsmodels`, `scikit-learn`, `hypothesis-generation`, `pydeseq2`, `biopython`, `rdkit`
+  - *документы/медиа*: `pdf`, `docx`, `pptx`, `xlsx`, `markitdown`, `officecli`, `generate-image`, `video`, `infographics`, `scientific-slides` / `scientific-schematics` / `scientific-visualization`, `latex-posters`, `matplotlib`, `seaborn`
+  - *режимы мышления*: `consciousness-council`, `balanced`, `what-if-oracle`, `dhdna-profiler`
+  - *мета*: `find-skills`, `shap`, `watch`, `transcribe`
+- **Интеграции:** `hallmark` — anti-slop гейты для страниц; `board-of-directors` — совет из 5 перспектив + Red Team;
+  `premortem` — предразбор провала; `rea` — reverse-engineering страниц и форматов; `sdd`; `deck`.
 
 **Как вызывать:**
 
 1. **Автоматически** — по триггерам из описания навыка (агент сам подключит нужный, когда задача совпадает).
 2. **Явно** — «используй skill `<имя>`: `<задача>`». Примеры: «сделай premortem по D001»,
-   «собери лендинг по design-ui».
-3. **В процессе — по шагам:** `pfs step` печатает обязательные карты шага; options → `red-team`
-   субагент атакует варианты; decision → `decision-support` + `premortem` — ПОСЛЕ черновика D###
-   и ДО утверждения; research → для глубокого литобзора — `deep-research`.
+   «используй skill hallmark: собери лендинг».
+3. **В процессе — по шагам:** `pfs step` печатает обязательные карты шага; options → для дорогих решений
+   подключается `board-of-directors`; decision → `decision-support` + `premortem` — ПОСЛЕ черновика D###
+   и ДО утверждения; research → для JS-страниц — `deep-research` / `rea`.
 
 **Правило приоритета:** при конфликте методология из `knowledge/` приоритетнее процедуры навыка.
 Полный реестр — [`SKILLS.md`](SKILLS.md).

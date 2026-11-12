@@ -8,7 +8,7 @@ distinct options, and aligned product and communication strategies. After the de
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
 This is a repository folder: instructions, knowledge sets organized by category (strategy · economics · product ·
-UX · data · platforms · Gen AI), 100 skills, 8 subagents, 4 hooks, and a dependency-free Python CLI/MCP toolset.
+UX · data · platforms · Gen AI), 121 skills, 8 subagents, 4 hooks, and a dependency-free Python CLI/MCP toolset.
 Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
@@ -27,7 +27,7 @@ cd product-factory-strategist
 ./scripts/install.sh                            # uv tool install -e . (or venv+symlink)
 pfs --help                                      # CLI installed: works from any folder
 python3 -m tools.pfs doctor                     # environment check: Python, pdftotext, knowledge base
-python3 -m unittest discover -s tests           # 411 tests
+python3 -m unittest discover -s tests           # 398 tests
 ```
 
 Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INSTALL_EN.md](docs/INSTALL_EN.md).
@@ -125,7 +125,7 @@ flowchart TD
 flowchart TB
   U["Product director"] -->|"request · answers to question blocks"| ENV
   subgraph ENV["LLM environment (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 100<br/>(base + product-skills 27 + integrations: sdd · deck · premortem)"]
+    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 120<br/>(base + product-skills 27 + integrations: sdd · deck · premortem · board-of-directors · hallmark)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 5<br/>SessionStart · PreWeb-domains · PostTool-log · Stop-cost (+ shared module)"]
   end
@@ -155,32 +155,33 @@ every place referencing it.
 
 ```mermaid
 flowchart TB
-  SK["100 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
+  SK["121 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: method procedures<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
-  SK --> L["Personal library 57<br/>design · marketing · research · data · docs/media · thinking modes · meta"]
-  SK --> INT["Integrations 3<br/>premortem · sdd · deck"]
+  SK --> L["Personal library 75<br/>design · marketing · science · docs/media · thinking modes · meta"]
+  SK --> INT["Integrations 6<br/>hallmark · board-of-directors · premortem · rea · sdd · deck"]
   B & P & L & INT --> INV["Invocation: automatic by triggers · explicit 'use skill X' · via process steps"]
 ```
 
-100 skills in `.claude/skills/`, four groups:
+121 skills in `.claude/skills/`, four groups:
 
 - **base 13** — process steps (one per workflow stage: intake → sources → research → … → monitoring).
 - **product-skills 27** — method procedures (problem and solution design, traction modeling, unit economics,
   market sizing, interviews, UX review, …).
-- **personal library 57** — domain expertise:
+- **personal library 75** — domain expertise:
   - Design: design-ui, refero-design, frontend-design, claudable-landing, make-interfaces-feel-better,
     emil-design-eng, web-design-guidelines.
-  - Marketing & comms: ads, ad-creative, seo-audit, ai-seo, cro, pricing, offers, emails, launch,
-    content-strategy, competitors, analytics, programmatic-seo, customer-research,
+  - Marketing: ads, ad-creative, seo-audit, ai-seo, cro, pricing, offers, cold-email, emails, launch,
+    content-strategy, competitors, analytics, programmatic-seo, directory-submissions, customer-research,
     marketing-psychology, prospecting, copywriting, onboarding, signup, paywalls, churn-prevention,
-    site-architecture, sales-enablement, revops.
-  - Research & science: research-lookup, literature-review, scientific-writing, scientific-critical-thinking,
-    peer-review, hypothesis-generation, defuddle.
-  - Data: statistical-analysis, exploratory-data-analysis, matplotlib, scientific-visualization.
+    site-architecture, sales-enablement.
+  - Science: paper-lookup, research-lookup, literature-review, scientific-writing, scientific-critical-thinking,
+    peer-review, statistical-analysis, statsmodels, scikit-learn, hypothesis-generation, pydeseq2, biopython,
+    rdkit.
   - Docs/media: pdf, docx, pptx, xlsx, markitdown, officecli, generate-image, video, infographics,
-    watch, transcribe.
-  - Thinking modes/meta: balanced, find-skills.
-- **integrations** — premortem, sdd, deck.
+    scientific-slides, scientific-schematics, scientific-visualization, latex-posters, matplotlib, seaborn.
+  - Thinking modes: consciousness-council, balanced, what-if-oracle, dhdna-profiler.
+  - Meta: find-skills, shap, watch, transcribe.
+- **integrations** — hallmark, board-of-directors, premortem, rea, sdd, deck.
 
 **How to invoke — three ways:**
 
@@ -188,7 +189,7 @@ flowchart TB
    ("run a premortem", "audit the landing against web guidelines").
 2. **Explicit** — "use skill `<name>`: `<task>`".
 3. **In-process** — step skills chain the needed ones: `pfs step` prints the mandatory knowledge cards;
-   options → options + red-team; decision → decision-support + premortem.
+   options → options + red-team + board-of-directors; decision → decision-support + premortem.
    Examples: `pfs questions options`, `pfs export --deck`.
 
 **Consistency rule:** on conflict, `knowledge/` cards (methodology) take precedence over a skill's procedure.
@@ -304,9 +305,9 @@ consent and no personal data · the validator refuses a fact based on synthetic/
 ```
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
-  skills/ (100: base 13 · product-skills 27 · personal library · integrations)
+  skills/ (121: base 13 · product-skills 27 · personal library · integrations)
   agents/ (8) · hooks/ (5) · settings.json
-.cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable)
+.cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
 knowledge/  methods/ (89 RU cards) · methods_en/ (89 EN mirrors (full bilingual base)) · INDEX.md · INDEX_EN.md
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions
@@ -316,5 +317,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/ (411) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel)
+tests/ (398) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel)
 ```
