@@ -23,11 +23,14 @@ class TitleNormalizationTests(unittest.TestCase):
         pdir = project.create(RAW_TITLE_MD, RAW_REQUEST, slug="pro52")
         meta = core.read_json(pdir / "project.json")
         title = meta["title"]
-        # грамматика: «вывести проекта» → «вывести проект», без markdown
-        self.assertNotIn("проекта", title)
+        # markdown-остатки сырого запроса не выживают
         self.assertNotIn("**", title)
         self.assertNotIn("](http", title)
-        self.assertIn("Как вывести проект на европейский рынок cvstart.org", title)
+        # генитив не выживает как токен: «вывести проекта» → «вывести проект»
+        tokens = [t.strip(".,;:!?") for t in title.split()]
+        self.assertNotIn("проекта", tokens)
+        # title — точная исправленная формулировка
+        self.assertEqual(title, "Как вывести проект на европейский рынок cvstart.org")
         # исходный запрос сохранён дословно — и в project.json, и в 00_brief
         self.assertEqual(meta["question"], RAW_REQUEST)
         brief = (pdir / "outputs" / "00_brief.md").read_text(encoding="utf-8")
