@@ -158,7 +158,9 @@ pfs claim retag --from C003 --to C059   # перенумерация тегов 
 > Реестры `projects/*/{claims,sources,decisions}.jsonl` и `state.json` правятся только через pfs:
 > прямая запись (sed -i, redirect, Edit) блокируется permission opencode.json и PreToolUse-хуком
 > pre_guard.py с подсказкой нужной команды. Чтение — только внутри репозитория; материалы
-> пользователя — только те, что он явно передал. Выписки — в `projects/<slug>/sources/raw/`;
+> пользователя — только те, что он явно передал. Чтение вне репо (Read/Grep/Glob, а в Bash —
+> пути `~/…` вне репозитория) требует подтверждения человека; в OpenCode за то же отвечает
+> permission `external_directory`. Выписки — в `projects/<slug>/sources/raw/`;
 > `pfs source add --text-file` копирует файл туда сам, а файл вне проекта — с пометкой в реестре.
 
 ### Проверки и влияние

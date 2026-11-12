@@ -85,7 +85,7 @@ LLM-среда (Claude Code / Cursor / Codex) — «мозг» и исполни
 |---|---|---|
 | SessionStart | session_start.py | состояние проекта и «что решать сейчас» — продолжение в новом чате |
 | PreToolUse(WebFetch) | pre_web.py | блокирует домены вне allowed_sources проекта |
-| PreToolUse(Bash, Read, Edit, Write, MultiEdit) | pre_guard.py | запись в `projects/*/{claims,sources,decisions}.jsonl` и `state.json` блокируется с подсказкой команды pfs (PRO-58); чтение вне репозитория — с подтверждением человека (ask) |
+| PreToolUse(Bash, Read, Edit, Write, MultiEdit, Grep, Glob) | pre_guard.py | запись в `projects/*/{claims,sources,decisions}.jsonl` и `state.json` блокируется с подсказкой команды pfs (PRO-58); чтение вне репозитория — с подтверждением человека (ask): Read/Grep/Glob — любой путь вне репо, Bash — пути в домашней папке пользователя вне репо (`~/Projects/…`, `~/.config/…`); в OpenCode ту же роль играет permission `external_directory` |
 | PostToolUse | post_tool.py | журнал действий; поиск фраз-инструкций в ответах WebFetch/WebSearch; автопроверка документа после записи |
 | Stop | stop.py | стоимость сессии (идемпотентно) и сообщение пользователю |
 

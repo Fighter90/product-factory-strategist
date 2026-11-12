@@ -244,6 +244,120 @@ class HookGuardTests(unittest.TestCase):
             self.assertIn("permissionDecision", decision["hookSpecificOutput"])
 
 
+class HookReadScopeTests(unittest.TestCase):
+    """Чтение вне репозитория не только через Read: Bash/Grep/Glob тоже требуют ask.
+
+    Нарушения из PRO-58 были именно через Bash: `ls ~/Projects/`,
+    `head ~/Projects/career-ops/README.md`, `grep ~/.config/opencode/...`.
+    """
+
+    def test_bash_home_project_reads_ask(self):
+        home = Path.home()
+        for cmd in ("ls ~/Projects/",
+                    "head ~/Projects/career-ops/README.md",
+                    "grep -n 'критерий' ~/.config/opencode/skills/career-ops-qa/SKILL.md",
+                    f"cat {home / 'Projects' / 'career-ops' / 'README.md'}",
+                    "git -C ~/Projects/career-ops log --oneline -3",
+                    "tail -20 \"$HOME/Projects/career-ops/NOTES.md\""):
+            out = run_hook("pre_guard.py", {"tool_name": "Bash", "tool_input": {"command": cmd}}).stdout
+            decision = json.loads(out)["hookSpecificOutput"]
+            self.assertEqual(decision["permissionDecision"], "ask", cmd)
+            self.assertIn("репозитори", decision["permissionDecisionReason"])
+
+    def test_bash_inside_and_system_paths_silent(self):
+        for cmd in ("echo $HOME",
+                    "cat /tmp/excerpts/note.md",
+                    "ls projects/",
+                    "grep -rn claims.jsonl tools/",
+                    "sed -i '' 's/\\[C003\\]/[C059]/g' projects/demo/outputs/04_product_strategy.md",
+                    "python3 -m tools.pfs claim add 'Рынок' --kind hypothesis",
+                    "python3 -m tools.pfs check --json > /tmp/check.json",
+                    "cp a.md b.md && mv b.md c.md",
+                    "git log --oneline -3",
+                    "/usr/bin/python3 --version",
+                    "ls ~/Projects/product-factory-strategist/README.md"):
+            r = run_hook("pre_guard.py", {"tool_name": "Bash", "tool_input": {"command": cmd}})
+            self.assertEqual(r.stdout, "", cmd)
+
+    def test_bash_registry_deny_wins_over_ask(self):
+        cmd = f"sed -i '' 's/a/b/' {Path.home() / 'Projects' / 'other' / 'projects' / 'demo' / 'claims.jsonl'}"
+        out = run_hook("pre_guard.py", {"tool_name": "Bash", "tool_input": {"command": cmd}}).stdout
+        decision = json.loads(out)["hookSpecificOutput"]
+        self.assertEqual(decision["permissionDecision"], "deny")
+        self.assertIn("claim retag", decision["permissionDecisionReason"])
+
+    def test_grep_and_glob_outside_repo_ask(self):
+        home = Path.home()
+        for tool, inp in (("Grep", {"pattern": "x", "path": "~/Projects/career-ops"}),
+                          ("Grep", {"pattern": "x", "path": str(home / ".config" / "opencode")}),
+                          ("Glob", {"pattern": "**/*.md", "path": str(home / "Downloads")})):
+            out = run_hook("pre_guard.py", {"tool_name": tool, "tool_input": inp}).stdout
+            decision = json.loads(out)["hookSpecificOutput"]
+            self.assertEqual(decision["permissionDecision"], "ask", f"{tool} {inp}")
+
+    def test_grep_and_glob_inside_or_absent_silent(self):
+        for tool, inp in (("Grep", {"pattern": "x"}),
+                          ("Grep", {"pattern": "x", "path": "tools"}),
+                          ("Grep", {"pattern": "x", "path": str(REPO / "docs")}),
+                          ("Glob", {"pattern": "tests/*.py"}),
+                          ("Glob", {"pattern": "docs/*.md", "path": "docs"})):
+            r = run_hook("pre_guard.py", {"tool_name": tool, "tool_input": inp})
+            self.assertEqual(r.stdout, "", f"{tool} {inp}")
+
+    def test_settings_matcher_includes_grep_and_glob(self):
+        """Хук получает события Grep/Glob только если они в matcher'e settings.json."""
+        cfg = json.loads((REPO / ".claude" / "settings.json").read_text(encoding="utf-8"))
+        matchers = [ev["matcher"] for ev in cfg["hooks"].get("PreToolUse", [])
+                    if any("pre_guard.py" in h.get("command", "") for h in ev["hooks"])]
+        self.assertTrue(matchers)
+        for m in matchers:
+            for tool in ("Bash", "Read", "Edit", "Write", "MultiEdit", "Grep", "Glob"):
+                self.assertIn(tool, m)
+
+
+class OpenCodePermissionTests(unittest.TestCase):
+    """opencode.json сверен со схемой https://opencode.ai/config.json (PRO-58, раунд 3).
+
+    Проверено по живой схеме и докам (opencode.ai/docs/permissions):
+    `external_directory` — реальное действие permission (и в $defs.PermissionConfig,
+    и в списке действий V2); ресурсы сопоставляются с полным значением простыми
+    whole-value wildcards (`*` — ноль и более любых символов, остальные — литералы),
+    для shell это полная строка команды (сканер может разбить составную на несколько).
+    """
+
+    @staticmethod
+    def _wildcard_match(pattern: str, value: str) -> bool:
+        return re.fullmatch("".join(".*" if ch == "*" else re.escape(ch) for ch in pattern), value) is not None
+
+    def _permission(self):
+        cfg = json.loads((REPO / "opencode.json").read_text(encoding="utf-8"))
+        self.assertEqual(cfg["$schema"], "https://opencode.ai/config.json")
+        return cfg["permission"]
+
+    def test_external_directory_ask_declared(self):
+        # критерий №3: чтение вне репозитория в OpenCode — ask; ключ есть в схеме
+        self.assertEqual(self._permission()["external_directory"], "ask")
+
+    def test_bash_deny_keys_cover_registries_and_match_full_command(self):
+        bash = self._permission()["bash"]
+        registries = ("claims.jsonl", "sources.jsonl", "decisions.jsonl", "state.json")
+        for name in registries:
+            self.assertEqual(bash.get(f"*sed -i*{name}*"), "deny", name)
+            self.assertEqual(bash.get(f"*perl -i*{name}*"), "deny", name)
+            self.assertEqual(bash.get(f"*> *{name}*"), "deny", name)
+        # ведущий `*` и литеральный `>`: сопоставление с полной строкой команды
+        self.assertTrue(self._wildcard_match(
+            "*sed -i*claims.jsonl*",
+            "sed -i '' 's/\\[C003\\]/[C059]/g' projects/demo/claims.jsonl"))
+        self.assertTrue(self._wildcard_match(
+            "*> *decisions.jsonl*", "echo '{}' > projects/demo/decisions.jsonl"))
+        # легитимные pfs-команды под deny-паттерны не попадают
+        for cmd in ("python3 -m tools.pfs claim retag --from C003 --to C059",
+                    "python3 -m tools.pfs claim add 'Рынок' --kind hypothesis"):
+            for pattern in bash:
+                self.assertFalse(self._wildcard_match(pattern, cmd), f"{pattern} vs {cmd}")
+
+
 class JournalTests(unittest.TestCase):
     """post_tool.py: ручная правка outputs через Bash фиксируется в журнале проекта."""
 

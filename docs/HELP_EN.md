@@ -158,7 +158,9 @@ Kinds: `fact` (needs a source; synthetic material never counts as one), `hypothe
 > The registries `projects/*/{claims,sources,decisions}.jsonl` and `state.json` are edited only via pfs:
 > direct writes (sed -i, redirect, Edit) are blocked by opencode.json permissions and the pre_guard.py
 > PreToolUse hook, with a hint pointing to the right command. Reading stays inside the repository;
-> user materials count only when explicitly handed over. Excerpts live in `projects/<slug>/sources/raw/`;
+> user materials count only when explicitly handed over. Reads outside the repo (Read/Grep/Glob,
+> and in Bash any `~/…` path outside the repo) ask the human first; in OpenCode the same role is
+> played by the `external_directory` permission. Excerpts live in `projects/<slug>/sources/raw/`;
 > `pfs source add --text-file` copies the file there itself, marking files that came from outside the project.
 
 ### Checks and impact
