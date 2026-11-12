@@ -45,6 +45,8 @@ STR: dict[str, dict[str, str]] = {
         "warn_num_title_mismatch": "{cid}/{sid}: числа заголовка источника ({tnums}) не совпадают с числами утверждения ({cnums}); число подтверждено текстом sources/{sid}.md — возможно, разные показатели",
         "warn_num_serious": "{cid}/{sid}: числа утверждения ({cnums}) не совпадают с числами заголовка источника ({tnums}) и отсутствуют в его тексте — серьёзное расхождение, сверьте утверждение с источником",
         "warn_quote_numbers": "{cid}/{sid}: числа из цитаты ({nums}) отсутствуют в тексте источника — проверьте цитату против sources/{sid}.md",
+        "warn_banned_term": "{name}: «{term}» — жаргон/англицизм, по стайлгайду (STYLE_RU.md) пишите «{instead}»",
+        "warn_abbrev_undecoded": "{name}: «{term}» без расшифровки при первом упоминании — напишите «{term} — {hint}»",
         "kind_fact": "факт", "kind_hypothesis": "гипотеза", "kind_forecast": "прогноз",
         "kind_assumption": "допущение", "kind_inference": "вывод",
         # ---------- status ----------
@@ -163,6 +165,8 @@ STR: dict[str, dict[str, str]] = {
         "warn_num_title_mismatch": "{cid}/{sid}: numbers in the source title ({tnums}) do not match the claim numbers ({cnums}); the number is confirmed by the text of sources/{sid}.md — possibly different metrics",
         "warn_num_serious": "{cid}/{sid}: claim numbers ({cnums}) do not match the source title numbers ({tnums}) and are absent from its text — serious discrepancy, verify the claim against the source",
         "warn_quote_numbers": "{cid}/{sid}: numbers from the quote ({nums}) are absent from the source text — check the quote against sources/{sid}.md",
+        "warn_banned_term": "{name}: '{term}' is banned jargon — write '{instead}' per the style guide",
+        "warn_abbrev_undecoded": "{name}: '{term}' is not decoded at first mention — write '{term} — {hint}'",
         "kind_fact": "fact", "kind_hypothesis": "hypothesis", "kind_forecast": "forecast",
         "kind_assumption": "assumption", "kind_inference": "inference",
         "status_project": "PROJECT: {title}  [{slug}]",

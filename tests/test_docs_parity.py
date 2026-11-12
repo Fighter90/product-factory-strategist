@@ -30,8 +30,9 @@ DOC_TO_TEMPLATE = {
 
 class TemplatesParityTests(unittest.TestCase):
     def test_every_ru_template_has_en_counterpart(self):
+        # STYLE_RU.md — стайлгайд русского языка (PRO-52), EN-версии не имеет по определению
         missing = [p.name for p in sorted(TEMPLATES_RU.glob("*.md"))
-                   if p.name != "SIX_PAGER_PROMPT_EN.md"
+                   if p.name not in ("SIX_PAGER_PROMPT_EN.md", "STYLE_RU.md")
                    and not (TEMPLATES_EN / p.name).is_file()]
         self.assertEqual(missing, [], f"нет EN-версий шаблонов: {missing}")
 

@@ -1,6 +1,7 @@
 """Создание проекта, состояние шагов, продолжение после перерыва."""
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from . import core, i18n
@@ -55,9 +56,36 @@ BRIEF_TEMPLATE_EN = """# Brief: {title}
 """
 
 
+# PRO-52: сырой запрос больше не доезжает до title в неизменном виде. Markdown-разметка
+# («**проекта**», «[cvstart.org](http://cvstart.org)») вычищается, типовые падежные огрехи
+# («вывести проекта» вместо «вывести проект») исправляются по списку глаголов, управляющих
+# винительным падежом. Исходный запрос при этом хранится дословно: project.json → question
+# и строка «Исходный запрос (дословно)» в 00_brief.md — правку формулировки фиксирует intake.
+_MD_NOISE = [
+    (re.compile(r"\[([^\]]+)\]\([^)]*\)"), r"\1"),  # [текст](url) → текст
+    (re.compile(r"\*\*([^*]+)\*\*"), r"\1"),        # **жирный** → текст
+    (re.compile(r"`([^`]+)`"), r"\1"),              # `код` → текст
+]
+_ACC_VERBS = ("вывести", "запустить", "выпустить", "продвинуть", "масштабировать", "создать",
+              "собрать", "найти", "проверить", "оценить", "улучшить", "увеличить", "повысить",
+              "показать", "построить")
+_CASE_SLIP = re.compile(rf"\b({'|'.join(_ACC_VERBS)})\s+проекта\b", re.IGNORECASE)
+
+
+def normalize_title(title: str) -> str:
+    """Название проекта: без markdown, лишних пробелов и типовых падежных огрехей."""
+    t = title or ""
+    for pat, repl in _MD_NOISE:
+        t = pat.sub(repl, t)
+    t = _CASE_SLIP.sub(r"\1 проект", t)
+    t = re.sub(r"\s+", " ", t).strip()
+    return (t[:1].upper() + t[1:]) if t else t
+
+
 def create(title: str, question: str, slug: str | None = None, owner_role: str = "руководитель продукта",
            lang: str = "ru") -> Path:
     lang = lang if lang in i18n.LANGS else "ru"
+    title = normalize_title(title)
     slug = slug or core.slugify(title)
     pdir = core.projects_dir() / slug
     if (pdir / "project.json").exists():
