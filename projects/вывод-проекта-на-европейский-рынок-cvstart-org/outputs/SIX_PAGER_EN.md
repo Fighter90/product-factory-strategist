@@ -1,6 +1,6 @@
 # Taking cvstart.org to the European market: six-pager
 
-> Assembled 2026-11-10T00:00 by the `pfs export --six-pager` tool per the specification `knowledge/templates/SIX_PAGER_PROMPT_EN.md` (growth-strategy reference format: FAQ-1…6 with numbered subpoints, a tactics matrix, and KPIs in two planes). The [C###]/[S###] tags trace the origin of every number; source footnotes are at the end of the document.
+> Assembled 2026-11-10T00:00 by the `pfs export --six-pager` tool per the specification `knowledge/templates/SIX_PAGER_PROMPT_EN.md` (growth-strategy reference format: FAQ-1…6 with numbered subpoints, a tactics matrix, and KPIs in two dimensions). The [C###]/[S###] tags trace the origin of every number; source footnotes are at the end of the document.
 
 **Request:** How to take the cvstart.org project to the European market
 
@@ -19,7 +19,7 @@ The European resume-tool market is large and densely monetized: DE has ~109k unf
 - EU: 10+ million ICT specialists (2024), 5.0% of employment; Sweden leads at 8.6% [C010] (A)
 - DE: 109,000 unfilled IT vacancies (2025), down from the 149k peak (2023) [C011] (B)
 - NL: 15.1k open ICT vacancies (late 2025); 622,000 ICT specialists [C012] (A)
-- FR: shortage indicator for "IT engineers" of 1.1; 42,635 hiring projects for a single profession [C013] (A)
+- FR: a shortage indicator of 1.1 for "IT engineers"; 42,635 hiring projects for a single profession [C013] (A)
 - ES: ~120,000 unfilled tech vacancies; tech employment >1 million [C014] (B)
 - SE: +18,000 tech specialists per year through 2028 [C015] (B)
 - PL: +44% tech vacancies year over year (2025) [C016] (C)
@@ -167,13 +167,13 @@ Prioritization by capacity / CAC / competition (the calculation behind the concl
 
 - "This is not a European strategy but a global EN strategy with a European accent" — for the DE/FR/ES segments (the local language is mandatory [C017–C019]) it does nothing.
 - "Community channels do not grow without a product story": without "Hired" stories the content for Reddit/HN is thin.
-**What would falsify the option.** The HN/Reddit waves deliver no sustained lift (a spike → a fall back to baseline) — the channel does not work.
+**What would falsify the option.** The HN/Reddit waves deliver no sustained lift (a spike → back to the baseline) — the channel does not work.
 
 #### Option C: Three-wave entry with an "honest free" tier and deferred monetization (recommendation)
 
 **The gist.** Wave 1 = DE+NL+SE: OSS channels (B) + DE SEO for "Lebenslauf erstellen" positioned as "free, no auto-renewals" against trial-trap [C022][C024][C026]; the local conventions of the DE template (the tabular Lebenslauf, Anschreiben [C017]); a GDPR-ready cloud architecture is built in from the start (EU hosting from €3.79/mo [C062], SCC for US LLM APIs [C036]). Wave 2 = PL (growth +44% [C016], the regional price set by A/B). Wave 3 = FR/ES (the language is mandatory [C018][C019]). Hosted monetization in EUR — the gate after wave 1: launch only with confirmed conversions (the 180-day gate); Pro €9–12 / Unlimited €25–29 prices (the CVDesignR €9.99 [C023] ↔ resume.io €24.95 [C026] corridor), VAT via Non-Union OSS or an MoR [C037].
 **What must be true.** [C048] the trial-trap backdrop makes "free + honest" a differentiator; [C043] EN is enough for NL/SE; the SEO volume of the DE keywords is material (a gap — verify with Keyword Surfer before launch); the DE local conventions are implementable within the 19-locale architecture [C007].
-**Effect.** (forecast) W1 (6 months): stars 96 → 400–1000; DE-SEO organic from a zero DR — a lower bound of 500–2000 visits/mo by month 6 with good content (low confidence, D); a hosted launch in months 6–8 → by month 12, per the global model, ~50–80 paying users (MRR €1.3–2k) at organic CAC (low confidence — a carry-over of demo assumptions).
+**Effect.** (forecast) W1 (6 months): stars 96 → 400–1000; DE-SEO organic from a zero DR — a lower bound of 500–2000 visits/mo by month 6 with good content (low confidence, D); launching the hosted version in months 6–8 → by month 12, per the global model, ~50–80 paying users (MRR €1.3–2k) at organic CAC (low confidence — a carry-over of demo assumptions).
 **Costs and revenue.** Time 5–10 hrs/wk; infra €5–20/mo; revenue 0 until the hosted gate; afterwards — per the model.
 **Risks.** SEO against clones with budgets — a low probability of top-3 in DE; overextension across 3 waves on solo resources; the hosted version may never get built (the main execution risk); an early check on day 90 would produce a false negative for the SEO channel (see the red-team objections).
 
@@ -184,7 +184,7 @@ Prioritization by capacity / CAC / competition (the calculation behind the concl
 - "The 90-day gate kills our own SEO channel": by day 90 at DR≈0 there will be neither 1,000 visits nor rankings → the wave-1 gate is redefined: a 180-day window, the metrics — Search Console indexing and impressions + exported CVs/mo (the NSM in audience units, not stars); conversion is secondary.
 - "MRR requires an auto-renewing subscription — the trial-trap mechanics we stand against": the monetization model is compatible with the positioning — no auto-charges: an annual subscription with an end-of-term reminder and/or credits/one-off packs; the price corridor [C023][C026] is recalculated in a single unit (per month at honest renewal).
 - "The PL/ES data are hypotheses [C044]": hence PL as wave 2 with an A/B price, FR/ES as wave 3.
-**What would falsify the option.** Over 180 days, no indexing and no impression growth on the DE/NL/SE pages despite an executed content plan; or exported CVs/mo < 50 at 500+ visits → the channel and the positioning are rebuilt (a fallback to B/E).
+**What would falsify the option.** Over 180 days, no indexing and no impression growth on the DE/NL/SE pages despite an executed content plan; or exported CVs/mo < 50 at 500+ visits → the channel and the positioning are rebuilt (fall back to option B/E).
 
 #### Option D: Commerce-first — hosted in EUR right away
 
@@ -243,7 +243,7 @@ Scale 1–5: 5 — good. The weights are not numeric: "feasibility" and "trust r
 
 #### Recommendation
 
-Option C (as revised after the red team), because: (1) it is the only option that simultaneously grows the European audience and keeps the path to EUR monetization with realistic gates; (2) it rests on confirmed facts: the trial-trap backdrop [C022][C024][C026], the DE/FR/ES languages [C017–C019], cheap EU hosting [C062]; (3) it fits the solo resource thanks to the waves, a WBS with a fixed cutting priority, and the 180-day gate on impressions/CV exports [C052]. Conditions for changing the recommendation: Keyword Surfer shows negligible DE/NL/SE volumes (SEO drops out → a B+C hybrid with SEO moved to wave 2); the owner demands monetization immediately (then D, with full awareness of the PII risk and dominatedness); the 180-day gate of wave 1 fails (a fallback to B/E). Mandatory pre-checks before launch: a test of "OSS free forever + hosted for money" on the current community and an audit of locale non-indexing in Search Console.
+Option C (as revised after the red team), because: (1) it is the only option that simultaneously grows the European audience and keeps the path to EUR monetization with realistic gates; (2) it rests on confirmed facts: the trial-trap backdrop [C022][C024][C026], the DE/FR/ES languages [C017–C019], cheap EU hosting [C062]; (3) it fits the solo resource thanks to the waves, a WBS with a fixed cutting priority, and the 180-day gate on impressions/CV exports [C052]. Conditions for changing the recommendation: Keyword Surfer shows negligible DE/NL/SE volumes (SEO drops out → a B+C hybrid with SEO moved to wave 2); the owner demands monetization immediately (then D, with full awareness of the PII risk and dominatedness); the 180-day gate of wave 1 fails (fall back to option B/E). Mandatory pre-checks before launch: a test of "OSS free forever + hosted for money" on the current community and an audit of locale non-indexing in Search Console.
 
 ### Initiatives of the chosen direction (drivers)
 
@@ -306,8 +306,8 @@ JTBD: "When I look for a job in Europe, I want to filter the real vacancies from
 The bet: **occupy the "free, honest, local" corner in wave 1 (DE+NL+SE) through the OSS community + long-tail DE SEO, with a 180-day gate before EUR monetization without auto-charges.** Why: the only option that grows the audience while preserving the path to EUR revenue on solo resources; it rests on the confirmed trial-trap backdrop and the unoccupied honest-free slot (except XING, which has no job scanning) [C048].
 
 Outcome roadmap (outcomes, not features):
-- **Stage 1 (months 0–6), the DE+NL+SE wave:** DE templates of local conventions (the tabular Lebenslauf + Anschreiben) [C017]; 10–12 long-tail articles ("kostenlos", "ohne Abo", "Alternative zu CVMaker/resume.io"); an OSS launch (Show HN, answer-first Reddit, GitHub). **The result by day 180:** indexed DE/NL/SE pages, growing Search Console impressions, NSM ≥ 50 exported CVs/mo, stars 400–1000. Gate passed → stage 2; failed → a fallback to B/E.
-- **Stage 2 (months 6–12):** a community test of "OSS free forever + hosted for money" on the current core [C053] → the hosted launch: Free (BYOK) / Pro €9–12 / Unlimited €25–29 — a subscription without auto-charges: annual with a renewal reminder and one-click cancellation (or monthly cancel-anytime with the same reminder); one-off credits as an alternative [C052][C053]; an MoR or Non-Union OSS [C037]; EU hosting [C062]; a regional price A/B + the start of the PL wave (the PL locale exists [C007]).
+- **Stage 1 (months 0–6), the DE+NL+SE wave:** DE templates of local conventions (the tabular Lebenslauf + Anschreiben) [C017]; 10–12 long-tail articles ("kostenlos", "ohne Abo", "Alternative zu CVMaker/resume.io"); an OSS launch (Show HN, answer-first Reddit, GitHub). **The result by day 180:** indexed DE/NL/SE pages, growing Search Console impressions, NSM ≥ 50 exported CVs/mo, stars 400–1000. Gate passed → stage 2; failed → fall back to option B/E.
+- **Stage 2 (months 6–12):** a community test of "OSS free forever + hosted for money" on the current core [C053] → launch the hosted version: Free (BYOK) / Pro €9–12 / Unlimited €25–29 — a subscription without auto-charges: annual with a renewal reminder and one-click cancellation (or monthly cancel-anytime with the same reminder); one-off credits as an alternative [C052][C053]; an MoR or Non-Union OSS [C037]; EU hosting [C062]; a regional price A/B + the start of the PL wave (the PL locale exists [C007]).
 - **Stage 3 (months 12+):** the FR/ES wave after the PL conversion is confirmed; the local conventions lettre de motivation / CV español [C018][C019]; content scaling.
 
 #### Deliberate non-goals
@@ -338,7 +338,7 @@ Outcome roadmap (outcomes, not features):
 
 | Risk | Probability | Impact | Mitigation | Early signal |
 |---|---|---|---|---|
-| DE SEO volumes negligible / the DR does not carry | medium | high | a Keyword Surfer pre-check before launch; a pivot to community/PR (heise [C035]) | zero indexing within 60 days |
+| DE SEO volumes negligible / the Domain Rating is too low to rank | medium | high | a Keyword Surfer pre-check before launch; a shift to community and PR (heise [C035]) | zero indexing within 60 days |
 | Solo overload (the hour budget: 160+ hours against 130–260 hours available [C056]) | high | high | a WBS with a fixed cutting priority: content → the FR/ES groundwork → never the DE conventions | the weekly plan missed twice in a row |
 | A community revolt at monetization | medium | high | a preemptive positioning test on the core [C053]; the OSS core stays MIT/free [C005] | −10% stars / negativity in issues |
 | A GDPR incident on hosted | low | critical | SCC+TIA for US LLM APIs [C036], EU hosting [C062], a 72-hour incident plan before the first user | GDPR requests, complaints |
@@ -347,10 +347,10 @@ Outcome roadmap (outcomes, not features):
 
 Tactics matrix (from the outcome roadmap, 04_product_strategy.md):
 
-| Strategic initiative | Focus | User needs and expectations | Decisions (tactics) |
+| Strategic initiative | Focus | User needs and expectations | Solutions (tactics) |
 |---|---|---|---|
-| Stage 1 (months 0–6), the DE+NL+SE wave | DE templates of local conventions (the tabular Lebenslauf + Anschreiben) [C017] | — | DE templates of local conventions (the tabular Lebenslauf + Anschreiben) [C017]; 10–12 long-tail articles ("kostenlos", "ohne Abo", "Alternative zu CVMaker/resume.io"); an OSS launch (Show HN, answer-first Reddit, GitHub). **Result:** indexed DE/NL/SE pages, growing Search Console impressions, NSM ≥ 50 exported CVs/mo, stars 400–1000. Gate passed → stage 2; failed → a fallback to B/E. |
-| Stage 2 (months 6–12) | a community test of "OSS free forever + hosted for money" on the current core [C053] → the hosted launch: Free (BYOK) / Pro €9–12 / Unlimited €25–29 — a subscription without auto-charges: annual with a renewal reminder and one-click cancellation (or monthly cancel-anytime with the same reminder) | — | a community test of "OSS free forever + hosted for money" on the current core [C053] → the hosted launch: Free (BYOK) / Pro €9–12 / Unlimited €25–29 — a subscription without auto-charges: annual with a renewal reminder and one-click cancellation (or monthly cancel-anytime with the same reminder); one-off credits as an alternative [C052][C053]; an MoR or Non-Union OSS [C037]; EU hosting [C062]; a regional price A/B + the start of the PL wave (the PL locale exists [C007]). |
+| Stage 1 (months 0–6), the DE+NL+SE wave | DE templates of local conventions (the tabular Lebenslauf + Anschreiben) [C017] | — | DE templates of local conventions (the tabular Lebenslauf + Anschreiben) [C017]; 10–12 long-tail articles ("kostenlos", "ohne Abo", "Alternative zu CVMaker/resume.io"); an OSS launch (Show HN, answer-first Reddit, GitHub). **Result:** indexed DE/NL/SE pages, growing Search Console impressions, NSM ≥ 50 exported CVs/mo, stars 400–1000. Gate passed → stage 2; failed → fall back to option B/E. |
+| Stage 2 (months 6–12) | a community test of "OSS free forever + hosted for money" on the current core [C053] → launch the hosted version: Free (BYOK) / Pro €9–12 / Unlimited €25–29 — a subscription without auto-charges: annual with a renewal reminder and one-click cancellation (or monthly cancel-anytime with the same reminder) | — | a community test of "OSS free forever + hosted for money" on the current core [C053] → launch the hosted version: Free (BYOK) / Pro €9–12 / Unlimited €25–29 — a subscription without auto-charges: annual with a renewal reminder and one-click cancellation (or monthly cancel-anytime with the same reminder); one-off credits as an alternative [C052][C053]; an MoR or Non-Union OSS [C037]; EU hosting [C062]; a regional price A/B + the start of the PL wave (the PL locale exists [C007]). |
 | Stage 3 (months 12+) | the FR/ES wave after the PL conversion is confirmed | — | the FR/ES wave after the PL conversion is confirmed; the local conventions lettre de motivation / CV español [C018][C019]; content scaling. |
 
 ## FAQ-5. High-level plan
@@ -383,7 +383,7 @@ Tactics matrix (from the outcome roadmap, 04_product_strategy.md):
 - **Comparison**: the base — current telemetry is absent → first implement privacy-friendly export counting (a local opt-in option for an anonymous counter, or GitHub release statistics as a proxy); the external anchor — the 2–5% freemium conversion (a niche benchmark, hypothesis [C051]). Before/after: the DE/FR/ES locales as a "passive control" (their content is untouched in wave 1).
 - **Window**: 180 days (the wave-1 gate) with early signals at 60/90/120 days. Sample: at 1,000 visits/mo and a 5% expectation, 50 exports/mo is enough to read the trend; statistical rigor is not required — decisions are made on thresholds.
 - **Counter-metrics** [C057]: DE-page bounce > 80%; GDPR requests > 5; NPS < 30 — a stop-and-adjust signal, not growth at any cost.
-- **Criteria**: **continue** NSM ≥ 50/mo by day 180 → stage 2 (the hosted gate); **adjust** 20–50/mo → rebuild the channels (SEO ↔ community) and the message (a headline A/B), extend the gate by 90 days once; **stop** < 20/mo at 500+ visits/mo → a fallback to option B/E, the SEO content is mothballed.
+- **Criteria**: **continue** NSM ≥ 50/mo by day 180 → stage 2 (the hosted gate); **adjust** 20–50/mo → rebuild the channels (SEO ↔ community) and the message (a headline A/B), extend the gate by 90 days once; **stop** < 20/mo at 500+ visits/mo → fall back to option B/E, the SEO content is mothballed.
 - **Type**: an MVP wave (real product + content), cost €0, owner — the founder.
 
 #### H2. The DE SEO channel works at DR≈0 (the channel hypothesis)
@@ -444,7 +444,7 @@ Tactics matrix (from the outcome roadmap, 04_product_strategy.md):
 
 | Check | Continue | Adjust | Stop |
 |---|---|---|---|
-| H1 | NSM ≥ 50 exports/mo by day 180 → stage 2 | 20–50/mo → rebuild the channels/message, the gate +90 days (once) | < 20/mo at 500+ visits → a fallback to B/E |
+| H1 | NSM ≥ 50 exports/mo by day 180 → stage 2 | 20–50/mo → rebuild the channels/message, the gate +90 days (once) | < 20/mo at 500+ visits → fall back to option B/E |
 | H2 | indexing ≥ 80%, impressions growing | indexing present, no impressions → rebuild the semantics | no indexing within 60 days → hours to community/PR |
 | H3 | EN ≥ 50% of the DE conversion | 30–50% → local NL/SE templates | < 30% → NL/SE to wave 2 |
 | H4 | a neutral/positive reaction | mixed → a different contract wording | a revolt → monetization postponed (B) |
@@ -465,11 +465,11 @@ Order of tactics: high → medium → base priority (see the WBS: P1 "never cut"
 
 **Decision D002** — Pre-checks before the wave-1 launch (€0, 2 weeks). Interim review 2026-11-22; trigger: the SEO volumes are negligible → the SEO channel drops out, a B+C hybrid.
 
-## FAQ-6. Success metrics. KPIs in two planes
+## FAQ-6. Success metrics. KPIs in two dimensions
 
 | Plane | Hypothesis | Metric | Base → target by deadline | Action threshold (stop) |
 |---|---|---|---|---|
-| Product | H1 — The "honest free" tier converts against trial-trap [C051] | NSM: exported CVs/mo | base ~0 (no telemetry → an opt-in export counter or release statistics as a proxy) → ≥ 50/mo by day 180 | < 20/mo at 500+ visits → a fallback to B/E |
+| Product | H1 — The "honest free" tier converts against trial-trap [C051] | NSM: exported CVs/mo | base ~0 (no telemetry → an opt-in export counter or release statistics as a proxy) → ≥ 50/mo by day 180 | < 20/mo at 500+ visits → fall back to option B/E |
 | Product | H2 — The DE SEO channel works at DR≈0 [C052] | SC impressions/indexing | base 0; the internal control — NL/SE pages without content (the passive hreflang effect). → > 5,000 impressions/mo by day 150; indexing ≥ 80% | no indexing within 60 days → hours to community/PR |
 | Product | H3 — EN is enough for NL/SE [C043] | the NL/SE vs DE conversion | a rotational A/B/C of the nl/sv/en pages from the 19 locales [C007]. → EN ≥ 50% of DE | < 30% → NL/SE to wave 2 |
 | Product | H4 — The community will accept monetization [C054] | sentiment/star churn | the external base — the star trends of Reactive Resume/Cal.com/Plausible around monetization announcements. → churn < 10%/mo | a revolt → monetization postponed (B) |
