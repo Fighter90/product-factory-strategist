@@ -467,7 +467,7 @@ Order of tactics: high → medium → base priority (see the WBS: P1 "never cut"
 
 ## FAQ-6. Success metrics. KPIs in two dimensions
 
-| Plane | Hypothesis | Metric | Base → target by deadline | Action threshold (stop) |
+| Dimension | Hypothesis | Metric | Base → target by deadline | Action threshold (stop) |
 |---|---|---|---|---|
 | Product | H1 — The "honest free" tier converts against trial-trap [C051] | NSM: exported CVs/mo | base ~0 (no telemetry → an opt-in export counter or release statistics as a proxy) → ≥ 50/mo by day 180 | < 20/mo at 500+ visits → fall back to option B/E |
 | Product | H2 — The DE SEO channel works at DR≈0 [C052] | SC impressions/indexing | base 0; the internal control — NL/SE pages without content (the passive hreflang effect). → > 5,000 impressions/mo by day 150; indexing ≥ 80% | no indexing within 60 days → hours to community/PR |
