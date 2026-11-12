@@ -217,14 +217,22 @@ class TestSiteDictionaries(unittest.TestCase):
                              f"ru/en keys differ for page {page}")
             self.assertTrue(len(ru[page]) > 50, f"too few strings for {page}")
 
-    def test_templates_and_dictionaries_agree(self):
-        """Extracting from templates again yields the committed dictionaries."""
+    def test_i18n_json_byte_identical_to_extraction(self):
+        """Committed site/i18n/{ru,en}.json equal extract_all() output byte-for-byte.
+
+        Extraction is a dev-time step (see .github/workflows/pages.yml: the deploy
+        build must not pass --extract). This byte-level gate is what makes
+        translation drift fail CI instead of being silently rewritten at deploy.
+        """
         extracted = bs.extract_all()
         for lang in ("ru", "en"):
-            committed = json.loads(
-                (ROOT / "site" / "i18n" / f"{lang}.json").read_text("utf-8"))
-            self.assertEqual(extracted[lang], committed,
-                             f"site/i18n/{lang}.json is stale vs site/src templates")
+            serialized = json.dumps(
+                extracted[lang], ensure_ascii=False, indent=1) + "\n"
+            committed = (ROOT / "site" / "i18n" / f"{lang}.json").read_text("utf-8")
+            self.assertEqual(
+                serialized, committed,
+                f"site/i18n/{lang}.json is stale vs site/src templates "
+                f"(run: python3 scripts/build_site.py --extract)")
 
 
 class _BuiltSite(unittest.TestCase):
@@ -277,6 +285,18 @@ class TestBuildTwoVersions(_BuiltSite):
             [sys.executable, str(ROOT / "scripts" / "build_site.py"), "--help"],
             capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stderr)
+
+    def test_deploy_workflow_builds_from_committed_i18n(self):
+        """.github/workflows/pages.yml must NOT pass --extract at deploy.
+
+        site/i18n/{ru,en}.json are committed artifacts of a dev-time extraction;
+        the deploy build reads them. Silent rewriting at deploy would mask
+        translation drift — the byte-for-byte test above is what fails CI on it.
+        """
+        wf = (ROOT / ".github" / "workflows" / "pages.yml").read_text("utf-8")
+        self.assertIn("scripts/build_site.py", wf, "deploy build step missing")
+        self.assertNotIn("--extract", wf,
+                         "deploy must build from committed i18n, not rewrite it")
 
 
 class TestEnglishLeaks(_BuiltSite):

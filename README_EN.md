@@ -27,7 +27,7 @@ cd product-factory-strategist
 ./scripts/install.sh                            # uv tool install -e . (or venv+symlink)
 pfs --help                                      # CLI installed: works from any folder
 python3 -m tools.pfs doctor                     # environment check: Python, pdftotext, knowledge base
-python3 -m unittest discover -s tests           # 414 tests
+python3 -m unittest discover -s tests           # 415 tests
 ```
 
 Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INSTALL_EN.md](docs/INSTALL_EN.md).
@@ -315,7 +315,10 @@ tools/pfs/  core · project · route · sources · claims · check · impact · 
 projects/<slug>/
             sources/ · claims.jsonl · decisions.jsonl · log.jsonl · costs.json · state.json
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
-site/index.html (RU/EN)
+site/       src/ (4 bilingual page templates) · i18n/{ru,en}.json (page-string dictionary) ·
+            index/demo/materials/help.html and en/ (RU and EN) — generated pages are
+            committed and rebuilt at deploy (pages.yml) by scripts/build_site.py from
+            src + i18n + projects/демо; edit text in src/i18n, not in the built html
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/ (414) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel)
+tests/ (415) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel)
 ```
