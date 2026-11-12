@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import claims as claims_mod, core, gaps, review, sources as src_mod
+from . import claims as claims_mod, core, gaps, i18n, review, sources as src_mod
 from .impact import TAG
 
 # PRO-26: числовой кросс-чек. Число — целое или десятичное (в т.ч. русская запятая: «8,5»);
@@ -50,8 +50,7 @@ def en_sync_warnings(pdir: Path) -> list[str]:
                      key=lambda t: (t[0], int(t[1:])))
     if not missing:
         return []
-    return [f"SIX_PAGER_EN.md отстал от RU: нет тегов {', '.join(missing)} — "
-            "пересоберите пару: pfs export --six-pager --en"]
+    return [i18n.t(i18n.lang_of(pdir), "warn_en_sync", tags=", ".join(missing))]
 
 
 def _numbers(text: str) -> dict[float, str]:
@@ -78,11 +77,12 @@ def _source_body(pdir: Path, sid: str) -> str:
 
 def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict]) -> list[str]:
     """PRO-26: числовой кросс-чек реестра — ловит расхождение «заголовок 17 vs утверждение 19»,
-    которое иначе доживает до финального аудита.
+    которое иначе доживает до финального аудита. Сообщения — на языке проекта (PRO-57).
     1) числа активного утверждения против чисел заголовка источника, на который оно ссылается:
        оба набора непусты и не пересекаются → warning с парой C###/S### (пересечение хотя бы
        по одному числу расхождением не считается — утверждение вправе содержать числа сверх заголовка);
     2) числа цитаты (quote) против текста sources/S###.md: числа, которых в тексте нет → warning."""
+    tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
     out: list[str] = []
     bodies: dict[str, set[float]] = {}
     for c in claims.values():
@@ -105,101 +105,106 @@ def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict])
                 if set(cnums) & body:
                     # числа подтверждены текстом источника — заголовок может нести
                     # другую метрику (кейс C004/S002: звёзды vs локали), это не устаревание
-                    out.append(f"{c['id']}/{sid}: числа заголовка источника ({_fmt(tnums)}) не совпадают "
-                               f"с числами утверждения ({_fmt(cnums)}); число подтверждено текстом "
-                               f"sources/{sid}.md — возможно, разные показатели")
+                    out.append(tr("warn_num_title_mismatch", cid=c["id"], sid=sid,
+                                  tnums=_fmt(tnums), cnums=_fmt(cnums)))
                 else:
-                    out.append(f"{c['id']}/{sid}: числа утверждения ({_fmt(cnums)}) не совпадают с числами "
-                               f"заголовка источника ({_fmt(tnums)}) и отсутствуют в его тексте — "
-                               f"серьёзное расхождение, сверьте утверждение с источником")
+                    out.append(tr("warn_num_serious", cid=c["id"], sid=sid,
+                                  tnums=_fmt(tnums), cnums=_fmt(cnums)))
             quote = c.get("quote")
             if quote:
                 if sid in bodies:
                     missing = {v: raw for v, raw in _numbers(quote).items() if v not in bodies[sid]}
                     if missing:
-                        out.append(f"{c['id']}/{sid}: числа из цитаты ({_fmt(missing)}) отсутствуют "
-                                   f"в тексте источника — проверьте цитату против sources/{sid}.md")
+                        out.append(tr("warn_quote_numbers", cid=c["id"], sid=sid, nums=_fmt(missing)))
     return out
 
 
 def run(pdir: Path) -> dict:
-    cfg = core.read_json(core.CONFIG / "quality_gate.json", {})
+    cfg_all = core.read_json(core.CONFIG / "quality_gate.json", {})
+    # PRO-57: язык проекта выбирает блок проверок; EN-заголовки — quality_gate.json → "en".
+    lang = i18n.lang_of(pdir)
+    block = cfg_all.get(lang) if isinstance(cfg_all.get(lang), dict) and "documents" in cfg_all.get(lang, {}) \
+        else cfg_all.get("ru", cfg_all)
+    tr = lambda key, **kw: i18n.t(lang, key, **kw)
+    kind_label = lambda kind: tr(f"kind_{kind}") if f"kind_{kind}" in i18n.STR.get(lang, {}) else kind
     errors: list[str] = []
     warnings: list[str] = []
     passed: list[str] = []
     claims = {c["id"]: c for c in claims_mod.load(pdir)}
     srcs = {s["id"]: s for s in src_mod.load(pdir)}
     decisions = {d["id"] for d in core.read_jsonl(pdir / "decisions.jsonl")}
-    num_re = re.compile(cfg.get("number_regex", r"\d+%"), re.IGNORECASE)
-    exempt = cfg.get("exempt_line_markers", [])
+    num_re = re.compile(block.get("number_regex", r"\d+%"), re.IGNORECASE)
+    exempt = block.get("exempt_line_markers", [])
 
     # 1. Реестр утверждений
     for c in claims.values():
         if c["status"] != "active":
             continue
         if c["kind"] == "fact" and not c["sources"]:
-            errors.append(f"{c['id']}: факт без источника")
+            errors.append(tr("err_fact_no_source", cid=c["id"]))
         if c["kind"] == "fact" and c["sources"] and all(srcs.get(s, {}).get("origin") == "synthetic" for s in c["sources"]):
-            errors.append(f"{c['id']}: факт опирается только на синтетические ответы")
+            errors.append(tr("err_fact_synthetic", cid=c["id"]))
         if c["kind"] == "fact" and c.get("grade") == "D":
-            errors.append(f"{c['id']}: сила D не может быть фактом — переведите в допущение")
+            errors.append(tr("err_fact_grade_d", cid=c["id"]))
         stale = [d for d in c["derived_from"] if claims.get(d, {}).get("status") != "active"]
         if stale:
-            warnings.append(f"{c['id']}: основания {', '.join(stale)} замещены/отозваны — пересмотрите вывод (pfs claim supersede --from …)")
+            warnings.append(tr("warn_stale_grounds", cid=c["id"], stale=", ".join(stale)))
         if c["kind"] in ("hypothesis", "forecast", "assumption") and not (c["sources"] or c["derived_from"]):
-            warnings.append(f"{c['id']}: {claims_mod.KIND_RU[c['kind']]} без оснований — укажите, откуда она")
+            warnings.append(tr("warn_no_grounds", cid=c["id"], kind=kind_label(c["kind"])))
     flagged = [s["id"] for s in srcs.values() if s.get("injection_flags")]
     if flagged:
-        warnings.append(f"Источники с фразами-инструкциями (проигнорированы как команды): {', '.join(flagged)}")
+        warnings.append(tr("warn_injection", ids=", ".join(flagged)))
 
     # 2. Документы
-    for name, rules in cfg.get("documents", {}).items():
+    for name, rules in block.get("documents", {}).items():
         path = pdir / "outputs" / name
         if not path.exists():
-            warnings.append(f"{name}: документа ещё нет")
+            warnings.append(tr("warn_doc_missing", name=name))
             continue
         text = path.read_text(encoding="utf-8")
         for sec in rules.get("required_sections", []):
             if not _has_section(text, sec):
-                errors.append(f"{name}: нет раздела «{sec}»")
+                errors.append(tr("err_no_section", name=name, sec=sec))
         for i, line in enumerate(text.splitlines(), 1):
             for m in TAG.finditer(line):
                 tid = m.group(1)
                 if tid.startswith("C"):
                     if tid not in claims:
-                        errors.append(f"{name}:{i}: ссылка на несуществующее {tid}")
+                        errors.append(tr("err_unknown_claim", name=name, i=i, tid=tid))
                     elif claims[tid]["status"] != "active":
-                        errors.append(f"{name}:{i}: {tid} {claims[tid]['status']} — обновите формулировку"
-                                      + (f" (замена: {claims[tid].get('superseded_by')})" if claims[tid].get("superseded_by") else ""))
+                        by = f" ({tr('err_claim_superseded_by', by=claims[tid]['superseded_by'])})" \
+                            if claims[tid].get("superseded_by") else ""
+                        errors.append(tr("err_claim_status", name=name, i=i, tid=tid,
+                                         status=claims[tid]["status"]) + by)
                 elif tid.startswith("S") and tid not in srcs:
-                    errors.append(f"{name}:{i}: ссылка на несуществующий источник {tid}")
+                    errors.append(tr("err_unknown_source", name=name, i=i, tid=tid))
                 elif tid.startswith("D") and tid not in decisions:
-                    errors.append(f"{name}:{i}: ссылка на несуществующее решение {tid}")
+                    errors.append(tr("err_unknown_decision", name=name, i=i, tid=tid))
             if rules.get("numbers_need_tags") and not line.startswith("#") and num_re.search(line) \
                     and not TAG.search(line) and not any(mk in line for mk in exempt):
-                warnings.append(f"{name}:{i}: число без ссылки на C###/S###: «{line.strip()[:90]}»")
+                warnings.append(tr("warn_number_no_tag", name=name, i=i, line=line.strip()[:90]))
         if "min_options" in rules:
             heads = [l for l in text.splitlines() if re.match(rules["option_heading_regex"], l)]
             if len(heads) < rules["min_options"]:
-                errors.append(f"{name}: вариантов {len(heads)}, нужно не меньше {rules['min_options']}")
+                errors.append(tr("err_too_few_options", name=name, n=len(heads), m=rules["min_options"]))
             low = text.lower()
             if not any(k in low for k in rules.get("status_quo_keywords", [])):
-                errors.append(f"{name}: нет варианта «оставить как есть»")
+                errors.append(tr("err_no_status_quo", name=name))
             if not any(k in low for k in rules.get("exit_keywords", [])):
-                warnings.append(f"{name}: не рассмотрен вариант «закрыть/свернуть направление»")
+                warnings.append(tr("warn_no_exit_option", name=name))
             chunks = re.split(rules["option_heading_regex"], text, flags=re.MULTILINE)[1:]
             for idx, chunk in enumerate(chunks, 1):
                 for sec in rules.get("per_option_sections", []):
                     if sec.lower() not in chunk.lower():
-                        errors.append(f"{name}: у варианта №{idx} нет раздела «{sec}»")
+                        errors.append(tr("err_option_section", name=name, idx=idx, sec=sec))
         if rules.get("promise_table_section"):
             body = _section_body(text, rules["promise_table_section"])
             rows = [l for l in body.splitlines() if l.startswith("|") and not l.startswith("|---")][1:]
             if not rows:
-                errors.append(f"{name}: таблица «обещание → чем подтверждено в продукте» пуста")
+                errors.append(tr("err_promise_table_empty", name=name))
             for r in rows:
                 if not TAG.search(r):
-                    errors.append(f"{name}: обещание без подтверждения (нет C###/S###): «{r[:80]}»")
+                    errors.append(tr("err_promise_no_tag", name=name, row=r[:80]))
         if not errors or all(not e.startswith(name) for e in errors):
             passed.append(name)
 
@@ -217,12 +222,14 @@ def run(pdir: Path) -> dict:
     return {"errors": errors, "warnings": warnings, "passed": passed, "score": score}
 
 
-def report_text(res: dict) -> str:
-    out = [f"Контроль качества: {res['score']}/100 | ошибок {len(res['errors'])}, предупреждений {len(res['warnings'])}"]
+def report_text(res: dict, lang: str = "ru") -> str:
+    tr = lambda key, **kw: i18n.t(lang, key, **kw)
+    out = [tr("check_header", score=res["score"], errors=len(res["errors"]),
+              warnings=len(res["warnings"]))]
     if res["passed"]:
-        out.append("✔ Без ошибок: " + ", ".join(res["passed"]))
+        out.append(tr("check_passed", names=", ".join(res["passed"])))
     out += [f"✖ {e}" for e in res["errors"]]
     out += [f"⚠ {w}" for w in res["warnings"][:40]]
     if len(res["warnings"]) > 40:
-        out.append(f"… ещё {len(res['warnings']) - 40} предупреждений")
+        out.append(tr("check_more_warnings", n=len(res["warnings"]) - 40))
     return "\n".join(out)

@@ -20,3 +20,24 @@ description: Шаг 0. Постановка задачи — превращае�
 6. Покажи бриф одним экраном и попроси подтверждения. Затем `pfs step intake done --next "Собрать источники и составить план исследования"`.
 
 Нельзя: начинать исследование без подтверждённого вопроса; задавать вопросы, ответ на которые можно найти самому.
+
+## English
+
+# Intake (problem framing)
+
+Maps: `M-brief-hypotheses`, `M-product-context`, `M-problem-design`.
+
+1. Re-read the request verbatim. Extract: the object (product/service), the symptom, the author's implicit
+   hypothesis, and the decision behind it ("what will be done with the result").
+2. Fill `outputs/00_brief.md` with what is already known. Leave "?" for the unknowns.
+3. Ask **no more than 3 questions** — only those without which the next step goes the wrong way. Priority:
+   (a) which decision, and who makes it; (b) who receives the result and in what format; (c) what data/materials
+   exist (metrics, research, interfaces) and what the constraints are (deadline, budget, regulation, brand).
+   Each question comes with options and your default assumption: "If you don't answer, I will assume …".
+   Record it: `pfs ask "<questions>" --options "..."`.
+4. On the answer: `pfs answer "…"`, update the brief, list the **assumptions** (`pfs claim add … --kind assumption`).
+5. Register the user's materials: `pfs source add <file> --origin own`.
+6. Show the brief on one screen and ask for confirmation. Then
+   `pfs step intake done --next "Collect sources and draft the research plan"`.
+
+Never: start research without a confirmed question; ask questions you could answer yourself.

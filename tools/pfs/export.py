@@ -6,7 +6,7 @@ import html as html_mod
 import re
 from pathlib import Path
 
-from . import calc, check, claims as claims_mod, core, cost, decisions, sources as src_mod
+from . import calc, check, claims as claims_mod, core, cost, decisions, i18n, sources as src_mod
 from .xlsx import sheet_names
 
 ORDER = ["00_brief.md", "01_research_plan.md", "02_situation.md", "03_options.md", "04_product_strategy.md",
@@ -88,30 +88,32 @@ def freshness_warnings(pdir: Path) -> list[str]:
 
 
 def build(pdir: Path) -> Path:
+    lang = i18n.lang_of(pdir)
+    tr = lambda key, **kw: i18n.t(lang, key, **kw)
     meta = core.read_json(pdir / "project.json", {})
-    parts = [f"# {meta.get('title')}: стратегия и обоснование", "",
-             f"> Собрано {core.now()[:16]} командой `pfs export`. Теги [C###] — утверждения, [S###] — источники, [D###] — решения (см. приложения).", ""]
+    parts = [tr("report_title", title=meta.get("title")), "",
+             tr("report_built", ts=core.now()[:16]), ""]
     outs = pdir / "outputs"
     for name in ORDER + sorted(p.name for p in outs.glob("*.md") if p.name not in ORDER and p.name != "REPORT.md"):
         p = outs / name
         if p.exists():
             body = p.read_text(encoding="utf-8")
-            note = ("> Авто-черновик: собран командой `pfs export --six-pager`; детализируйте по "
-                    "spec — knowledge/templates/SIX_PAGER_PROMPT.md.\n\n") if p.name == "SIX_PAGER.md" else ""
+            note = tr("report_sixpager_note", spec=i18n.SIX_PAGER_SPEC[lang]) if p.name == "SIX_PAGER.md" else ""
             parts += [note + body.replace("\n# ", "\n## ") if not body.startswith("# ") else "#" + body, "", "---", ""]
     active = [c for c in claims_mod.load(pdir)]
-    parts += ["# Приложение A. Реестр утверждений", "", claims_mod.table(active), ""]
-    parts += ["# Приложение B. Источники", "", "| ID | Название | Ссылка / файл | Происхождение | Получено |", "|---|---|---|---|---|"]
+    parts += [tr("appx_a_claims"), "", claims_mod.table(active), ""]
+    parts += [tr("appx_b_sources"), "", tr("appx_sources_header"), "|---|---|---|---|---|"]
     for s in src_mod.load(pdir):
         parts.append(f"| {s['id']} | {s['title'].replace('|', '/')} | {s.get('url') or s.get('path') or '—'} | {s['origin']} | {s['retrieved'][:10]} |")
     decs = decisions.load(pdir)
     if decs:
-        parts += ["", "# Приложение C. Решения и обязательства", "", decisions.table(decs)]
+        parts += ["", tr("appx_c_decisions"), "", decisions.table(decs)]
     qc = check.run(pdir)
-    parts += ["", "# Приложение D. Прозрачность", "", "```", cost.summary_text(pdir), check.report_text(qc), "```"]
+    parts += ["", tr("appx_d_transparency"), "", "```", cost.summary_text(pdir, lang),
+              check.report_text(qc, lang), "```"]
     att = attachments_table(pdir)
     if att:
-        parts += ["", "# Приложение E. Excel-расчёты", "", att]
+        parts += ["", tr("appx_e_excel"), "", att]
     path = outs / "REPORT.md"
     core.atomic_write(path, "\n".join(parts) + "\n")
     core.log(pdir, "action", "Собран outputs/REPORT.md", tool="pfs export")

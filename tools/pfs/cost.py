@@ -8,7 +8,7 @@ import json
 import math
 from pathlib import Path
 
-from . import core
+from . import core, i18n
 
 # Подписочные провайдеры: оплата планом, а не за токен — фактическая цена $0,
 # в отчёте показываем эквивалент по API-ценам и пометку «подписочный план» (PRO-62).
@@ -479,50 +479,49 @@ def summary(pdir: Path) -> dict:
             "plan_share": plan_share(pdir, p)}
 
 
-def summary_text(pdir: Path) -> str:
+def summary_text(pdir: Path, lang: str = "ru") -> str:
     """Отчёт `pfs cost` и Приложение D отчёта/six-pager: фактическая оплата и эквивалент
     по API-ценам, пометка «подписочный план», разбивка по моделям (с кэшем) и шагам
-    процесса, время сессий и минуты человека, повторы и доля подписки (PRO-62)."""
+    процесса, время сессий и минуты человека, повторы и доля подписки (PRO-62).
+    Язык — параметр (по умолчанию ru; PRO-57: pfs cost и REPORT — по языку проекта)."""
     s = summary(pdir)
     p = pricing()
-    out = [f"Итого: фактически ${s['usd']:.2f} (~{s['rub']:.0f} ₽) "
-           f"| эквивалент по API-ценам ${s['usd_equivalent']:.2f} (~{s['rub_equivalent']:.0f} ₽) "
-           f"| сессий {s['sessions']} | токенов {_fmt(s['tokens'])} "
-           f"| время сессий {s['time_minutes']:.0f} мин "
-           f"| время человека {s['human_minutes']:.0f} мин"]
+    tr = lambda key, **kw: i18n.t(lang, key, **kw)
+    out = [tr("cost_total", usd=s["usd"], rub=s["rub"], usd_eq=s["usd_equivalent"],
+              rub_eq=s["rub_equivalent"], sessions=s["sessions"], tokens=_fmt(s["tokens"]),
+              tmin=s["time_minutes"], hmin=s["human_minutes"])]
     if s["plan"]:
-        prov = ", ".join(s["plan_providers"]) or "подписка"
-        out.append(f"подписочный план ({prov}): фактическая оплата ${s['usd']:.2f} — покрыта "
-                   f"подпиской; эквивалент по API-ценам ${s['usd_equivalent']:.2f} — сколько "
-                   f"стоили бы те же токены по прайсу провайдера")
+        prov = ", ".join(s["plan_providers"]) or tr("cost_plan_default")
+        out.append(tr("cost_plan", prov=prov, usd=s["usd"], usd_eq=s["usd_equivalent"]))
     if s["by_model"]:
-        out.append("По моделям:")
+        out.append(tr("cost_by_models"))
         for m, v in sorted(s["by_model"].items(), key=lambda x: -x[1]):
             tk = s["by_model_tokens"].get(m, {})
-            out.append(f"  {m:<24} ${v:.2f} | токены {_fmt(sum(tk.values()))} "
-                       f"(вход {_fmt(tk.get('input', 0))} · выход {_fmt(tk.get('output', 0))} "
-                       f"· кэш {_fmt(tk.get('cache_read', 0))}/{_fmt(tk.get('cache_write', 0))})")
+            out.append(tr("cost_by_model_row", model=m, usd=v, tokens=_fmt(sum(tk.values())),
+                          inp=_fmt(tk.get("input", 0)), outp=_fmt(tk.get("output", 0)),
+                          cr=_fmt(tk.get("cache_read", 0)), cw=_fmt(tk.get("cache_write", 0))))
     if s["by_step"]:
-        out.append("По шагам:")
+        out.append(tr("cost_by_steps"))
         order = {sid: i for i, sid in enumerate(core.STAGE_IDS)}
         for stp in sorted(s["by_step"], key=lambda x: (order.get(x, len(order)), x)):
             models = s["by_step"][stp]
             tk = sum(sum((c or {}).get(k, 0) for k in TOKEN_KEYS) for c in models.values())
             stp_usd = sum(model_cost(m, c, p) for m, c in models.items())
-            out.append(f"  {stp:<12} токены {_fmt(tk)} · эквивалент ${stp_usd:.2f}")
+            out.append(tr("cost_by_step_row", step=stp, tokens=_fmt(tk), usd=stp_usd))
     r = s["retries"]
     if r["messages"]:
-        tail = (f" · {_fmt(r['tokens'])} токенов" if r["tokens"]
-                else " · токены неизвестны (агрегат сессии)")
+        tail = (tr("cost_retries_tail_tokens", tokens=_fmt(r["tokens"])) if r["tokens"]
+                else tr("cost_retries_tail_unknown"))
         if r["usd_equivalent"]:
-            tail += f" · эквивалент ${r['usd_equivalent']:.2f}"
-        word = _plural(r["messages"], "сообщение", "сообщения", "сообщений")
-        out.append(f"Повторы: {r['messages']} {word}{tail}")
+            tail += tr("cost_retries_tail_equiv", usd=r["usd_equivalent"])
+        word = (_plural(r["messages"], "сообщение", "сообщения", "сообщений") if lang == "ru"
+                else ("message" if r["messages"] == 1 else "messages"))
+        out.append(tr("cost_retries", n=r["messages"], word=word, tail=tail))
     share = s["plan_share"]
     if share:
         head = f"{share['tier']}, " if share.get("tier") else ""
-        out.append(f"доля подписки ({head}${share['month_usd']:g}/мес × {share['days']} дн): "
-                   f"${share['usd']:.2f}")
+        out.append(tr("cost_plan_share", head=head, month_usd=share["month_usd"],
+                      days=share["days"], usd=share["usd"]))
     return "\n".join(out)
 
 

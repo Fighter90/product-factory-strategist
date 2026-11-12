@@ -10,7 +10,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from . import (calc, check, claims, core, cost, data, decisions, docx, export, finish, gaps, impact,
+from . import (calc, check, claims, core, cost, data, decisions, docx, export, finish, gaps, i18n, impact,
                kb, models, participate, project, review, route, sources)
 from .core import PfsError
 
@@ -24,8 +24,23 @@ def _split(v: str | None) -> list[str]:
 
 
 def cmd_new(a):
-    pdir = project.create(a.title, a.question, a.slug)
-    print(f"Создан проект {pdir.name}. Следующий шаг: intake — уточнить запрос (см. AGENTS.md).")
+    pdir = project.create(a.title, a.question, a.slug, lang=getattr(a, "lang", "ru"))
+    lang = i18n.lang_of(pdir)
+    print(i18n.t(lang, "new_created", slug=pdir.name, agents=i18n.pointers(lang)["agents"]))
+
+
+def cmd_lang(a):
+    """Показать/переключить язык проекта (PRO-57): pfs lang | pfs lang en [--project slug]."""
+    pdir = _p(a)
+    if getattr(a, "value", None):
+        meta = core.read_json(pdir / "project.json", {})
+        old = meta.get("lang", "ru")
+        meta["lang"] = a.value
+        core.write_json(pdir / "project.json", meta)
+        print(i18n.t(a.value, "lang_set", lang=a.value, old=old, **i18n.pointers(a.value)))
+        return
+    lang = i18n.lang_of(pdir)
+    print(i18n.t(lang, "lang_current", lang=lang, **i18n.pointers(lang)))
 
 
 def cmd_use(a):
@@ -45,11 +60,14 @@ def cmd_status(a):
 
 
 def cmd_step(a):
-    st = project.set_step(_p(a), a.step, a.status, a.note, a.next)
-    print(f"Шаг {a.step} → {a.status}. Текущий: {st['stage']}. Далее: {st.get('next_action')}")
+    pdir = _p(a)
+    st = project.set_step(pdir, a.step, a.status, a.note, a.next)
+    lang = i18n.lang_of(pdir)
+    print(i18n.t(lang, "step_marked", step=a.step, status=a.status, stage=st["stage"],
+                 next=st.get("next_action")))
     cards = kb.cards_for(a.step)
     if cards:
-        print("Карты шага: " + ", ".join(cards))
+        print(i18n.t(lang, "step_cards", cards=", ".join(cards)))
 
 
 def cmd_next(a):
@@ -190,8 +208,9 @@ def cmd_claim(a):
 
 
 def cmd_check(a):
-    res = check.run(_p(a))
-    print(json.dumps(res, ensure_ascii=False, indent=2) if a.json else check.report_text(res))
+    pdir = _p(a)
+    res = check.run(pdir)
+    print(json.dumps(res, ensure_ascii=False, indent=2) if a.json else check.report_text(res, i18n.lang_of(pdir)))
     if a.strict and res["errors"]:
         sys.exit(1)
 
@@ -253,7 +272,7 @@ def cmd_cost(a):
         s = cost.record_session(pdir, path.stem, path, a.since, a.until)
         print(f"Транскрипт: {path.name}")
         print(_session_line(s))
-    print(cost.summary_text(pdir))
+    print(cost.summary_text(pdir, i18n.lang_of(pdir)))
 
 
 def _session_line(s: dict) -> str:
@@ -420,8 +439,8 @@ def cmd_finish(a):
     pdir = _p(a)
     res = finish.run(pdir, no_deck=a.no_deck, en=a.en)
     # предупреждения о несвежем реестре печатает summary_text (PRO-41: без дублей)
-    print(check.report_text(res["check"]))
-    print(finish.summary_text(res))
+    print(check.report_text(res["check"], i18n.lang_of(pdir)))
+    print(finish.summary_text(res, i18n.lang_of(pdir)))
 
 
 DIST_NAME = "product-factory-strategist"  # имя пакета в importlib.metadata (PRO-44)
@@ -520,7 +539,14 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--project", help="slug проекта (по умолчанию активный)")
     sp = ap.add_subparsers(dest="cmd", required=True)
 
-    s = sp.add_parser("new", help="создать проект"); s.add_argument("title"); s.add_argument("question"); s.add_argument("--slug"); s.set_defaults(f=cmd_new)
+    s = sp.add_parser("new", help="создать проект | create a project"); s.add_argument("title"); s.add_argument("question")
+    s.add_argument("--slug")
+    s.add_argument("--lang", choices=["ru", "en"], default="ru",
+                   help="язык проекта (PRO-57): messages, templates and quality-gate headings; ru по умолчанию")
+    s.set_defaults(f=cmd_new)
+    s = sp.add_parser("lang", help="язык проекта: показать или переключить ru|en (PRO-57)")
+    s.add_argument("value", nargs="?", choices=["ru", "en"], help="без значения — показать текущий")
+    s.set_defaults(f=cmd_lang)
     s = sp.add_parser("use", help="сделать проект активным"); s.add_argument("slug"); s.set_defaults(f=cmd_use)
     sp.add_parser("list", help="список проектов").set_defaults(f=cmd_list)
     s = sp.add_parser("status", help="где остановились"); s.add_argument("--brief", action="store_true"); s.set_defaults(f=cmd_status)
@@ -691,6 +717,11 @@ def main(argv: list[str] | None = None) -> int:
     try:
         args.f(args)
     except PfsError as exc:
-        print(f"Ошибка: {exc}", file=sys.stderr)
+        # PRO-57: язык активного проекта, если определим — иначе ru (сообщение об ошибке без трейсбека)
+        try:
+            lang = i18n.active_lang()
+        except Exception:
+            lang = "ru"
+        print(i18n.t(lang, "error_prefix", msg=exc), file=sys.stderr)
         return 2
     return 0

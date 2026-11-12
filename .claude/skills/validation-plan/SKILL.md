@@ -19,3 +19,21 @@ description: Шаг 7. План проверки стратегии — ожид
 5. **Критерии решения** — заранее: «продолжаем, если …; меняем, если …; останавливаем, если …».
 6. Тип проверки (MVP/пилот/фейковая дверь/опрос/интервью), стоимость, ответственный.
 `pfs check` → `pfs step validation done`.
+
+## English
+
+# Validation plan (06_validation_plan.md)
+
+Template: `knowledge/templates/validation_plan.md` (`knowledge/templates/en/validation_plan.md` for `lang: en`).
+Maps: `M-mvp-pilots`, `M-product-metrics`, `M-quant-methods`, `M-success-metrics`, `M-pmf-scaling`.
+
+For each key strategy hypothesis (3–5 items, the riskiest first):
+1. **Expected change** — metric, direction, magnitude (range), unit, period; why we expect it [C###].
+2. **Comparison baseline** — control group / A/B / before-after adjusted for seasonality / synthetic control;
+   the base value [C###] and how to get it if unknown.
+3. **Observation window** — how long until the effect shows (usage, payment, renewal cycle) and the sample fills up
+   (sample-size estimate: map `M-quant-methods`).
+4. **Counter-metrics** — cannibalization, churn, support load, complaints, brand; the thresholds at which we stop.
+5. **Decision criteria** — fixed in advance: "continue if …; change if …; stop if …".
+6. Test type (MVP/pilot/fake door/survey/interviews), cost, owner.
+`pfs check` → `pfs step validation done`.
