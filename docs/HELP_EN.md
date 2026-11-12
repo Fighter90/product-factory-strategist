@@ -149,9 +149,19 @@ pfs claim list [--kind fact] [--all]
 pfs claim retract --id C005 --reason "methodology error"
 pfs claim supersede --id C005 "Market is 45 B RUB" --reason "new report" [--source S009]
 pfs claim rebase [--id C012]            # redirect conclusions to the replacements of their grounds
+pfs claim retag --from C003 --to C059   # renumber [C###] tags across all outputs in one command,
+                                        # validated before writing and journalled
 ```
 Kinds: `fact` (needs a source; synthetic material never counts as one), `hypothesis`, `forecast`,
 `assumption`, `inference` (only from other C###). Evidence strength: `--grade A…D`.
+
+> The registries `projects/*/{claims,sources,decisions}.jsonl` and `state.json` are edited only via pfs:
+> direct writes (sed -i, redirect, Edit) are blocked by opencode.json permissions and the pre_guard.py
+> PreToolUse hook, with a hint pointing to the right command. Reading stays inside the repository;
+> user materials count only when explicitly handed over. Reads outside the repo (Read/Grep/Glob,
+> and in Bash any `~/…` path outside the repo) ask the human first; in OpenCode the same role is
+> played by the `external_directory` permission. Excerpts live in `projects/<slug>/sources/raw/`;
+> `pfs source add --text-file` copies the file there itself, marking files that came from outside the project.
 
 ### Checks and impact
 ```bash

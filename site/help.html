@@ -150,8 +150,8 @@ body[data-lang=ru] [lang=en]{display:none}
   <h1 lang="ru">Справка <span class="grad">·</span> агент</h1><h1 lang="en">Agent <span class="grad">help</span></h1>
   <p class="sub" lang="ru">Полная документация: как общаться с агентом, все 12 шагов процесса, доказательства S### → C### → D###, Excel-модели и six-pager, инструменты (CLI, MCP, навыки, субагенты, хуки), среды и интеграции, безопасность, глоссарий и частые проблемы.</p>
   <p class="sub" lang="en">Full documentation: talking to the agent, all 12 process steps, evidence S### → C### → D###, Excel models and the six-pager, tooling (CLI, MCP, skills, subagents, hooks), environments and integrations, security, glossary and troubleshooting.</p>
-  <div class="meta" lang="ru">12 шагов · 89 карт знаний (RU + EN-индекс) · 100 навыков · 8 субагентов · 4 хука · 18 MCP-инструментов · 0 зависимостей</div>
-  <div class="meta" lang="en">12 steps · 89 knowledge cards · 100 skills · 8 subagents · 4 hooks · 18 MCP tools · 0 dependencies</div>
+  <div class="meta" lang="ru">12 шагов · 89 карт знаний (RU + EN-индекс) · 100 навыков · 8 субагентов · 6 хуков · 18 MCP-инструментов · 0 зависимостей</div>
+  <div class="meta" lang="en">12 steps · 89 knowledge cards · 100 skills · 8 subagents · 6 hooks · 18 MCP tools · 0 dependencies</div>
   <div class="search"><input id="q" type="search" placeholder="Поиск по справке… / Search the help…" aria-label="Поиск по справке / Search the help"></div>
 </div></div>
 
@@ -193,7 +193,7 @@ body[data-lang=ru] [lang=en]{display:none}
     <a href="#h-mcp" lang="ru">MCP: 18 инструментов</a><a href="#h-mcp" lang="en">MCP: 18 tools</a>
     <a href="#h-skills" lang="ru">Навыки (100)</a><a href="#h-skills" lang="en">Skills (100)</a>
     <a href="#h-subagents" lang="ru">Субагенты (8)</a><a href="#h-subagents" lang="en">Subagents (8)</a>
-    <a href="#h-hooks" lang="ru">Хуки (4)</a><a href="#h-hooks" lang="en">Hooks (4)</a>
+    <a href="#h-hooks" lang="ru">Хуки (6)</a><a href="#h-hooks" lang="en">Hooks (6)</a>
     <a href="#h-models" lang="ru">Модели и маршрутизация</a><a href="#h-models" lang="en">Models &amp; routing</a>
     <a href="#h-cost" lang="ru">Стоимость</a><a href="#h-cost" lang="en">Cost</a>
     <a href="#h-data" lang="ru">Анализ данных</a><a href="#h-data" lang="en">Data analysis</a>
@@ -272,12 +272,12 @@ body[data-lang=ru] [lang=en]{display:none}
       <pre lang="ru">$ git clone https://github.com/Fighter90/product-factory-strategist.git
 $ cd product-factory-strategist
 $ python3 -m tools.pfs doctor      # проверка окружения
-$ python3 -m unittest discover -s tests   # 499 тестов, опционально
+$ python3 -m unittest discover -s tests   # 531 тестов, опционально
 $ pfs new "Почему падает удержание" "запрос дословно"</pre>
       <pre lang="en">$ git clone https://github.com/Fighter90/product-factory-strategist.git
 $ cd product-factory-strategist
 $ python3 -m tools.pfs doctor      # environment check
-$ python3 -m unittest discover -s tests   # 499 tests, optional
+$ python3 -m unittest discover -s tests   # 531 tests, optional
 $ pfs new "Why is retention dropping" "the request verbatim"</pre>
       <p lang="ru">Требования: Python 3.9+ и любая поддерживаемая среда. Пакеты не устанавливаются — только стандартная библиотека. Секреты (ключи Linear и других MCP) кладутся в <code>.env</code> — он не коммитится и не обязателен для базового цикла.</p>
       <p lang="en">Requirements: Python 3.9+ and any supported environment. No packages to install — standard library only. Secrets (Linear and other MCP keys) go to <code>.env</code> — it is git-ignored and not required for the basic loop.</p></div>
@@ -573,15 +573,16 @@ pfs decision rebase --id D001 --note "основания обновлены"</pr
       </table>
       <p lang="en">router (request scenario), researcher (source extraction), data-analyst (tables, cohorts, funnels), synthetic-respondent (AI persona, hypotheses only), ux-analyst (interface review, evidence-bound), red-team (attacks each option), comms-strategist (comms draft), evidence-auditor (rubric review).</p></div>
 
-    <div class="faq rv" id="h-hooks"><h3 lang="ru">Хуки (4): события и действия</h3><h3 lang="en">Hooks (4): events and actions</h3>
+    <div class="faq rv" id="h-hooks"><h3 lang="ru">Хуки (6): события и действия</h3><h3 lang="en">Hooks (6): events and actions</h3>
       <table lang="ru">
         <tr><th>Хук</th><th>Когда</th><th>Что делает</th></tr>
         <tr><td><code>SessionStart</code></td><td>новый чат</td><td>сам подаёт агенту статус проекта и «что решать сейчас» — продолжение без пересказа</td></tr>
         <tr><td><code>PreToolUse</code></td><td>перед WebFetch</td><td>проверяет URL по разрешённым доменам проекта; чужой домен блокируется <b>до</b> запроса</td></tr>
-        <tr><td><code>PostToolUse</code></td><td>после инструментов</td><td>пишет журнал; проверяет внешние тексты на фразы-инструкции (помечает, не исполняет); автопроверка изменённых документов</td></tr>
+        <tr><td><code>PreToolUse</code></td><td>перед Bash / Read / Edit / Write</td><td><code>pre_guard</code>: прямая запись в реестры (<code>claims/sources/decisions.jsonl</code>, <code>state.json</code>) блокируется с подсказкой команды pfs; чтение вне репозитория — только с подтверждением человека</td></tr>
+        <tr><td><code>PostToolUse</code></td><td>после инструментов</td><td>пишет журнал (включая ручные правки outputs из Bash); проверяет внешние тексты на фразы-инструкции (помечает, не исполняет); автопроверка изменённых документов</td></tr>
         <tr><td><code>Stop</code></td><td>конец сессии</td><td>пересчитывает стоимость сессии по транскрипту (идемпотентно) и показывает итог</td></tr>
       </table>
-      <p lang="en">SessionStart feeds project context on a new chat; PreToolUse enforces allowed domains before fetch; PostToolUse logs actions, scans external text for embedded instructions (flags, never executes), auto-checks changed docs; Stop recomputes session cost from the transcript.</p></div>
+      <p lang="en">SessionStart feeds project context on a new chat; PreToolUse (pre_web) enforces allowed domains before fetch; PreToolUse (pre_guard) blocks direct writes to the project registries with a hint pointing to the right pfs command and asks for confirmation on reads outside the repository; PostToolUse logs actions (including manual Bash edits of outputs), scans external text for embedded instructions (flags, never executes), auto-checks changed docs; Stop recomputes session cost from the transcript.</p></div>
 
     <div class="faq rv" id="h-models"><h3 lang="ru">Модели и маршрутизация</h3><h3 lang="en">Models and routing</h3>
       <p lang="ru">Профиль моделей живёт в <code>config/models.json</code>: дешёвые — классификация, выписки, оценка по рубрике, ИИ-респонденты; сильные — синтез, варианты, red team, стратегии. <code>pfs models</code> — таблица, <code>pfs models pick &lt;задача&gt;</code> — конкретная модель, <code>pfs models use &lt;профиль&gt;</code> — переключение среды (например, экономный профиль), <code>pfs route --economy</code> — понижение deep→balanced кроме red team. <b>Эскалация:</b> если check дважды нашёл ошибки в результате шага или оценка пограничная — <code>pfs models escalate &lt;задача&gt; --reason "…"</code> и повтор моделью выше. Субагенты наследуют профиль из frontmatter; после смены профиля — <code>pfs models sync</code>.</p>
@@ -608,8 +609,8 @@ pfs data stats file.csv --col revenue --group seg              # статист�
       <p lang="en"><code>pfs media add shot.png --desc "what is visible" --title "…"</code> copies the media to <code>sources/raw/</code> and turns the description into a text source: the agent analyzes exactly what is described. <code>pfs ux scaffold S003 --focus "onboarding"</code> builds a heuristics + journey scaffold bound to the material; the <code>ux-analyst</code> subagent fills it without inventing beyond the screenshots.</p></div>
 
     <div class="faq rv" id="h-env-claude"><h3 lang="ru">Среда: Claude Code — полный опыт</h3><h3 lang="en">Environment: Claude Code — the full experience</h3>
-      <p lang="ru">Откройте папку репозитория в Claude Code — всё подхватится автоматически: 100 навыков, 8 субагентов, 4 хука (контекст при старте, домены, инъекции, стоимость), команды CLI (<code>pfs …</code>) и MCP-инструменты. Просто напишите задачу — дальше агент ведёт сам.</p>
-      <p lang="en">Open the repo folder in Claude Code — everything auto-loads: 100 skills, 8 subagents, 4 hooks, the CLI (<code>pfs …</code>) and MCP tools. Just state the task — the agent takes it from there.</p></div>
+      <p lang="ru">Откройте папку репозитория в Claude Code — всё подхватится автоматически: 100 навыков, 8 субагентов, 6 хуков (контекст при старте, домены, защита реестров, журнал правок, инъекции, стоимость), команды CLI (<code>pfs …</code>) и MCP-инструменты. Просто напишите задачу — дальше агент ведёт сам.</p>
+      <p lang="en">Open the repo folder in Claude Code — everything auto-loads: 100 skills, 8 subagents, 6 hooks, the CLI (<code>pfs …</code>) and MCP tools. Just state the task — the agent takes it from there.</p></div>
 
     <div class="faq rv" id="h-env-others"><h3 lang="ru">Среды: Cursor, Codex, OpenCode, Windsurf, Copilot</h3><h3 lang="en">Environments: Cursor, Codex, OpenCode, Windsurf, Copilot</h3>
       <p lang="ru">Все среды читают <code>AGENTS.md</code>. <b>Cursor</b> — правило <code>.cursor/rules</code> + MCP из <code>.mcp.json</code>. <b>Codex / OpenCode / Windsurf / Copilot</b> — без хуков: начните с «прочитай AGENTS.md и выполни <code>pfs status</code>» — агент восстановит контекст и продолжит. MCP <code>pfs-strategist</code> работает во всех (launcher с sys.path не зависит от папки запуска).</p>
