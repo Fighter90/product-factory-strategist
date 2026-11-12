@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "product-factory-strategist"
-version = "1.2.22"
+version = "1.2.23"
 description = "Стратег Фабрики продуктов — ИИ-агент для руководителя цифрового продукта (CLI pfs)"
 readme = "README.md"
 requires-python = ">=3.9"
