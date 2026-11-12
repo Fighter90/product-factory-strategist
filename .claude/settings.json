@@ -7,11 +7,20 @@
       "Read(./projects/**)",
       "WebSearch"
     ],
+    "ask": [
+      "Read(~/Downloads/**)",
+      "Read(~/Documents/**)",
+      "Read(~/Desktop/**)"
+    ],
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(~/.ssh/**)",
-      "Read(~/.aws/**)"
+      "Read(~/.aws/**)",
+      "Edit(./projects/**/claims.jsonl)",
+      "Edit(./projects/**/sources.jsonl)",
+      "Edit(./projects/**/decisions.jsonl)",
+      "Edit(./projects/**/state.json)"
     ]
   },
   "hooks": {
@@ -19,10 +28,11 @@
       {"hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/session_start.py\"", "timeout": 20}]}
     ],
     "PreToolUse": [
-      {"matcher": "WebFetch", "hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre_web.py\"", "timeout": 10}]}
+      {"matcher": "WebFetch", "hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre_web.py\"", "timeout": 10}]},
+      {"matcher": "Bash|Read|Edit|Write|MultiEdit", "hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre_guard.py\"", "timeout": 10}]}
     ],
     "PostToolUse": [
-      {"matcher": "WebFetch|WebSearch|Write|Edit|MultiEdit", "hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/post_tool.py\"", "timeout": 20}]}
+      {"matcher": "WebFetch|WebSearch|Write|Edit|MultiEdit|Bash", "hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/post_tool.py\"", "timeout": 20}]}
     ],
     "Stop": [
       {"hooks": [{"type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop.py\"", "timeout": 30}]}

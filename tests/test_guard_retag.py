@@ -178,10 +178,16 @@ class HookGuardTests(unittest.TestCase):
                     "cat projects/demo/state.json",
                     "python3 -m tools.pfs claim add 'Рынок' --kind hypothesis",
                     "grep -rn claims.jsonl tools/ 2>&1",
-                    "python3 -m tools.pfs check --json > /tmp/check.json",
-                    "cat projects/demo/claims.jsonl > /tmp/copy.jsonl"):
+                    "python3 -m tools.pfs check --json > /tmp/check.json"):
             r = run_hook("pre_guard.py", {"tool_name": "Bash", "tool_input": {"command": cmd}})
             self.assertEqual(r.stdout, "", cmd)
+
+    def test_bash_redirect_with_registry_in_segment_denied(self):
+        # перенаправление в сегменте с реестром блокируется консервативно:
+        # cat … > копию ничем не лучше echo … > реестр для наивного парсера
+        out = run_hook("pre_guard.py", {"tool_name": "Bash",
+                                        "tool_input": {"command": "cat projects/demo/claims.jsonl > /tmp/copy.jsonl"}}).stdout
+        self.assertEqual(json.loads(out)["hookSpecificOutput"]["permissionDecision"], "deny")
 
     def test_edit_and_write_registry_denied(self):
         for tool in ("Edit", "Write", "MultiEdit"):
