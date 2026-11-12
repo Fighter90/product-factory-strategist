@@ -156,7 +156,7 @@ def cmd_source(a):
 def cmd_claim(a):
     pdir = _p(a)
     if a.action == "add":
-        c = claims.add(pdir, a.text, a.kind, _split(a.source), _split(a.derived_from), a.confidence, a.note, a.quote, grade=a.grade)
+        c = claims.add(pdir, a.text, a.kind, _split(a.source), _split(a.from_ref), a.confidence, a.note, a.quote, grade=a.grade)
         print(f"{c['id']} [{claims.KIND_RU[c['kind']]}] записано")
     elif a.action == "add-batch":
         res = claims.add_batch(pdir, core.resolve_input(a.text, pdir))
@@ -175,9 +175,13 @@ def cmd_claim(a):
             ch = claims.rebase(pdir, cid)
             if ch:
                 print(f"{cid}: {', '.join(ch)}")
+    elif a.action == "retag":
+        res = claims.retag(pdir, a.from_ref, a.to)
+        print(f"Перенумерация тегов: [{res['from']}] → [{res['to']}] — файлов {res['files']}, вхождений {res['replacements']}")
+        print("Сверка ссылок и реестра: pfs check · влияние: pfs impact " + res["to"])
     elif a.action == "supersede":
         new = claims.supersede(pdir, a.id, a.text, a.kind, _split(a.source) or None, a.confidence, a.reason or "",
-                               _split(a.derived_from) if a.derived_from else None, grade=a.grade)
+                               _split(a.from_ref) if a.from_ref else None, grade=a.grade)
         print(f"{a.id} замещено {new['id']}")
         print(impact.impact_text(impact.impact(pdir, a.id)))
 
@@ -543,11 +547,13 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(f=cmd_source)
 
     s = sp.add_parser("claim", help="утверждения")
-    s.add_argument("action", choices=["add", "add-batch", "list", "retract", "supersede", "rebase"],
+    s.add_argument("action", choices=["add", "add-batch", "list", "retract", "supersede", "rebase", "retag"],
                    help="add-batch — пачка из JSONL-файла (text/kind/source/grade/quote/from); "
-                        "невалидная строка отменяет весь батч")
+                        "невалидная строка отменяет весь батч; retag — перенумерация тегов [C###] "
+                        "во всех outputs одной командой (--from C003 --to C059) с журналом")
     s.add_argument("text", nargs="?"); s.add_argument("--id"); s.add_argument("--kind", choices=claims.KINDS)
-    s.add_argument("--source"); s.add_argument("--from", dest="derived_from"); s.add_argument("--confidence", default="medium")
+    s.add_argument("--source"); s.add_argument("--from", dest="from_ref"); s.add_argument("--to")
+    s.add_argument("--confidence", default="medium")
     s.add_argument("--note"); s.add_argument("--quote"); s.add_argument("--reason"); s.add_argument("--all", action="store_true")
     s.add_argument("--grade", choices=claims.GRADES, help="сила доказательства A–D")
     s.set_defaults(f=cmd_claim)

@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 from . import core, sources as src_mod
@@ -159,6 +160,40 @@ def add_batch(pdir: Path, path: Path) -> dict:
     if recs:
         core.log(pdir, "claim", f"add-batch: создано {len(recs)}, дубликаты пропущены {skipped}")
     return {"created": [r["id"] for r in recs], "skipped": skipped, "total": len(items)}
+
+
+def retag(pdir: Path, from_id: str, to_id: str) -> dict:
+    """Перенумерация тегов утверждений во всех outputs/*.md одной командой (PRO-58).
+
+    Кейс: агент правил теги вручную через sed по всем документам. Здесь замена
+    [C003] → [C059] идёт по всем документам разом, с валидацией ДО записи (не найдён
+    ни один тег — ничего не пишется) и одной записью в журнал. Реестр claims.jsonl
+    не меняется: переносятся только ссылки в документах.
+    """
+    shape = re.compile(r"^C\d{3,}$")
+    for x in (from_id, to_id):
+        if not shape.match(x or ""):
+            raise PfsError(f"retag: ожидаются ID утверждений C###, получено «{x}»")
+    if from_id == to_id:
+        raise PfsError("retag: --from и --to совпадают — заменять нечего")
+    get(pdir, to_id)  # цель должна быть в реестре: иначе в документах останутся висячие теги
+    docs = sorted((pdir / "outputs").glob("*.md"))
+    tag = re.compile(r"\[" + re.escape(from_id) + r"\]")
+    planned = []
+    replacements = 0
+    for doc in docs:
+        text = doc.read_text(encoding="utf-8")
+        n = len(tag.findall(text))
+        if n:
+            planned.append((doc, tag.sub(f"[{to_id}]", text)))
+            replacements += n
+    if not planned:
+        raise PfsError(f"retag: тег [{from_id}] не найден ни в одном документе outputs/ — править нечего")
+    for doc, text in planned:  # запись только после успешной валидации всех документов
+        core.atomic_write(doc, text)
+    names = [doc.name for doc, _ in planned]
+    core.log(pdir, "claim", f"retag: [{from_id}] → [{to_id}] — файлов {len(planned)}, вхождений {replacements} ({', '.join(names)})")
+    return {"from": from_id, "to": to_id, "files": len(planned), "replacements": replacements, "docs": names}
 
 
 def _update(pdir: Path, cid: str, **fields) -> dict:
