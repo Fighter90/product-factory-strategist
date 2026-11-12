@@ -55,8 +55,14 @@ class AttemptsCounter(unittest.TestCase):
         review = seg_between("failIssue(issue, 'review'", "continue;")
         self.assertIn("bumpAttempts(issue.identifier)", review,
                       "ветка провала ревью не пишет счётчик попыток")
-        self.assertEqual(ORCH.count("bumpAttempts(issue.identifier)"), 2,
-                         "bumpAttempts должен вызываться ровно в двух ветках провала")
+        # PRO-68: pipeline-краш — тоже провал попытки (краш-цикл PRO-63 горел 4+ циклов
+        # подряд, потому что краш счётчик не трогал); на 2-м краше задача паркуется
+        crash = seg_between("failIssue(issue, 'pipeline'", "} finally {")
+        self.assertIn("bumpAttempts(issue.identifier)", crash,
+                      "pipeline-краш не пишет счётчик попыток — краш-цикл бесконечен")
+        self.assertEqual(ORCH.count("bumpAttempts(issue.identifier)"), 3,
+                         "bumpAttempts должен вызываться ровно в трёх ветках провала "
+                         "(gates, review, pipeline-краш — PRO-68)")
 
     def test_failure_at_limit_does_not_requeue(self):
         """На 2-й провал задача не возвращается в Todo — пик-луп следующего запуска
