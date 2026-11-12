@@ -15,6 +15,19 @@
 
 ---
 
+## 0. Язык проекта (RU/EN)
+
+Язык проекта хранится в `projects/<slug>/project.json → lang`: задаётся при создании (`pfs new --lang en "…" "…"`)
+или переключением активного проекта — `pfs lang en` (показать текущий: `pfs lang`). По умолчанию `ru`.
+
+- `lang: ru` — инструкции из этого файла, шаблоны `knowledge/templates/`, RU-заголовки проверок
+  (`config/quality_gate.json → "ru"`), сообщения `pfs status/next/check` — по-русски.
+- `lang: en` — **читай [AGENTS_EN.md](AGENTS_EN.md) вместо этого файла** и веди весь прогон по-английски:
+  шаблоны `knowledge/templates/en/`, все outputs и сообщения CLI — на английском, `pfs check` ждёт
+  EN-заголовки (`config/quality_gate.json → "en"`).
+
+---
+
 ## 1. Неизменные правила
 
 1. **Каждое существенное сведение — с источником.** Сначала `pfs source add`, потом `pfs claim add … --source S###`.
@@ -129,7 +142,8 @@
 ## 6. Шпаргалка команд
 
 ```
-pfs new "<название>" "<запрос дословно>"     pfs status | pfs list | pfs use <slug>
+pfs new "<название>" "<запрос дословно>" [--lang ru|en]   pfs status | pfs list | pfs use <slug>
+pfs lang [ru|en]                              # язык проекта: сообщения, шаблоны и заголовки проверок (PRO-57)
 pfs route ["запрос"] [--override X]          pfs models [pick|escalate|use|sync] <задача>
 pfs step <шаг> in_progress|done --next "…"   pfs ask "вопрос" --options "A,B,C" | pfs answer "…"
 pfs next                                     # «что решать сейчас»: шаг, обязательства, пересмотры, вопросы

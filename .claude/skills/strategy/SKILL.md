@@ -30,3 +30,34 @@ description: Шаг 6. Согласованные продуктовая и ко
 
 Согласованность: аудитория, задача и метрики в двух документах совпадают; каждое обещание коммуникации опирается на
 функцию/свойство из продуктовой стратегии. `pfs check` → `pfs step strategy done`.
+
+## English
+
+# Product and communication strategy
+
+Templates: `knowledge/templates/product_strategy.md`, `knowledge/templates/comms_strategy.md`
+(`knowledge/templates/en/…` for `lang: en`). Maps: `M-strategy-growth`, `M-jtbd`, `M-competitors`,
+`M-success-metrics`, `M-unit-economics`, `M-outcome-roadmap`, `M-usp`, `M-product-communication`,
+`M-audience-research`, `M-marketing-research`.
+
+## 04_product_strategy.md
+1. **Audience and its job** (JTBD: situation → motivation → expected outcome), segment size [C###].
+2. **Alternatives** — how the job is solved today (including "do nothing" and indirect competitors).
+3. **Chosen direction** — the essence of the bet, why this option (link to 03_options), what we do in stage 1/2/3
+   (an outcome roadmap: results, not features).
+4. **Conscious trade-offs** — what we deliberately do NOT do and why (segments, features, channels).
+5. **Economics** — how value links to costs and revenue: revenue drivers, costs, unit economics, ranges;
+   forecasts marked as forecast.
+6. **Metrics** — NSM/target metric, tree, counter-metrics. **Risks** and their mitigation.
+
+## 05_comms_strategy.md (can be handed to the `comms-strategist` subagent)
+1. **Audience and situation** — who makes the decision, at what moment and where.
+2. **Barrier of understanding or choice** — confusion, distrust, price, habit, risk; what it rests on [C###].
+3. **Key message** — one sentence + 2–3 supporting points.
+4. **Proof** — evidence for each point (product facts, data, demonstration).
+5. **Role of channels** — each channel: its job along the journey (learn/understand/try/stay), format, metric.
+6. **Promises backed by the product** — a "Promise | What backs it in the product [C###] | Overselling risk" table.
+   A promise without backing — remove or rewrite it.
+
+Consistency: audience, job and metrics match across the two documents; every communication promise rests on a
+feature/property from the product strategy. `pfs check` → `pfs step strategy done`.

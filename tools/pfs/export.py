@@ -6,7 +6,7 @@ import html as html_mod
 import re
 from pathlib import Path
 
-from . import calc, check, claims as claims_mod, core, cost, decisions, sources as src_mod
+from . import calc, check, claims as claims_mod, core, cost, decisions, i18n, sources as src_mod
 from .xlsx import sheet_names
 
 ORDER = ["00_brief.md", "01_research_plan.md", "02_situation.md", "03_options.md", "04_product_strategy.md",
@@ -108,7 +108,8 @@ def build(pdir: Path) -> Path:
     if decs:
         parts += ["", "# Приложение C. Решения и обязательства", "", decisions.table(decs)]
     qc = check.run(pdir)
-    parts += ["", "# Приложение D. Прозрачность", "", "```", cost.summary_text(pdir), check.report_text(qc), "```"]
+    parts += ["", "# Приложение D. Прозрачность", "", "```", cost.summary_text(pdir),
+              check.report_text(qc, i18n.lang_of(pdir)), "```"]
     att = attachments_table(pdir)
     if att:
         parts += ["", "# Приложение E. Excel-расчёты", "", att]

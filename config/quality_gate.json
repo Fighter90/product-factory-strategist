@@ -1,32 +1,65 @@
 {
-  "_comment": "Автоматические проверки документов (pfs check). Заголовки ищутся без учёта регистра как подстроки строк, начинающихся с #. Меняйте здесь, не в коде.",
-  "documents": {
-    "02_situation.md": {
-      "required_sections": ["Что известно", "Чего мы не знаем", "Вопросы, которые могут изменить решение"],
-      "numbers_need_tags": true
+  "_comment": "Автоматические проверки документов (pfs check). Блок выбирается по языку проекта (project.json → lang, PRO-57): \"ru\" или \"en\". Заголовки ищутся без учёта регистра как подстроки строк, начинающихся с #. Меняйте здесь, не в коде. EN-заголовки согласованы с knowledge/templates/en/.",
+  "ru": {
+    "documents": {
+      "02_situation.md": {
+        "required_sections": ["Что известно", "Чего мы не знаем", "Вопросы, которые могут изменить решение"],
+        "numbers_need_tags": true
+      },
+      "03_options.md": {
+        "min_options": 3,
+        "option_heading_regex": "^##\\s+Вариант\\s+[A-ZА-Я0-9]",
+        "status_quo_keywords": ["оставить как есть", "статус-кво", "ничего не менять"],
+        "exit_keywords": ["закрыть", "свернуть", "выход из направления"],
+        "per_option_sections": ["Возражения"],
+        "numbers_need_tags": true
+      },
+      "04_product_strategy.md": {
+        "required_sections": ["Аудитория", "Альтернативы", "Выбранное направление", "Осознанные отказы", "Экономика"],
+        "numbers_need_tags": true
+      },
+      "05_comms_strategy.md": {
+        "required_sections": ["Аудитория и ситуация", "Барьер", "Ключевое сообщение", "Подтверждение", "Роль каналов", "Соответствие обещаний продукту"],
+        "promise_table_section": "Соответствие обещаний продукту",
+        "numbers_need_tags": true
+      },
+      "06_validation_plan.md": {
+        "required_sections": ["Ожидаемое изменение", "С чем сравниваем", "Срок наблюдения", "Нежелательные последствия", "Критерии решения"],
+        "numbers_need_tags": false
+      }
     },
-    "03_options.md": {
-      "min_options": 3,
-      "option_heading_regex": "^##\\s+Вариант\\s+[A-ZА-Я0-9]",
-      "status_quo_keywords": ["оставить как есть", "статус-кво", "ничего не менять"],
-      "exit_keywords": ["закрыть", "свернуть", "выход из направления"],
-      "per_option_sections": ["Возражения"],
-      "numbers_need_tags": true
-    },
-    "04_product_strategy.md": {
-      "required_sections": ["Аудитория", "Альтернативы", "Выбранное направление", "Осознанные отказы", "Экономика"],
-      "numbers_need_tags": true
-    },
-    "05_comms_strategy.md": {
-      "required_sections": ["Аудитория и ситуация", "Барьер", "Ключевое сообщение", "Подтверждение", "Роль каналов", "Соответствие обещаний продукту"],
-      "promise_table_section": "Соответствие обещаний продукту",
-      "numbers_need_tags": true
-    },
-    "06_validation_plan.md": {
-      "required_sections": ["Ожидаемое изменение", "С чем сравниваем", "Срок наблюдения", "Нежелательные последствия", "Критерии решения"],
-      "numbers_need_tags": false
-    }
+    "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|п\\.п\\.|₽|руб|млн|млрд|тыс|\\$|раз[а]?\\b|пользоват|абонент)",
+    "exempt_line_markers": ["<!-- no-tag -->", "|---", "Цель:", "Срок наблюдения:"]
   },
-  "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|п\\.п\\.|₽|руб|млн|млрд|тыс|\\$|раз[а]?\\b|пользоват|абонент)",
-  "exempt_line_markers": ["<!-- no-tag -->", "|---", "Цель:", "Срок наблюдения:"]
+  "en": {
+    "documents": {
+      "02_situation.md": {
+        "required_sections": ["What we know", "What we don't know", "Questions that could change the decision"],
+        "numbers_need_tags": true
+      },
+      "03_options.md": {
+        "min_options": 3,
+        "option_heading_regex": "^##\\s+Option\\s+[A-Z0-9]",
+        "status_quo_keywords": ["keep as is", "status quo", "do nothing"],
+        "exit_keywords": ["shut down", "wind down", "exit the direction", "close the direction"],
+        "per_option_sections": ["Objections"],
+        "numbers_need_tags": true
+      },
+      "04_product_strategy.md": {
+        "required_sections": ["Audience", "Alternatives", "Chosen direction", "Conscious trade-offs", "Economics"],
+        "numbers_need_tags": true
+      },
+      "05_comms_strategy.md": {
+        "required_sections": ["Audience and situation", "Barrier", "Key message", "Proof", "Role of channels", "Promises backed by the product"],
+        "promise_table_section": "Promises backed by the product",
+        "numbers_need_tags": true
+      },
+      "06_validation_plan.md": {
+        "required_sections": ["Expected change", "Comparison baseline", "Observation window", "Counter-metrics", "Decision criteria"],
+        "numbers_need_tags": false
+      }
+    },
+    "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|pp\\b|₽|RUB|mln|bn|k\\b|\\$|times|users|subscribers|customers|weeks|months|days)",
+    "exempt_line_markers": ["<!-- no-tag -->", "|---", "Goal:", "Observation window:"]
+  }
 }
