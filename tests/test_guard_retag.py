@@ -190,6 +190,27 @@ class HookGuardTests(unittest.TestCase):
                                         "tool_input": {"command": "cat projects/demo/claims.jsonl > /tmp/copy.jsonl"}}).stdout
         self.assertEqual(json.loads(out)["hookSpecificOutput"]["permissionDecision"], "deny")
 
+    def test_bash_bypasses_via_pfs_prefix_and_separators_denied(self):
+        """Обходы из ревью PRO-58 (раунд 2): писатель в реестр прячется за «легитимной»
+        pfs-командой — через `;`, `&&` или перенаправлением в самой pfs-команде.
+        Вайтлиста «команда начинается с pfs» нет: сегменты делятся по `|`, `;`, `&&`,
+        и любой сегмент «реестр + признак записи» блокируется."""
+        for cmd in ("python3 -m tools.pfs status; rm projects/demo/claims.jsonl",
+                    "python3 -m tools.pfs claim list > projects/demo/claims.jsonl",
+                    "python3 -m tools.pfs status && mv projects/demo/sources.jsonl /tmp/s.jsonl",
+                    "python3 -m tools.pfs status; python3 -c \"open('projects/demo/state.json','w')\""):
+            out = run_hook("pre_guard.py", {"tool_name": "Bash", "tool_input": {"command": cmd}}).stdout
+            decision = json.loads(out)["hookSpecificOutput"]
+            self.assertEqual(decision["permissionDecision"], "deny", cmd)
+            self.assertIn("pfs", decision["permissionDecisionReason"])
+
+    def test_pfs_mentioning_registry_without_writers_allowed(self):
+        """Легитимная pfs-команда называет файл реестра и не содержит писателей —
+        её пропускает отсутствие признака записи, а не вайтлист по префиксу."""
+        r = run_hook("pre_guard.py", {"tool_name": "Bash",
+                                      "tool_input": {"command": "python3 -m tools.pfs claim add-batch claims.jsonl"}})
+        self.assertEqual(r.stdout, "")
+
     def test_edit_and_write_registry_denied(self):
         for tool in ("Edit", "Write", "MultiEdit"):
             out = run_hook("pre_guard.py", {"tool_name": tool,

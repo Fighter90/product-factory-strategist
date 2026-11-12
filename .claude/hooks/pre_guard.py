@@ -24,9 +24,11 @@ REGISTRIES = {
     "state.json": "Состояние шагов правится только через pfs: python3 -m tools.pfs step <шаг> in_progress|done --next \"…\"",
 }
 
-# Признаки записи в файл внутри сегмента команды. Сегмент пайплайна, где упомянут
-# реестр и есть такой признак, блокируется; pfs-команды пропускаются всегда
-# (pfs claim add-batch claims.jsonl легитимно называет файл реестра).
+# Признаки записи в файл внутри сегмента команды. Любой сегмент, где упомянут
+# реестр и есть такой признак, блокируется — независимо от того, чем начинается
+# сегмент: вайтлиста «pfs-команды пропускаются» нет (перенаправление в самой
+# pfs-команде — тоже запись). Легитимный `pfs claim add-batch claims.jsonl`
+# проходит, потому что писателей в нём нет, а не потому что он начинается с pfs.
 WRITERS = (r"\bsed\b.*(?:\s-i\b|--in-place)", r"\bperl\s+-(?:i|pe)\b", r"\bpython3?\s+-c\b",
            r"(?<![\d&])>(?!&)", r"\btee\b", r"\brm\b", r"\bmv\b", r"\bcp\b",
            r"\btruncate\b", r"\bdd\b", r"\bgit\s+(?:checkout|restore)\b")
@@ -34,6 +36,12 @@ WRITERS = (r"\bsed\b.*(?:\s-i\b|--in-place)", r"\bperl\s+-(?:i|pe)\b", r"\bpytho
 # Пути в домашней папке пользователя: `~/…`, `$HOME/…` и развёрнутый абсолютный путь.
 # Кавычки, пробелы, `;`, `|` и символы перенаправления границу пути не включают.
 HOME_PATH = (r"(?:~/|\$HOME/)[^\s'\";|<>]+",)
+
+# Границы сегментов составной команды: конвейер `|`, списки `;` и `&&` (и
+# одиночный `&`). Кавычки уважаем: `;` внутри строки аргумента — не разделитель,
+# иначе `python3 -c "…; open('claims.jsonl','w')"` распадается на части, где
+# писатель и реестр оказываются в разных сегментах.
+SEPARATORS = "|;&"
 
 
 def _home() -> Path:
@@ -90,15 +98,30 @@ def _registry_hit(text: str) -> str | None:
     return None
 
 
+def _segments(command: str):
+    """Части составной команды по `|`, `;`, `&` (в т.ч. `&&`) вне кавычек."""
+    buf, quote = [], None
+    for ch in command:
+        if quote:
+            buf.append(ch)
+            if ch == quote:
+                quote = None
+        elif ch in "'\"":
+            quote = ch
+            buf.append(ch)
+        elif ch in SEPARATORS:
+            yield "".join(buf)
+            buf = []
+        else:
+            buf.append(ch)
+    yield "".join(buf)
+
+
 def bash_guard(command: str) -> str | None:
     """Имя реестра, если команда записывает в него; иначе None."""
-    for seg in command.split("|"):
+    for seg in _segments(command):
         hit = _registry_hit(seg)
-        if not hit:
-            continue
-        if seg.strip().startswith("python3 -m tools.pfs"):
-            continue  # сам pfs пишет в реестры легитимно
-        if any(re.search(pat, seg) for pat in WRITERS):
+        if hit and any(re.search(pat, seg) for pat in WRITERS):
             return hit
     return None
 
