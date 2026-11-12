@@ -45,6 +45,13 @@ The tooling is the CLI `python3 -m tools.pfs …` (referred to below as `pfs …
 8. **Economy.** The model per task is selected via `config/models.json` (`pfs models`). For long sources, run a cheap
    extraction first (`extract`), then synthesize over the extracts. Don't read the knowledge base whole: use
    `pfs kb search`.
+9. **Registries via pfs only; reading stays inside the repository.** Direct writes to
+   `projects/*/{claims,sources,decisions}.jsonl` and `state.json` (sed -i, redirect, Edit) are forbidden: the
+   permission in `opencode.json` and the `pre_guard.py` PreToolUse hook block them with a hint pointing to the
+   right command. Renumbering claim tags across documents is one command — `pfs claim retag --from C003 --to C059` —
+   not sed over every file. Excerpts live in `projects/<slug>/sources/raw/`: `pfs source add --text-file` copies
+   the file there itself, marking files that came from outside the project. Do not open other people's folders
+   (`~/Projects/…`): only public sources and materials the user handed over explicitly (extends rule 5).
 
 ---
 
@@ -140,6 +147,7 @@ pfs source refresh S###                      # reload a web source; if sha256 ch
 pfs claim add "text" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "inference" --kind inference --from C001,C004
 pfs claim supersede --id C003 "new text" --reason "…" [--from C…] | retract --id C003 --reason "…"
+pfs claim retag --from C003 --to C059        # renumber [C###] tags across all outputs in one command
 pfs claim rebase [--id C010]                 # point conclusions from superseded grounds at the replacements
 pfs impact C003 | S002                       pfs check [--strict]
 pfs review lock                              # after the evidence-auditor review; registry edits after lock → "review verdict stale" — re-run review and lock

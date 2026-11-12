@@ -8,7 +8,7 @@ distinct options, and aligned product and communication strategies. After the de
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
 This is a repository folder: instructions, knowledge sets organized by category (strategy · economics · product ·
-UX · data · platforms · Gen AI), 100 skills, 8 subagents, 4 hooks, and a dependency-free Python CLI/MCP toolset.
+UX · data · platforms · Gen AI), 100 skills, 8 subagents, 6 hooks, and a dependency-free Python CLI/MCP toolset.
 Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
@@ -34,7 +34,7 @@ Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INST
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 499 tests
+python3 -m unittest discover -s tests          # 519 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -126,7 +126,7 @@ flowchart TB
   subgraph ENV["LLM environment (Claude Code / Cursor / OpenCode / Codex…)"]
     AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 100<br/>(base + product-skills 27 + integrations: sdd · deck · premortem)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
-    AG --> HK["hooks: 5<br/>SessionStart · PreWeb-domains · PostTool-log · Stop-cost (+ shared module)"]
+    AG --> HK["hooks: 6<br/>SessionStart · PreWeb-domains · PreGuard-registries · PostTool-log · Stop-cost (+ shared module)"]
   end
   ENV -->|"CLI: pfs … · MCP: pfs-strategist"| TOOLS
   subgraph TOOLS["tools/pfs — deterministic guarantees (stdlib only)"]
@@ -263,7 +263,7 @@ Higgsfield visuals, Lovable web version).
 | `pfs ask / answer / question` | human checkpoints |
 | `pfs source add/list/show [--text-file --url --origin --force]` | sources S### |
 | `pfs source refresh S###` | refresh a web source: sha256 delta, backup, impact |
-| `pfs claim add/list/supersede/retract/rebase [--kind --source --from --grade]` | claims C### |
+| `pfs claim add/list/supersede/retract/rebase/retag [--kind --source --from --grade]` | claims C###; `retag --from C003 --to C059` renumbers claim tags across all outputs in one command |
 | `pfs check [--strict --json] · pfs impact C###` | quality and change impact |
 | `pfs review lock` | lock the review verdict; registry edits after the lock → "verdict stale" in check/status/export |
 | `pfs decision add/list/due/done/status/rebase` | decisions and monitoring |
@@ -304,7 +304,7 @@ consent and no personal data · the validator refuses a fact based on synthetic/
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
   skills/ (100: base 13 · product-skills 27 · personal library · integrations)
-  agents/ (8) · hooks/ (5) · settings.json
+  agents/ (8) · hooks/ (6: + pre_guard) · settings.json · opencode.json (permissions)
 .cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
 knowledge/  methods/ (89 RU cards) · methods_en/ (89 EN mirrors (full bilingual base)) · INDEX.md · INDEX_EN.md
@@ -315,5 +315,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/ (499) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/ (519) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```

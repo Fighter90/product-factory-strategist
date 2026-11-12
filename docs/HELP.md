@@ -149,9 +149,17 @@ pfs claim list [--kind fact] [--all]
 pfs claim retract --id C005 --reason "ошибка в методике"
 pfs claim supersede --id C005 "Рынок 45 млрд" --reason "новый отчёт" [--source S009]
 pfs claim rebase [--id C012]            # перенаправить выводы на замены оснований
+pfs claim retag --from C003 --to C059   # перенумерация тегов [C###] во всех outputs одной командой,
+                                        # с валидацией до записи и записью в журнал
 ```
 Типы: `fact` (есть источник; синтетика фактами не считается), `hypothesis`, `forecast`,
 `assumption`, `inference` (только из других C###). Сила доказательства — `--grade A…D`.
+
+> Реестры `projects/*/{claims,sources,decisions}.jsonl` и `state.json` правятся только через pfs:
+> прямая запись (sed -i, redirect, Edit) блокируется permission opencode.json и PreToolUse-хуком
+> pre_guard.py с подсказкой нужной команды. Чтение — только внутри репозитория; материалы
+> пользователя — только те, что он явно передал. Выписки — в `projects/<slug>/sources/raw/`;
+> `pfs source add --text-file` копирует файл туда сам, а файл вне проекта — с пометкой в реестре.
 
 ### Проверки и влияние
 ```bash

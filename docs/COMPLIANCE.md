@@ -7,11 +7,11 @@
 
 | Счётчик | Значение | Проверка |
 |---|---|---|
-| Тесты | 499 (`OK`) | `python3 -m unittest discover -s tests` |
+| Тесты | 519 (`OK`) | `python3 -m unittest discover -s tests` |
 | Карты знаний | 89 RU (`knowledge/methods/`) + 89 EN-зеркал — полная двуязычная база (`knowledge/methods_en/`) + `knowledge/INDEX_EN.md` | `ls knowledge/methods \| wc -l` → 89; `ls knowledge/methods_en \| wc -l` → 89 |
 | Навыки | 100 | `ls .claude/skills \| wc -l` → 100 |
 | Субагенты | 8 | `ls .claude/agents \| wc -l` → 8 |
-| Хуки | 5 (`session_start`, `pre_web`, `post_tool`, `stop`, `_common`) | `ls .claude/hooks \| wc -l` → 5 |
+| Хуки | 6 (`session_start`, `pre_web`, `pre_guard`, `post_tool`, `stop`, `_common`) | `ls .claude/hooks \| wc -l` → 6 |
 | MCP-инструменты | 18 | `tools/pfs/mcp_server.py` |
 | Внешние зависимости | 0 (Python stdlib) | `pyproject.toml`, `pip` не нужен |
 
@@ -88,7 +88,7 @@ PDF/DOCX, cover letters, трекер, карта вакансий; 100% лок�
 ## 4. Как проверить
 
 ```bash
-# 1. Тесты инструментов (499, без установки пакетов)
+# 1. Тесты инструментов (519, без установки пакетов)
 python3 -m unittest discover -s tests
 
 # 2. Quality gate демо-проекта (100/100)
@@ -100,7 +100,7 @@ python3 -m tools.pfs --project демо status
 # 4. Счётчики репозитория
 ls .claude/skills | wc -l          # 100
 ls .claude/agents | wc -l          # 8
-ls .claude/hooks | wc -l           # 5
+ls .claude/hooks | wc -l           # 6
 ls knowledge/methods | wc -l       # 89
 ls knowledge/methods_en | wc -l    # 89
 

@@ -40,6 +40,13 @@
    утверждения не дублируются (инструмент возвращает существующий ID).
 8. **Экономичность.** Модель под задачу выбирается по `config/models.json` (`pfs models`). Длинные источники —
    сначала дешёвая выписка (`extract`), потом синтез по выпискам. Не читай базу знаний целиком: `pfs kb search`.
+9. **Реестры — только через pfs, чтение — только внутри репозитория.** Прямая запись в
+   `projects/*/{claims,sources,decisions}.jsonl` и `state.json` (sed -i, redirect, Edit) запрещена: permission
+   в `opencode.json` и PreToolUse-хук `pre_guard.py` блокируют её с подсказкой нужной команды. Перенумерация
+   тегов в документах — одной командой `pfs claim retag --from C003 --to C059`, а не sed по всем файлам.
+   Выписки — в `projects/<slug>/sources/raw/`: `pfs source add --text-file` скопирует файл туда сам, а файл
+   вне проекта — с пометкой в реестре. Чужие каталоги (`~/Projects/…`) не открывать: только открытые
+   источники и материалы, которые пользователь передал явно (дополняет правило 5).
 
 ---
 
@@ -133,6 +140,7 @@ pfs source refresh S###                      # перезагрузить web-и
 pfs claim add "текст" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "вывод" --kind inference --from C001,C004
 pfs claim supersede --id C003 "новый текст" --reason "…" [--from C…] | retract --id C003 --reason "…"
+pfs claim retag --from C003 --to C059        # перенумерация тегов [C###] во всех outputs одной командой
 pfs claim rebase [--id C010]                 # перенаправить выводы с замещённых оснований на замены
 pfs impact C003 | S002                       pfs check [--strict]
 pfs review lock                              # после ревизии evidence-auditor; правки реестра после lock → «вердикт review устарел» — повторите review и lock
