@@ -4,6 +4,8 @@ Bash/Edit/Write с записью в projects/*/{claims,sources,decisions}.jsonl
 блокируется (deny) с подсказкой нужной команды pfs. Чтение вне репозитория (Read) требует
 подтверждения человека (ask): только открытые источники и явно переданные материалы.
 """
+from __future__ import annotations
+
 import re
 from pathlib import Path
 

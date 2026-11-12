@@ -12,6 +12,7 @@ pre_guard.py (deny записи в claims/sources/decisions.jsonl и state.json 
 """
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -215,6 +216,32 @@ class HookGuardTests(unittest.TestCase):
         for p in ("tools/pfs/cli.py", str(REPO / "AGENTS.md")):
             r = run_hook("pre_guard.py", {"tool_name": "Read", "tool_input": {"file_path": p}})
             self.assertEqual(r.stdout, "", p)
+
+    def test_hooks_py39_compatible(self):
+        """Хуки запускаются интерпретатором среды (бывает 3.9): PEP 604-аннотации
+        (`str | None`) вычисляются при определении функции и падают с TypeError
+        до guard() — пустой stdout ломает парсинг решения. Файл с такими
+        аннотациями обязан иметь `from __future__ import annotations` (паттерн
+        tools/pfs). Кроме того: пустых решений не бывает — хук либо молчит,
+        либо отвечает валидным JSON."""
+        hook_dir = REPO / ".claude" / "hooks"
+        for hook in sorted(hook_dir.glob("*.py")):
+            src = hook.read_text(encoding="utf-8")
+            if re.search(r"(?::|->)\s*\w+(?:\[[^\]]*\])?\s*\|\s*None", src):
+                self.assertIn("from __future__ import annotations", src,
+                              f"{hook.name}: PEP 604 аннотации без future-import падают на Python 3.9")
+
+    def test_hook_never_empty_stdout_on_decision(self):
+        """Хук с решением отвечает валидным JSON, а не пустой строкой
+        (регрессия: TypeError на Python 3.9 до guard() → пустой stdout)."""
+        cases = [("Bash", {"command": "sed -i x projects/demo/claims.jsonl"}),
+                 ("Edit", {"file_path": "projects/demo/state.json"}),
+                 ("Read", {"file_path": "~/Projects/other/README.md"})]
+        for tool, inp in cases:
+            r = run_hook("pre_guard.py", {"tool_name": tool, "tool_input": inp})
+            self.assertEqual(r.stderr, "", tool)  # TypeError до guard() виден в stderr
+            decision = json.loads(r.stdout)  # пустой stdout → JSONDecodeError
+            self.assertIn("permissionDecision", decision["hookSpecificOutput"])
 
 
 class JournalTests(unittest.TestCase):
