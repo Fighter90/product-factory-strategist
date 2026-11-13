@@ -10,7 +10,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from . import (calc, check, claims, core, cost, data, decisions, docx, export, finish, gaps, i18n, impact,
+from . import (ab, calc, check, claims, core, cost, data, decisions, docx, export, finish, gaps, i18n, impact,
                kb, models, participate, project, review, route, sources)
 from .core import PfsError
 
@@ -400,6 +400,22 @@ def cmd_ux(a):
     print(f"Каркас разбора: {path} (выводы — только по материалу {a.source_id})")
 
 
+def cmd_ab(a):
+    """Дизайн A/B-теста (PRO-71): документ по M-ab-test-design-template + чек-лист
+    M-ab-test-checklist + контекст AI-ревьюера M-ai-experiment-review-context."""
+    pdir = _p(a)
+    lang = i18n.lang_of(pdir)
+    res = ab.design(pdir, hypothesis=a.hypothesis, metric=a.metric, proxy=a.proxy, guardrail=a.guardrail,
+                    baseline=a.baseline, mde=a.mde, alpha=a.alpha, power=a.power,
+                    traffic=a.traffic, share=a.share, rules=a.rules, split_system=a.split_system)
+    for key, label in (("design", "Дизайн A/B-теста (M-ab-test-design-template)"),
+                       ("checklist", "Чек-лист запуска (M-ab-test-checklist)"),
+                       ("ai_review", "Контекст AI-ревьюера (M-ai-experiment-review-context)")):
+        print(f"{label}: {res[key]}")
+    if not ab.claim_hypotheses(pdir):
+        print(i18n.t(lang, "ab_no_hypothesis"))
+
+
 def cmd_route(a):
     pdir = core.project_dir(a.project) if core.active_slug() or a.project else None
     req = a.request or (core.read_json(pdir / "project.json", {}).get("question") if pdir else "")
@@ -695,6 +711,21 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("source_id", help="S### — источник с материалом разбора")
     s.add_argument("--focus", help="фокус разбора, напр. «онбординг»")
     s.set_defaults(f=cmd_ux)
+
+    s = sp.add_parser("ab", help="дизайн A/B-теста: документ по шаблону + чек-лист запуска + контекст AI-ревьюера")
+    s.add_argument("--hypothesis", help="C### — гипотеза из реестра (по умолчанию первая активная гипотеза/прогноз или «Гипотеза 1» из 06)")
+    s.add_argument("--metric", help="целевая метрика (для доли и ratio — числитель/знаменатель)")
+    s.add_argument("--proxy", help="прокси-метрика — помогает заметить эффект раньше")
+    s.add_argument("--guardrail", help="защитная метрика и порог недопустимого вреда")
+    s.add_argument("--baseline", type=float, help="базовое значение целевой метрики, доля 0<p<1, напр. 0.018")
+    s.add_argument("--mde", type=float, help="минимальный обнаружимый эффект в абсолютных долях, напр. 0.01")
+    s.add_argument("--alpha", type=float, default=0.05, help="уровень значимости (по умолчанию 0.05)")
+    s.add_argument("--power", type=float, default=0.8, help="мощность (по умолчанию 0.8)")
+    s.add_argument("--traffic", type=float, help="суточный трафик подходящей аудитории (для расчёта длительности)")
+    s.add_argument("--share", type=float, default=0.5, help="доля трафика на тестовую группу (по умолчанию 0.5)")
+    s.add_argument("--rules", help="правила решения: порог успеха; отказ; неясный результат")
+    s.add_argument("--split-system", help="система сплитования и идентификатор, напр. «Experimentus, ID=user_id»")
+    s.set_defaults(f=cmd_ab)
 
     s = sp.add_parser("route", help="выбор сценария и моделей"); s.add_argument("request", nargs="?")
     s.add_argument("--override"); s.add_argument("--economy", action="store_true"); s.add_argument("--json", action="store_true")

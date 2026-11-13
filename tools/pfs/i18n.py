@@ -146,6 +146,9 @@ STR: dict[str, dict[str, str]] = {
         "guide_meta": "- Персона: {persona}\n- Тема: {topic}\n- Дата: {date}",
         "guide_note": "> Каркас вопросов — заполните агентом до сессии. Ответы ИИ-респондентов\n"
                       "> (interviews/synthetic) дают только гипотезы и не доказывают спрос.",
+        "ab_no_hypothesis": "⚠ В реестре нет активных гипотез и в 06 нет «Гипотеза N» — секция «Гипотеза» "
+                            "оставлена заглушкой: сформулируйте (pfs claim add … --kind hypothesis) и перезапустите "
+                            "на новом проекте или допишите документ вручную.",
     },
     "en": {
         "check_header": "Quality check: {score}/100 | errors {errors}, warnings {warnings}",
@@ -274,6 +277,9 @@ STR: dict[str, dict[str, str]] = {
         "guide_note": "> Question skeleton — have the agent fill it in before the session. "
                       "AI-respondent answers (interviews/synthetic) yield hypotheses only and "
                       "do not prove demand.",
+        "ab_no_hypothesis": "⚠ No active hypotheses in the registry and no Hypothesis N in 06 — the "
+                            "Hypothesis section is a placeholder: state it (pfs claim add … --kind hypothesis) "
+                            "and rerun on a fresh project, or edit the document by hand.",
     },
 }
 
