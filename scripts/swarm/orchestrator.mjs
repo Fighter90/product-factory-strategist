@@ -33,7 +33,7 @@ const MAX_ROUNDS = num('--rounds', 3);
 // краш-безопасность (PRO-68): задача In Progress с меткой swarm, чей клейм старше
 // STUCK_MIN минут (или без клейм-метки — краш до записи), считается зависшей и
 // реqueue'ится в Todo; свежий клейм не трогаем — защита от перехвата чужой свежей работы
-const STUCK_MIN = num('--stuck-min', 30);
+const STUCK_MIN = num('--stuck-min', 90);
 const DRY = flag('--dry-run');
 const NO_RELEASE = flag('--no-release');
 const PIN = process.env.SWARM_PIN_ISSUE || '';
