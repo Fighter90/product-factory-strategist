@@ -137,7 +137,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>grounds · commitments"] --> MON["decision due<br/>what to decide now"]
   end
-  KB["knowledge/ — 89 cards across categories (RU) + 89 EN mirrors (full bilingual base) (methods_en/) + INDEX_EN.md<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
+  KB["knowledge/ — 94 cards across categories (RU) + 94 EN mirrors (full bilingual base) (methods_en/) + INDEX_EN.md<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → primary sources → S###"| S
   EX --> ATT["outputs/attachments/*.xlsx<br/>recalculated on open"]
@@ -218,7 +218,7 @@ flowchart LR
   IMP --> REV["revision: supersede · rebase"]
 ```
 
-### 2. Knowledge base (89 cards across categories (RU) + 89 EN mirrors (full bilingual base) + EN index)
+### 2. Knowledge base (94 cards across categories (RU) + 94 EN mirrors (full bilingual base) + EN index)
 Knowledge sets by category: growth strategy · unit economics & monetization · product management · UX & customer
 metrics · data analysis & A/B · platform solutions · Gen AI in products. Framework layer: Double Diamond, Lean
 Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Kano. Techniques only — no brands. Search: `pfs kb search` (BM25,

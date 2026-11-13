@@ -201,7 +201,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>основания · обязательства"] --> MON["decision due<br/>что решать сейчас"]
   end
-  KB["knowledge/ — 89 карт по категориям (RU) + 89 EN-зеркал — полная двуязычная база (methods_en/) + INDEX_EN.md<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
+  KB["knowledge/ — 94 карты по категориям (RU) + 94 EN-зеркала — полная двуязычная база (methods_en/) + INDEX_EN.md<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → первоисточники → S###"| S
   SUB -->|"отчёты"| ENV
@@ -278,7 +278,7 @@ flowchart LR
   IMP --> REV["пересмотр: supersede · rebase"]
 ```
 
-### 2. База знаний (89 карт по категориям (RU) + 89 EN-зеркал — полная двуязычная база и EN-индекс)
+### 2. База знаний (94 карты по категориям (RU) + 94 EN-зеркала — полная двуязычная база и EN-индекс)
 Наборы знаний по категориям: стратегия и рост · юнит-экономика и монетизация · продуктовый менеджмент ·
 UX и клиентские метрики · анализ данных и A/B · платформенные решения · Gen AI в продукте. Поверх —
 фреймворки: Double Diamond, Lean Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Кано. Только методики —
