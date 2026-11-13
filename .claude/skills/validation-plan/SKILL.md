@@ -6,7 +6,7 @@ description: Шаг 7. План проверки стратегии — ожид
 # План проверки (06_validation_plan.md)
 
 Шаблон: `knowledge/templates/validation_plan.md`. Карты: `M-mvp-pilots`, `M-product-metrics`, `M-quant-methods`,
-`M-success-metrics`, `M-pmf-scaling`.
+`M-success-metrics`, `M-pmf-scaling`, `M-ab-test-design-template`, `M-ab-test-checklist`, `M-ai-experiment-review-context`.
 
 Для каждой ключевой гипотезы стратегии (3–5 штук, самые рискованные — первыми):
 1. **Ожидаемое изменение** — метрика, направление, величина (диапазон), единица, период; почему ожидаем [C###].
@@ -25,7 +25,7 @@ description: Шаг 7. План проверки стратегии — ожид
 # Validation plan (06_validation_plan.md)
 
 Template: `knowledge/templates/validation_plan.md` (`knowledge/templates/en/validation_plan.md` for `lang: en`).
-Maps: `M-mvp-pilots`, `M-product-metrics`, `M-quant-methods`, `M-success-metrics`, `M-pmf-scaling`.
+Maps: `M-mvp-pilots`, `M-product-metrics`, `M-quant-methods`, `M-success-metrics`, `M-pmf-scaling`, `M-ab-test-design-template`, `M-ab-test-checklist`, `M-ai-experiment-review-context`.
 
 For each key strategy hypothesis (3–5 items, the riskiest first):
 1. **Expected change** — metric, direction, magnitude (range), unit, period; why we expect it [C###].
