@@ -58,5 +58,9 @@ python3 scripts/swarm/prep_linear.py   # метка swarm на PRO-26…PRO-40 +
   разработки → ветка пересоздаётся на свежем main, конфликт релизного squash → union-
   разрешение *.md в живом ребейзе (невалидный `-X union` при `--squash` убран, PRO-68)
 - reflog-спасение потерянных коммитов исполнителя (уроки run-5/run-6 career-ops)
+- guard живого воркера (PRO-73): каждый воркер пишет pid в `.task-board/worker.pid`;
+  тик при живом `opencode run` этого репо (pid жив + команда + cwd) завершается
+  до лока, pick и detach — свежезапущенный воркер (opencode грузится 10–30 с)
+  больше не срывается `git checkout --detach origin/main`
 - фейл на любом шаге → комментарий в задаче; Life-cycle Linear принадлежит оркестратору
 - логи: `.task-board/log/cycle-*.log`
