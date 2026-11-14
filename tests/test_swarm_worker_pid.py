@@ -70,6 +70,19 @@ class WorkerPidContract(unittest.TestCase):
         self.assertLess(guard_pos, lock_pos, "guard после лока — тик успевает захватить очередь")
         self.assertLess(guard_pos, pick_pos, "guard после pick — тик заходит в pick при живом воркере")
 
+    def test_cwd_parse_is_space_safe(self):
+        """Ревью раунд 3: `awk '$4=="cwd"{print $NF}'` берёт ПОСЛЕДНЕЕ поле строки —
+        путь репо с пробелами («…/Мои проекты/…») обрезается, `dir === ROOT`
+        никогда не выполняется, guard молча перестаёт работать. Разбор cwd —
+        из F-вывода lsof (`-Fn -d cwd`) через substr (префиксы `ncwd`/`n`),
+        без `$NF`; консервативный fallback `!dir` сохранён."""
+        guard = seg_between("async function tickWorkerAlive", "async function main()")
+        self.assertNotIn("$NF", guard, "разбор cwd через $NF обрезает пути с пробелами")
+        self.assertIn("-Fn", guard, "cwd нужно брать из F-вывода lsof (-Fn), а не из табличного")
+        self.assertIn("-d cwd", guard, "lsof должен выбирать только cwd (-d cwd)")
+        self.assertIn("substr(", guard, "путь из F-вывода извлекается substr — пробелы сохраняются")
+        self.assertIn("!dir", guard, "консервативный fallback (пустой cwd = наш воркер) должен остаться")
+
     def test_skip_exits_cleanly_with_code_zero(self):
         """Пропуск тика — не исключение: exit 1 гонит launchd в немедленный рестарт-цикл."""
         seg = seg_between("await tickWorkerAlive()", "const lock = resolve(STATE, 'lock')")

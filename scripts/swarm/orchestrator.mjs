@@ -197,6 +197,10 @@ const extractVerdict = (all) => {
 // `git checkout --detach origin/main`. Guard отличает воркера от переиспользованного
 // pid (команда должна быть opencode, cwd — корень этого репо); недоступный cwd трактуем
 // консервативно (пропуск лишнего тика безвреден, сорванная ветка — нет).
+// Ревью раунд 3: cwd разбирается из F-вывода lsof (`-Fn -d cwd`) по префиксу строки —
+// `ncwd…`/`n…` (разные сборки lsof), `substr` сохраняет пробелы в пути; прежний
+// `awk '$4=="cwd"{print $NF}'` брал последнее поле строки и молча обрезал пути
+// с пробелами («…/Мои проекты/…») — guard переставал работать.
 // Возвращает pid живого воркера или 0.
 async function tickWorkerAlive() {
   let pid = 0;
@@ -208,7 +212,7 @@ async function tickWorkerAlive() {
   }
   const ps = await run('ps', ['-p', String(pid), '-o', 'command=', '-ww'], { timeoutMs: 10_000 });
   if (!/opencode/.test(ps.out)) return 0; // pid переиспользован посторонним процессом
-  const cwd = await run('bash', ['-c', `lsof -p ${pid} 2>/dev/null | awk '$4=="cwd"{print $NF; exit}'`], { timeoutMs: 10_000 });
+  const cwd = await run('bash', ['-c', `lsof -a -p ${pid} -d cwd -Fn 2>/dev/null | awk 'match($0,/^ncwd/){print substr($0,5); exit} match($0,/^n/){print substr($0,2); exit}'`], { timeoutMs: 10_000 });
   const dir = cwd.out.trim();
   return (dir === ROOT || !dir) ? pid : 0; // cwd другого репо — не наш воркер, не блокируем
 }
