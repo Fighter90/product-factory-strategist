@@ -151,8 +151,10 @@ def build_rules(c):
     add(r"(tests/\s+)\((\d+)\)", lambda m: f"{m.group(1)}({T})")
     add(r"(\| Тесты \| )(\d+)", lambda m: f"{m.group(1)}{T}")
     add(r"(Тесты инструментов \()(\d+)", lambda m: f"{m.group(1)}{T}")
-    add(r"(\| unittest \| )(\d+)( тестов инструментов)", lambda m: f"{m.group(1)}{T}{m.group(3)}")
-    add(r"(discover -s tests\s+# )(\d+)( тестов)", lambda m: f"{m.group(1)}{T}{m.group(3)}")
+    add(r"(\| unittest \| )(\d+)( тест(?:а|ов)? инструментов)",
+        lambda m: f"{m.group(1)}{T} {ru_plural(T, 'тест', 'теста', 'тестов')} инструментов")
+    add(r"(discover -s tests\s+# )(\d+)( тест(?:а|ов)?)",
+        lambda m: f"{m.group(1)}{T} {ru_plural(T, 'тест', 'теста', 'тестов')}")
     add(r"(discover -s tests\s+# )(\d+)( tests)", lambda m: f"{m.group(1)}{T}{m.group(3)}")
     return rules
 

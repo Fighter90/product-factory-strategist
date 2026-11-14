@@ -469,6 +469,43 @@ class TestCountersTests(unittest.TestCase):
             self.assertEqual(ok_findings, [],
                              f"актуальный счётчик помечен как устаревший: {sample!r}")
 
+    def test_test_counter_uses_correct_ru_plural(self):
+        """Ревью PRO-73 раунд 3: счётчик тестов не должен дублировать «634 тестов» —
+        форма слова зависит от числа (634 → «теста»). Скрипт счётчиков пишет форму
+        по ru_plural и распознаёт устаревшее число в ЛЮБОЙ из форм слова
+        («тест»/«теста»/«тестов») — иначе после ручной правки формы паттерн
+        перестанет матчится и счётчик заморозится."""
+        script = load_counts_script()
+        actual = script.counts()["tests"]
+        rules = script.build_rules(script.counts())
+        good = script.ru_plural(actual, "тест", "теста", "тестов")
+        stale = str(actual + 7)
+        templates = [
+            "| unittest | {n} {form} инструментов | tests/ |",
+            "$ python3 -m unittest discover -s tests          # {n} {form}, опционально",
+        ]
+        for form in ("тест", "теста", "тестов"):
+            for tmpl in templates:
+                sample = tmpl.format(n=stale, form=form)
+                new_text, findings = script._process_text(sample, rules)
+                self.assertIn(str(actual), new_text,
+                              f"устаревшее число в форме «{form}» не распознано: {sample!r}")
+                self.assertIn(f"{actual} {good}", new_text,
+                              f"форма слова не приведена к правильной: {sample!r} → {new_text!r}")
+                self.assertTrue(findings, f"расхождение не сообщено: {sample!r}")
+                # актуальное число в любой форме: правильная форма — без замечаний,
+                # неправильная — переписана в правильную с замечанием
+                ok_sample = tmpl.format(n=actual, form=form)
+                new_text, findings = script._process_text(ok_sample, rules)
+                self.assertIn(f"{actual} {good}", new_text,
+                              f"форма слова при актуальном счётчике не исправлена: {ok_sample!r} → {new_text!r}")
+                if form == good:
+                    self.assertEqual(findings, [],
+                                     f"правильная форма помечена устаревшей: {ok_sample!r}")
+                else:
+                    self.assertTrue(findings,
+                                    f"неверная форма слова не замечена: {ok_sample!r}")
+
 
 class KeptSkillPointerTests(unittest.TestCase):
     """«Use `X` skill» в оставшихся навыках указывает на существующий навык или известный внешний инструмент.
