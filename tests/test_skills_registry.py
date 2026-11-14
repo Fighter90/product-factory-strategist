@@ -143,7 +143,7 @@ class SkillsDocTests(unittest.TestCase):
 
     def test_doc_states_actual_total(self):
         doc = (REPO / "docs" / "SKILLS.md").read_text(encoding="utf-8")
-        m = re.search(r"Итого: \*\*(\d+)\*\* навыков", doc)
+        m = re.search(r"Итого: \*\*(\d+)\*\* навык(?:а|ов)?", doc)
         self.assertIsNotNone(m, "в docs/SKILLS.md нет строки «Итого: **N** навыков»")
         self.assertEqual(int(m.group(1)), len(loaded_skills()),
                          "число в docs/SKILLS.md расходится с .claude/skills")
@@ -251,7 +251,7 @@ class MermaidGroupTests(unittest.TestCase):
 
     def _block(self, path):
         text = (REPO / path).read_text(encoding="utf-8")
-        m = re.search(r'SK\["(\d+) (?:навыков|skills)"\]', text)
+        m = re.search(r'SK\["(\d+) (?:навык(?:а|ов)?|skills)"\]', text)
         self.assertIsNotNone(m, f"в {path} нет узла SK[\"100 …\"] второго mermaid-блока")
         end = text.find("```", m.end())
         self.assertNotEqual(end, -1, f"в {path} не найдено закрытие mermaid-блока")
