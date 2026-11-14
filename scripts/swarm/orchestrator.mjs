@@ -161,9 +161,21 @@ async function pickIssue() {
 // In Progress крашем прошлого прогона, была невидима до ручного requeue (PRO-68:
 // застревали PRO-53/54/55/59/60/61/63). Решение о «завислости» — по возрасту клейма.
 const stuckIssues = async () => {
-  const d = await gql(`query($f: IssueFilter!) { issues(filter: $f, first: 10) { nodes { id identifier title state { name } labels { nodes { name } } } } }`,
-    { f: { team: { key: { eq: TEAM_KEY } }, labels: { name: { eq: LABEL } }, state: { name: { eq: 'In Progress' } } } });
-  return d.issues.nodes;
+  // Пагинация обязательна (PRO-72): порядок возврата Linear не гарантирован — сортировка
+  // не спасает, а одна страница (лимит 10) без after оставлял хвост зависших невидимым
+  // (14.11.2026: 13 задач In Progress, PRO-48/47/46 с клеймами 110+ мин > STUCK_MIN
+  // не реqueue'ились никогда — очередь пустела, задачи зависали навсегда).
+  const nodes = [];
+  let after = null;
+  for (;;) {
+    const d = await gql(
+      `query($f: IssueFilter!, $after: String) { issues(filter: $f, first: 50, after: $after) { nodes { id identifier title state { name } labels { nodes { name } } } pageInfo { hasNextPage endCursor } } }`,
+      { f: { team: { key: { eq: TEAM_KEY } }, labels: { name: { eq: LABEL } }, state: { name: { eq: 'In Progress' } } }, after });
+    nodes.push(...d.issues.nodes);
+    if (!d.issues.pageInfo.hasNextPage) break;
+    after = d.issues.pageInfo.endCursor;
+  }
+  return nodes;
 };
 const comment = (issueId, body) => gql('mutation($i:String!,$b:String!){ commentCreate(input:{issueId:$i, body:$b}){ success } }', { i: issueId, b: body });
 const setState = async (issueId, name) => comment && gql('mutation($id:String!,$s:String!){ issueUpdate(id:$id, input:{stateId:$s}){ success } }', { id: issueId, s: (await states())[name] });
