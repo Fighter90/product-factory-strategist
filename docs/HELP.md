@@ -308,7 +308,7 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
 
 ## Навыки: структура и вызов
 
-У агента 100 навыков (skills): базовые 13 по шагам процесса · 27 product-skills · 57 из личной библиотеки · 3 интеграции.
+У агента 101 навык (skills): базовые 13 по шагам процесса · 27 product-skills · 57 из личной библиотеки · 4 интеграции.
 Навыки не заменяют процесс и `pfs` — это библиотека техник, которые подключаются там, где нужны.
 
 **Группы:**
@@ -321,7 +321,7 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
   - *наука и данные*: `research-lookup`, `literature-review`, `scientific-writing`, `scientific-critical-thinking`, `peer-review`, `statistical-analysis`, `hypothesis-generation`, `exploratory-data-analysis`, `transcribe`, `watch`
   - *документы/медиа*: `pdf`, `docx`, `pptx`, `xlsx`, `markitdown`, `officecli`, `generate-image`, `video`, `infographics`, `matplotlib`, `scientific-visualization`
   - *мета*: `balanced`, `find-skills`
-- **Интеграции:** `premortem` — предразбор провала; `sdd` — дисциплина разработки; `deck` — презентация из six-pager.
+- **Интеграции:** `premortem` — предразбор провала; `sdd` — дисциплина разработки; `deck` — презентация из six-pager; `ph-trends` — тренды Product Hunt → применение к продукту.
 
 **Как вызывать:**
 
