@@ -10,7 +10,7 @@
 // Ключ Linear: env SWARM_LINEAR_KEY или ~/.swarm_linear_key (не коммитится).
 
 import { spawn } from 'node:child_process';
-import { openSync, writeSync, closeSync, readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync, appendFileSync } from 'node:fs';
+import { openSync, writeSync, closeSync, readFileSync, writeFileSync, statSync, mkdirSync, existsSync, unlinkSync, appendFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { resolve } from 'node:path';
 
@@ -21,6 +21,11 @@ const LOGS = resolve(STATE, 'log');
 const WORKER_PID = resolve(STATE, 'worker.pid');
 const TEAM_KEY = 'PRO';
 const LABEL = 'swarm';
+// PRO-73 (ревью раунд 4): граница протухания worker.pid. Таймаут воркера — одна
+// константа и для дефолта worker(), и для guard'а (разъезд сделал бы границу либо
+// дырявой, либо вечной); grace покрывает 3-секундный grace run() и скос часов.
+const WORKER_TIMEOUT_MS = 25 * 60_000;
+const PID_STALE_GRACE_MS = 5 * 60_000;
 
 const KEYFILE = resolve(homedir(), '.swarm_linear_key');
 const LINEAR_KEY = process.env.SWARM_LINEAR_KEY || (existsSync(KEYFILE) ? readFileSync(KEYFILE, 'utf8').trim() : '');
@@ -96,14 +101,15 @@ const sh = async (cmd, opts) => {
   return r;
 };
 
-async function worker(role, vars, { timeoutMs = 25 * 60_000 } = {}) {
+async function worker(role, vars, { timeoutMs = WORKER_TIMEOUT_MS } = {}) {
   let prompt = ROLES[role];
   for (const [k, v] of Object.entries(vars)) prompt = prompt.split(`{{${k}}}`).join(v ?? '');
   log(`  [${role}] GLM worker started (timeout ${Math.round(timeoutMs / 60000)}m)`);
   // PRO-73: pid воркера — в .task-board/worker.pid; свежий тик оркестратора видит
   // живой pid и завершается до detach origin/main (воркер мог ещё ничего не
   // закоммитить — дерево «чисто», но его ветку срывать нельзя). Файл остаётся и
-  // после смерти воркера: мёртвый pid тик не блокирует, а краш-сирота — блокирует.
+  // после смерти воркера: мёртвый pid тик не блокирует, а краш-сирота — блокирует
+  // (но только до mtime-границы протухания, см. tickWorkerAlive).
   const r = await run('opencode', ['run', prompt], { timeoutMs, onSpawn: (pid) => writeFileSync(WORKER_PID, `${pid}\n`) });
   const tail = r.all.slice(-4000);
   log(`  [${role}] finished code=${r.code}`);
@@ -201,11 +207,18 @@ const extractVerdict = (all) => {
 // `ncwd…`/`n…` (разные сборки lsof), `substr` сохраняет пробелы в пути; прежний
 // `awk '$4=="cwd"{print $NF}'` брал последнее поле строки и молча обрезал пути
 // с пробелами («…/Мои проекты/…») — guard переставал работать.
+// Ревью раунд 4: pid-файл протухает по mtime (worker-timeout + grace): run() убивает
+// группу воркера по его таймауту, поэтому файл старше границы не может описывать
+// живого воркера — сирота погибшего ждущего экземпляра (живость pid консервативна:
+// EPERM, переиспользование другим opencode этого репо) больше не блокирует очередь
+// навсегда: таймаут 25 мин для неё не существует, mtime-граница — существует.
 // Возвращает pid живого воркера или 0.
 async function tickWorkerAlive() {
   let pid = 0;
-  try { pid = parseInt(readFileSync(WORKER_PID, 'utf8').trim(), 10) || 0; } catch { return 0; } // нет файла — воркера нет
+  let mtimeMs = 0;
+  try { pid = parseInt(readFileSync(WORKER_PID, 'utf8').trim(), 10) || 0; mtimeMs = statSync(WORKER_PID).mtimeMs; } catch { return 0; } // нет файла — воркера нет
   if (pid < 2) return 0;
+  if (Date.now() - mtimeMs > WORKER_TIMEOUT_MS + PID_STALE_GRACE_MS) return 0; // протух: воркер не может жить дольше своего таймаута — сирота не блокирует очередь
   try { process.kill(pid, 0); } catch (e) {
     if (e && e.code === 'EPERM') return pid; // чужой процесс — консервативно считаем живым
     return 0; // ESRCH: процесса нет — клейм-сирота мертва, тик можно продолжать
