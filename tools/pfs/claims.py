@@ -238,58 +238,6 @@ def supersede(pdir: Path, cid: str, text: str, kind: str | None = None, sources:
     return new
 
 
-def fix_source(pdir: Path, cid: str, sources: str | list[str], quote: str | None = None) -> dict:
-    """Исправить привязку утверждения к источникам с перепроверкой цитаты (PRO-50).
-
-    Кейс: модель привязала факт не к тому источнику — числовой кросс-чек это видит
-    («числа цитаты отсутствуют в тексте источника»), но точечной починки привязки
-    не было. sources — один ID (строка) или список. Перед записью цитата (старая или
-    новая из --quote) перепроверяется против текста новых источников: числа, которых
-    нет ни в одном тексте, отклоняют перепривязку БЕЗ записи — цитата могла быть
-    выдумана; обновите её (--quote «дословно из источника»). Для факта действуют те
-    же правила, что при add: источники зарегистрированы и не синтетические. Правка
-    пишется в history и журнал; текст, тип и основания не меняются.
-    """
-    rec = get(pdir, cid)
-    if rec["status"] != "active":
-        raise PfsError(f"{cid} уже не активно ({rec['status']}) — правьте его замену (supersede)")
-    if isinstance(sources, str):
-        sources = [sources]
-    sources = [s.strip() for s in sources if s and s.strip()]
-    src_rows = {s["id"]: s for s in src_mod.load(pdir)}
-    unknown = [s for s in sources if s not in src_rows]
-    if unknown:
-        raise PfsError(f"Источник {', '.join(unknown)} не зарегистрирован (pfs source add …)")
-    origins = {src_rows[s]["origin"] for s in sources}
-    if rec["kind"] == "fact":
-        if not sources:
-            raise PfsError("Факт без источника недопустим — перепривяжите к источнику или замените через supersede")
-        if origins <= {"synthetic", "agent"}:
-            raise PfsError("Синтетические материалы и выводы агента не могут подтверждать факт — только гипотезу")
-    new_quote = (quote.strip() or None) if quote is not None else rec.get("quote")
-    if new_quote and sources:
-        from . import check as check_mod  # локально: check импортирует claims наверху
-        texts = set()
-        for sid in sources:
-            if (pdir / "sources" / f"{sid}.md").exists():
-                texts |= set(check_mod._numbers(check_mod._source_body(pdir, sid)))
-        missing = sorted(v for v in check_mod._numbers(new_quote) if v not in texts)
-        if missing:
-            shown = ", ".join(f"{v:g}" for v in missing)
-            raise PfsError(f"Перепроверка цитаты: числа ({shown}) отсутствуют в тексте "
-                           f"{', '.join(sources)} — перепривязка отклонена (цитата могла быть "
-                           f"выдумана). Обновите цитату дословно из источника: --quote «…»")
-    old_sources = list(rec["sources"])
-    fields: dict = {"sources": list(dict.fromkeys(sources)), "quote": new_quote}
-    history = list(rec.get("history") or [])
-    history.append({"ts": core.now(), "fix_source": {"from": old_sources, "to": fields["sources"]}})
-    fields["history"] = history
-    _update(pdir, cid, **fields)
-    core.log(pdir, "claim", f"{cid}: перепривязка {', '.join(old_sources) or '—'} → "
-             f"{', '.join(fields['sources'])}" + ("; цитата обновлена" if quote is not None else ""))
-    return get(pdir, cid)
-
-
 def rebase(pdir: Path, cid: str) -> list[str]:
     """Перенаправить замещённые основания вывода на их замены (текст вывода не меняется).
 

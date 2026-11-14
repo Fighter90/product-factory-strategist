@@ -18,14 +18,13 @@ def run(pdir: Path, no_deck: bool = False, en: bool = False) -> dict:
     """Собрать финальный пакет в правильном порядке.
 
     Затвор строгий: перед сборкой выполняется pfs check, и ЛЮБАЯ его ошибка
-    останавливает сборку (как `pfs check --strict`: ошибки → ненулевой код выхода;
-    серьёзные расхождения чисел с источниками становятся ошибками только под --strict,
-    при сборке check.run остаётся без strict — предупреждения сборке не мешают).
-    Пакет из невалидного реестра не собираем.
+    останавливает сборку (эквивалент `pfs check --strict`, где --strict — это
+    «ошибки → ненулевой код выхода»; отдельного флага strict у check.run нет,
+    предупреждения сборке не мешают). Пакет из невалидного реестра не собираем.
     Возвращает {check, artifacts, missing_docs, stale_warnings} — stale_warnings
     это предупреждения о несвежих основаниях ДО пересборки (свежая сборка их снимает).
     """
-    stale = export.freshness_warnings(pdir, advice=False)  # несвежий реестр ДО сборки; без «Пересоберите» (PRO-63)
+    stale = export.freshness_warnings(pdir)  # предупреждение о несвежих основаниях — до сборки
     qc = check.run(pdir)
     if qc["errors"]:  # строгий затвор: любая ошибка check останавливает сборку (см. докстрингу)
         tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
@@ -59,7 +58,5 @@ def summary_text(res: dict, lang: str = "ru") -> str:
     else:
         lines.append(tr("finish_all_docs"))
     if res["stale_warnings"]:
-        # PRO-63: префикс «снято свежей пересборкой», поэтому без «⚠ » и без подсказки
-        # «Пересоберите» — сборка только что пересобрала пакет из текущего реестра.
-        lines.append(tr("finish_stale") + " ".join(w.removeprefix("⚠ ") for w in res["stale_warnings"]))
+        lines.append(tr("finish_stale") + " ".join(res["stale_warnings"]))
     return "\n".join(lines)

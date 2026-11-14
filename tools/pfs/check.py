@@ -13,18 +13,6 @@ from .impact import TAG
 NUM_TOKEN = re.compile(r"\d+(?:[.,]\d+)?")
 YEAR_TOKEN = re.compile(r"^(?:19|20)\d{2}$")
 
-# PRO-50: не-показатели вырезаются из текста ДО извлечения чисел — без этого даты,
-# версии и ID в заголовках источников и цитатах давали ложные «расхождения».
-# Порядок важен: ISO-дата целиком (иначе «11», «08» из «2026-11-08» считаются числами),
-# дата DD.MM[.ГГ[ГГ]] (день 01–31, месяц 01–12: «25.09.2026» из заголовка keyword-БД),
-# версия (v1.2.7 и semver 1.2.3: бейдж релиза в цитате — не метрика).
-NON_METRIC_TOKENS = (
-    re.compile(r"\d{4}-\d{2}-\d{2}"),
-    re.compile(r"\b(?:0[1-9]|[12]\d|3[01])\.(?:0[1-9]|1[0-2])(?:\.(?:\d{2}|\d{4}))?\b"),
-    re.compile(r"\b(?:v|ver\.?\s*)?\d+\.\d+\.\d+\b", re.IGNORECASE),
-    re.compile(r"\b(?:v|ver\.?\s*)\d+(?:\.\d+)+\b", re.IGNORECASE),
-)
-
 
 def _sections(text: str) -> list[str]:
     return [l.lstrip("#").strip().lower() for l in text.splitlines() if l.startswith("#")]
@@ -103,20 +91,10 @@ def en_style_warnings(pdir: Path) -> list[str]:
 
 
 def _numbers(text: str) -> dict[float, str]:
-    """Числа текста: {значение: как написано}. Не-показатели исключены (PRO-50):
-    годы, даты (YYYY-MM-DD, DD.MM), версии (v1.2, 1.2.3); цифра, прилипшая к букве
-    («S041», «C003», «v2») — идентификатор; целое с ведущим нулём («041») — индекс.
-    «0,5» и «17» — по-прежнему числа: чердак от перестраховки."""
-    for rx in NON_METRIC_TOKENS:
-        text = rx.sub(" ", text)
+    """Числа текста: {значение: как написано}. Годы исключаются (см. NUM_TOKEN)."""
     out: dict[float, str] = {}
     for m in NUM_TOKEN.finditer(text):
         raw = m.group(0)
-        before = text[m.start() - 1] if m.start() else " "
-        if before.isalpha():
-            continue
-        if raw.isdigit() and len(raw) > 1 and raw[0] == "0":
-            continue
         if not YEAR_TOKEN.match(raw):
             out.setdefault(float(raw.replace(",", ".")), raw)
     return out
@@ -134,20 +112,15 @@ def _source_body(pdir: Path, sid: str) -> str:
     return text[head:] if head != -1 else text
 
 
-def numeric_findings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict]) -> dict[str, list[str]]:
-    """PRO-26/PRO-50: числовой кросс-чек реестра, разбитый по строгости. Сообщения —
-    на языке проекта (PRO-57). Ключ «errors» — то, что под --strict падает:
-    1) «серьёзное расхождение»: числа активного утверждения не совпадают с числами
-       заголовка источника и отсутствуют в его тексте (sources/S###.md);
-    2) числа цитаты (quote), которых нет в тексте источника, — цитата могла быть
-       выдумана моделью.
-    Ключ «warnings» — всегда предупреждения: нейтральное «число подтверждено текстом,
-    но не заголовком» (заголовок может нести другую метрику). Пересечение хотя бы по
-    одному числу расхождением не считается — утверждение вправе содержать числа сверх
-    заголовка."""
+def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict]) -> list[str]:
+    """PRO-26: числовой кросс-чек реестра — ловит расхождение «заголовок 17 vs утверждение 19»,
+    которое иначе доживает до финального аудита. Сообщения — на языке проекта (PRO-57).
+    1) числа активного утверждения против чисел заголовка источника, на который оно ссылается:
+       оба набора непусты и не пересекаются → warning с парой C###/S### (пересечение хотя бы
+       по одному числу расхождением не считается — утверждение вправе содержать числа сверх заголовка);
+    2) числа цитаты (quote) против текста sources/S###.md: числа, которых в тексте нет → warning."""
     tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
-    errors: list[str] = []
-    warnings: list[str] = []
+    out: list[str] = []
     bodies: dict[str, set[float]] = {}
     for c in claims.values():
         if c["status"] != "active":
@@ -169,31 +142,21 @@ def numeric_findings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict])
                 if set(cnums) & body:
                     # числа подтверждены текстом источника — заголовок может нести
                     # другую метрику (кейс C004/S002: звёзды vs локали), это не устаревание
-                    warnings.append(tr("warn_num_title_mismatch", cid=c["id"], sid=sid,
-                                       tnums=_fmt(tnums), cnums=_fmt(cnums)))
+                    out.append(tr("warn_num_title_mismatch", cid=c["id"], sid=sid,
+                                  tnums=_fmt(tnums), cnums=_fmt(cnums)))
                 else:
-                    errors.append(tr("warn_num_serious", cid=c["id"], sid=sid,
-                                     tnums=_fmt(tnums), cnums=_fmt(cnums)))
+                    out.append(tr("warn_num_serious", cid=c["id"], sid=sid,
+                                  tnums=_fmt(tnums), cnums=_fmt(cnums)))
             quote = c.get("quote")
             if quote:
                 if sid in bodies:
                     missing = {v: raw for v, raw in _numbers(quote).items() if v not in bodies[sid]}
                     if missing:
-                        errors.append(tr("warn_quote_numbers", cid=c["id"], sid=sid, nums=_fmt(missing)))
-    return {"errors": errors, "warnings": warnings}
+                        out.append(tr("warn_quote_numbers", cid=c["id"], sid=sid, nums=_fmt(missing)))
+    return out
 
 
-def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict]) -> list[str]:
-    """PRO-26: все находки числового кросс-чека одним списком (без --strict это
-    предупреждения; разбиение строгости — numeric_findings, PRO-50)."""
-    f = numeric_findings(pdir, claims, srcs)
-    return f["errors"] + f["warnings"]
-
-
-def run(pdir: Path, strict: bool = False) -> dict:
-    """strict (PRO-50): «серьёзное расхождение» числа с источником и числа цитаты,
-    которых нет в тексте источника, попадают в errors (без strict — warnings,
-    как раньше); нейтральное расхождение заголовка остаётся предупреждением."""
+def run(pdir: Path) -> dict:
     cfg_all = core.read_json(core.CONFIG / "quality_gate.json", {})
     # PRO-57: язык проекта выбирает блок проверок; EN-заголовки — quality_gate.json → "en".
     lang = i18n.lang_of(pdir)
@@ -228,21 +191,6 @@ def run(pdir: Path, strict: bool = False) -> dict:
     flagged = [s["id"] for s in srcs.values() if s.get("injection_flags")]
     if flagged:
         warnings.append(tr("warn_injection", ids=", ".join(flagged)))
-
-    # 1b. PRO-59: выписки (origin=excerpt) — первоисточник недоступен из среды.
-    # Основания утверждения: его источники + источники унаследованных утверждений (--from).
-    def _grounds(c: dict) -> list[str]:
-        out = list(c["sources"])
-        for d in c["derived_from"]:
-            out.extend(claims.get(d, {}).get("sources", []))
-        return out
-    excerpt_claims = [c for c in claims.values() if c["status"] == "active" and c["sources"]
-                      and _grounds(c) and all(srcs.get(s, {}).get("origin") == "excerpt" for s in _grounds(c))]
-    if excerpt_claims:
-        warnings.append(tr("warn_excerpt_only", ids=", ".join(c["id"] for c in excerpt_claims)))
-    for c in excerpt_claims:
-        if c["kind"] == "fact" and c.get("grade") in ("A", "B"):
-            errors.append(tr("err_fact_excerpt_grade", cid=c["id"], grade=c["grade"]))
 
     # 2. Документы
     for name, rules in block.get("documents", {}).items():
@@ -306,13 +254,9 @@ def run(pdir: Path, strict: bool = False) -> dict:
     warnings.extend(en_style_warnings(pdir))
     # 5. PRO-27: реестр изменился после lock вердикта review — вердикт устарел
     warnings.extend(review.stale_warnings(pdir))
-    # 6. PRO-26/PRO-50: числовой кросс-чек — числа активных утверждений против заголовков
-    #    источников, числа цитат против текста источников (sources/S###.md);
-    #    серьёзные расхождения под --strict — ошибки
-    num = numeric_findings(pdir, claims, srcs)
-    if strict:
-        errors.extend(num["errors"])
-    warnings.extend(num["warnings"] + ([] if strict else num["errors"]))
+    # 6. PRO-26: числовой кросс-чек — числа активных утверждений против заголовков источников,
+    #    числа цитат против текста источников (sources/S###.md)
+    warnings.extend(numeric_warnings(pdir, claims, srcs))
     # 7. PRO-52: языковой линтер документа комитета — запрещённые англицизмы, жаргон
     #    и аббревиатуры без расшифровки (quality_gate.json → banned_terms)
     warnings.extend(language_warnings(pdir, block, tr))
