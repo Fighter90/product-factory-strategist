@@ -124,10 +124,9 @@ def build(pdir: Path) -> Path:
 
 ATTACHMENTS = [
     ("unit_economics.xlsx", "ARPU, VC, CAC, отток"),
-    ("growth_model.xlsx", "MAU (месячная активная аудитория (monthly active users)), рост, конверсия, AOV, take rate"),
+    ("growth_model.xlsx", "MAU, рост, конверсия, AOV, take rate"),
     ("cohort_retention.xlsx", "размеры когорт, кривая удержания"),
     ("market_sizing.xlsx", "PAM, доли воронки, факторы среды"),
-    ("options_scoring.xlsx", "критерии, веса, фильтры, баллы вариантов"),
 ]
 
 
@@ -304,8 +303,7 @@ _EN: dict[str, str] = {
     "# {title}: six-pager": "# Six-pager (EN)",
     "> Собрано {ts} командой `pfs export --six-pager` по спецификации "
     "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
-    "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI (ключевой показатель "
-    "эффективности (key performance indicator)) в двух плоскостях). "
+    "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
     "Теги [C###]/[S###] — происхождение чисел; сноски-источники — в конце документа.":
         core.EN_DRAFT_MARK + " the EN six-pager is written in plain English by the "
         "six-pager-writer from the SAME data package (claims, sources, calculations; "
@@ -360,11 +358,9 @@ _EN: dict[str, str] = {
         "| Segment | Blocking factor | How it is removed |",
     "| Сегмент 1 | … | … |": "| Segment 1 | … | … |",
     "> **Вывод (умозаключение):** сегментация по барьеру входа; лестница тиров "
-    "обслуживает все барьеры; приоритизация — по ёмкости, CAC (стоимость привлечения "
-    "клиента (customer acquisition cost)) и конкуренции (расчёт — выше).":
+    "обслуживает все барьеры; приоритизация — по ёмкости/CAC/конкуренции (расчёт — выше).":
         "> **Conclusion (inference):** segment by the entry barrier; the tier ladder serves "
-        "all barriers; prioritize by capacity, CAC (customer acquisition cost) and "
-        "competition (calculation above).",
+        "all barriers; prioritize by capacity/CAC/competition (calculation above).",
     "## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.":
         "## FAQ-3. Strategic initiatives. Justify each one briefly.",
     "> Раздел появится после шага «options» (03_options.md).":
@@ -433,13 +429,6 @@ _EN: dict[str, str] = {
         "Assumptions [add C-tags]: ARPU, variable costs, CAC, churn — the input sheet of "
         "unit_economics.xlsx.",
     "| Формула | Расчёт | Результат |": "| Formula | Calculation | Result |",
-
-    "ARPU — средневзвешенный: Σ(цена × доля)": "ARPU — tier-weighted: Σ(price × share)",
-    "**ARPU = {x}**": "**ARPU = {x}**",
-    "CAC платящего = CAC / CR free→paid": "Paying-user CAC = CAC / free→paid CR",
-    "**CAC платящего = {x}**": "**Paying-user CAC = {x}**",
-    "LTV/CAC платящего": "LTV/CAC (paying user)",
-    "Окупаемость CAC платящего = CAC платящего / CM": "Paying CAC payback = paying CAC / CM",
     "CM = ARPU × (1 − доля переменных)": "CM = ARPU × (1 − variable share)",
     "Средняя жизнь платящего = 1 / churn": "Average paying lifetime = 1 / churn",
     "**{x} мес**": "**{x} mo**",
@@ -491,73 +480,45 @@ def _en_pending(what: str) -> str:
 
 
 def _unit_econ_block(pdir: Path, lang: str = "ru") -> str | None:
-    """Пошаговая юнит-экономика из calcs.json (unit_econ) — та же математика, что в
-    unit_economics.xlsx (calc.derived, PRO-51): ARPU средневзвешенный по тарифам,
-    CAC платящего во freemium, LTV/CAC и окупаемость — от CAC платящего. Честный
-    вывод при LTV/CAC < 3 вместо отрицательных порогов чувствительности."""
+    """Пошаговая юнит-экономика из calcs.json (unit_econ): CM, LTV, LTV/CAC, окупаемость."""
     cfg = core.read_json(pdir / "calcs.json", {}).get("unit_econ") or {}
-    d = calc.derived(cfg)
-    if d.get("arpu") is None or not d.get("ltv") or not d.get("cac_paying"):
+    arpu, vc = cfg.get("arpu"), cfg.get("vc_share")
+    cac, churn = cfg.get("cac"), cfg.get("churn_month")
+    vals = (arpu, vc, cac, churn)
+    if not all(isinstance(v, (int, float)) for v in vals) or not arpu or not churn or not cac:
         return None
-    freemium = d.get("cr") is not None
-    tiers = [t for t in (cfg.get("tiers") or [])
-             if isinstance(t.get("price"), (int, float)) and isinstance(t.get("share"), (int, float))]
 
     def n(x: float) -> str:
         # RU: десятичная запятая; EN (PRO-53): 1,234.5 — точка-разделитель, запятая — тысячи
         return f"{x:,.2f}" if lang == "en" else f"{x:.2f}".replace(".", ",")
 
-    rows = []
-    if tiers:
-        mix = " + ".join(f"{t['price']:g} × {t['share'] * 100:.0f}%" for t in tiers)
-        rows.append((_t("ARPU — средневзвешенный: Σ(цена × доля)", lang), mix,
-                     _t("**ARPU = {x}**", lang).format(x=n(d["arpu"]))))
-    vc = cfg.get("vc_share") or 0
-    rows.append((_t("CM = ARPU × (1 − доля переменных)", lang),
-                 f"{n(d['arpu'])} × (1 − {n(vc)}) = {n(d['arpu'])} × {n(1 - vc)}",
-                 f"**CM = {n(d['cm'])}**"))
-    churn = cfg.get("churn_month") or 0
-    rows.append((_t("Средняя жизнь платящего = 1 / churn", lang), f"1 / {n(churn)}",
-                 _t("**{x} мес**", lang).format(x=n(d["life"]))))
-    rows.append((_t("LTV = CM / churn", lang), f"{n(d['cm'])} / {n(churn)}",
-                 f"**LTV = {n(d['ltv'])}**"))
-    if freemium:
-        rows.append((_t("CAC платящего = CAC / CR free→paid", lang),
-                     f"{n(d['cac'])} / {n(d['cr'])}",
-                     _t("**CAC платящего = {x}**", lang).format(x=n(d["cac_paying"]))))
-    ratio_lbl = _t("LTV/CAC платящего", lang) if freemium else _t("LTV/CAC", lang)
-    rows.append((ratio_lbl, f"{n(d['ltv'])} / {n(d['cac_paying'])}",
-                 _t("**{x}** (критерий ≥ 3)", lang).format(x=n(d["ltv_cac"]))))
-    pb_lbl = (_t("Окупаемость CAC платящего = CAC платящего / CM", lang) if freemium
-              else _t("Окупаемость CAC = CAC / CM", lang))
-    rows.append((pb_lbl, f"{n(d['cac_paying'])} / {n(d['cm'])}",
-                 _t("**{x} мес**", lang).format(x=n(d["payback"]))))
+    cm = arpu * (1 - vc)
+    ltv = cm / churn
+    ratio = ltv / cac
+    payback = cac / cm
+    life = 1 / churn
+    rows = [
+        (_t("CM = ARPU × (1 − доля переменных)", lang),
+         f"{n(arpu)} × (1 − {n(vc)}) = {n(arpu)} × {n(1 - vc)}", f"**CM = {n(cm)}**"),
+        (_t("Средняя жизнь платящего = 1 / churn", lang), f"1 / {n(churn)}",
+         _t("**{x} мес**", lang).format(x=n(life))),
+        (_t("LTV = CM / churn", lang), f"{n(cm)} / {n(churn)}", f"**LTV = {n(ltv)}**"),
+        (_t("LTV/CAC", lang), f"{n(ltv)} / {n(cac)}", _t("**{x}** (критерий ≥ 3)", lang).format(x=n(ratio))),
+        (_t("Окупаемость CAC = CAC / CM", lang), f"{n(cac)} / {n(cm)}",
+         _t("**{x} мес**", lang).format(x=n(payback))),
+    ]
     table = _t("| Формула | Расчёт | Результат |", lang) + "\n|---|---|---|\n" + \
-        "\n".join(f"| {f_} | {c_} | {r_} |" for f_, c_, r_ in rows)
+        "\n".join(f"| {f} | {c} | {r} |" for f, c, r in rows)
     note = _flat(cfg.get("note"))
     head = (_t("Допущения: {note}", lang).format(note=note) if note else
             _t("Допущения [укажите теги]: ARPU, переменные, CAC, churn — лист «Ввод» unit_economics.xlsx.", lang))
-    # Чувствительность к критерию LTV/CAC ≥ 3: во freemium честный порог — конверсия
-    # free→paid, а не «CAC до...» (PRO-51: не смешивать органику и платный сценарий).
-    if freemium and d["cm"]:
-        cr_need = 3 * churn * d["cac"] / d["cm"]
-        if d["ltv_cac"] < 3:
-            sens = _t("**Вывод (умозаключение):** LTV/CAC ≥ 3 требует конверсию free→paid "
-                      "≈ {cr} % (сейчас {cr_now} %) при прочих равных — платное привлечение "
-                      "при текущих допущениях не окупается: рост держится на органике "
-                      "(денежный CAC ≈ 0), платный канал открывается только после "
-                      "подтверждения конверсии и микса тарифов гейтом.", lang) \
-                .format(cr=n(cr_need * 100), cr_now=n(d["cr"] * 100))
-        else:
-            sens = _t("**Вывод (умозаключение):** LTV/CAC платящего ≥ 3 держится до CR "
-                      "≈ {cr} % при прочих равных (сетка — лист «Чувствительность»).", lang) \
-                .format(cr=n(min(cr_need, 1.0) * 100))
-    elif not freemium and d["cm"] > 0 and d["ltv"] > 0:
+    # Чувствительность к критерию LTV/CAC ≥ 3: порог по каждому допущению при прочих равных.
+    if cm > 0 and ltv > 0:
         sens = _t("**Вывод (умозаключение):** LTV/CAC ≥ 3 держится до churn ≈ {churn} %/мес, "
                   "до CAC ≈ €{cac}, до доли переменных расходов ≈ {vc} % "
                   "(каждый порог — при прочих равных; сетка — лист «Чувствительность»).",
-                  lang).format(churn=n(d["cm"] / (3 * d["cac"]) * 100), cac=n(d["ltv"] / 3),
-                               vc=n((1 - 3 * d["cac"] / d["ltv"]) * 100))
+                  lang).format(churn=n(cm / (3 * cac) * 100), cac=n(ltv / 3),
+                               vc=n((1 - 3 * cac / ltv) * 100))
     else:
         sens = _t("**Вывод (умозаключение):** запас прочности модели — какой допуск выдерживает "
                   "каждое допущение (см. лист «Чувствительность»).", lang)
@@ -704,24 +665,11 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
     Спецификация детализации: knowledge/templates/SIX_PAGER_PROMPT.md."""
     if with_calcs:
         calc.run(pdir, "all")
-    parts = six_pager_parts(pdir, lang)
-    path = pdir / "outputs" / ("SIX_PAGER_EN.md" if lang == "en" else "SIX_PAGER.md")
-    core.atomic_write(path, "\n".join(parts) + "\n")
-    core.log(pdir, "action", f"Собран outputs/{path.name} (формат референса)", tool="pfs export --six-pager")
-    return path
-
-
-def six_pager_parts(pdir: Path, lang: str = "ru") -> list[str]:
-    """Секции six-pager без записи файла и без пересчёта Excel. Потребители:
-    build_six_pager и check.en_sync_warnings — сверка «EN-каркас не дописывали»
-    по числу pending-строк (ревью PRO-52: выживший EN_DRAFT_MARK в дописанном
-    EN-документе должен предупреждать, а не молча отключать сверку RU↔EN)."""
     meta = core.read_json(pdir / "project.json", {})
     parts = [_t("# {title}: six-pager", lang).format(title=meta.get("title")), "",
              _t("> Собрано {ts} командой `pfs export --six-pager` по спецификации "
                 "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
-                "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI (ключевой показатель "
-                "эффективности (key performance indicator)) в двух плоскостях). "
+                "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
                 "Теги [C###]/[S###] — происхождение чисел; сноски-источники — в конце документа.",
                 lang).format(ts=core.now()[:16]), "",
              _t("**Запрос:** {q}", lang).format(q=meta.get("question", "")), ""]
@@ -779,8 +727,7 @@ def six_pager_parts(pdir: Path, lang: str = "ru") -> list[str]:
               "|---|---|---|",
               _t("| Сегмент 1 | … | … |", lang), "",
               _t("> **Вывод (умозаключение):** сегментация по барьеру входа; лестница тиров "
-                 "обслуживает все барьеры; приоритизация — по ёмкости, CAC (стоимость привлечения "
-                 "клиента (customer acquisition cost)) и конкуренции (расчёт — выше).", lang), ""]
+                 "обслуживает все барьеры; приоритизация — по ёмкости/CAC/конкуренции (расчёт — выше).", lang), ""]
     doc03 = _en_pending("03_options.md — chosen direction, initiatives (drivers)") \
         if lang == "en" else _insert_doc(pdir, "03_options.md", reg=reg)
     parts += [_t("## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.", lang), "",
@@ -854,7 +801,10 @@ def six_pager_parts(pdir: Path, lang: str = "ru") -> list[str]:
               "", _t("> Формулы пересчитываются при открытии (Excel / Numbers / LibreOffice). "
                      "Детализация по спецификации — knowledge/templates/SIX_PAGER_PROMPT.md. "
                      "Полная версия с доказательствами — REPORT.md.", lang)]
-    return parts
+    path = pdir / "outputs" / ("SIX_PAGER_EN.md" if lang == "en" else "SIX_PAGER.md")
+    core.atomic_write(path, "\n".join(parts) + "\n")
+    core.log(pdir, "action", f"Собран outputs/{path.name} (формат референса)", tool="pfs export --six-pager")
+    return path
 
 
 _MAX_POINTS = 6   # тезисов на слайд

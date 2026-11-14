@@ -218,8 +218,8 @@ pfs ux scaffold S003 --focus "onboarding"                      # UX scaffold of 
 ```bash
 pfs calc scaffold                      # calcs.json skeleton from 02/04/06/07: numbers carry
                                        # C/S tags in _notes; misses become null + _hints
-pfs calc all                          # 5 workbooks → projects/<slug>/outputs/attachments/
-pfs calc unit-econ | growth | cohort | market | options
+pfs calc all                          # 4 workbooks → projects/<slug>/outputs/attachments/
+pfs calc unit-econ | growth | cohort | market
 ```
 Each workbook: an **Input** sheet (editable parameters) + calculation sheets **built on formulas** — Excel
 recalculates on open. Parameters come from `projects/<slug>/calcs.json`; the skeleton is generated

@@ -60,7 +60,7 @@ The European resume-tool market is large and densely monetized: DE has ~109k unf
 ### Contradictions between sources
 
 - Bitkom reports 109k while alternative aggregators report lower totals of unfilled vacancies (methodological differences: Bitkom counts all IT vacancies, job portals count only active listings) [C011]. Left open: the decision needs only the order of magnitude (tens of thousands) — the contradiction does not change the conclusion.
-- XING's free Lebenslauf [C021] vs CVStart monetization: reconcilable — the free tier becomes a competitive requirement, not an option; the paid tier sits above features XING lacks (board scanning, tracker) [C078].
+- XING's free Lebenslauf [C021] vs CVStart monetization: reconcilable — the free tier becomes a competitive requirement, not an option; the paid tier sits above features XING lacks (board scanning, tracker) [C004].
 - Paddle's "Nordics +28%" [C029] vs CVDesignR FR €9.99 [C023]: different regions and products — not a contradiction within one conclusion; WTP is heterogeneous across countries, which supports regional pricing.
 
 ### What we don't know
@@ -206,11 +206,11 @@ Prioritization by capacity / CAC / competition (the calculation behind the concl
 **What must be true.** The US segment is more accessible at the same effort (a single EN, a larger volume [C031] ~673k/mo globally).
 **Effect.** (forecast) Global EN traffic grows faster per unit of effort; the European request is postponed.
 **Costs and revenue.** the same 5–10 hrs/wk, €0.
-**Risks.** US competition is denser (all 7 global players are there); abandoning the DE/PL windows where competitors are less localized [C080].
+**Risks.** US competition is denser (all 7 global players are there); abandoning the DE/PL windows where competitors are less localized [C009].
 
 ##### Objections
 
-- "Our non-EN locales are an asset that does not work at all under a US focus": abandoning a differentiator [C007][C080].
+- "Our non-EN locales are an asset that does not work at all under a US focus": abandoning a differentiator [C007][C009].
 - "The 19 locales get indexed without us" — but there is no conversion without the local conventions [C017].
 **What would falsify the option.** If the US channels deliver ≤ the global baseline without focus, the option loses its meaning; and if the owner treats Europe as a strategic goal (the brief), the option contradicts it.
 
@@ -261,19 +261,17 @@ Option C (as revised after the red team), because: (1) it is the only option tha
 
 Unit economics — the step-by-step calculation:
 
-Assumptions: unit assumptions [C082]: plans Pro €12 (70% of the base) / Unlimited €25 (30%) — the CVDesignR €9.99 [C023] ↔ resume.io €24.95 [C026] corridor; ARPU is tier-weighted €15.90 (Σ price × share), not the top-tier price; variable costs 25%; churn 8%/mo; free→paid CR 3.5% — the middle of the freemium benchmark 2–5%. CAC €30 — a paid-scenario assumption per attracted free user; the cash CAC of organic ≈ 0 [04_product_strategy]. The mix and CR are not confirmed — to be verified by checkpoint H1 [06_validation_plan]
+Assumptions: unit assumptions [C057]: ARPU €25 (Unlimited; the CVDesignR €9.99 [C023] ↔ resume.io €24.95 [C026] corridor); variable costs 25%; churn 8%/mo. CAC €30 — an assumption for the sensitivity of the paid scenario; the cash CAC of organic ≈ 0 [04_product_strategy]. Not confirmed for the EU — to be verified at validation [06_validation_plan]
 
 | Formula | Calculation | Result |
 |---|---|---|
-| ARPU — tier-weighted: Σ(price × share) | 12 × 70% + 25 × 30% | **ARPU = 15.90** |
-| CM = ARPU × (1 − variable share) | 15.90 × (1 − 0.25) = 15.90 × 0.75 | **CM = 11.93** |
+| CM = ARPU × (1 − variable share) | 25.00 × (1 − 0.25) = 25.00 × 0.75 | **CM = 18.75** |
 | Average paying lifetime = 1 / churn | 1 / 0.08 | **12.50 months** |
-| LTV = CM / churn | 11.93 / 0.08 | **LTV = 149.06** |
-| Paying-user CAC = CAC / free→paid CR | 30.00 / 3.5% | **Paying-user CAC = 857.14** |
-| LTV/CAC (paying user) | 149.06 / 857.14 | **0.17** (criterion ≥ 3) |
-| Paying CAC payback = paying CAC / CM | 857.14 / 11.93 | **71.88 months** |
+| LTV = CM / churn | 18.75 / 0.08 | **LTV = 234.38** |
+| LTV/CAC | 234.38 / 30.00 | **7.81** (criterion ≥ 3) |
+| CAC payback = CAC / CM | 30.00 / 18.75 | **1.60 months** |
 
-**Conclusion (inference):** LTV/CAC ≥ 3 requires a free→paid conversion ≈ 60.38% (currently 3.50%), all else equal — paid acquisition does not pay off under the current assumptions: growth rests on organic (cash CAC ≈ 0), and the paid channel opens only after the conversion and the plan mix are confirmed by the checkpoint.
+**Conclusion (inference):** LTV/CAC ≥ 3 holds up to churn ≈ 20.83%/mo, up to CAC ≈ €78.12, and up to a variable-cost share ≈ 61.60% (each threshold — all else equal; the grid is on the "Sensitivity" sheet).
 
 ## FAQ-4. Tactics. Detail each initiative down to specific tactics.
 
@@ -298,9 +296,9 @@ JTBD: "When I look for a job in Europe, I want to filter the real vacancies from
 |---|---|---|---|
 | XING Lebenslauf (DE) | free, built into a familiar service | only the Lebenslauf: no vacancy scanning, tracker, or multiboard | [C021] (B) |
 | Local clones (CVMaker, LiveCareer PL) | the local language, SEO visibility | a €1.99–2.95 trial → a €21–25/4-weeks auto-renewal | [C022][C024][C026] (B) |
-| Global (resume.io, Teal, Zety) | brand, templates | USD billing [C025][C027], trial-trap, thin locales [C080] | (A/B) |
+| Global (resume.io, Teal, Zety) | brand, templates | USD billing [C025][C027], trial-trap, thin locales [C009] | (A/B) |
 | Europass (government, EU) | free, multilingual | a universal template that fails local ATS conventions, no AI | observation (C) |
-| ChatGPT manually | free, flexible | no job scans, tracker, or format-specific templates | [C078] |
+| ChatGPT manually | free, flexible | no job scans, tracker, or format-specific templates | [C004] |
 | Nothing (a Word template) | habit | manual routine, no vacancy scoring | — |
 
 #### Chosen direction (option C from 03_options)
@@ -325,7 +323,7 @@ Outcome roadmap (outcomes, not features):
 #### Economics (forecast; the ranges carry over global-model assumptions, low confidence)
 
 - **Before monetization (months 0–6):** costs = time 5–10 hrs/wk [C059] + infra from €3.79/mo [C062]. Revenue 0.
-- **After hosted (months 6–12):** revenue = paying users × ARPU. Unit assumptions [C082] (carried over from the global plan, not confirmed for the EU): plans Pro €12 (70% of the base) / Unlimited €25 (30%) → tier-weighted ARPU ≈ €15.90 — not the top-tier price [M-unit-economics]; variable costs (inference+infra+MoR) ~25% → CM ≈ €11.93; fixed costs ~€150/mo → break-even ≈ 13 paying users against fixed costs. Churn 8%/mo → LTV ≈ €149.06. Freemium: free→paid CR 3.5% (middle of the 2–5% benchmark) → paying-user CAC = €30 / 0.035 ≈ €857 → LTV/CAC (paying) ≈ 0.17 — paid acquisition does not pay off under these assumptions (the paid scenario is not mixed with organic: the cash CAC of organic ≈ 0, the real cost is time); checkpoint H1 tests the conversion and the plan mix before any paid channels.
+- **After hosted (months 6–12):** revenue = paying users × ARPU. Unit assumptions [C057] (carried over from the global plan, not confirmed for the EU): ARPU €25 (Unlimited), variable costs (inference+infra+MoR) ~25% → CM ≈ €18.75; fixed costs ~€150/mo → break-even ≈ 8 paying users against fixed costs; at ARPU €12 (Pro-only) CM ≈ €9 → ≈ 17 paying users. Churn 8%/mo (assumption [C057]) → LTV ≈ €234 at ARPU €25. The cash CAC ≈ 0 (organic); the real cost is time.
 - **The forecast by month 12:** 50–80 paying users, MRR €1.3–2k (low confidence: global assumptions carried over to the EU; the PL/ES WTP is unconfirmed [C044]). Sensitivity analysis is mandatory in the validation plan.
 - **Honest units:** prices are compared in a single unit (€/mo at honest renewal), without mixing the 4-week subscription and one-off packs [C052].
 
@@ -334,7 +332,7 @@ Outcome roadmap (outcomes, not features):
 - **NSM: exported CVs/mo per locale** [C052] — units of the target audience, not stars.
 - Tree: visit → install/signup → activation (the first CV import) → CV export → (after hosted) payment.
 - Channel metrics: Search Console impressions/indexing (SEO), stars/forks (the OSS channel — vanity, auxiliary), 30-day retention after the HN/Reddit waves.
-- Counter-metrics: star/fork churn after the monetization announcement; GDPR requests > 5; DE-page bounce > 80%; free-tier inference costs > €200/mo; NPS < 30 [C082].
+- Counter-metrics: star/fork churn after the monetization announcement; GDPR requests > 5; DE-page bounce > 80%; free-tier inference costs > €200/mo; NPS < 30 [C057].
 
 #### Risks and mitigation
 
@@ -384,7 +382,7 @@ Tactics matrix (from the outcome roadmap, 04_product_strategy.md):
 - **Expected change** [C051]: the NSM — exported CVs — from ~0 to **≥ 50/mo by day 180** summed across DE/NL/SE; the visit → first export conversion ≥ 5–10%. Why expected: the trial-trap backdrop [C022][C024][C026] and a free competitor without vacancy scanning [C021].
 - **Comparison**: the base — current telemetry is absent → first implement privacy-friendly export counting (a local opt-in option for an anonymous counter, or GitHub release statistics as a proxy); the external anchor — the 2–5% freemium conversion (a niche benchmark, hypothesis [C051]). Before/after: the DE/FR/ES locales as a "passive control" (their content is untouched in wave 1).
 - **Window**: 180 days (the wave-1 gate) with early signals at 60/90/120 days. Sample: at 1,000 visits/mo and a 5% expectation, 50 exports/mo is enough to read the trend; statistical rigor is not required — decisions are made on thresholds.
-- **Counter-metrics** [C082]: DE-page bounce > 80%; GDPR requests > 5; NPS < 30 — a stop-and-adjust signal, not growth at any cost.
+- **Counter-metrics** [C057]: DE-page bounce > 80%; GDPR requests > 5; NPS < 30 — a stop-and-adjust signal, not growth at any cost.
 - **Criteria**: **continue** NSM ≥ 50/mo by day 180 → stage 2 (the hosted gate); **adjust** 20–50/mo → rebuild the channels (SEO ↔ community) and the message (a headline A/B), extend the gate by 90 days once; **stop** < 20/mo at 500+ visits/mo → fall back to option B/E, the SEO content is mothballed.
 - **Type**: an MVP wave (real product + content), cost €0, owner — the founder.
 
@@ -434,7 +432,7 @@ Tactics matrix (from the outcome roadmap, 04_product_strategy.md):
 | H4 community test | 2 weeks reaction + 30 days churn | the OSS-community reaction cycle |
 | H5 PL prices | 60 days | a 1-month billing cycle + renewal |
 
-#### Unintended consequences (stop thresholds) [C082]
+#### Unintended consequences (stop thresholds) [C057]
 
 - DE-page bounce > 80% or GDPR requests > 5 → stop scaling content, review quality.
 - "Crawled – not indexed" > 50% → a scaled-content signal, rebuild the content to native DE.
@@ -454,7 +452,7 @@ Tactics matrix (from the outcome roadmap, 04_product_strategy.md):
 
 #### Review rule
 
-Any counter-metric crosses its threshold [C082] → review the affected conclusions (`pfs impact`), a debrief in the weekly wave-1 rhythm. New data (Keyword Surfer volumes, WTP facts) → `pfs source add` + a rebuild of waves 2–3 without changing wave 1.
+Any counter-metric crosses its threshold [C057] → review the affected conclusions (`pfs impact`), a debrief in the weekly wave-1 rhythm. New data (Keyword Surfer volumes, WTP facts) → `pfs source add` + a rebuild of waves 2–3 without changing wave 1.
 
 Expected contribution of the initiatives to the overall result (sums to 100%; an expert judgment by the drivers of 04, hours — the wave-1 WBS, revisited at the M2/M4 milestones):
 

@@ -35,7 +35,7 @@ pfs --help
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 638 тестов
+python3 -m unittest discover -s tests          # 646 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -76,7 +76,7 @@ python3 -m unittest discover -s tests          # 638 тестов
 | 6 · Выбор | Пауза человека: руководитель выбрал **B — hosted freemium SaaS** (записано источником S011) | `pfs answer`, S011 |
 | 7 · Стратегии | Продуктовая (Free BYOK / Pro $12 / Unlimited $29; opt-in облако при локальном MIT-core; честный прайсинг без автопродлений; волны локалей EN → DE/ES/PT-BR → JA/ZH) + коммуникационная с таблицей «обещание → подтверждение» | `04/05` |
 | 8 · Проверка | 90 дней: продолжить ≥40 платящих / изменить 20–40 / остановить <20 при activation <35%; контр-метрики: звёзды GitHub, GDPR-жалобы, NPS ≥30, инференс free ≤$200/мес | `06_validation_plan.md` |
-| 9 · Review | Автопроверка `check --strict` = **100/100**; six-pager RU/EN (MD · PDF · DOCX) + 5 книг Excel (включая взвешенный скоринг вариантов); экономика [C016]: тарифы Pro $12/Unlimited $29 → ARPU $18,80 (средневзвешенный), CM $14,10, LTV ≈ $176,25, CAC платящего ≈ $1 091, LTV/CAC платящего ≈ 0,16 — платный канал не окупается, рост на органике; брейк-евен ≈ 106 платящих; синтетическая воронка [S008] — метод, не прогноз | `pfs calc all`, `pfs export --six-pager` |
+| 9 · Review | Автопроверка `check --strict` = **100/100**; six-pager RU/EN (MD · PDF · DOCX) + 4 книги Excel; экономика [C016]: ARPU $29, CM $21,75, LTV ≈ $271,88, LTV/CAC ≈ 4,5, брейк-евен ≈ 69 платящих; синтетическая воронка [S008] — метод, не прогноз | `pfs calc all`, `pfs export --six-pager` |
 | 10 · Решение | D001: бета в 3 EN-гео к 2026-12-15, пересмотр 2027-02-10, основания C019/C013/C014/C016/C005/C006 | `pfs decision add` |
 | 11 · Мониторинг | Открыт: `pfs decision due` следит за бета-обязательством и датой пересмотра | шаг in_progress |
 
@@ -88,7 +88,7 @@ python3 -m unittest discover -s tests          # 638 тестов
 - **Рекомендация: вариант B — hosted freemium SaaS**: Free BYOK / Pro $12 / Unlimited $29, opt-in облако
   при локальном MIT-core, честный прайсинг без автопродлений, волны локалей EN → DE/ES/PT-BR → JA/ZH.
   B2B-лицензии (D), open-core-переход (C) и статус-кво (A) — осознанные отказы.
-- **Экономика [C016]**: тарифы Pro $12 (60%) / Unlimited $29 (40%) → ARPU $18,80 (средневзвешенный) → контрибуция $14,10; LTV ≈ $176,25; CAC платящего ≈ $1 091 (CAC $60 / CR 5,5%) → LTV/CAC платящего ≈ 0,16 — платный канал не окупается, рост на органике; брейк-евен ≈ 106 платящих
+- **Экономика [C016]**: ARPU $29 → контрибуция $21,75; LTV ≈ $271,88; LTV/CAC ≈ 4,5; брейк-евен ≈ 69 платящих
   (чувствительность — в Excel).
 - **Синтетическая воронка [S008]** (метод, не прогноз): к нед. 12 — 53 платящих, MRR $1 537; воспроизводится
   скриптом `analysis/gen_synthetic.py` → `synthetic_funnel.csv`.
@@ -106,7 +106,7 @@ python3 -m unittest discover -s tests          # 638 тестов
 | **Six-pager RU** (MD · **PDF** · DOCX) | `projects/демо/outputs/SIX_PAGER_RU.md` · `.pdf` · `.docx` |
 | **Six-pager EN** (MD · **PDF** · DOCX) | `projects/демо/outputs/SIX_PAGER_EN.md` · `.pdf` · `.docx` |
 | Полный отчёт | `projects/демо/outputs/REPORT.md` |
-| Excel-модель (5 книг) | `projects/демо/outputs/attachments/` (unit_economics · growth_model · cohort_retention · market_sizing · options_scoring) |
+| Excel-модель (4 книги) | `projects/демо/outputs/attachments/` (unit_economics · growth_model · cohort_retention · market_sizing) |
 | Скриншоты продукта | `projects/демо/outputs/img/`, `site/assets/` |
 | Синтетические интервью (2 персоны) | `projects/демо/interviews/synthetic/` |
 | Синтетика + анализ данных | `projects/демо/analysis/` (gen_synthetic.py, synthetic_funnel.csv, md_to_pdf.py) |
@@ -135,7 +135,7 @@ python3 -m unittest discover -s tests          # 638 тестов
 | Поддержка решений и пересмотр | D001 + `pfs decision due`; `pfs impact` показывает затронутые выводы |
 | Маршрутизация, skills/hooks/subagents | `pfs route` → сценарий вывода на рынок; red-team субагент |
 | MCP и CLI | CLI `pfs` (25+ команд) + MCP 18 инструментов |
-| Six-pager для комитета | RU и EN, каждый в трёх форматах (MD/PDF/DOCX) + 5 книг Excel |
+| Six-pager для комитета | RU и EN, каждый в трёх форматах (MD/PDF/DOCX) + 4 книги Excel |
 | Качество | `pfs check --strict` = 100/100 |
 
 ### Как повторить
@@ -197,7 +197,7 @@ flowchart TB
     P["projects/&lt;slug&gt;<br/>state · outputs · calcs.json"] --> S["sources S###<br/>дедуп · SSRF · инъекции"]
     S --> CL["claims C###<br/>fact/hypothesis/forecast/assumption/inference · сила A–D"]
     CL --> CH["check --strict<br/>quality gate по рубрике"]
-    CAL["calc → 5 книг Excel<br/>лист «Ввод» + формулы"] --> EX["export<br/>REPORT.md · SIX_PAGER.md (FAQ-1…6)"]
+    CAL["calc → 4 книги Excel<br/>лист «Ввод» + формулы"] --> EX["export<br/>REPORT.md · SIX_PAGER.md (FAQ-1…6)"]
     CH --> EX
     DEC["decisions D###<br/>основания · обязательства"] --> MON["decision due<br/>что решать сейчас"]
   end
@@ -295,7 +295,7 @@ UX и клиентские метрики · анализ данных и A/B ·
 Навык: `deep-research`. Плюс 27 процедур product-skills и вопросные блоки `config/question_blocks.json`.
 
 ### 4. Числа — из расчётов, не «из головы»
-`pfs calc` строит 5 книг Excel на формулах (юнит-экономика с ARPU-миксом тарифов, freemium-CAC платящего и сценариями,
+`pfs calc` строит 4 книги Excel на формулах (юнит-экономика с LTV/CAC/пейбеком и чувствительностью,
 модель роста 12 мес, когортное удержание, PAM→TAM→SAM→SOM + PESTEL): лист «Ввод» — редактируемые
 параметры из `calcs.json` (каждое значение — C###), кэш значений для предпросмотра, пересчёт при открытии.
 Каркас `calcs.json` собирает `pfs calc scaffold` из документов 02/04/06/07: найденные числа — со своим
@@ -333,7 +333,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 | `pfs data funnel/stats <csv>` | воронка по событиям/колонкам; статистика с ДИ 95% |
 | `pfs interview guide\|save · pfs media add · pfs ux scaffold` | гайды интервью, медиа-источники, UX-каркас |
 | `pfs calc scaffold` | каркас `calcs.json` из 02/04/06/07 (числа с C/S-тегами, остальное — null) |
-| `pfs calc [all\|unit-econ\|growth\|cohort\|market\|options]` | Excel-приложения (юнит-экономика: tiers-микс и freemium, рост с воронкой, когорты, рынок); `options` — взвешенный скоринг вариантов: лист Excel + md-таблица |
+| `pfs calc [all\|unit-econ\|growth\|cohort\|market]` | Excel-приложения |
 | `pfs export [--six-pager --no-calcs]` | REPORT.md / SIX_PAGER.md |
 | `pfs export --deck` | HTML-дека 16:9 из six-pager |
 | `pfs finish [--no-deck --en]` | финальный пакет одной цепочкой: check → Excel → REPORT → six-pager → DOCX → deck (идемпотентно) |
@@ -385,5 +385,5 @@ site/                index.html · en/index.html — генератор scripts/
                      materials.html · help.html (RU/EN)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
-tests/               (638)
+tests/               (646)
 ```

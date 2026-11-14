@@ -218,8 +218,8 @@ pfs ux scaffold S003 --focus "онбординг"                      # UX-ка
 ```bash
 pfs calc scaffold                      # каркас calcs.json из 02/04/06/07: числа с C/S-тегами
                                        # в _notes; ненайденные — null + подсказка в _hints
-pfs calc all                          # 5 книг → projects/<slug>/outputs/attachments/
-pfs calc unit-econ | growth | cohort | market | options
+pfs calc all                          # 4 книги → projects/<slug>/outputs/attachments/
+pfs calc unit-econ | growth | cohort | market
 ```
 Каждая книга: лист **«Ввод»** (редактируемые параметры) + расчётные листы **на формулах** — Excel
 пересчитывает при открытии. Параметры агент берёт из `projects/<slug>/calcs.json`; каркас
