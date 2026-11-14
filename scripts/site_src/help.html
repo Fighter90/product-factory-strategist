@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="{{PAGE_LANG}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{help_DOC_TITLE}}</title>
+<meta name="description" content="{{help_DOC_DESC}}">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='.55' stop-color='%23818cf8'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='11' fill='%2305070f'/%3E%3Cg fill='none' stroke='url(%23g)' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M14 10H34L42 19L24 42L6 19Z'/%3E%3Cpath d='M6 19H42' opacity='.7'/%3E%3Cpath d='M14 10L20 19L24 42' opacity='.55'/%3E%3Cpath d='M34 10L28 19L24 42' opacity='.55'/%3E%3C/g%3E%3C/svg%3E">
+{{SEO_HEAD}}
+<style>
+:root{
+  --bg:#05070f; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06);
+  --text:#eef2ff; --muted:#9aa7bd; --line:rgba(148,163,184,.16);
+  --accent:#2dd4bf; --accent2:#818cf8; --accent3:#f472b6; --warn:#f6ad55; --ok:#48bb78;
+  --code:rgba(8,12,24,.75);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+[id]{scroll-margin-top:92px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden;transition:opacity .18s ease}
+body.lang-switching{opacity:.55}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(1200px 800px at 78% -12%,rgba(129,140,248,.10),transparent 62%),radial-gradient(1000px 760px at -12% 32%,rgba(45,212,191,.08),transparent 62%),radial-gradient(1100px 820px at 108% 92%,rgba(244,114,182,.06),transparent 62%)}
+::selection{background:rgba(45,212,191,.3)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;opacity:.24;filter:blur(110px);
+  background:conic-gradient(from 0deg at 32% 28%,rgba(45,212,191,.15),transparent 28%,rgba(129,140,248,.15) 52%,transparent 76%,rgba(244,114,182,.12));
+  animation:auroraSpin 44s linear infinite}
+.noise{position:absolute;inset:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+
+#bar{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));box-shadow:0 0 12px rgba(129,140,248,.7)}
+header{position:sticky;top:0;z-index:50;background:rgba(5,7,15,.66);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:16px;padding:13px 0;flex-wrap:wrap}
+.logo{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:.2px}
+.logo-t{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo .mark{width:25px;height:25px;flex:none;filter:drop-shadow(0 0 10px rgba(45,212,191,.28));transition:filter .3s,transform .45s cubic-bezier(.2,.6,.2,1)}
+.logo:hover{text-decoration:none}
+.logo:hover .mark{transform:rotate(10deg) scale(1.06);filter:drop-shadow(0 0 14px rgba(129,140,248,.55))}
+.nav a.nl{color:var(--muted);font-size:14px;position:relative}
+.nav a.nl::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transition:width .25s}
+.nav a.nl:hover{color:var(--text);text-decoration:none}
+.nav a.nl:hover::after{width:100%}
+.nav a.nl.on{color:var(--accent)}
+.nav a.nl.on::after{width:100%}
+.lang{margin-left:auto;display:flex;gap:6px}
+.lang button{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:8px;cursor:pointer;font-size:13px;transition:.2s}
+.lang button.active{color:#05070f;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));border-color:transparent;font-weight:700}
+
+.help-hero{position:relative;padding:72px 0 56px;overflow:hidden;border-bottom:1px solid var(--line)}
+.help-art{position:absolute;inset:0;z-index:0;overflow:hidden}
+.help-art img{width:100%;height:100%;object-fit:cover;opacity:.42;
+  -webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent 100%);mask-image:linear-gradient(to bottom,#000 30%,transparent 100%)}
+.help-hero h1{font-size:clamp(30px,4vw,44px);font-weight:850;letter-spacing:-.8px;position:relative}
+.help-hero h1 .grad{background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 45%,var(--accent3) 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.help-hero .sub{color:var(--muted);font-size:16.5px;max-width:860px;margin:14px 0 0;position:relative}
+.help-hero .meta{position:relative;margin-top:14px;color:rgba(154,167,189,.85);font-size:13px}
+.search{margin-top:24px;max-width:560px;position:relative}
+.search input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px 12px 42px;color:var(--text);font-size:14px;outline:none;backdrop-filter:blur(8px);transition:border-color .2s}
+.search input:focus{border-color:var(--accent)}
+.search input::placeholder{color:rgba(154,167,189,.75)}
+.search::before{content:"⌕";position:absolute;left:15px;top:50%;transform:translateY(-52%);color:var(--muted);font-size:17px}
+
+.layout{display:grid;grid-template-columns:262px 1fr;gap:44px;padding:48px 0 72px;position:relative;z-index:2}
+.side{position:sticky;top:96px;align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 120px);overflow-y:auto;padding-right:6px;scrollbar-width:thin}
+.side .cap{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:rgba(154,167,189,.6);padding:14px 12px 6px}
+.side .cap:first-child{padding-top:0}
+.side a{color:var(--muted);font-size:13px;padding:5px 12px;border-left:2px solid var(--line);transition:.2s}
+.side a:hover{color:var(--text);border-color:var(--accent);text-decoration:none}
+.side a.on{color:var(--accent);border-color:var(--accent);background:rgba(45,212,191,.06)}
+.content{min-width:0}
+.noresult{display:none;color:var(--muted);border:1px dashed var(--line);border-radius:12px;padding:18px 20px;font-size:14px}
+
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:14px}
+.kp{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 17px;backdrop-filter:blur(8px);transition:border-color .25s,transform .25s}
+.kp:hover{border-color:rgba(129,140,248,.5);transform:translateY(-2px)}
+.kp b{display:block;font-size:13.5px;margin-bottom:5px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.kp span{color:var(--muted);font-size:13px}
+
+.faq{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:14px;backdrop-filter:blur(8px);position:relative;overflow:hidden}
+.faq::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2.5px;background:linear-gradient(to bottom,var(--accent),var(--accent2),var(--accent3));opacity:.55}
+.faq.hidden{display:none}
+.faq h3{font-size:15.5px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:9px}
+.faq p{color:var(--muted);font-size:14.5px;margin-bottom:8px}
+.faq p b{color:var(--text)}
+.faq .lbl{display:inline-block;font-size:11.5px;color:var(--accent3);border:1px solid rgba(244,114,182,.3);border-radius:6px;padding:0 8px;margin-right:6px;background:rgba(244,114,182,.06)}
+.note{border-left:3px solid var(--accent);background:var(--card);padding:13px 17px;border-radius:0 12px 12px 0;color:var(--muted);font-size:14px;margin:16px 0}
+.pause{color:var(--warn);font-weight:700}
+.ok{color:var(--ok);font-weight:700}
+
+pre{background:var(--code);border:1px solid var(--line);border-radius:14px;padding:16px 20px;overflow-x:auto;font-size:13px;line-height:1.65;margin:12px 0}
+code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+p code,li code,td code,.kp code,.faq b code{background:var(--code);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.9em;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;display:block;overflow-x:auto}
+th{background:var(--card2);text-align:left;padding:9px 12px;border:1px solid var(--line);font-weight:700;white-space:nowrap}
+td{padding:8px 12px;border:1px solid var(--line);color:var(--muted);vertical-align:top;overflow-wrap:anywhere}
+td code{white-space:nowrap}
+
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
+
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
+footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
+
+
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;gap:26px;padding-top:34px}
+  .side{position:static;flex-direction:row;flex-wrap:wrap;gap:8px;max-height:none;overflow:visible}
+  .side .cap{display:none}
+  .side a{border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+  .side a.on{border-color:var(--accent)}
+}
+@media(max-width:700px){.nav a.nl,.nav a.nl.keep{display:none}.logo{font-size:15px}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .aurora{display:none}
+  .rv{animation:rvIn linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+}
+
+.lang a,.lang b{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:8px;font-size:13px;transition:.2s;text-decoration:none}
+.lang b{color:var(--text);border-color:rgba(45,212,191,.5);font-weight:700}
+.lang a:hover{color:var(--text);text-decoration:none;border-color:rgba(45,212,191,.5)}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="aurora"></div><div class="noise"></div></div>
+<div id="bar"></div>
+
+<header><div class="wrap nav">
+  <a class="logo" href="index.html"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t">{{BRAND}}</span></a>
+  <a class="nl keep" href="index.html#features">{{help_k001}}</a>
+  <a class="nl" href="index.html#process">{{help_k002}}</a>
+  <a class="nl" href="demo.html">{{help_k003}}</a>
+  <a class="nl" href="index.html#architecture">{{help_k004}}</a>
+  <a class="nl" href="index.html#commands">{{help_k005}}</a>
+  <a class="nl on" href="help.html">{{help_k006}}</a>
+  {{LANG_SWITCH}}
+</div></header>
+
+<div class="help-hero"><div class="wrap">
+  <div class="help-art" aria-hidden="true"><img src="{{A}}assets/help_network.jpg" alt=""></div>
+  <h1>{{help_k007}}</h1>
+  <p class="sub">{{help_k008}}</p>
+  <div class="meta">{{help_k009}}</div>
+  <div class="search"><input id="q" type="search" placeholder="Поиск по справке… / Search the help…" aria-label="Поиск по справке / Search the help"></div>
+</div></div>
+
+<div class="wrap"><div class="layout">
+  <nav class="side" aria-label="Разделы справки">
+    <div class="cap">{{help_k010}}</div>
+    <a href="#h-keypoints">{{help_k011}}</a>
+    <a href="#h-communicate">{{help_k012}}</a>
+    <a href="#h-phrases">{{help_k013}}</a>
+    <a href="#h-quickstart">{{help_k014}}</a>
+    <a href="#h-first">{{help_k015}}</a>
+    <a href="#h-demo">{{help_k016}}</a>
+
+    <div class="cap">{{help_k017}}</div>
+    <a href="#h-workflow">{{help_k018}}</a>
+    <a href="#h-step0">{{help_nav00}}</a><a href="#h-step1">{{help_nav01}}</a><a href="#h-step2">{{help_nav02}}</a><a href="#h-step3">{{help_nav03}}</a>
+    <a href="#h-step4">{{help_nav04}}</a><a href="#h-step5">{{help_nav05}}</a><a href="#h-step6">{{help_nav06}}</a><a href="#h-step7">{{help_nav07}}</a>
+    <a href="#h-step8">{{help_nav08}}</a><a href="#h-step9">{{help_nav09}}</a><a href="#h-step10">{{help_nav10}}</a><a href="#h-step11">{{help_nav11}}</a>
+
+    <div class="cap">{{help_k019}}</div>
+    <a href="#h-sources">{{help_k020}}</a>
+    <a href="#h-source-types">{{help_k021}}</a>
+    <a href="#h-claims">{{help_k022}}</a>
+    <a href="#h-grades">{{help_k023}}</a>
+    <a href="#h-supersede">{{help_k024}}</a>
+    <a href="#h-impact">{{help_k025}}</a>
+    <a href="#h-decisions">{{help_k026}}</a>
+
+    <div class="cap">{{help_k027}}</div>
+    <a href="#h-docs">{{help_k028}}</a>
+    <a href="#h-report">{{help_k029}}</a>
+    <a href="#h-sixpager">{{help_k030}}</a>
+    <a href="#h-calcs">{{help_k031}}</a>
+    <a href="#h-excel">{{help_k032}}</a>
+    <a href="#h-deck">{{help_k033}}</a>
+
+    <div class="cap">{{help_k034}}</div>
+    <a href="#h-cli">{{help_k035}}</a>
+    <a href="#h-mcp">{{help_k036}}</a>
+    <a href="#h-skills">{{help_k037}}</a>
+    <a href="#h-subagents">{{help_k038}}</a>
+    <a href="#h-hooks">{{help_k039}}</a>
+    <a href="#h-models">{{help_k040}}</a>
+    <a href="#h-cost">{{help_k041}}</a>
+    <a href="#h-data">{{help_k042}}</a>
+    <a href="#h-interviews">{{help_k043}}</a>
+    <a href="#h-media-ux">{{help_k044}}</a>
+
+    <div class="cap">{{help_k045}}</div>
+    <a href="#h-env-claude">{{help_k046}}</a>
+    <a href="#h-env-others">{{help_k047}}</a>
+    <a href="#h-env-linear">{{help_k048}}</a>
+    <a href="#h-env-lovable">{{help_k049}}</a>
+    <a href="#h-env-misc">{{help_k050}}</a>
+
+    <div class="cap">{{help_k051}}</div>
+    <a href="#h-resume">{{help_k052}}</a>
+    <a href="#h-portability">{{help_k053}}</a>
+    <a href="#h-security">{{help_k054}}</a>
+    <a href="#h-check">{{help_k055}}</a>
+    <a href="#h-trouble">{{help_k056}}</a>
+    <a href="#h-glossary">{{help_k057}}</a>
+  </nav>
+
+  <div class="content" id="clist">
+
+    <div class="faq rv" id="h-keypoints"><h3>{{help_k058}}</h3>
+      <div class="kgrid">
+        <div class="kp"><b>{{help_k059}}</b><span>{{help_k060}}</span></div>
+        <div class="kp"><b>{{help_k061}}</b><span>{{help_k062}}</span></div>
+        <div class="kp"><b>{{help_k063}}</b><span>{{help_k064}}</span></div>
+        <div class="kp"><b>{{help_k065}}</b><span>{{help_k066}}</span></div>
+        <div class="kp"><b>{{help_k067}}</b><span>{{help_k068}}</span></div>
+        <div class="kp"><b>{{help_k069}}</b><span>{{help_k070}}</span></div>
+      </div>
+    </div>
+
+    <div class="faq rv" id="h-communicate"><h3>{{help_k071}}</h3>
+      <p>{{help_k072}}</p><p>{{help_k073}}</p></div>
+
+    <div class="faq rv" id="h-phrases"><h3>{{help_k074}}</h3>
+      <table>{{help_k075}}</table>
+    </div>
+
+    <div class="faq rv" id="h-quickstart"><h3>{{help_k076}}</h3>
+      <pre>{{help_k077}}</pre>
+      <p>{{help_k078}}</p></div>
+
+    <div class="faq rv" id="h-first"><h3>{{help_k079}}</h3>
+      <p>{{help_k080}}</p><p>{{help_k081}}</p></div>
+
+    
+    <div class="faq rv" id="h-demo"><h3>{{help_k082}}</h3>
+      <p>{{help_k083}}</p><p>{{help_k084}}</p><p>{{help_k085}}</p><p>{{help_k086}}</p><p>{{help_k087}}</p>
+      <pre>{{help_k088}}</pre>
+      <p>{{help_k089}}</p><p>{{help_k090}}</p><p>{{help_k091}}</p>
+    </div>
+
+<div class="faq rv" id="h-workflow"><h3>{{help_k092}}</h3>
+      <p>{{help_k093}}</p></div>
+
+    <div class="faq rv" id="h-step0"><h3><span class="lbl">{{help_step00}}</span><span>{{help_k094}}</span></h3>
+      <p>{{help_k095}}</p></div>
+
+    <div class="faq rv" id="h-step1"><h3><span class="lbl">{{help_step01}}</span><span>{{help_k096}}</span></h3>
+      <p>{{help_k097}}</p></div>
+
+    <div class="faq rv" id="h-step2"><h3><span class="lbl">{{help_step02}}</span><span>{{help_k098}}</span></h3>
+      <p>{{help_k099}}</p></div>
+
+    <div class="faq rv" id="h-step3"><h3><span class="lbl">{{help_step03}}</span><span>{{help_k100}}</span></h3>
+      <p>{{help_k101}}</p></div>
+
+    <div class="faq rv" id="h-step4"><h3><span class="lbl">{{help_step04}}</span><span>{{help_k102}}</span></h3>
+      <p>{{help_k103}}</p></div>
+
+    <div class="faq rv" id="h-step5"><h3><span class="lbl">{{help_step05}}</span><span>{{help_k104}}</span></h3>
+      <p>{{help_k105}}</p></div>
+
+    <div class="faq rv" id="h-step6"><h3><span class="lbl">{{help_step06}}</span><span>{{help_k106}}</span></h3>
+      <p>{{help_k107}}</p></div>
+
+    <div class="faq rv" id="h-step7"><h3><span class="lbl">{{help_step07}}</span><span>{{help_k108}}</span></h3>
+      <p>{{help_k109}}</p></div>
+
+    <div class="faq rv" id="h-step8"><h3><span class="lbl">{{help_step08}}</span><span>{{help_k110}}</span></h3>
+      <p>{{help_k111}}</p></div>
+
+    <div class="faq rv" id="h-step9"><h3><span class="lbl">{{help_step09}}</span><span>{{help_k112}}</span></h3>
+      <p>{{help_k113}}</p></div>
+
+    <div class="faq rv" id="h-step10"><h3><span class="lbl">{{help_step10}}</span><span>{{help_k114}}</span></h3>
+      <p>{{help_k115}}</p></div>
+
+    <div class="faq rv" id="h-step11"><h3><span class="lbl">{{help_step11}}</span><span>{{help_k116}}</span></h3>
+      <p>{{help_k117}}</p></div>
+
+    <div class="faq rv" id="h-sources"><h3>{{help_k118}}</h3>
+      <p>{{help_k119}}</p><p>{{help_k120}}</p></div>
+
+    <div class="faq rv" id="h-source-types"><h3>{{help_k121}}</h3>
+      <table>{{help_k122}}</table>
+    </div>
+
+    <div class="faq rv" id="h-claims"><h3>{{help_k123}}</h3>
+      <p>{{help_k124}}</p>
+      <pre>{{help_k125}}</pre>
+      <table>{{help_k126}}</table>
+    </div>
+
+    <div class="faq rv" id="h-grades"><h3>{{help_k127}}</h3>
+      <table>{{help_k128}}</table>
+      <p>{{help_k129}}</p></div>
+
+    <div class="faq rv" id="h-supersede"><h3>{{help_k130}}</h3>
+      <pre>{{help_k131}}</pre>
+      <p>{{help_k132}}</p></div>
+
+    <div class="faq rv" id="h-impact"><h3>{{help_k133}}</h3>
+      <p>{{help_k134}}</p></div>
+
+    <div class="faq rv" id="h-decisions"><h3>{{help_k135}}</h3>
+      <pre>{{help_k136}}</pre>
+      <p>{{help_k137}}</p></div>
+
+    <div class="faq rv" id="h-docs"><h3>{{help_k138}}</h3>
+      <table>{{help_k139}}</table>
+      <p>{{help_k140}}</p></div>
+
+    <div class="faq rv" id="h-report"><h3>{{help_k141}}</h3>
+      <p>{{help_k142}}</p></div>
+
+    <div class="faq rv" id="h-sixpager"><h3>{{help_k143}}</h3>
+      <table>{{help_k144}}</table>
+      <p>{{help_k145}}</p></div>
+
+    <div class="faq rv" id="h-calcs"><h3>{{help_k146}}</h3>
+      <p>{{help_k147}}</p>
+      <table>{{help_k148}}</table>
+    </div>
+
+    <div class="faq rv" id="h-excel"><h3>{{help_k149}}</h3>
+      <p>{{help_k150}}</p><p>{{help_k151}}</p></div>
+
+    <div class="faq rv" id="h-deck"><h3>{{help_k152}}</h3>
+      <p>{{help_k153}}</p></div>
+
+    <div class="faq rv" id="h-cli"><h3>{{help_k154}}</h3>
+      <table>{{help_k155}}</table>
+      <p>{{help_k156}}</p></div>
+
+    <div class="faq rv" id="h-mcp"><h3>{{help_k157}}</h3>
+      <p>{{help_k158}}</p>
+      <table>{{help_k159}}</table>
+    </div>
+
+    <div class="faq rv" id="h-skills"><h3>{{help_k160}}</h3>
+      <p>{{help_k161}}</p><p>{{help_k162}}</p></div>
+
+    <div class="faq rv" id="h-subagents"><h3>{{help_k163}}</h3>
+      <table>{{help_k164}}</table>
+      <p>{{help_k165}}</p></div>
+
+    <div class="faq rv" id="h-hooks"><h3>{{help_k166}}</h3>
+      <table>{{help_k167}}</table>
+      <p>{{help_k168}}</p></div>
+
+    <div class="faq rv" id="h-models"><h3>{{help_k169}}</h3>
+      <p>{{help_k170}}</p></div>
+
+    <div class="faq rv" id="h-cost"><h3>{{help_k171}}</h3>
+      <p>{{help_k172}}</p></div>
+
+    <div class="faq rv" id="h-data"><h3>{{help_k173}}</h3>
+      <pre>{{help_k174}}</pre>
+      <p>{{help_k175}}</p></div>
+
+    <div class="faq rv" id="h-interviews"><h3>{{help_k176}}</h3>
+      <p>{{help_k177}}</p></div>
+
+    <div class="faq rv" id="h-media-ux"><h3>{{help_k178}}</h3>
+      <p>{{help_k179}}</p></div>
+
+    <div class="faq rv" id="h-env-claude"><h3>{{help_k180}}</h3>
+      <p>{{help_k181}}</p></div>
+
+    <div class="faq rv" id="h-env-others"><h3>{{help_k182}}</h3>
+      <p>{{help_k183}}</p></div>
+
+    <div class="faq rv" id="h-env-linear"><h3>{{help_k184}}</h3>
+      <p>{{help_k185}}</p></div>
+
+    <div class="faq rv" id="h-env-lovable"><h3>{{help_k186}}</h3>
+      <p>{{help_k187}}</p></div>
+
+    <div class="faq rv" id="h-env-misc"><h3>{{help_k188}}</h3>
+      <p>{{help_k189}}</p></div>
+
+    <div class="faq rv" id="h-resume"><h3>{{help_k190}}</h3>
+      <p>{{help_k191}}</p></div>
+
+    <div class="faq rv" id="h-portability"><h3>{{help_k192}}</h3>
+      <p>{{help_k193}}</p></div>
+
+    <div class="faq rv" id="h-security"><h3>{{help_k194}}</h3>
+      <p>{{help_k195}}</p></div>
+
+    <div class="faq rv" id="h-check"><h3>{{help_k196}}</h3>
+      <table>{{help_k197}}</table>
+      <p>{{help_k198}}</p></div>
+
+    <div class="faq rv" id="h-trouble"><h3>{{help_k199}}</h3>
+      <table>{{help_k200}}</table>
+      <p>{{help_k201}}</p></div>
+
+    <div class="faq rv" id="h-glossary"><h3>{{help_k202}}</h3>
+      <table>{{help_k203}}</table>
+      <p>{{help_k204}}</p></div>
+
+    <div class="noresult" id="nores">{{help_k205}}</div>
+    <p class="backline rv"><a href="index.html">{{help_k206}}</a></p>
+  </div>
+</div></div>
+
+<footer><div class="wrap">
+  <div>
+    <div class="logo"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t">{{BRAND}}</span></div>
+    <div>{{help_k207}}</div>
+  </div>
+  <div>
+    <a href="index.html">{{help_k208}}</a> ·
+    <a href="demo.html">{{help_k209}}</a> ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/wiki">Wiki</a> ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP.md">{{help_k210}}</a>
+    <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/docs/HELP_EN.md">{{help_k211}}</a>
+  </div>
+</div></footer>
+
+<script>
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+
+const bar = document.getElementById('bar');
+function frame(){
+  const y = window.scrollY;
+  const h = document.documentElement.scrollHeight - innerHeight;
+  bar.style.width = (h > 0 ? (y/h*100) : 0) + '%';
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+const io = new IntersectionObserver(() => {});
+
+
+// scrollspy сайдбара
+const sio = new IntersectionObserver(es => es.forEach(e => {
+  const l = document.querySelector('.side a[href="#' + e.target.id + '"]');
+  if (l) l.classList.toggle('on', e.isIntersecting);
+}), {rootMargin:'-25% 0px -65% 0px'});
+document.querySelectorAll('.faq[id]').forEach(s => sio.observe(s));
+
+// поиск-фильтр по всем блокам
+(function(){
+  const q = document.getElementById('q');
+  if (!q) return;
+  const blocks = [...document.querySelectorAll('.content > .faq')];
+  const nores = document.getElementById('nores');
+  q.addEventListener('input', () => {
+    const v = q.value.trim().toLowerCase();
+    let vis = 0;
+    for (const b of blocks){
+      const hit = !v || b.textContent.toLowerCase().includes(v);
+      b.classList.toggle('hidden', !hit);
+      if (hit){ vis++; b.classList.add('in'); }
+    }
+    if (nores) nores.style.display = vis ? 'none' : 'block';
+  });
+})();
+</script>
+</body>
+</html>

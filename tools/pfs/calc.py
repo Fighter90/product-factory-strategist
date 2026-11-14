@@ -10,7 +10,8 @@
 отсутствующие — заполняются примером из DEFAULTS с пометкой «ПРИМЕР».
 Каркас calcs.json собирает pfs calc scaffold из 02/04/06/07: каждое найденное
 число — со своим C/S-тегом в _notes, ненайденное — null + подсказка в _hints.
-Запуск: pfs calc [all|unit-econ|growth|cohort|market] → outputs/attachments/*.xlsx
+Запуск: pfs calc [all|unit-econ|growth|cohort|market|options] → outputs/attachments/*.xlsx
+(options дополнительно пишет md-таблицу скоринга рядом с книгой).
 """
 from __future__ import annotations
 
@@ -23,6 +24,8 @@ from .xlsx import Workbook
 DEFAULTS: dict[str, dict] = {
     "unit_econ": {
         "arpu": 199, "vc_share": 0.2, "cac": 600, "churn_month": 0.08,
+        "scenarios": {"pessimistic": {"arpu": 0.8, "churn": 1.5, "cac": 1.3},
+                      "optimistic": {"arpu": 1.2, "churn": 0.7, "cac": 0.8}},
         "note": "ПРИМЕР — замените на данные проекта в calcs.json; каждое значение подкрепите C###",
     },
     "growth": {
@@ -34,6 +37,22 @@ DEFAULTS: dict[str, dict] = {
         "retention": [1.0, 0.55, 0.42, 0.35, 0.30, 0.27, 0.24, 0.22, 0.21, 0.20, 0.19, 0.18],
     },
     "market": {"pam": 120_000_000_000, "tam_share": 0.6, "sam_share": 0.3, "som_share": 0.05},
+    "options": {
+        "criteria": [
+            {"name": "Влияние на цель брифа", "weight": 3},
+            {"name": "Реализуемость", "weight": 2, "gate_min": 3},
+            {"name": "Скорость эффекта", "weight": 1},
+        ],
+        "options": [
+            {"name": "A. Оставить как есть", "scores": [3, 4, 2]},
+            {"name": "B. Ставка на один канал", "scores": [4, 2, 4]},
+            {"name": "C. Комбинация каналов", "scores": [3, 3, 3]},
+            {"name": "D. Закрыть направление", "scores": [1, 5, 5]},
+        ],
+        "note": "ПРИМЕР — перенесите критерии из таблицы «Сравнение» 03_options.md; веса — числа "
+                "(напр. 1–3), у фильтров-порогов задайте gate_min: итог = Σ(балл × вес), "
+                "вариант ниже порога отсеивается до ранжирования",
+    },
 }
 
 MONTHS = 12
@@ -41,44 +60,172 @@ MONTHS = 12
 
 # ---------- юнит-экономика ----------
 
+def weighted_arpu(p: dict) -> float | None:
+    """ARPU = Σ(цена тарифа × доля базы) по tiers [карта M-unit-economics: средневзвешенный
+    по долям базы, не цена топ-тарифа]; без tiers — скаляр arpu."""
+    tiers = [t for t in (p.get("tiers") or [])
+             if isinstance(t.get("price"), (int, float)) and isinstance(t.get("share"), (int, float))]
+    if tiers:
+        return round(sum(t["price"] * t["share"] for t in tiers), 6)
+    a = p.get("arpu")
+    return round(a, 6) if isinstance(a, (int, float)) else None
+
+
+def derived(p: dict, mult: dict | None = None) -> dict:
+    """Производные метрики юнит-экономики из сырой секции calcs.json «unit_econ» —
+    одна математика для книги Excel, блока six-pager и кросс-чека `pfs check`
+    (PRO-51: текст и Excel не должны расходиться). ARPU — средневзвешенный по tiers;
+    во freemium CAC платящего = CAC / CR_free→paid, LTV/CAC и окупаемость — от него.
+    Чего-то не хватает — None: пример из DEFAULTS в проверку текста не подставляется.
+    mult — множители сценария {arpu|churn|cac|cr: x}."""
+    m = mult or {}
+    d: dict = {"arpu": None, "cm": None, "life": None, "ltv": None, "cac": None,
+               "cr": None, "cac_paying": None, "ltv_cac": None, "payback": None}
+    vc = p.get("vc_share")
+    arpu = weighted_arpu(p)
+    if arpu is not None and isinstance(vc, (int, float)) and 0 <= vc < 1:
+        arpu = arpu * m.get("arpu", 1.0)
+        d["arpu"] = round(arpu, 6)
+        d["cm"] = round(arpu * (1 - vc), 6)
+    churn = p.get("churn_month")
+    if isinstance(churn, (int, float)) and churn > 0 and d["cm"] is not None:
+        churn = churn * m.get("churn", 1.0)
+        d["life"] = round(1 / churn, 6)
+        d["ltv"] = round(d["cm"] * d["life"], 6)
+    cac = p.get("cac")
+    if isinstance(cac, (int, float)) and cac > 0:
+        cr = p.get("cr_free_paid")
+        d["cac"] = round(cac * m.get("cac", 1.0), 6)
+        if isinstance(cr, (int, float)) and 0 < cr <= 1:
+            cr = min(cr * m.get("cr", 1.0), 1.0)
+            d["cr"] = round(cr, 6)
+            d["cac_paying"] = round(d["cac"] / cr, 6)
+        else:
+            d["cac_paying"] = d["cac"]
+    if d["ltv"] and d["cac_paying"]:
+        d["ltv_cac"] = round(d["ltv"] / d["cac_paying"], 6)
+        if d["cm"]:
+            d["payback"] = round(d["cac_paying"] / d["cm"], 6)
+    return d
+
+
 def unit_econ(p: dict) -> Workbook:
-    arpu, vc, cac, churn = p["arpu"], p["vc_share"], p["cac"], p["churn_month"]
-    cm = arpu * (1 - vc)
-    life = 1 / churn if churn else 0.0
-    ltv = cm * life
+    """Книга юнит-экономики: «Ввод» (тарифы миксом, CR freemium) + «Юнит-экономика»,
+    «Чувствительность LTV/CAC» и «Сценарии» (пессимист/база/оптимист — один лист).
+    Формулы ссылаются на адреса строк «Ввод»; кэш значений — из derived()."""
+    d = derived(p)
+    freemium = d.get("cr") is not None
+    tiers = [t for t in (p.get("tiers") or [])
+             if isinstance(t.get("price"), (int, float)) and isinstance(t.get("share"), (int, float))]
     wb = Workbook()
-    v = wb.sheet("Ввод", widths={1: 36, 2: 13, 3: 52})
+    v = wb.sheet("Ввод", widths={1: 38, 2: 13, 3: 52})
     v.row("Параметр", "Значение", "Комментарий")
-    v.row("ARPU — выручка с юнита, ₽/мес", arpu, "выручка на одного активного платящего")
-    v.row("Доля переменных затрат (VC)", {"v": vc, "pct": True}, "себестоимость обслуживания, платежные комиссии")
-    v.row("CAC — привлечение юнита, ₽", cac, "маркетинг и промо на одного нового юнита")
-    v.row("Отток в месяц (churn)", {"v": churn, "pct": True}, "доля ушедших за месяц")
-    v.row("Примечание", p.get("note", ""))
-    u = wb.sheet("Юнит-экономика", widths={1: 34, 2: 13, 3: 44})
+    addr: dict[str, str] = {}
+
+    def put(label, val, comment="", key=None):
+        v.row(label, val, comment)
+        if key:
+            addr[key] = f"$B${len(v.rows)}"
+        return len(v.rows)
+
+    tier_rows = []
+    for i, t_ in enumerate(tiers, 1):
+        name = t_.get("name") or f"Тариф {i}"
+        put(f"{name} — цена, ₽/мес", t_["price"], "цена тарифа")
+        tier_rows.append(len(v.rows))
+        put(f"{name} — доля базы", {"v": t_["share"], "pct": True}, "доля юнитов на тарифе")
+    if tiers:
+        f_mix = "+".join(f"B{r}*B{r + 1}" for r in tier_rows)
+        put("ARPU — средневзвешенный, ₽/мес", {"f": f_mix, "cached": d["arpu"]},
+            "Σ(цена × доля) — не цена топ-тарифа [M-unit-economics]", key="arpu")
+    else:
+        put("ARPU — выручка с юнита, ₽/мес", p.get("arpu"),
+            "выручка на одного активного платящего", key="arpu")
+    put("Доля переменных затрат (VC)", {"v": p.get("vc_share", 0), "pct": True},
+        "себестоимость обслуживания, платежные комиссии", key="vc")
+    put("CAC — привлечение бесплатного юнита, ₽" if freemium else "CAC — привлечение юнита, ₽",
+        p.get("cac"), "маркетинг и промо на одного нового юнита", key="cac")
+    if freemium:
+        put("Конверсия free → paid (CR)", {"v": d["cr"], "pct": True},
+            "доля бесплатных юнитов, ставших платящими", key="cr")
+        put("CAC платящего = CAC / CR, ₽", {"f": f"'Ввод'!{addr['cac']}/'Ввод'!{addr['cr']}",
+                                            "cached": round(d["cac_paying"], 2)},
+            "во freemium LTV/CAC и окупаемость считают от CAC платящего", key="cac_pay")
+    put("Отток в месяц (churn)", {"v": p.get("churn_month", 0), "pct": True},
+        "доля ушедших за месяц", key="churn")
+    put("Примечание", p.get("note", ""))
+    cac_cell = addr["cac_pay"] if freemium else addr["cac"]
+
+    u = wb.sheet("Юнит-экономика", widths={1: 36, 2: 13, 3: 44})
     u.row("Показатель", "Значение", "Как считается")
-    u.row("Валовая маржа юнита (CM), ₽/мес", {"f": "'Ввод'!B2*(1-'Ввод'!B3)", "cached": round(cm, 2)},
+    u.row("Валовая маржа юнита (CM), ₽/мес",
+          {"f": f"'Ввод'!{addr['arpu']}*(1-'Ввод'!{addr['vc']})", "cached": round(d["cm"], 2)},
           "ARPU × (1 − доля VC)")
-    u.row("Средний срок жизни юнита, мес", {"f": "1/'Ввод'!B5", "cached": round(life, 2)}, "1 / отток")
-    u.row("LTV, ₽", {"f": "B2*B3", "cached": round(ltv, 2)}, "CM × срок жизни")
-    u.row("LTV / CAC", {"f": "B4/'Ввод'!B4", "cached": round(ltv / cac, 2) if cac else 0, "bold": True},
-          "орентир: ≥ 3")
-    u.row("Пейбек CAC, мес", {"f": "'Ввод'!B4/B2", "cached": round(cac / cm, 2) if cm else 0},
+    u.row("Средний срок жизни юнита, мес",
+          {"f": f"1/'Ввод'!{addr['churn']}", "cached": round(d["life"], 2)}, "1 / отток")
+    u.row("LTV, ₽", {"f": "B2*B3", "cached": round(d["ltv"], 2)}, "CM × срок жизни")
+    if freemium:
+        u.row("CAC платящего (freemium), ₽",
+              {"f": f"'Ввод'!{cac_cell}", "cached": round(d["cac_paying"], 2)}, "CAC / CR free→paid")
+    u.row("LTV / CAC платящего" if freemium else "LTV / CAC",
+          {"f": f"B4/'Ввод'!{cac_cell}", "cached": round(d["ltv_cac"], 2) if d["ltv_cac"] else 0,
+           "bold": True}, "ориентир: ≥ 3")
+    u.row("Пейбек CAC платящего, мес" if freemium else "Пейбек CAC, мес",
+          {"f": f"'Ввод'!{cac_cell}/B2", "cached": round(d["payback"], 2) if d["payback"] else 0},
           "CAC / CM; ориентир ≤ 12 мес")
-    u.row("Доля CAC в LTV", {"f": "'Ввод'!B4/B4", "cached": round(cac / ltv, 3) if ltv else 0, "pct": True},
-          "расход на привлечение в lifetime-выручке юнита")
+    u.row("Доля CAC платящего в LTV" if freemium else "Доля CAC в LTV",
+          {"f": f"'Ввод'!{cac_cell}/B4", "cached": round(d["cac_paying"] / d["ltv"], 3) if d["ltv"] else 0,
+           "pct": True}, "расход на привлечение в lifetime-выручке юнита")
     s = wb.sheet("Чувствительность LTV/CAC", widths={1: 18})
     vcs = [0.1, 0.2, 0.3, 0.4, 0.5]
     churns = [0.04, 0.06, 0.08, 0.10, 0.12]
     header = ["Отток ↓ / VC →"] + [{"v": x, "pct": True, "bold": True} for x in vcs]
     s.row(*header)
+    arpu_v = d["arpu"] or 0
     for ch in churns:
         row_no = len(s.rows) + 1  # номер добавляемой строки
         row = [{"v": ch, "pct": True, "bold": True}]
         for i in range(len(vcs)):
             col = col_ref(i + 2)  # B..F — доли VC в заголовке
-            row.append({"f": f"'Ввод'!$B$2*(1-{col}$2)/($A{row_no}*'Ввод'!$B$4)",
-                        "cached": round(arpu * (1 - vcs[i]) / (ch * cac), 2) if cac else 0})
+            row.append({"f": f"'Ввод'!{addr['arpu']}*(1-{col}$2)/($A{row_no}*'Ввод'!{cac_cell})",
+                        "cached": round(arpu_v * (1 - vcs[i]) / (ch * d["cac_paying"]), 2)
+                        if d["cac_paying"] else 0})
         s.row(*row)
+    c = wb.sheet("Сценарии", widths={1: 16, 2: 9, 3: 9, 4: 9, 5: 9})
+    names = (("пессимистичный", "pessimistic"), ("базовый", "base"), ("оптимистичный", "optimistic"))
+    scen = p.get("scenarios") or {}
+    head = (["Сценарий", "ARPU ×", "churn ×", "CAC ×"] + (["CR ×"] if freemium else [])
+            + ["ARPU", "CM", "Срок жизни, мес", "LTV",
+               "CAC платящего" if freemium else "CAC", "LTV/CAC"])
+    c.row(*head)
+    from .xlsx import col_letter
+    for label, key in names:
+        m = scen.get(key) or {}
+        mult = {"arpu": float(m.get("arpu", 1.0)), "churn": float(m.get("churn", 1.0)),
+                "cac": float(m.get("cac", 1.0)), "cr": float(m.get("cr", 1.0))}
+        r = len(c.rows) + 1
+        sd = derived(p, mult=mult)
+        mc = {k: col_letter(2 + i) for i, k in enumerate(("arpu", "churn", "cac", "cr"))}
+        cells = [label, {"v": mult["arpu"]}, {"v": mult["churn"]}, {"v": mult["cac"]}]
+        if freemium:
+            cells.append({"v": mult["cr"]})
+        arpu_f = f"'Ввод'!{addr['arpu']}*{mc['arpu']}{r}"
+        cm_f = arpu_f + f"*(1-'Ввод'!{addr['vc']})"
+        life_f = f"1/('Ввод'!{addr['churn']}*{mc['churn']}{r})"
+        ltv_f = f"{cm_f}*{life_f}"
+        if freemium:
+            cac_f = (f"('Ввод'!{addr['cac']}*{mc['cac']}{r})/"
+                     f"('Ввод'!{addr['cr']}*{mc['cr']}{r})")
+        else:
+            cac_f = f"'Ввод'!{addr['cac']}*{mc['cac']}{r}"
+        cells += [{"f": arpu_f, "cached": round(sd["arpu"] or 0, 2)},
+                  {"f": cm_f, "cached": round(sd["cm"] or 0, 2)},
+                  {"f": life_f, "cached": round(sd["life"] or 0, 2)},
+                  {"f": ltv_f, "cached": round(sd["ltv"] or 0, 2)},
+                  {"f": cac_f, "cached": round(sd["cac_paying"] or 0, 2)},
+                  {"f": f"{ltv_f}/{cac_f}", "cached": round(sd["ltv_cac"] or 0, 2), "bold": True}]
+        c.row(*cells)
+    c.row("Примечание", "множители к значениям листа «Ввод»; сценарии — calcs.json → unit_econ.scenarios")
     return wb
 
 
@@ -129,7 +276,44 @@ def growth(p: dict) -> Workbook:
     month_row("GMV, ₽", 4, lambda i: order_vals[i] * aov, sum(order_vals) * aov)
     month_row("Выручка платформы, ₽", 5, lambda i: order_vals[i] * aov * take, sum(order_vals) * aov * take)
     month_row("Валовая маржа, ₽", 6, lambda i: order_vals[i] * aov * take * marg, sum(order_vals) * aov * take * marg)
+    funnel_sheet(p, wb)
     return wb
+
+
+def funnel_sheet(p: dict, wb: Workbook) -> None:
+    """PRO-51: явная воронка из calcs.json → growth.funnel — у каждой ступени своя
+    единица (визиты ≠ установки ≠ регистрации ≠ экспорты: кейс cvstart-EU, где
+    «1 000 визитов × 5% = 50 экспортов» соседствовал с «1 000+ установок/мес»).
+    Первый шаг — абсолютное значение, дальше — доля от предыдущего."""
+    funnel = p.get("funnel")
+    if not funnel:
+        return
+    note = ""
+    if isinstance(funnel, dict):
+        note = funnel.get("note") or ""
+        funnel = funnel.get("steps") or []
+    if isinstance(p.get("funnel_note"), str):
+        note = p["funnel_note"]
+    steps = [f for f in funnel if f.get("name")]
+    if not steps:
+        return
+    f = wb.sheet("Воронка", widths={1: 32, 2: 18, 3: 16, 4: 13})
+    f.row("Шаг", "Доля от предыдущего", "Единица шага", "Значение/мес")
+    prev_ref, prev_val = None, 0.0
+    for st in steps:
+        r = len(f.rows) + 1
+        share = st.get("share")
+        share_cell = {"v": share, "pct": True} if isinstance(share, (int, float)) else "—"
+        if prev_ref is None:
+            prev_val = float(st.get("value") or 0)
+            val_cell = {"v": prev_val, "cached": prev_val}
+        else:
+            prev_val = round(prev_val * (share or 0), 6)
+            val_cell = {"f": f"{prev_ref}*B{r}", "cached": prev_val}
+        f.row(st["name"], share_cell, st.get("unit", "ед. шага"), val_cell)
+        prev_ref = f"D{r}"
+    f.row("Примечание", note or "визиты, установки, регистрации и экспорты — разные шаги: "
+                                "у каждой ступени своя единица; числа — из calcs.json → growth.funnel", "", "")
 
 
 # ---------- когортное удержание ----------
@@ -195,6 +379,90 @@ def market(p: dict) -> Workbook:
     for dom in ("Политико-правовые", "Экономические", "Социальные", "Технологические", "Экологические", "Рыночные и конкуренция"):
         p_.row(dom, "", "", "", "", "", "")
     return wb
+
+
+# ---------- взвешенный скоринг вариантов (pfs calc options) ----------
+
+def options_scores(p: dict) -> list[dict]:
+    """Взвешенный скоринг: итог = Σ(балл × вес), не сумма баллов (PRO-51: cvstart-EU
+    складывал баллы как равные при качественных весах «высокий/критический»).
+    gate_min — фильтр-порог («реализуемость ≥ 3»): вариант ниже порога отсеивается
+    до ранжирования. Возвращает варианты в порядке: прошедшие фильтр по убыванию
+    итога, затем отсеянные."""
+    crit = [c for c in (p.get("criteria") or []) if c.get("name")]
+    weights = [float(c.get("weight", 1)) for c in crit]
+    res = []
+    for o in (p.get("options") or []):
+        raw = [float(s) for s in (o.get("scores") or [])]
+        scores = (raw + [0.0] * len(crit))[:len(crit)]
+        fail = ""
+        for i, c in enumerate(crit):
+            gmin = c.get("gate_min")
+            if isinstance(gmin, (int, float)) and scores[i] < gmin:
+                fail = f"фильтр «{c['name']}»: {scores[i]:g} < {gmin:g}"
+                break
+        res.append({"name": o.get("name") or f"Вариант {len(res) + 1}", "scores": scores,
+                    "total": round(sum(s * w for s, w in zip(scores, weights)), 6),
+                    "passes": not fail, "reason": fail})
+    res.sort(key=lambda r: (not r["passes"], -r["total"]))
+    return res
+
+
+def _opt_header(crit: list[dict]) -> list[str]:
+    head = []
+    for c in crit:
+        h = f"{c['name']} (вес {float(c.get('weight', 1)):g})"
+        if isinstance(c.get("gate_min"), (int, float)):
+            h += f", фильтр ≥ {c['gate_min']:g}"
+        head.append(h)
+    return head
+
+
+def options(p: dict) -> Workbook:
+    """Книга скоринга вариантов: «Критерии» (веса и фильтры-пороги — редактируются)
+    + «Скоринг» (баллы, взвешенная сумма формулой SUMPRODUCT по весам «Критериев»,
+    отсеянные фильтром — без формулы). Параметры — calcs.json → options."""
+    crit = [c for c in (p.get("criteria") or []) if c.get("name")]
+    res = options_scores(p)
+    wb = Workbook()
+    k = wb.sheet("Критерии", widths={1: 36, 2: 10, 3: 18})
+    k.row("Критерий", "Вес", "Фильтр (мин. балл)")
+    for c in crit:
+        gmin = c.get("gate_min")
+        k.row(c["name"], float(c.get("weight", 1)),
+              gmin if isinstance(gmin, (int, float)) else "—")
+    if p.get("note"):
+        k.row("Примечание", p["note"])
+    s = wb.sheet("Скоринг", widths={1: 28})
+    n = len(crit)
+    from .xlsx import col_letter
+    last = col_letter(1 + n)
+    s.row(*(["Вариант"] + _opt_header(crit) + ["Взвешенная сумма: Σ(балл × вес)", "Фильтр / статус"]))
+    for r in res:
+        row_no = len(s.rows) + 1
+        cells = [r["name"]] + [{"v": sc} for sc in r["scores"]]
+        cells.append({"f": f"SUMPRODUCT('Критерии'!$B$2:$B${n + 1},B{row_no}:{last}{row_no})",
+                      "cached": r["total"], "bold": True} if r["passes"] else "отсеян (фильтр)")
+        cells.append(r["reason"] or "ранжирование")
+        s.row(*cells)
+    return wb
+
+
+def options_md(p: dict) -> str:
+    """Маркдаун-таблица скоринга рядом с options_scoring.xlsx: веса видны в заголовках,
+    итог — взвешенная сумма, отсеянные — в конце таблицы."""
+    crit = [c for c in (p.get("criteria") or []) if c.get("name")]
+    res = options_scores(p)
+    head = ["Вариант"] + _opt_header(crit) + ["**Σ(балл × вес)**", "Фильтр / статус"]
+    out = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
+    for r in res:
+        row = [r["name"]] + [f"{sc:g}" for sc in r["scores"]]
+        row.append(f"**{r['total']:g}**" if r["passes"] else "отсеян")
+        row.append(r["reason"] or "ранжирование")
+        out.append("| " + " | ".join(row) + " |")
+    if p.get("note"):
+        out += ["", f"> {p['note']}"]
+    return "\n".join(out) + "\n"
 
 
 # ---------- каркас calcs.json из документов ----------
@@ -527,23 +795,34 @@ BUILDERS = {
     "growth": (growth, "growth_model.xlsx"),
     "cohort": (cohort, "cohort_retention.xlsx"),
     "market": (market, "market_sizing.xlsx"),
+    "options": (options, "options_scoring.xlsx"),
 }
-KEYS_BY_SECTION = {"unit-econ": "unit_econ", "growth": "growth", "cohort": "cohort", "market": "market"}
+KEYS_BY_SECTION = {"unit-econ": "unit_econ", "growth": "growth", "cohort": "cohort",
+                   "market": "market", "options": "options"}
 
 
 def run(pdir: Path, which: str = "all") -> list[Path]:
-    """Собрать Excel-приложения в outputs/attachments/ и записать в журнал."""
+    """Собрать Excel-приложения в outputs/attachments/ и записать в журнал.
+    options — взвешенный скоринг вариантов: книга + md-таблица рядом; в `all`
+    собирается только когда в calcs.json заполнена секция options — пример-скоринг
+    в проект без сравнения вариантов не подкладываем."""
     if which != "all" and which not in BUILDERS:
         raise core.PfsError(f"какой расчёт: all, {', '.join(BUILDERS)}")
     cfg = core.read_json(pdir / "calcs.json", {})
     out = pdir / "outputs" / "attachments"
     out.mkdir(parents=True, exist_ok=True)
     keys = list(BUILDERS) if which == "all" else [which]
+    if which == "all":
+        keys = [k for k in keys if k != "options" or cfg.get("options")]
     paths = []
     for key in keys:
         fn, fname = BUILDERS[key]
         params = _merge(DEFAULTS[KEYS_BY_SECTION[key]], cfg.get(KEYS_BY_SECTION[key]))
         path = fn(params).save(out / fname)
-        core.log(pdir, "action", f"Excel-приложение: outputs/attachments/{fname}", tool="pfs calc")
+        extra = ""
+        if key == "options":
+            (out / "options_scoring.md").write_text(options_md(params), encoding="utf-8")
+            extra = " + options_scoring.md"
+        core.log(pdir, "action", f"Excel-приложение: outputs/attachments/{fname}{extra}", tool="pfs calc")
         paths.append(path)
     return paths

@@ -9,8 +9,9 @@ import re
 import shutil
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
-from . import (ab, calc, check, claims, core, cost, data, decisions, docx, export, finish, gaps, i18n, impact,
+from . import (ab, calc, check, claims, core, cost, data, decisions, docx, export, extract, finish, gaps, i18n, impact,
                kb, models, participate, project, review, route, sources)
 from .core import PfsError
 
@@ -162,6 +163,11 @@ def cmd_gap(a):
 
 def cmd_source(a):
     pdir = _p(a)
+    if getattr(a, "excerpt", False) and a.action != "add":
+        raise PfsError("--excerpt работает только с pfs source add (выписка из --text-file): "
+                       "pfs source add --text-file <файл> --url <ссылка> --published <дата> --excerpt")
+    if getattr(a, "via_browser", False) and a.action != "fetch":
+        raise PfsError("--via-browser работает только с pfs source fetch: pfs source fetch <url> --via-browser")
     if a.action == "add":
         # относительные пути резолвятся от каталога проекта, если файла там нет — от cwd (PRO-36)
         is_url = bool(a.target and re.match(r"^https?://", a.target))
@@ -169,9 +175,12 @@ def cmd_source(a):
         text_path = core.resolve_input(a.text_file, pdir) if a.text_file else None
         text = sources.assert_safe_local(text_path).read_text(encoding="utf-8") if text_path else None
         rec, new = sources.add(pdir, target, text=text, url=a.url, title=a.title, origin=a.origin or "public",
-                               note=a.note, published=a.published, force=a.force, text_path=text_path)
+                               note=a.note, published=a.published, force=a.force, text_path=text_path,
+                               excerpt=bool(getattr(a, "excerpt", False)))
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
         print(f"{'Добавлен' if new else 'Уже есть (повтор пропущен)'}: {rec['id']} — {rec['title']} ({rec['chars']} зн.){flag}")
+        if rec.get("origin") == "excerpt":
+            print("⚠ Выписка: пока источник не перепроверен (pfs source refresh), сила доказательств не выше C")
         if rec.get("external_path"):
             print(f"⚠ Файл лежал вне проекта ({rec['external_path']}) — копия сохранена в {rec['path']}. "
                   "Материал должен быть явно передан пользователем.")
@@ -179,7 +188,8 @@ def cmd_source(a):
             print(f"Файл: {(pdir / rec['path']).resolve()}")  # копия в sources/raw/ — след в проекте (PRO-58)
     elif a.action == "fetch":
         rec, new, channel = sources.fetch(pdir, a.target, title=a.title, origin=a.origin,
-                                          note=a.note, published=a.published, force=a.force)
+                                          note=a.note, published=a.published, force=a.force,
+                                          via_browser=bool(getattr(a, "via_browser", False)))
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
         via = sources.VIA_LABELS.get(channel, channel)
         print(f"{'Добавлен' if new else 'Уже есть (повтор пропущен)'}: {rec['id']} — {rec['title']} "
@@ -234,11 +244,22 @@ def cmd_claim(a):
                                _split(a.from_ref) if a.from_ref else None, grade=a.grade)
         print(f"{a.id} замещено {new['id']}")
         print(impact.impact_text(impact.impact(pdir, a.id)))
+    elif a.action == "fix-source":
+        rec = claims.fix_source(pdir, a.id, _split(a.source) or [], quote=a.quote)
+        print(f"{rec['id']}: источники → {', '.join(rec['sources'])}"
+              + ("; цитата обновлена" if a.quote else ""))
+        f = check.numeric_findings(pdir, {rec["id"]: rec}, {s["id"]: s for s in sources.load(pdir)})
+        own = [m for m in f["errors"] + f["warnings"] if m.startswith(f"{rec['id']}/")]
+        if own:
+            print("Перепроверка цитаты — расхождения остались:")
+            print("\n".join(f"⚠ {m}" for m in own))
+        else:
+            print("Перепроверка цитаты: числа цитаты есть в тексте источника — чисто")
 
 
 def cmd_check(a):
     pdir = _p(a)
-    res = check.run(pdir)
+    res = check.run(pdir, strict=a.strict)
     print(json.dumps(res, ensure_ascii=False, indent=2) if a.json else check.report_text(res, i18n.lang_of(pdir)))
     if a.strict and res["errors"]:
         sys.exit(1)
@@ -340,7 +361,11 @@ def cmd_kb(a):
 
 def cmd_data(a):
     pdir = _p(a) if core.active_slug() or a.project else None
-    path = Path(a.file)
+    # PRO-63: как у source add/docx/media — путь сначала от каталога проекта, потом от cwd;
+    # отсутствующий файл — понятная PfsError вместо FileNotFoundError-трейсбека.
+    path = core.resolve_input(a.file, pdir)
+    if not path.exists():
+        raise core.PfsError(f"Файл не найден: {path}")
     if a.action == "profile":
         text = data.profile_text(data.profile(path, a.sheet))
         cmd = f"python3 -m tools.pfs data profile {a.file}" + (f" --sheet {a.sheet}" if a.sheet else "")
@@ -375,9 +400,9 @@ def cmd_data(a):
 def cmd_interview(a):
     pdir = _p(a)
     if a.action == "guide":
-        if not (a.topic or "").strip():
-            raise core.PfsError("interview guide: укажите тему --topic")
-        print(f"Гайд: {participate.guide(pdir, a.persona, a.topic)}")
+        # PRO-63: --topic необязателен, как задокументировано в AGENTS/HELP ([--topic])
+        topic = a.topic or ""
+        print(f"Гайд: {participate.guide(pdir, a.persona, topic)}")
     else:
         if not a.file:
             raise core.PfsError("interview save: укажите файл транскрипта/выжимки")
@@ -550,6 +575,41 @@ def install_lines(mod_file=_DEFAULT, dist_path=_DEFAULT, version=_DEFAULT,
     return lines
 
 
+DOCTOR_HTTPS_DOMAINS = ("https://www.python.org/", "https://pypi.org/", "https://ec.europa.eu/eurostat/")
+
+
+def https_lines(domains=_DEFAULT, timeout=_DEFAULT, fetcher=_DEFAULT) -> list[str]:
+    """Строки блока HTTPS для pfs doctor (PRO-59): доступность 2–3 доменов через ту же цепочку
+    доверия, что и pfs source fetch; при провале TLS — готовая команда исправления."""
+    if domains is _DEFAULT:
+        domains = DOCTOR_HTTPS_DOMAINS
+    if timeout is _DEFAULT:
+        timeout = 4
+    if fetcher is _DEFAULT:
+        fetcher = lambda u: extract.fetch_url(u, timeout=timeout, attempts=1)  # noqa: E731
+    trust = extract.ssl_context()[1]
+    status, fails = [], []
+    for d in domains:
+        host = urlparse(d).hostname or d
+        try:
+            fetcher(d)
+            status.append(f"{host}: ok")
+        except Exception as exc:
+            status.append(f"{host}: ошибка — {str(exc).splitlines()[0][:80]}")
+            fails.append(exc)
+    lines = [f"HTTPS (сертификаты: {trust}): " + "; ".join(status)]
+    if any(extract.is_cert_verify_error(e) for e in fails):
+        ver = f"{sys.version_info.major}.{sys.version_info.minor}"
+        lines.append(f"  исправление: TLS-сертификаты не прошли проверку — запустите "
+                     f"«/Applications/Python {ver}/Install Certificates.command» "
+                     f"или {sys.executable} -m pip install certifi (pfs использует certifi автоматически); "
+                     "проверка TLS не отключается")
+    elif fails:
+        lines.append("  проверьте сеть и адреса — без сети pfs source fetch недоступен "
+                     "(сохраняйте текст вручную: pfs source add --text-file <файл> --excerpt)")
+    return lines
+
+
 def cmd_doctor(a):
     ok = sys.version_info >= (3, 9)
     print(f"Python {sys.version.split()[0]}: {'ok' if ok else 'нужен 3.9+'}")
@@ -561,6 +621,8 @@ def cmd_doctor(a):
         print("pypdf: есть")
     except ImportError:
         print("pypdf: нет (необязательно)")
+    for line in https_lines():
+        print(line)
     projects = project.list_projects()
     active = core.active_slug()
     print(f"Карт в базе знаний: {len(kb.cards())}; проектов: {len(projects)}; активный: {active}")
@@ -625,15 +687,24 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--url"); s.add_argument("--title")
     s.add_argument("--origin", help="public | excerpt (выписка, первоисточник недоступен) | own | interview | synthetic | agent; "
                                     "для fetch по умолчанию: public при прямом успехе, excerpt при фолбэке (reader/архив)")
+    s.add_argument("--excerpt", action="store_true",
+                   help="режим выписки (только add): origin=excerpt; обязательны --url (первоисточник) "
+                        "и --published (дата); сила доказательств не выше C, пока источник не перепроверен (pfs source refresh)")
+    s.add_argument("--via-browser", action="store_true",
+                   help="загрузить через Playwright, браузер (только fetch) — JS-страницы и 403 для ботов; "
+                        "если Playwright не установлен, подскажет команду установки")
     s.add_argument("--note"); s.add_argument("--published"); s.add_argument("--force", action="store_true")
     s.add_argument("--max-chars", type=int, default=4000, help="лимит знаков превью (show/refresh)")
     s.set_defaults(f=cmd_source)
 
     s = sp.add_parser("claim", help="утверждения")
-    s.add_argument("action", choices=["add", "add-batch", "list", "retract", "supersede", "rebase", "retag"],
+    s.add_argument("action", choices=["add", "add-batch", "list", "retract", "supersede", "rebase", "retag",
+                                      "fix-source"],
                    help="add-batch — пачка из JSONL-файла (text/kind/source/grade/quote/from); "
                         "невалидная строка отменяет весь батч; retag — перенумерация тегов [C###] "
-                        "во всех outputs одной командой (--from C003 --to C059) с журналом")
+                        "во всех outputs одной командой (--from C003 --to C059) с журналом; "
+                        "fix-source — перепривязка активного утверждения к правильному источнику "
+                        "(--id C008 --source S040, опционально --quote) с перепроверкой цитаты (PRO-50)")
     s.add_argument("text", nargs="?"); s.add_argument("--id"); s.add_argument("--kind", choices=claims.KINDS)
     s.add_argument("--source"); s.add_argument("--from", dest="from_ref"); s.add_argument("--to")
     s.add_argument("--confidence", default="medium")

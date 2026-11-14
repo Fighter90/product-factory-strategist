@@ -43,6 +43,9 @@ STR: dict[str, dict[str, str]] = {
         "warn_injection": "Источники с фразами-инструкциями (проигнорированы как команды): {ids}",
         "warn_en_sync": "SIX_PAGER_EN.md отстал от RU: нет тегов {tags} — EN-версия пишется агентом "
                         "из того же пакета данных (spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
+        "warn_en_draft_pending": "SIX_PAGER_EN.md дописан, но осталась pending-строка "
+                                 "«> EN draft — pending: …» — допишите секции по спецификации "
+                                 "SIX_PAGER_PROMPT_EN.md и уберите маркер каркаса",
         "warn_en_cyrillic": "SIX_PAGER_EN.md:{lines}: кириллица ({n} стр.): «{sample}» — EN-версия "
                             "пишется по-английски из того же пакета данных, RU-текст не вставляется "
                             "(spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
@@ -55,6 +58,10 @@ STR: dict[str, dict[str, str]] = {
         "warn_num_title_mismatch": "{cid}/{sid}: числа заголовка источника ({tnums}) не совпадают с числами утверждения ({cnums}); число подтверждено текстом sources/{sid}.md — возможно, разные показатели",
         "warn_num_serious": "{cid}/{sid}: числа утверждения ({cnums}) не совпадают с числами заголовка источника ({tnums}) и отсутствуют в его тексте — серьёзное расхождение, сверьте утверждение с источником",
         "warn_quote_numbers": "{cid}/{sid}: числа из цитаты ({nums}) отсутствуют в тексте источника — проверьте цитату против sources/{sid}.md",
+        "err_calc_mismatch": "{name}:{i}: {metric} — {got} в тексте, а расчёт из calcs.json даёт {want}; пересчитайте документ (`pfs calc all`, `pfs export`) или обновите calcs.json",
+        "metric_arpu": "ARPU (средневзвешенный по тарифам)", "metric_ltv": "LTV",
+        "metric_ltv_cac": "LTV/CAC", "metric_cac_paying": "CAC платящего",
+        "metric_payback": "Окупаемость CAC платящего",
         "warn_banned_term": "{name}: «{term}» — жаргон/англицизм, по стайлгайду (STYLE_RU.md) пишите «{instead}»",
         "warn_abbrev_undecoded": "{name}: «{term}» без расшифровки при первом упоминании — напишите «{term} — {hint}»",
         "kind_fact": "факт", "kind_hypothesis": "гипотеза", "kind_forecast": "прогноз",
@@ -176,6 +183,9 @@ STR: dict[str, dict[str, str]] = {
         "warn_injection": "Sources containing instruction phrases (ignored as commands): {ids}",
         "warn_en_sync": "SIX_PAGER_EN.md lags behind RU: missing tags {tags} — the EN six-pager is "
                         "written by the agent from the same data package (spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
+        "warn_en_draft_pending": "SIX_PAGER_EN.md was appended, but a pending line "
+                                 "\"> EN draft — pending: …\" survived — finish the sections per "
+                                 "SIX_PAGER_PROMPT_EN.md and remove the skeleton marker",
         "warn_en_cyrillic": "SIX_PAGER_EN.md:{lines}: Cyrillic text ({n} lines): \"{sample}\" — the EN "
                             "six-pager is written in English from the same data package; RU text is never "
                             "pasted (spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
@@ -188,6 +198,10 @@ STR: dict[str, dict[str, str]] = {
         "warn_num_title_mismatch": "{cid}/{sid}: numbers in the source title ({tnums}) do not match the claim numbers ({cnums}); the number is confirmed by the text of sources/{sid}.md — possibly different metrics",
         "warn_num_serious": "{cid}/{sid}: claim numbers ({cnums}) do not match the source title numbers ({tnums}) and are absent from its text — serious discrepancy, verify the claim against the source",
         "warn_quote_numbers": "{cid}/{sid}: numbers from the quote ({nums}) are absent from the source text — check the quote against sources/{sid}.md",
+        "err_calc_mismatch": "{name}:{i}: {metric} is {got} in the text, but the calcs.json math gives {want}; recalculate the document (`pfs calc all`, `pfs export`) or update calcs.json",
+        "metric_arpu": "ARPU (tier-weighted)", "metric_ltv": "LTV",
+        "metric_ltv_cac": "LTV/CAC", "metric_cac_paying": "Paying-user CAC",
+        "metric_payback": "Paying-user CAC payback",
         "warn_banned_term": "{name}: '{term}' is banned jargon — write '{instead}' per the style guide",
         "warn_abbrev_undecoded": "{name}: '{term}' is not decoded at first mention — write '{term} — {hint}'",
         "kind_fact": "fact", "kind_hypothesis": "hypothesis", "kind_forecast": "forecast",

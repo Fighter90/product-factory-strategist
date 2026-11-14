@@ -214,3 +214,26 @@
 {"ts": "2026-11-10T00:19:37+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
 {"ts": "2026-11-10T00:19:44+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
 {"ts": "2026-11-10T01:09:14+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-14T23:34:38+03:00", "kind": "claim", "msg": "C078 [факт] Продукт CVStart (career-ops-ui): скан 135 джоб-бордов (130 международных + 5 RU), AI-скори", "sources": ["S001"]}
+{"ts": "2026-11-14T23:34:38+03:00", "kind": "claim", "msg": "C004 замещено C078: сверка с sources/S001: на снимке сайта 135 job-board sources = 130 международных + 5 RU, а не ~129; формулировка выровнена с источником"}
+{"ts": "2026-11-14T23:34:38+03:00", "kind": "claim", "msg": "C079 [вывод] Вывод: прямые конкуренты (Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi) — ", "sources": ["S002"]}
+{"ts": "2026-11-14T23:34:38+03:00", "kind": "claim", "msg": "C008 замещено C079: цитата (Zety $23,70, resume.io $29,95) отсутствует в тексте S002 (там прайс Rezi) и других зарегистрированных источников — агрегат по прайс-страницам регистрируется как вывод, конкретные цены Zety/resume.io не верифицированы"}
+{"ts": "2026-11-14T23:34:38+03:00", "kind": "claim", "msg": "C080 [гипотеза] Гипотеза: языковое покрытие прямых конкурентов узкое (Enhancv/Teal/Rezi — англоязычные, Ki", "sources": ["S002"]}
+{"ts": "2026-11-14T23:34:38+03:00", "kind": "claim", "msg": "C009 замещено C080: число «6 языков» отсутствует в тексте S002 — конкретика не верифицирована, понижено до гипотезы"}
+{"ts": "2026-11-14T23:34:38+03:00", "kind": "claim", "msg": "C081 [факт] Продукт запущен на Product Hunt (бейдж на сайте); текущий релиз v1.271.2, 7 922 автотеста;", "sources": ["S001"]}
+{"ts": "2026-11-14T23:34:38+03:00", "kind": "claim", "msg": "C066 замещено C081: сверка с sources/S001: на снимке v1.271.2 · 7,922 automated tests и 135 job-board sources — цифры релиза выровнены с источником"}
+{"ts": "2026-11-14T23:35:13+03:00", "kind": "claim", "msg": "C071: перепривязка S004 → S004; цитата обновлена"}
+{"ts": "2026-11-14T23:35:13+03:00", "kind": "claim", "msg": "retag: [C004] → [C078] — файлов 6, вхождений 36 (02_situation.md, 04_product_strategy.md, 05_comms_strategy.md, REPORT.md, SIX_PAGER.md, SIX_PAGER_EN.md)"}
+{"ts": "2026-11-14T23:35:13+03:00", "kind": "claim", "msg": "retag: [C009] → [C080] — файлов 5, вхождений 18 (03_options.md, 04_product_strategy.md, REPORT.md, SIX_PAGER.md, SIX_PAGER_EN.md)"}
+{"ts": "2026-11-14T23:35:13+03:00", "kind": "claim", "msg": "retag: [C066] → [C081] — файлов 2, вхождений 2 (REPORT.md, wbs_wave1.md)"}
+{"ts": "2026-11-14T23:35:14+03:00", "kind": "claim", "msg": "C060: основания перенаправлены C004→C078"}
+{"ts": "2026-11-14T23:35:23+03:00", "kind": "claim", "msg": "C082 [допущение] Юнит-допущения модели (выведены из ценового коридора ниши, для ЕС не подтверждены): тарифы"}
+{"ts": "2026-11-14T23:35:23+03:00", "kind": "claim", "msg": "C057 замещено C082: PRO-51: ARPU 25 — цена тарифа Unlimited, не средневзвешенный ARPU; добавлены микс тарифов, CR free→paid и измеримая замена «оттока звёзд»"}
+{"ts": "2026-11-14T23:35:23+03:00", "kind": "claim", "msg": "retag: [C057] → [C082] — файлов 6, вхождений 43 (04_product_strategy.md, 06_validation_plan.md, 07_quality_review.md, REPORT.md, SIX_PAGER.md, SIX_PAGER_EN.md)"}
+{"ts": "2026-11-14T23:35:24+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-14T23:35:24+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-14T23:35:24+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-14T23:35:24+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-14T23:35:24+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/options_scoring.xlsx + options_scoring.md", "tool": "pfs calc"}
+{"ts": "2026-11-14T23:35:24+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-14T23:35:24+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}

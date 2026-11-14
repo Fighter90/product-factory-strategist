@@ -266,10 +266,10 @@ def _sixpager_usage(path: Path) -> str:
 
 def excel_numbers() -> dict:
     md = _read(DEMO / "outputs" / "03_options.md")
-    price = _require(re.search(r"paid \$([\d]+)/мес", md), "цена Pro", DEMO / "outputs" / "03_options.md")
+    price = _require(re.search(r"Unlimited \$([\d]+)/мес", md), "цена Pro", DEMO / "outputs" / "03_options.md")
     cm = _require(re.search(r"CM \$([\d,]+)", md), "вклад на покрытие", DEMO / "outputs" / "03_options.md")
     ltv = _require(re.search(r"LTV ≈ \$([\d,]+)", md), "LTV", DEMO / "outputs" / "03_options.md")
-    ratio = _require(re.search(r"LTV/CAC ≈ ([\d,]+)", md), "LTV/CAC", DEMO / "outputs" / "03_options.md")
+    ratio = _require(re.search(r"LTV/CAC[^≈\n]{0,12}≈ ([\d,]+)", md), "LTV/CAC", DEMO / "outputs" / "03_options.md")
     return {"XL_PRICE": price, "XL_CM": cm, "XL_LTV": ltv, "XL_RATIO": ratio}
 
 
@@ -772,7 +772,7 @@ RU_BODY = f"""
         <div class="xl">
           <div class="label" style="margin-bottom:10px">Excel · лист «Ввод»</div>
           <table>
-            <tr><td>Цена Pro</td><td>${{{{XL_PRICE}}}}/мес</td></tr>
+            <tr><td>Тариф Unlimited</td><td>${{{{XL_PRICE}}}}/мес</td></tr>
             <tr><td>Переменные 25% → вклад на покрытие</td><td>${{{{XL_CM}}}}</td></tr>
             <tr><td>LTV</td><td>≈ ${{{{XL_LTV}}}}</td></tr>
             <tr><td>LTV / CAC</td><td>≈ {{{{XL_RATIO}}}}</td></tr>
@@ -1075,7 +1075,7 @@ EN_BODY = f"""
         <div class="xl">
           <div class="label" style="margin-bottom:10px">Excel · input sheet</div>
           <table>
-            <tr><td>Pro price</td><td>${{{{XL_PRICE}}}}/mo</td></tr>
+            <tr><td>Unlimited plan</td><td>${{{{XL_PRICE}}}}/mo</td></tr>
             <tr><td>25% variable costs → contribution margin</td><td>${{{{XL_CM}}}}</td></tr>
             <tr><td>LTV</td><td>≈ ${{{{XL_LTV}}}}</td></tr>
             <tr><td>LTV / CAC</td><td>≈ {{{{XL_RATIO}}}}</td></tr>
