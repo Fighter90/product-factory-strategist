@@ -387,8 +387,7 @@ class TestCommittedOutput(SiteBuildBase):
 
     def test_referenced_assets_exist(self):
         for rel in ("assets/logo.svg", "assets/hero-poster.webp",
-                    "assets/og/og.jpg", "assets/dark-double-diamond.webp",
-                    "assets/dark-double-diamond.avif", "assets/dossier-dark.webp",
+                    "assets/og/og.jpg", "assets/dossier-dark.webp",
                     "assets/dossier-dark.avif"):
             self.assertTrue((ROOT / "site" / rel).exists(), rel)
         self.assertTrue((ROOT / "site" / "assets" / "hero-swarm-2.mp4").exists())
@@ -593,7 +592,7 @@ class TestOgSingleFile(SiteBuildBase):
 class TestDarkAssetsUsed(SiteBuildBase):
     """Тёмные фото подключены к генерируемым страницам: picture, avif/webp, размеры."""
 
-    PAIRS = {"dark-double-diamond": (1800, 1350), "dossier-dark": (1800, 1012)}
+    PAIRS = {"dossier-dark": (1800, 1012)}
 
     def test_shipped(self):
         for name in self.PAIRS:
@@ -616,6 +615,32 @@ class TestDarkAssetsUsed(SiteBuildBase):
         for p in sorted((ROOT / "site" / "assets").glob("dark-*.webp")):
             for lang, page in self.built.items():
                 self.assertIn(p.stem, page, f"{lang}: {p.name} лежит без использования")
+
+
+class TestDoubleDiamondRemoved(unittest.TestCase):
+    """dark-double-diamond убрана с лендинга по решению владельца: ни разметки
+    в собранных страницах, ни файлов в site/assets (просьба — убрать картинку
+    https://strategyproduct.ru/assets/dark-double-diamond.avif)."""
+
+    PAGES = ("site/index.html", "site/en/index.html")
+
+    def test_not_referenced_on_landing(self):
+        for rel in self.PAGES:
+            page = (ROOT / rel).read_text(encoding="utf-8")
+            self.assertNotIn("dark-double-diamond", page, rel)
+
+    def test_assets_removed(self):
+        for ext in (".avif", ".webp"):
+            p = ROOT / "site" / "assets" / f"dark-double-diamond{ext}"
+            self.assertFalse(p.exists(), f"{p.name} всё ещё в репозитории")
+
+    def test_dossier_dark_still_there(self):
+        """Соседнее тёмное фото CTA не задето — сносили только double-diamond."""
+        for ext in (".avif", ".webp"):
+            self.assertTrue(
+                (ROOT / "site" / "assets" / f"dossier-dark{ext}").exists(), ext)
+        page = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
+        self.assertIn("dossier-dark", page)
 
 
 class TestCommittedEnNoCyrillic(unittest.TestCase):

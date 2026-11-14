@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>{{materials.title}}</title>
+<meta name="description" content="{{materials.description}}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{materials.og_title}}">
+<meta property="og:url" content="{{materials.og_url}}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='.55' stop-color='%23818cf8'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='11' fill='%2305070f'/%3E%3Cg fill='none' stroke='url(%23g)' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M14 10H34L42 19L24 42L6 19Z'/%3E%3Cpath d='M6 19H42' opacity='.7'/%3E%3Cpath d='M14 10L20 19L24 42' opacity='.55'/%3E%3Cpath d='M34 10L28 19L24 42' opacity='.55'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --bg:#05070f; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06);
+  --text:#eef2ff; --muted:#9aa7bd; --line:rgba(148,163,184,.16);
+  --accent:#2dd4bf; --accent2:#818cf8; --accent3:#f472b6;
+  --code:rgba(8,12,24,.75);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+[id]{scroll-margin-top:92px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden}
+body.lang-switching{opacity:.55}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(1200px 800px at 78% -12%,rgba(129,140,248,.10),transparent 62%),radial-gradient(1000px 760px at -12% 32%,rgba(45,212,191,.08),transparent 62%),radial-gradient(1100px 820px at 108% 92%,rgba(244,114,182,.07),transparent 62%)}
+::selection{background:rgba(45,212,191,.3)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;opacity:.24;filter:blur(110px);
+  background:conic-gradient(from 0deg at 32% 28%,rgba(45,212,191,.15),transparent 28%,rgba(129,140,248,.15) 52%,transparent 76%,rgba(244,114,182,.12));
+  animation:auroraSpin 44s linear infinite}
+.noise{position:absolute;inset:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+#bar{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));box-shadow:0 0 12px rgba(129,140,248,.7)}
+header{position:sticky;top:0;z-index:50;background:rgba(5,7,15,.66);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:16px;padding:13px 0;flex-wrap:wrap}
+.logo{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:.2px}
+.logo-t{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo .mark{width:25px;height:25px;flex:none;filter:drop-shadow(0 0 10px rgba(45,212,191,.28))}
+.nav a.nl{color:var(--muted);font-size:14px;position:relative}
+.nav a.nl::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transition:width .25s}
+.nav a.nl:hover{color:var(--text);text-decoration:none}
+.nav a.nl:hover::after{width:100%}
+.nav a.nl.on{color:var(--accent)}
+.nav a.nl.on::after{width:100%}
+.lang{margin-left:auto;display:flex;gap:6px}
+.lang a{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:8px;cursor:pointer;font-size:13px}
+.lang a.on{color:#05070f;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));border-color:transparent;font-weight:700}
+.hero{position:relative;padding:70px 0 50px;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(30px,4vw,44px);font-weight:850;letter-spacing:-.8px;position:relative}
+.hero h1 .grad{background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 45%,var(--accent3) 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{color:var(--muted);font-size:16.5px;max-width:860px;margin:14px 0 0;position:relative}
+.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px;position:relative}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 14px;font-size:12.5px;color:var(--muted)}
+.chip b{color:var(--accent);font-weight:700}
+section{padding:56px 0;position:relative}
+section+section{border-top:1px solid rgba(148,163,184,.12)}
+h2{font-size:clamp(22px,3vw,29px);letter-spacing:-.4px;margin-bottom:12px;position:relative;padding-bottom:12px}
+h2::after{content:"";position:absolute;left:0;bottom:0;width:72px;height:3px;border-radius:2px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transform:scaleX(0);transform-origin:left}
+.rv.in h2::after{transform:scaleX(1);transition:transform .9s cubic-bezier(.2,.6,.2,1) .25s}
+.lead{color:var(--muted);max-width:860px;margin-bottom:26px}
+.flow-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.flow-svg{min-width:900px;width:100%;height:auto;display:block}
+.flow-svg .path{stroke-dasharray:1400;stroke-dashoffset:0;animation:draw linear both;animation-timeline:view();animation-range:entry 15% exit 75%}
+@keyframes draw{from{stroke-dashoffset:1400}to{stroke-dashoffset:0}}
+.pdf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.pdf-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;backdrop-filter:blur(8px);transition:transform .25s,border-color .25s}
+.pdf-card:hover{transform:translateY(-3px);border-color:rgba(244,114,182,.5)}
+.pdf-ic{margin-bottom:4px}
+.pdf-card h3{font-size:14.5px;margin:8px 0 6px;color:var(--text)}
+.pdf-card p{color:var(--muted);font-size:13px}
+.pdf-meta{font-size:11.5px;color:rgba(154,167,189,.7);margin:8px 0}
+.pdf-btns{display:flex;gap:8px;flex-wrap:wrap}
+.pbtn{display:inline-block;border:1px solid rgba(244,114,182,.45);color:#f472b6;border-radius:9px;padding:5px 12px;font-size:12.5px;font-weight:600}
+.pbtn:hover{text-decoration:none;background:rgba(244,114,182,.08)}
+.pbtn.ghost2{border-color:var(--line);color:var(--muted)}
+.pbtn.ghost2:hover{color:var(--text);border-color:var(--accent)}
+.shot-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;backdrop-filter:blur(8px);display:flex;flex-direction:column}
+.shot-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--card2)}
+.shot-bar i{width:10px;height:10px;border-radius:50%;background:rgba(154,167,189,.35)}
+.shot-bar i:nth-child(1){background:#f472b6}.shot-bar i:nth-child(2){background:#f6ad55}.shot-bar i:nth-child(3){background:#48bb78}
+.shot-bar span{margin-left:10px;font-size:12px;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,monospace}
+.shot-card img{width:100%;display:block}
+.shot-crop{aspect-ratio:16/10;overflow:hidden;flex:1 1 auto;min-height:220px}
+.shot-crop img{width:100%;height:100%;object-fit:cover;object-position:top center}
+.shot-cap{padding:10px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+.shot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:14px}
+@media(max-width:980px){.shot-grid{grid-template-columns:1fr}}
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:860px){.split2{grid-template-columns:1fr}}
+.faq6{display:grid;gap:8px;margin-top:6px}
+.f6{display:flex;gap:10px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 13px}
+.f6 b{font-size:12px;color:var(--accent);flex:none;font-variant-numeric:tabular-nums}
+.f6 span{font-size:13px;color:var(--muted)}
+.f6 span b{color:var(--text)}
+.note{border-left:3px solid var(--accent);background:var(--card);padding:13px 17px;border-radius:0 12px 12px 0;color:var(--muted);font-size:14px;margin:16px 0}
+.cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-block;padding:12px 26px;border-radius:12px;font-weight:700;font-size:15px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));color:#05070f;box-shadow:0 8px 30px rgba(45,212,191,.28)}
+.btn.ghost{border:1px solid var(--line);color:var(--text);background:var(--card)}
+.btn.ghost:hover{border-color:var(--accent)}
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
+.rv{animation:rvIn linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+@keyframes rvIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@supports not (animation-timeline: view()){ .rv{animation:none} }
+
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
+footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
+@media(max-width:700px){
+  .nav a.nl{display:none}
+  .wrap{padding:0 18px}
+  .cta .btn{width:100%;text-align:center;margin-bottom:10px}
+  .shot-cap{font-size:11.5px;padding:8px 12px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .aurora{display:none}
+  .rv{opacity:1;transform:none;animation:none}
+  .flow-svg .path{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="aurora"></div><div class="noise"></div></div>
+<div id="bar"></div>
+<header><div class="wrap nav">
+  <a class="logo" href="index.html"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></lineargradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t">{{materials.ru.k001}}{{materials.en.k001}}</span></a>
+  {{materials.ru.k002}}{{materials.en.k002}}
+  {{materials.ru.k003}}{{materials.en.k003}}
+  {{materials.ru.k004}}{{materials.en.k004}}
+  {{materials.ru.k005}}{{materials.en.k005}}
+  <div class="lang" role="group" aria-label="{{ui.aria_lang}}"><!--LANGSWITCH--></div>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  {{materials.ru.k006}}
+  {{materials.en.k006}}
+  {{materials.ru.lead}}
+  {{materials.en.lead}}
+  <div class="chips">
+    <span class="chip"><b>{{SIX_COUNT}}</b> {{materials.ru.k008}}{{materials.en.k008}}</span>
+    <span class="chip"><b>{{XLSX_COUNT}}</b> {{materials.ru.k009}}{{materials.en.k009}}</span>
+    <span class="chip"><b>{{SHOTS_COUNT}}</b> {{materials.ru.k010}}{{materials.en.k010}}</span>
+    <span class="chip"><b>{{SOURCES_COUNT}}</b> {{materials.ru.k011}}{{materials.en.k011}}</span>
+    <span class="chip"><b>{{CLAIMS_COUNT}}</b> {{materials.ru.k012}}{{materials.en.k012}}</span>
+    <span class="chip"><b>D001</b> {{materials.ru.k013}}{{materials.en.k013}}</span>
+  </div>
+</div></div>
+
+<section id="sixpager"><div class="wrap">
+  {{materials.ru.k014}}{{materials.en.k014}}
+  {{materials.ru.k015}}
+  {{materials.en.k015}}
+  <div class="split2 rv d2">
+    <div class="pdf-card">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 13l2 2 4-4"/></svg></div>
+      {{materials.ru.k016}}{{materials.en.k016}}
+      {{materials.ru.k017}}
+      {{materials.en.k017}}
+      <div class="pdf-meta">{{materials.ru.k018}}{{materials.en.k018}}</div>
+      <div class="pdf-btns">
+        <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.pdf" target="_blank" rel="noopener" class="pbtn">{{materials.ru.k019}}{{materials.en.k019}}</a>
+        <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.docx" target="_blank" rel="noopener" class="pbtn ghost2">DOCX</a>
+        <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_RU.md" target="_blank" rel="noopener" class="pbtn ghost2">Markdown</a>
+      </div>
+    </div>
+    <div class="pdf-card rv d1">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 13l2 2 4-4"/></svg></div>
+      {{materials.en.k020}}{{materials.ru.k020}}
+      {{materials.en.k021}}
+      {{materials.ru.k021}}
+      <div class="pdf-meta">{{materials.en.k022}}{{materials.ru.k022}}</div>
+      <div class="pdf-btns">
+        <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.pdf" target="_blank" rel="noopener" class="pbtn">{{materials.ru.k023}}{{materials.en.k023}}</a>
+        <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.docx" target="_blank" rel="noopener" class="pbtn ghost2">DOCX</a>
+      {{materials.ru.k024}}
+      {{materials.en.k024}}
+        <a href="https://raw.githubusercontent.com/Fighter90/product-factory-strategist/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/SIX_PAGER_EN.md" target="_blank" rel="noopener" class="pbtn ghost2">Markdown</a>
+      </div>
+    </div>
+  </div>
+  {{materials.ru.k025}}
+  {{materials.en.k025}}
+</div></section>
+
+<section id="excel"><div class="wrap">
+  {{materials.ru.k026}}{{materials.en.k026}}
+  {{materials.ru.k027}}
+  {{materials.en.k027}}
+  <div class="pdf-grid">
+    <div class="pdf-card rv">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M4 9h16M4 14h16M9 4v16M15 4v16"/></svg></div>
+      <h3>unit_economics.xlsx</h3>
+      {{materials.ru.k028}}
+      {{materials.en.k028}}
+      <div class="pdf-meta">{{materials.ru.k029}}{{materials.en.k029}}</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/attachments/unit_economics.xlsx" target="_blank" rel="noopener" class="pbtn">{{materials.ru.k030}}{{materials.en.k030}}</a></div>
+    </div>
+    <div class="pdf-card rv d1">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div>
+      <h3>growth_model.xlsx</h3>
+      {{materials.ru.k031}}
+      {{materials.en.k031}}
+      <div class="pdf-meta">{{materials.ru.k032}}{{materials.en.k032}}</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/attachments/growth_model.xlsx" target="_blank" rel="noopener" class="pbtn">{{materials.ru.k033}}{{materials.en.k033}}</a></div>
+    </div>
+    <div class="pdf-card rv d2">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><circle cx="8" cy="8" r="4"/><circle cx="16" cy="16" r="4"/></svg></div>
+      <h3>cohort_retention.xlsx</h3>
+      {{materials.ru.k034}}
+      {{materials.en.k034}}
+      <div class="pdf-meta">{{materials.ru.k035}}{{materials.en.k035}}</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/attachments/cohort_retention.xlsx" target="_blank" rel="noopener" class="pbtn">{{materials.ru.k036}}{{materials.en.k036}}</a></div>
+    </div>
+    <div class="pdf-card rv d3">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2"/></svg></div>
+      <h3>market_sizing.xlsx</h3>
+      {{materials.ru.k037}}
+      {{materials.en.k037}}
+      <div class="pdf-meta">{{materials.ru.k038}}{{materials.en.k038}}</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/attachments/market_sizing.xlsx" target="_blank" rel="noopener" class="pbtn">{{materials.ru.k039}}{{materials.en.k039}}</a></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="shots"><div class="wrap">
+  {{materials.ru.k040}}{{materials.en.k040}}
+  {{materials.ru.k041}}
+  {{materials.en.k041}}
+  <div class="shot-grid rv d2">
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>{{materials.ru.k042}}{{materials.en.k042}}</span></div>
+      <div class="shot-crop"><img src="assets/cv_landing_ru.jpg?v=9" alt="Лендинг cvstart.org (русский): AI-конструктор резюме, скан ~129 джоб-бордов, 19 языков"></div>
+      {{materials.ru.k043}}
+      {{materials.en.k043}}
+    </div>
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>{{materials.en.k044}}{{materials.ru.k044}}</span></div>
+      <div class="shot-crop"><img src="assets/cv_landing_en.jpg?v=9" alt="Лендинг cvstart.org (English): open-source AI resume builder"></div>
+      {{materials.ru.k045}}
+      {{materials.en.k045}}
+    </div>
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>{{materials.ru.k046}}{{materials.en.k046}}</span></div>
+      <div class="shot-crop"><img src="assets/cv_dash_ru.jpg?v=9" alt="Дашборд поиска работы CVStart (русский): AI-скоринг вакансий 0.0–5.0"></div>
+      {{materials.ru.k047}}
+      {{materials.en.k047}}
+    </div>
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>{{materials.en.k048}}{{materials.ru.k048}}</span></div>
+      <div class="shot-crop"><img src="assets/cv_dash_en.jpg?v=9" alt="Job-search dashboard CVStart (English): vacancy fit scoring"></div>
+      {{materials.ru.k049}}
+      {{materials.en.k049}}
+    </div>
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>{{materials.ru.k050}}{{materials.en.k050}}</span></div>
+      <div class="shot-crop"><img src="assets/cv_map_en.jpg?v=9" alt="Карта вакансий CVStart (English): job map"></div>
+      {{materials.ru.k051}}
+      {{materials.en.k051}}
+    </div>
+    <div class="shot-card">
+      <div class="shot-bar"><i></i><i></i><i></i><span>{{materials.ru.k052}}{{materials.en.k052}}</span></div>
+      <div class="shot-crop"><img src="assets/cv_tracker_en.jpg?v=9" alt="Трекер заявок CVStart (English): application tracker with follow-up"></div>
+      {{materials.ru.k053}}
+      {{materials.en.k053}}
+    </div>
+  </div>
+  {{materials.ru.k054}}
+  {{materials.en.k054}}
+</div></section>
+
+<section id="evidence"><div class="wrap">
+  {{materials.ru.k055}}{{materials.en.k055}}
+  {{materials.ru.k056}}
+  {{materials.en.k056}}
+  <div class="flow-wrap rv d2"><svg class="flow-svg" viewBox="0 0 1000 120" role="img" aria-label="{{ui.aria_flow}}">
+    <defs><linearGradient id="fg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".5" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></lineargradient></defs>
+    <path class="path" d="M25 60 H975" fill="none" stroke="url(#fg)" stroke-width="2.5"/>
+    <g font-size="12" font-weight="700" text-anchor="middle">
+      <g><circle cx="60" cy="60" r="26" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="60" y="64" fill="#2dd4bf">S###</text><text x="60" y="22" fill="#9aa7bd" font-weight="400"><tspan lang="ru">источники</tspan><tspan lang="en">sources</tspan></text><text x="60" y="106" fill="#9aa7bd" font-weight="400"><tspan lang="ru">{{SOURCES_COUNT}} · сайт + дайджесты</tspan><tspan lang="en">{{SOURCES_COUNT}} · site + digests</tspan></text></g>
+      <g><circle cx="240" cy="60" r="26" fill="#05070f" stroke="#2dd4bf" stroke-width="2"/><text x="240" y="64" fill="#2dd4bf">C###</text><text x="240" y="22" fill="#9aa7bd" font-weight="400"><tspan lang="ru">утверждения</tspan><tspan lang="en">claims</tspan></text><text x="240" y="106" fill="#9aa7bd" font-weight="400"><tspan lang="ru">{{CLAIMS_COUNT}} · силы A–D</tspan><tspan lang="en">{{CLAIMS_COUNT}} · grades A–D</tspan></text></g>
+      <g><circle cx="420" cy="60" r="26" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="420" y="64" fill="#818cf8">A–E</text><text x="420" y="22" fill="#9aa7bd" font-weight="400"><tspan lang="ru">варианты</tspan><tspan lang="en">options</tspan></text><text x="420" y="106" fill="#9aa7bd" font-weight="400"><tspan lang="ru">+ red team ×{{RT_HITS}}</tspan><tspan lang="en">+ red team ×{{RT_HITS}}</tspan></text></g>
+      <g><circle cx="600" cy="60" r="26" fill="#05070f" stroke="#818cf8" stroke-width="2"/><text x="600" y="64" fill="#818cf8">04·05</text><text x="600" y="22" fill="#9aa7bd" font-weight="400"><tspan lang="ru">стратегии</tspan><tspan lang="en">strategies</tspan></text><text x="600" y="106" fill="#9aa7bd" font-weight="400"><tspan lang="ru">обещания = продукт</tspan><tspan lang="en">promises = product proof</tspan></text></g>
+      <g><circle cx="780" cy="60" r="26" fill="#05070f" stroke="#f472b6" stroke-width="2"/><text x="780" y="64" fill="#f472b6">D001</text><text x="780" y="22" fill="#9aa7bd" font-weight="400"><tspan lang="ru">решение</tspan><tspan lang="en">decision</tspan></text><text x="780" y="106" fill="#9aa7bd" font-weight="400"><tspan lang="ru">пересмотр {{REVIEW_RU}}</tspan><tspan lang="en">review {{REVIEW_EN}}</tspan></text></g>
+      <g><circle cx="945" cy="60" r="26" fill="#05070f" stroke="#f472b6" stroke-width="2"/><text x="945" y="64" fill="#f472b6">✓</text><text x="945" y="22" fill="#9aa7bd" font-weight="400">check 100/100</text><text x="945" y="106" fill="#9aa7bd" font-weight="400"><tspan lang="ru">0 ошибок</tspan><tspan lang="en">0 errors</tspan></text></g>
+    </g>
+  </svg></div>
+  <div class="pdf-grid" style="margin-top:18px">
+    <div class="pdf-card rv">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 14h6M9 17h4"/></svg></div>
+      {{materials.ru.k057}}{{materials.en.k057}}
+      {{materials.ru.k058}}
+      {{materials.en.k058}}
+      <div class="pdf-meta"><code lang="ru">projects/демо/outputs/REPORT.md</code></div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/outputs/REPORT.md" target="_blank" rel="noopener" class="pbtn">{{materials.ru.k059}}{{materials.en.k059}}</a></div>
+    </div>
+    <div class="pdf-card rv d1">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+      {{materials.ru.k060}}{{materials.en.k060}}
+      {{materials.ru.k061}}
+      {{materials.en.k061}}
+      <div class="pdf-meta"><code lang="ru">projects/демо/sources/</code> · S001–S011</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/product-factory-strategist/tree/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/sources" target="_blank" rel="noopener" class="pbtn">{{materials.ru.k062}}{{materials.en.k062}}</a></div>
+    </div>
+    <div class="pdf-card rv d2">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f472b6" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+      {{materials.ru.k063}}{{materials.en.k063}}
+      {{materials.ru.k064}}
+      {{materials.en.k064}}
+      <div class="pdf-meta">interviews/synthetic/ · analysis/synthetic_funnel.csv</div>
+      <div class="pdf-btns">
+        <a href="https://github.com/Fighter90/product-factory-strategist/tree/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/interviews/synthetic" target="_blank" rel="noopener" class="pbtn">interviews/synthetic/</a>
+        <a href="https://github.com/Fighter90/product-factory-strategist/blob/main/projects/%D0%B4%D0%B5%D0%BC%D0%BE/analysis/synthetic_funnel.csv" target="_blank" rel="noopener" class="pbtn ghost2">synthetic_funnel.csv</a>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section id="product"><div class="wrap">
+  {{materials.ru.k065}}{{materials.en.k065}}
+  {{materials.ru.k066}}
+  {{materials.en.k066}}
+  <div class="split2 rv d2">
+    <div class="pdf-card">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></div>
+      {{materials.ru.k067}}{{materials.en.k067}}
+      {{materials.ru.k068}}
+      {{materials.en.k068}}
+      <div class="pdf-meta">{{materials.ru.k069}}{{materials.en.k069}}</div>
+      <div class="pdf-btns"><a href="https://cvstart.org/" target="_blank" rel="noopener" class="pbtn">{{materials.ru.k070}}{{materials.en.k070}}</a></div>
+    </div>
+    <div class="pdf-card rv d1">
+      <div class="pdf-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#2dd4bf" stroke-width="1.6"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13 5l-2 14"/></svg></div>
+      {{materials.ru.k071}}{{materials.en.k071}}
+      {{materials.ru.k072}}
+      {{materials.en.k072}}
+      <div class="pdf-meta">{{materials.ru.k073}}{{materials.en.k073}}</div>
+      <div class="pdf-btns"><a href="https://github.com/Fighter90/career-ops-ui" target="_blank" rel="noopener" class="pbtn">{{materials.ru.k074}}{{materials.en.k074}}</a></div>
+    </div>
+  </div>
+  <div class="cta rv">
+    {{materials.ru.k075}}{{materials.en.k075}}
+    {{materials.ru.k076}}{{materials.en.k076}}
+    {{materials.ru.k077}}{{materials.en.k077}}
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div>
+    <div class="logo"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g></svg><span class="logo-t">{{materials.ru.k078}}{{materials.en.k078}}</span></div>
+    <div>{{materials.ru.k079}}{{materials.en.k079}}</div>
+  </div>
+  <div>
+    {{materials.ru.k080}}{{materials.en.k080}} · {{materials.ru.k081}}{{materials.en.k081}} · {{materials.ru.k082}}{{materials.en.k082}} ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/wiki" target="_blank" rel="noopener">Wiki</a>
+  </div>
+</div></footer>
+
+<script>
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const bar = document.getElementById('bar');
+(function frame(){
+  const y = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
+  bar.style.width = (h > 0 ? (y/h*100) : 0) + '%';
+  requestAnimationFrame(frame);
+})();
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), {threshold:.12, rootMargin:'0px 0px -5% 0px'});
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+setTimeout(function(){ document.querySelectorAll('.rv:not(.in)').forEach(function(e){ e.classList.add('in'); }); }, 1400);
+</script>
+</body>
+</html>
