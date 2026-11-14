@@ -8,7 +8,7 @@
 за обязательствами и пересматривает выводы при новых данных.
 
 Это папка-репозиторий: инструкции, наборы знаний по категориям (стратегия · экономика · продукт · UX ·
-данные · платформы · Gen AI), 100 навыков, 8 субагентов, 6 хуков
+данные · платформы · Gen AI), 101 навык, 8 субагентов, 6 хуков
 и CLI/MCP-инструменты на чистом Python (ноль зависимостей). Работает в Claude Code, Cursor, Codex, OpenCode,
 Windsurf, Copilot.
 
@@ -188,7 +188,7 @@ flowchart TD
 flowchart TB
   U["Руководитель продукта"] -->|"запрос · ответы на блоки вопросов"| ENV
   subgraph ENV["LLM-среда (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 100<br/>(базовые 13 + product-skills 27 + личная 57 + интеграции 3: sdd · deck · premortem)"]
+    AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 101<br/>(базовые 13 + product-skills 27 + личная 57 + интеграции 4: ph-trends · sdd · deck · premortem)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 6<br/>SessionStart · PreWeb-домены · PreGuard-реестры · PostTool-журнал · Stop-стоимость (+ общий модуль)"]
   end
@@ -219,14 +219,14 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  SK["100 навыков"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
+  SK["101 навык"] --> B["Базовые 13: по шагам процесса<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: процедуры методов<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
   SK --> L["Личная библиотека 57<br/>дизайн · маркетинг · наука · документы/медиа · мета"]
-  SK --> INT["Интеграции 3<br/>premortem · sdd · deck"]
+  SK --> INT["Интеграции 4<br/>ph-trends · premortem · sdd · deck"]
   B & P & L & INT --> INV["Вызов: авто по триггерам · явно «используй skill X» · по шагам процесса"]
 ```
 
-**Структура (100):** четыре группы.
+**Структура (101):** четыре группы.
 - **Базовые 13** — шаги процесса: intake, research, situation, options, strategy, validation-plan,
   decision-support, data-analysis, interviews, ux-review, six-pager, deep-research, strategist.
 - **Product-skills 27** — процедуры методов: market-sizing, unit-economics, traction-modeling,
@@ -240,7 +240,7 @@ flowchart TB
   statistical-analysis, exploratory-data-analysis, scientific-critical-thinking, peer-review,
   scientific-writing, transcribe, watch; документы/медиа: markitdown, docx, pdf, xlsx, pptx, officecli,
   matplotlib, scientific-visualization, generate-image, infographics, video; мета: balanced, find-skills.
-- **Интеграции 3** — premortem, sdd, deck.
+- **Интеграции 4** — ph-trends (тренды Product Hunt → применение к продукту), premortem, sdd, deck.
 
 **Как вызывать — три способа:**
 1. **Автоматически** — среда читает `description` навыка и подключает его по формулировке задачи
@@ -352,6 +352,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 | Lovable | MCP `https://mcp.lovable.dev` (OAuth `/mcp`) | web-дека/лендинг по брифу `docs/lovable-brief.md` |
 | Higgsfield | MCP среды | визуалы слайдов/сайта (кредиты — с вопросом) |
 | officecli | внешний CLI | PPTX/XLSX/DOCX-манипуляции для деки и отчётов |
+| Product Hunt | MCP `.mcp.json` `https://mcp.producthunt.com/mcp` (OAuth `/mcp`) | тренды запусков → применение к продукту (skill `ph-trends`) |
 | GitHub Pages | workflow | сайт документации `strategyproduct.ru` (RU/EN) |
 
 ## Безопасность и данные
@@ -364,7 +365,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 
 ```
 AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject.toml
-.claude/skills/      (100)  базовые 13 · product-skills 27 · личная 57 · интеграции 3
+.claude/skills/      (101)  базовые 13 · product-skills 27 · личная 57 · интеграции 4
 .claude/agents/      (8)    researcher · red-team · evidence-auditor · synthetic-respondent ·
                             data-analyst · ux-analyst · comms-strategist · router
 .claude/hooks/       (6)    session_start (SessionStart-контекст) · pre_web (домены до запроса) ·
