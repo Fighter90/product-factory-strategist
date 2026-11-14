@@ -261,17 +261,19 @@ Option C (as revised after the red team), because: (1) it is the only option tha
 
 Unit economics — the step-by-step calculation:
 
-Assumptions: unit assumptions [C082]: ARPU €25 (Unlimited; the CVDesignR €9.99 [C023] ↔ resume.io €24.95 [C026] corridor); variable costs 25%; churn 8%/mo. CAC €30 — an assumption for the sensitivity of the paid scenario; the cash CAC of organic ≈ 0 [04_product_strategy]. Not confirmed for the EU — to be verified at validation [06_validation_plan]
+Assumptions: unit assumptions [C082]: plans Pro €12 (70% of the base) / Unlimited €25 (30%) — the CVDesignR €9.99 [C023] ↔ resume.io €24.95 [C026] corridor; ARPU is tier-weighted €15.90 (Σ price × share), not the top-tier price; variable costs 25%; churn 8%/mo; free→paid CR 3.5% — the middle of the freemium benchmark 2–5%. CAC €30 — a paid-scenario assumption per attracted free user; the cash CAC of organic ≈ 0 [04_product_strategy]. The mix and CR are not confirmed — to be verified by checkpoint H1 [06_validation_plan]
 
 | Formula | Calculation | Result |
 |---|---|---|
-| CM = ARPU × (1 − variable share) | 25.00 × (1 − 0.25) = 25.00 × 0.75 | **CM = 18.75** |
+| ARPU — tier-weighted: Σ(price × share) | 12 × 70% + 25 × 30% | **ARPU = 15.90** |
+| CM = ARPU × (1 − variable share) | 15.90 × (1 − 0.25) = 15.90 × 0.75 | **CM = 11.93** |
 | Average paying lifetime = 1 / churn | 1 / 0.08 | **12.50 months** |
-| LTV = CM / churn | 18.75 / 0.08 | **LTV = 234.38** |
-| LTV/CAC | 234.38 / 30.00 | **7.81** (criterion ≥ 3) |
-| CAC payback = CAC / CM | 30.00 / 18.75 | **1.60 months** |
+| LTV = CM / churn | 11.93 / 0.08 | **LTV = 149.06** |
+| Paying-user CAC = CAC / free→paid CR | 30.00 / 3.5% | **Paying-user CAC = 857.14** |
+| LTV/CAC (paying user) | 149.06 / 857.14 | **0.17** (criterion ≥ 3) |
+| Paying CAC payback = paying CAC / CM | 857.14 / 11.93 | **71.88 months** |
 
-**Conclusion (inference):** LTV/CAC ≥ 3 holds up to churn ≈ 20.83%/mo, up to CAC ≈ €78.12, and up to a variable-cost share ≈ 61.60% (each threshold — all else equal; the grid is on the "Sensitivity" sheet).
+**Conclusion (inference):** LTV/CAC ≥ 3 requires a free→paid conversion ≈ 60.38% (currently 3.50%), all else equal — paid acquisition does not pay off under the current assumptions: growth rests on organic (cash CAC ≈ 0), and the paid channel opens only after the conversion and the plan mix are confirmed by the checkpoint.
 
 ## FAQ-4. Tactics. Detail each initiative down to specific tactics.
 
@@ -323,7 +325,7 @@ Outcome roadmap (outcomes, not features):
 #### Economics (forecast; the ranges carry over global-model assumptions, low confidence)
 
 - **Before monetization (months 0–6):** costs = time 5–10 hrs/wk [C059] + infra from €3.79/mo [C062]. Revenue 0.
-- **After hosted (months 6–12):** revenue = paying users × ARPU. Unit assumptions [C082] (carried over from the global plan, not confirmed for the EU): ARPU €25 (Unlimited), variable costs (inference+infra+MoR) ~25% → CM ≈ €18.75; fixed costs ~€150/mo → break-even ≈ 8 paying users against fixed costs; at ARPU €12 (Pro-only) CM ≈ €9 → ≈ 17 paying users. Churn 8%/mo (assumption [C082]) → LTV ≈ €234 at ARPU €25. The cash CAC ≈ 0 (organic); the real cost is time.
+- **After hosted (months 6–12):** revenue = paying users × ARPU. Unit assumptions [C082] (carried over from the global plan, not confirmed for the EU): plans Pro €12 (70% of the base) / Unlimited €25 (30%) → tier-weighted ARPU ≈ €15.90 — not the top-tier price [M-unit-economics]; variable costs (inference+infra+MoR) ~25% → CM ≈ €11.93; fixed costs ~€150/mo → break-even ≈ 13 paying users against fixed costs. Churn 8%/mo → LTV ≈ €149.06. Freemium: free→paid CR 3.5% (middle of the 2–5% benchmark) → paying-user CAC = €30 / 0.035 ≈ €857 → LTV/CAC (paying) ≈ 0.17 — paid acquisition does not pay off under these assumptions (the paid scenario is not mixed with organic: the cash CAC of organic ≈ 0, the real cost is time); checkpoint H1 tests the conversion and the plan mix before any paid channels.
 - **The forecast by month 12:** 50–80 paying users, MRR €1.3–2k (low confidence: global assumptions carried over to the EU; the PL/ES WTP is unconfirmed [C044]). Sensitivity analysis is mandatory in the validation plan.
 - **Honest units:** prices are compared in a single unit (€/mo at honest renewal), without mixing the 4-week subscription and one-off packs [C052].
 

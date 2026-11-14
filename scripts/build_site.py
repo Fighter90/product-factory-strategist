@@ -9,12 +9,13 @@ OG-картинки по языкам, числа — из репозитори�
 Только стандартная библиотека. Счётчик Метрики в репозиторий не пишется:
 подключается флагом `--ym-id` (см. site/ANALYTICS.md).
 
-Скоуп PRO-66: эта система генерирует `/` (RU) и `/en/` (EN). Страницы site/demo.html,
-site/help.html и site/materials.html остаются в прежней вёрстке — их перевод в новую
-систему вынесен в отдельную задачу; тёмные фото, относящиеся к ним (обложка demo
-на основе dark-hero-paper), подключаются вместе с конвертацией. Сейчас dark-hero-paper
-используется как OG-картинка site/assets/og/og.jpg, dark-double-diamond и dossier-dark —
-в разделах «Процесс» и финальном CTA лендинга.
+Скоуп PRO-66 + PRO-61: система генерирует `/` и `/en/` для всех страниц сайта
+(index, demo, help, materials). Строки подстраниц — в словарях site/i18n/{ru,en}.json,
+шаблоны — в scripts/site_src/; каждая страница статична, одного языка, без
+JS-переключателя. Числа демо (источники, утверждения, red team, юнит-экономика из
+calcs.json, даты D001) подставляются из projects/демо при сборке. Тёмные фото:
+dark-hero-paper — OG-картинка site/assets/og/og.jpg, dark-double-diamond и
+dossier-dark — в разделах «Процесс» и финальном CTA лендинга.
 
 Запуск: python3 scripts/build_site.py [--out site] [--ym-id 12345678]
 """
@@ -25,6 +26,7 @@ import html
 import json
 import re
 import sys
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -169,6 +171,16 @@ def demo_numbers() -> dict:
     if not re.match(r"^\d{4}-\d{2}-\d{2}$", review):
         raise BuildError(f"У D001 нет даты пересмотра в формате YYYY-MM-DD: {review!r}")
 
+    srcs = sorted(p.stem for p in (DEMO / "sources").glob("S*.md"))
+    if not srcs:
+        raise BuildError(f"В {DEMO / 'sources'} нет файлов S*.md")
+    commit = ""
+    for c in (d001.get("commitments") or []):
+        m = re.search(r"\d{4}-\d{2}-\d{2}", str(c.get("due", "")))
+        if m:
+            commit = m.group(0)
+            break
+
     return {
         "D_SOURCES": len(list((DEMO / "sources").glob("S*.md"))),
         "D_CLAIMS": len(claims),
@@ -181,6 +193,15 @@ def demo_numbers() -> dict:
         "D_LABEL_EN": _label_en(label),
         "REVIEW_RU": f"{review[8:]}.{review[5:7]}.{review[2:4]}",
         "REVIEW_EN": review,
+        "D_REVIEW": review,
+        "D_COMMIT": commit,
+        "D_ID": d001.get("id", "D001"),
+        "D_GROUNDS": "/".join(d001.get("grounds") or []),
+        "D_OPTS": len(letters),
+        "D_HITS": objections + assumptions,
+        "D_SRC_FIRST": srcs[0],
+        "D_SRC_LAST": srcs[-1],
+        "D_CLAIMS_LAST": f"C{len(claims):03d}",
     }
 
 
@@ -271,6 +292,93 @@ def excel_numbers() -> dict:
     ltv = _require(re.search(r"LTV ≈ \$([\d,]+)", md), "LTV", DEMO / "outputs" / "03_options.md")
     ratio = _require(re.search(r"LTV/CAC[^≈\n]{0,12}≈ ([\d,]+)", md), "LTV/CAC", DEMO / "outputs" / "03_options.md")
     return {"XL_PRICE": price, "XL_CM": cm, "XL_LTV": ltv, "XL_RATIO": ratio}
+
+
+def unit_tokens() -> dict:
+    """Юнит-математика платящего из calcs.json демо-проекта, сверка с 03_options.md.
+
+    PRO-61: числа на сайте считаются из реестра демо-проекта (pfs calc), а не набираются
+    руками: CM = ARPU × (1 − переменные), LTV = CM / churn (до цента), CAC платящего =
+    CAC / CR free→paid (если CR записан), LTV/CAC — с точностью документа. Документ
+    может описывать простую модель (paid-тариф) или средневзвешенную по тирам —
+    парсер разбирает оба варианта; расхождение с округлениями 03_options.md —
+    громкий BuildError, а не тихое расхождение сайта с демо.
+    """
+    calcs_path = DEMO / "calcs.json"
+    if not calcs_path.exists():
+        raise BuildError(f"Нет {calcs_path.relative_to(ROOT)} — пересоберите демо-проект (pfs calc)")
+    ue = json.loads(calcs_path.read_text(encoding="utf-8")).get("unit_econ") or {}
+    if not ue.get("arpu"):
+        raise BuildError("В calcs.json нет unit_econ.arpu — пересоберите демо-проект (pfs calc)")
+    arpu = Decimal(str(ue["arpu"]))
+    vc = Decimal(str(ue.get("vc_share", "")))
+    churn = Decimal(str(ue.get("churn_month", "")))
+    cac_free = Decimal(str(ue.get("cac", "")))
+    cr_raw = ue.get("cr_free_paid")
+    cr = Decimal(str(cr_raw)) if cr_raw else None
+    if not (vc and churn and cac_free):
+        raise BuildError("В calcs.json неполный unit_econ: arpu, vc_share, churn_month, cac")
+
+    opts_path = DEMO / "outputs" / "03_options.md"
+    opts = _read(opts_path)
+    cm = arpu * (Decimal(1) - vc)
+    ltv_raw = cm / churn
+    cac_paid = cac_free / cr if cr else cac_free
+    m_ratio = _require(re.search(r"LTV/CAC(?: платящего)? ≈ ([\d,]+)", opts),
+                       "LTV/CAC в 03_options", opts_path)
+    ratio_dec = Decimal(m_ratio.replace(",", "."))
+    ratio = ltv_raw / cac_paid
+    decimals = len(m_ratio) - m_ratio.index(",") - 1 if "," in m_ratio else 0
+    ratio_q = ratio.quantize(Decimal(1).scaleb(-decimals), rounding=ROUND_HALF_UP) \
+        if decimals else ratio.quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+    if abs(ratio_q - ratio_dec) > Decimal("0.001"):
+        raise BuildError(f"LTV/CAC не сходится: calcs.json → {ratio}, 03_options → {m_ratio}")
+    breakeven = int((Decimal(1500) / cm).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+    payback = (cac_paid / cm).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
+    var = arpu * vc
+
+    # ARPU документа: средневзвешенный или paid-тариф
+    m_arpu_w = re.search(r"ARPU ≈ \$([\d,]+)", opts)
+    m_arpu_p = re.search(r"paid \$([\d,]+)/мес", opts)
+    if m_arpu_w:
+        arpu_doc = m_arpu_w.group(1)
+    elif m_arpu_p:
+        arpu_doc = m_arpu_p.group(1)
+    else:
+        raise BuildError("В 03_options.md нет ARPU ни простым, ни средневзвешенным видом")
+    if abs(Decimal(arpu_doc.replace(",", ".")) - arpu) > Decimal("0.005"):
+        raise BuildError(f"ARPU не сходится: calcs.json → {arpu}, 03_options → {arpu_doc}")
+    cm_doc = _require(re.search(r"CM \$([\d,]+)", opts), "CM в 03_options", opts_path)
+    if abs(Decimal(cm_doc.replace(",", ".")) - cm) > Decimal("0.005"):
+        raise BuildError(f"CM не сходится: calcs.json → {cm}, 03_options → {cm_doc}")
+    ltv_doc = _require(re.search(r"LTV ≈ \$([\d,]+)", opts), "LTV в 03_options", opts_path)
+    if abs(Decimal(ltv_doc.replace(",", ".")) - ltv_raw) > Decimal("0.5"):
+        raise BuildError(f"LTV не сходится: calcs.json → {ltv_raw}, 03_options → {ltv_doc}")
+
+    def pair(x):
+        s = f"{x.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)}"
+        return s.replace(".", ","), s
+
+    arpu_ru, arpu_en = pair(arpu)
+    cm_ru, cm_en = pair(cm)
+    ltv_ru, ltv_en = pair(ltv_raw)
+    var_ru, var_en = pair(var)
+    ratio_ru = m_ratio.replace(".", ",")
+    ratio_en = m_ratio.replace(",", ".")
+    cac_int = int(cac_paid.quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+    cac_ru = f"{cac_int // 1000} {cac_int % 1000:03d}" if cac_int >= 1000 else str(cac_int)
+    cac_en = f"{cac_int:,}"
+    return {"U_ARPU_RU": arpu_ru, "U_ARPU_EN": arpu_en,
+            "U_CM_RU": cm_ru, "U_CM_EN": cm_en,
+            "U_LTV_RU": ltv_ru, "U_LTV_EN": ltv_en,
+            "U_RATIO_RU": ratio_ru, "U_RATIO_EN": ratio_en,
+            "U_VAR_RU": var_ru, "U_VAR_EN": var_en,
+            "U_BE": str(breakeven),
+            "U_CACP_RU": cac_ru, "U_CACP_EN": cac_en,
+            "U_PB_RU": str(payback).replace(".", ","), "U_PB_EN": str(payback),
+            "U_CAC": str(int(cac_free))}
+
+
 
 
 # ---------------- шаблоны ----------------
@@ -564,14 +672,58 @@ def _page(lang_attrs: str, title: str, desc: str, canonical: str, og: str,
 # Ключи, значения которых — уже готовая разметка/скрипты и не подлежат экранированию.
 # Всё остальное (числа, TEXT/SEG, C_DOM/path, D_LABEL, USAGE, даты, KIND, A…) —
 # пользовательские данные репозитория: экранируются html.escape.
-RAW_KEYS = frozenset({"CSS", "JS", "YM", "BRAND"})
+RAW_KEYS = frozenset({"CSS", "JS", "YM", "BRAND", "SEO_HEAD", "LANG_SWITCH"})
+
+# PRO-61: подстраницы — шаблон в scripts/site_src/, строки в site/i18n/{ru,en}.json.
+SUBPAGES = ("demo", "help", "materials")
+TPL_DIR = ROOT / "scripts" / "site_src"
+I18N_DIR = ROOT / "site" / "i18n"
 
 
-def render(template: str, mapping: dict) -> str:
+def load_i18n() -> dict:
+    out = {}
+    for lang in ("ru", "en"):
+        path = I18N_DIR / f"{lang}.json"
+        if not path.exists():
+            raise BuildError(f"Нет словаря {path.relative_to(ROOT)}")
+        out[lang] = json.loads(path.read_text(encoding="utf-8"))
+    return out
+
+
+def seo_head(lang: str, page: str, title: str, desc: str) -> str:
+    """canonical + hreflang + OG для подстраницы (URL зависит от языка)."""
+    url = f"{BASE}/{page}.html" if lang == "ru" else f"{BASE}/en/{page}.html"
+    brand = "Стратег Фабрики продуктов" if lang == "ru" else "Product Factory Strategist"
+    return (f'<link rel="canonical" href="{url}">\n'
+            f'<link rel="alternate" hreflang="ru" href="{BASE}/{page}.html">\n'
+            f'<link rel="alternate" hreflang="en" href="{BASE}/en/{page}.html">\n'
+            f'<link rel="alternate" hreflang="x-default" href="{BASE}/{page}.html">\n'
+            f'<meta property="og:type" content="website">\n'
+            f'<meta property="og:site_name" content="{brand}">\n'
+            f'<meta property="og:title" content="{title}">\n'
+            f'<meta property="og:description" content="{desc}">\n'
+            f'<meta property="og:url" content="{url}">\n'
+            f'<meta property="og:image" content="{BASE}/assets/og/og.jpg">\n'
+            f'<meta name="twitter:card" content="summary_large_image">')
+
+
+def lang_switch(lang: str, page: str) -> str:
+    """Переключатель языка — ссылки на соседнюю статическую страницу, без JS."""
+    if lang == "ru":
+        return ('<div class="lang" role="group" aria-label="Language / Язык">'
+                '<b aria-current="true">RU</b>'
+                f'<a href="en/{page}.html" hreflang="en">EN</a></div>')
+    return ('<div class="lang" role="group" aria-label="Language / Язык">'
+            '<b aria-current="true">EN</b>'
+            f'<a href="../{page}.html" hreflang="ru">RU</a></div>')
+
+
+def render(template: str, mapping: dict, raw_keys=None) -> str:
+    raw = raw_keys if raw_keys is not None else RAW_KEYS
     out = template
     for key, val in mapping.items():
         text = val if isinstance(val, str) else str(val)
-        if key not in RAW_KEYS:
+        if key not in raw:
             text = html.escape(text, quote=True)
         out = out.replace("{{" + key + "}}", text)
     if "{{" in out:
@@ -1093,7 +1245,7 @@ EN_BODY = f"""
       <div class="label">Demo project</div>
       <h2 id="demo-h">CVStart: <span class="acc">a paid version</span> and a go-to-market plan</h2>
       <p>The product lead’s request, word for word: “Build a commercial version of cvstart.org and a strategy to take it to market worldwide.” Numbers come from the project, not from hands.</p>
-      <div><a class="pill pill-b pill-sm" href="../demo.html" data-goal="cta_demo_click">Open the walkthrough{ARROW}</a></div>
+      <div><a class="pill pill-b pill-sm" href="demo.html" data-goal="cta_demo_click">Open the walkthrough{ARROW}</a></div>
     </div>
     <div>
       <!-- numbers are substituted by scripts/build_site.py from the demo project -->
@@ -1180,7 +1332,7 @@ EN_BODY = f"""
 <footer>
   <div class="wrap">
     <span style="color:var(--strong);font-weight:500">Product Factory Strategist</span>
-    <nav aria-label="Links"><a href="https://github.com/Fighter90/product-factory-strategist">GitHub</a><a href="../help.html">Help</a><a href="../materials.html">Demo materials</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/CHANGELOG.md">Changelog</a></nav>
+    <nav aria-label="Links"><a href="https://github.com/Fighter90/product-factory-strategist">GitHub</a><a href="help.html">Help</a><a href="materials.html">Demo materials</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/CHANGELOG.md">Changelog</a></nav>
     <span>MIT · open source</span>
   </div>
 </footer>
@@ -1209,6 +1361,7 @@ def build(out: Path, ym_id: str | None) -> list[Path]:
     tokens.update(claim_facts())
     tokens.update(excel_numbers())
     tokens["YM"] = YM_LOADER.replace("@ID@", ym_id) if ym_id else ""
+    tokens.update(unit_tokens())
 
     ru_title = "Стратег Фабрики продуктов — ИИ-агент для руководителя продукта"
     ru_desc = ("Агент проводит исследование и собирает стратегию, которую можно проверить: "
@@ -1242,6 +1395,51 @@ def build(out: Path, ym_id: str | None) -> list[Path]:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
         written.append(path)
+
+    # PRO-61: подстраницы demo/help/materials — те же данные репозитория, свои словари строк.
+    # XL_* переопределяются по языку: юнит-математика из calcs.json и десятичный разделитель.
+    i18n = load_i18n()
+    ru.update({"XL_ARPU": tokens["U_ARPU_RU"], "XL_CM": tokens["U_CM_RU"],
+               "XL_LTV": tokens["U_LTV_RU"], "XL_RATIO": tokens["U_RATIO_RU"],
+               "XL_RATIO_DOT": tokens["U_RATIO_EN"], "XL_VAR": tokens["U_VAR_RU"],
+               "XL_BE": tokens["U_BE"], "XL_CACP": tokens["U_CACP_RU"],
+               "XL_PB": tokens["U_PB_RU"],
+               "XL_CAC": tokens["U_CAC"]})
+    en.update({"XL_ARPU": tokens["U_ARPU_EN"], "XL_CM": tokens["U_CM_EN"],
+               "XL_LTV": tokens["U_LTV_EN"], "XL_RATIO": tokens["U_RATIO_EN"],
+               "XL_RATIO_DOT": tokens["U_RATIO_EN"], "XL_VAR": tokens["U_VAR_EN"],
+               "XL_BE": tokens["U_BE"], "XL_CACP": tokens["U_CACP_EN"],
+               "XL_PB": tokens["U_PB_EN"],
+               "XL_CAC": tokens["U_CAC"]})
+    for page in SUBPAGES:
+        tpl = (TPL_DIR / f"{page}.html").read_text(encoding="utf-8")
+        for lang, base_map in (("ru", ru), ("en", en)):
+            mapping = dict(i18n[lang])
+            mapping.update(base_map)
+            # title/description для SEO_HEAD: подставляем токены данных заранее —
+            # сам блок вставляется как готовая разметка (RAW_KEYS) и не проходит
+            # через второй проход render.
+            title = i18n[lang][f"{page}_DOC_TITLE"]
+            desc = i18n[lang][f"{page}_DOC_DESC"]
+            for k, v in mapping.items():
+                t = v if isinstance(v, str) else str(v)
+                title = title.replace("{{" + k + "}}", t)
+                desc = desc.replace("{{" + k + "}}", t)
+            mapping.update({
+                "PAGE_LANG": lang,
+                "BRAND": "Стратег Фабрики продуктов" if lang == "ru" else "Product Factory Strategist",
+                "LANG_SWITCH": lang_switch(lang, page),
+                "SEO_HEAD": seo_head(lang, page,
+                                     html.escape(title, quote=True),
+                                     html.escape(desc, quote=True)),
+            })
+            raw = frozenset(RAW_KEYS) | set(i18n[lang])
+            content = render(tpl, mapping, raw_keys=raw)
+            rel = Path(f"{page}.html") if lang == "ru" else Path("en") / f"{page}.html"
+            path = out / rel
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+            written.append(path)
     return written
 
 

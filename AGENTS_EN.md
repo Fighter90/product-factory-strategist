@@ -179,7 +179,8 @@ pfs decision add --title … --decision … --owner … --grounds C001,C007 --me
 pfs decision due [--on YYYY-MM-DD] | list | done --id D001 --commitment K1 | rebase --id D001 --note "…"
 pfs cost [--transcript <jsonl>] [--since|--until <ISO>] [--window]
 pfs calc scaffold                              # calcs.json skeleton from 02/04/06/07 (fill the nulls); then pfs calc all
-pfs calc [all|unit-econ|growth|cohort|market]   # Excel appendices (unit economics, growth, cohorts, market) → outputs/attachments/
+pfs calc [all|unit-econ|growth|cohort|market|options]  # Excel appendices (unit economics: tier mix and freemium, growth with the funnel, cohorts, market) → outputs/attachments/
+pfs calc options                               # weighted option scoring: Excel sheet + md table (the options section of calcs.json)
 pfs export [--six-pager] [--no-calcs]           # REPORT.md; six-pager in the strategy reference format (spec: knowledge/templates/SIX_PAGER_PROMPT.md) with Excel appendices
 pfs export --deck                            # 16:9 HTML deck built from SIX_PAGER.md
 pfs doctor

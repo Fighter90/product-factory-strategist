@@ -813,10 +813,12 @@ def build_parser() -> argparse.ArgumentParser:
                         "секции пишет six-pager-writer из того же пакета данных (spec: SIX_PAGER_PROMPT_EN.md)")
     s.add_argument("--no-calcs", action="store_true", help="не перегенерировать Excel")
     s.set_defaults(f=cmd_export)
-    s = sp.add_parser("calc", help="Excel-приложения: юнит-экономика, модель роста, когорты, рынок")
+    s = sp.add_parser("calc", help="Excel-приложения: юнит-экономика, рост, когорты, рынок, скоринг вариантов")
     s.add_argument("which", nargs="?", default="all",
-                   choices=["all", "unit-econ", "growth", "cohort", "market", "scaffold"],
-                   help="scaffold — каркас calcs.json из 02/04/06/07 (null — дописать вручную)")
+                   choices=["all", "unit-econ", "growth", "cohort", "market", "scaffold", "options"],
+                   help="scaffold — каркас calcs.json из 02/04/06/07 (null — дописать вручную); "
+                        "options — взвешенный скоринг вариантов: лист Excel + md-таблица "
+                        "(секция options в calcs.json, в `all` — только если секция заполнена)")
     s.set_defaults(f=cmd_calc)
     s = sp.add_parser("docx", help="Markdown → DOCX (без зависимостей)")
     s.add_argument("file", help=".md файл (относительный путь: каталог проекта → cwd)"); s.add_argument("--out")

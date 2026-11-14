@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import claims as claims_mod, core, gaps, i18n, review, sources as src_mod
+from . import calc, claims as claims_mod, core, gaps, i18n, review, sources as src_mod
 from .impact import TAG
 
 # PRO-26: числовой кросс-чек. Число — целое или десятичное (в т.ч. русская запятая: «8,5»);
@@ -190,6 +190,103 @@ def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict])
     return f["errors"] + f["warnings"]
 
 
+CALC_DOCS = ("03_options.md", "04_product_strategy.md", "06_validation_plan.md",
+             "SIX_PAGER.md", "SIX_PAGER_EN.md")
+# PRO-51: производные числа юнит-экономики. Зазор между метрикой и числом — до 24
+# символов без букв/цифр/арифметики (они закрывают формулы «LTV = CM / churn»);
+# окна-исключения: бенчмарки и пороги («критерий ≥ 3»), альтернативные сценарии
+# («Pro-only», «сценарий…»), чувствительность — их числа не обязаны совпадать с базой.
+_GAP = r"[^\da-zA-Z%×*/<>≥≤]{0,24}"
+_THOUSANDS = re.compile(r"\d{1,3}(?:[ \u00a0]\d{3})+(?:[.,]\d+)?|\d{1,3}(?:,\d{3})+(?:\.\d+)?")
+_NUM = re.compile(r"\d+(?:[.,]\d+)?")
+_SKIP_WORDS = ("критери", "ориентир", "норм", "бенчмарк", "benchmark", "target",
+               "сценар", "scenario", "пессимист", "оптимист", "pessimist", "optimist",
+               "-only", "чувствител", "фильтр", "порог", "с сетк")
+# (ключ derived из calc.derived, якорь) — число ищется сразу после якоря;
+# совпадение с любым округлением derived снимает вопрос (консервативно: ловим
+# только явные расхождения, как кейс «ARPU 25 / LTV 234 / LTV/CAC 7,81» в cvstart-EU).
+_CALC_ANCHORS = [
+    ("arpu", re.compile(r"ARPU(?![\w/])" + _GAP + r"(?:[≈~:=]|€|\$|₽|руб)?\s*")),
+    ("ltv", re.compile(r"LTV(?!\s*/)" + _GAP + r"(?:[≈~:=]|€|\$|₽|руб)?\s*")),
+    ("ltv_cac", re.compile(r"LTV\s*/\s*CAC" + _GAP + r"(?:[≈~:=]|€|\$|₽|руб)?\s*")),
+    ("cac_paying", re.compile(r"(?:CAC\s+платящ\w*|платящ\w*\s+CAC|paying\s+CAC)" + _GAP +
+                              r"(?:[≈~:=]|€|\$|₽|руб)?\s*", re.IGNORECASE)),
+    ("payback", re.compile(r"(?:[Оо]купаем\w*|[Пп]ейбек|[Pp]ayback)" + _GAP +
+                           r"(?:[≈~:=]|€|\$|₽|руб)?\s*", re.IGNORECASE)),
+]
+
+
+def _rounds_match(got: float, want: float) -> bool:
+    """Число в тексте совпадает с расчётом, если это одно из его округлений
+    (234,38 / 234,4 / 234 / ≈234 — всё «да»; 250 против 234,38 — «нет»)."""
+    return any(abs(got - round(want, k)) < 1e-9 for k in (0, 1, 2, 3, 4, 6))
+
+
+def _window_number(rest: str) -> float | None:
+    """Первое число после якоря: тысячи с пробелом/запятой («1 090», «1,090.91»)
+    разбираются раньше обычных чисел («7,81» — десятичная запятая)."""
+    th = _THOUSANDS.match(rest)
+    if th:
+        return float(th.group(0).replace(" ", "").replace("\u00a0", "").replace(",", ""))
+    nm = _NUM.match(rest)
+    return float(nm.group(0).replace(",", ".")) if nm else None
+
+
+def _line_numbers(line: str) -> list[float]:
+    """Все числа строки (для сверки «хоть одно сходится»): строки-выражения
+    таблиц six-pager («149,06 / 857,14 | 0,17») несут метрику последним числом."""
+    nums = [float(t.replace(",", ".")) for t in _NUM.findall(line)]
+    nums += [_thousands_value(m.group(0)) for m in _THOUSANDS.finditer(line)]
+    return nums
+
+
+def _thousands_value(raw: str) -> float:
+    """«1 090,91» / «1,090.91» → 1090.91: пробел отделяет тысячи (десятичный
+    разделитель — запятая или точка), запятая в EN-виде — тысячи."""
+    if " " in raw or "\u00a0" in raw:
+        s = raw.replace(" ", "").replace("\u00a0", "")
+        return float(s.replace(",", ".") if "." not in s else s.replace(",", ""))
+    return float(raw.replace(",", ""))
+
+
+def calc_mismatches(pdir: Path) -> list[str]:
+    """PRO-51: производные числа юнит-экономики (ARPU при тарифах, LTV, LTV/CAC,
+    CAC платящего, окупаемость) пересчитываются из calcs.json и сверяются с текстом
+    03/04/06 и six-pager — расхождение стало ошибкой check, а не мнением ревьюера.
+    Скалярные входы (CAC, churn, доли) не проверяются: их источник — S###/C###."""
+    cfg = core.read_json(pdir / "calcs.json", {}).get("unit_econ") or {}
+    if not isinstance(cfg, dict) or not cfg:
+        return []
+    d = calc.derived(cfg)
+    lang = i18n.lang_of(pdir)
+    out: list[str] = []
+    for name in CALC_DOCS:
+        path = pdir / "outputs" / name
+        if not path.exists():
+            continue
+        for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            for key, anchor in _CALC_ANCHORS:
+                want = d.get(key)
+                if want is None:
+                    continue
+                for m in anchor.finditer(line):
+                    # строка-выражение («CAC платящего = 60 / 0,055 ≈ 1 090,91»):
+                    # расхождение — только когда НИ ОДНО число строки не сходится
+                    # с расчётом (консервативно: ловим явные случаи, не уравнения)
+                    window = line[max(0, m.start() - 30):m.end() + 14].lower()
+                    if any(w in window for w in _SKIP_WORDS):
+                        continue
+                    if any(_rounds_match(x, want) for x in _line_numbers(line)):
+                        continue
+                    got = _window_number(line[m.end():])
+                    if got is None:
+                        continue
+                    out.append(i18n.t(lang, "err_calc_mismatch", name=name, i=i,
+                                      metric=i18n.t(lang, f"metric_{key}"),
+                                      got=f"{got:g}", want=f"{want:g}"))
+    return out
+
+
 def run(pdir: Path, strict: bool = False) -> dict:
     """strict (PRO-50): «серьёзное расхождение» числа с источником и числа цитаты,
     которых нет в тексте источника, попадают в errors (без strict — warnings,
@@ -313,6 +410,8 @@ def run(pdir: Path, strict: bool = False) -> dict:
     if strict:
         errors.extend(num["errors"])
     warnings.extend(num["warnings"] + ([] if strict else num["errors"]))
+    # 6a. PRO-51: производные числа юнит-экономики в 03/04/06 и six-pager — из calcs.json
+    errors.extend(calc_mismatches(pdir))
     # 7. PRO-52: языковой линтер документа комитета — запрещённые англицизмы, жаргон
     #    и аббревиатуры без расшифровки (quality_gate.json → banned_terms)
     warnings.extend(language_warnings(pdir, block, tr))
