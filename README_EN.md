@@ -8,7 +8,7 @@ distinct options, and aligned product and communication strategies. After the de
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
 This is a repository folder: instructions, knowledge sets organized by category (strategy · economics · product ·
-UX · data · platforms · Gen AI), 100 skills, 8 subagents, 6 hooks, and a dependency-free Python CLI/MCP toolset.
+UX · data · platforms · Gen AI), 101 skills, 8 subagents, 6 hooks, and a dependency-free Python CLI/MCP toolset.
 Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
@@ -124,7 +124,7 @@ flowchart TD
 flowchart TB
   U["Product director"] -->|"request · answers to question blocks"| ENV
   subgraph ENV["LLM environment (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 100<br/>(base + product-skills 27 + integrations: sdd · deck · premortem)"]
+    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 101<br/>(base + product-skills 27 + integrations: ph-trends · sdd · deck · premortem)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 6<br/>SessionStart · PreWeb-domains · PreGuard-registries · PostTool-log · Stop-cost (+ shared module)"]
   end
@@ -154,14 +154,14 @@ every place referencing it.
 
 ```mermaid
 flowchart TB
-  SK["100 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
+  SK["101 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: method procedures<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
   SK --> L["Personal library 57<br/>design · marketing · science · docs/media · meta"]
-  SK --> INT["Integrations 3<br/>premortem · sdd · deck"]
+  SK --> INT["Integrations 4<br/>ph-trends · premortem · sdd · deck"]
   B & P & L & INT --> INV["Invocation: automatic by triggers · explicit 'use skill X' · via process steps"]
 ```
 
-100 skills in `.claude/skills/`, four groups:
+101 skills in `.claude/skills/`, four groups:
 
 - **base 13** — process steps (one per workflow stage: intake → sources → research → … → monitoring).
 - **product-skills 27** — method procedures (problem and solution design, traction modeling, unit economics,
@@ -179,7 +179,7 @@ flowchart TB
   - Docs/media: markitdown, docx, pdf, xlsx, pptx, officecli, matplotlib, scientific-visualization,
     generate-image, infographics, video.
   - Meta: balanced, find-skills.
-- **integrations 3** — premortem, sdd, deck.
+- **integrations 4** — ph-trends (Product Hunt trends → product application), premortem, sdd, deck.
 
 **How to invoke — three ways:**
 
@@ -290,6 +290,7 @@ Higgsfield visuals, Lovable web version).
 | Lovable | MCP `https://mcp.lovable.dev` (OAuth `/mcp`) | web deck/landing from `docs/lovable-brief.md` |
 | Higgsfield | environment MCP | slide/site visuals (credits — asks first) |
 | officecli | external CLI | PPTX/XLSX/DOCX manipulation for deck and reports |
+| Product Hunt | MCP in `.mcp.json`, `https://mcp.producthunt.com/mcp` (OAuth `/mcp`) | launch trends → product application (`ph-trends` skill) |
 | GitHub Pages | workflow | docs site `strategyproduct.ru` (RU/EN) |
 
 ## Security and data
@@ -303,9 +304,9 @@ consent and no personal data · the validator refuses a fact based on synthetic/
 ```
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
-  skills/ (100: base 13 · product-skills 27 · personal library · integrations)
+  skills/ (101: base 13 · product-skills 27 · personal library · integrations)
   agents/ (8) · hooks/ (6: + pre_guard) · settings.json · opencode.json (permissions)
-.cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea)
+.cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea · producthunt)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
 knowledge/  methods/ (89 RU cards) · methods_en/ (89 EN mirrors (full bilingual base)) · INDEX.md · INDEX_EN.md
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions

@@ -16,6 +16,12 @@
       "url": "https://mcp.lovable.dev",
       "enabled": true
     },
+    "producthunt": {
+      "comment": "Product Hunt MCP (https://mcp.producthunt.com/mcp, streamable HTTP). Только OAuth: в клиенте '/mcp' → producthunt → Authenticate (браузер); API-ключа нет. Чтение (лидерборды, категории, запуски, профили) — свободно; запись в аккаунт (черновики запуска) — только с явным подтверждением. Скилл: ph-trends («тренды → применение к продукту»).",
+      "type": "http",
+      "url": "https://mcp.producthunt.com/mcp",
+      "enabled": true
+    },
     "rea": {
       "comment": "REA — reverse-engineering MCP (https://github.com/morluto/rea). Для Hopper-интеграции (macOS, установлен Hopper) переменная HOPPER_LAUNCHER_PATH опциональна — при нестандартном пути добавьте её в env.",
       "command": "npx",

@@ -41,7 +41,7 @@ PRODUCT = [
     "analytical-reports", "cannibalization", "product-metrics", "benchmarking",
     "scaling-communication", "growth-drivers", "trend-analysis", "problem-design",
 ]
-INTEGRATIONS = ["sdd", "deck", "premortem"]
+INTEGRATIONS = ["sdd", "deck", "premortem", "ph-trends"]
 
 # Файлы с числовыми счётчиками (именные списки правятся вручную).
 TARGETS = [

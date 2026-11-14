@@ -307,7 +307,7 @@ the report itself is origin agent — hypotheses only. Telemetry: `FEYNMAN_TELEM
 
 ## Skills: structure and invocation
 
-Alongside the process the environment loads **skills** — packaged instruction sets (100 in total, in three
+Alongside the process the environment loads **skills** — packaged instruction sets (101 in total, in three
 groups plus integrations):
 
 - **Base (13)** — one per process step: `intake`, `research`, `situation`, `options`, `strategy`,
@@ -326,7 +326,8 @@ groups plus integrations):
     `infographics`, `matplotlib`, `scientific-visualization`;
   - **Meta** — `balanced`, `find-skills`.
 - **Integrations** — cross-process behaviors: `premortem` (failure pre-mortem),
-  `sdd` (development discipline), `deck` (six-pager presentation).
+  `sdd` (development discipline), `deck` (six-pager presentation),
+  `ph-trends` (Product Hunt trends → product application).
 
 How skills are invoked:
 
