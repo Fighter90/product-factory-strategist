@@ -18,6 +18,7 @@ const ROOT = process.cwd();
 const SWARM = resolve(ROOT, 'scripts/swarm');
 const STATE = resolve(ROOT, '.task-board');
 const LOGS = resolve(STATE, 'log');
+const WORKER_PID = resolve(STATE, 'worker.pid');
 const TEAM_KEY = 'PRO';
 const LABEL = 'swarm';
 
@@ -54,13 +55,14 @@ function log(msg) {
 }
 const short = (s, n = 400) => String(s).replace(/\s+/g, ' ').trim().slice(0, n);
 
-function run(cmd, args_, { timeoutMs = 600_000, cwd = ROOT } = {}) {
+function run(cmd, args_, { timeoutMs = 600_000, cwd = ROOT, onSpawn = null } = {}) {
   // Три требования: (1) полный захват stdout/stderr — resolve на 'exit' гонится с доставкой
   // данных (под нагрузкой данные могли прийти пустыми → ревьюер получал ПУСТОЙ дифф);
   // (2) никакого вечного висения — grandchildren держат pipe'ы, 'close' может не наступить
   // никогда → 3-секундный grace после exit; (3) таймаут убивает ГРУППУ (kill(-pid)).
   return new Promise((res) => {
     const p = spawn(cmd, args_, { cwd, env: process.env, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
+    if (onSpawn) { try { onSpawn(p.pid); } catch {} } // PRO-73: pid живого воркера — наружу (worker.pid)
     let out = '', err = '', done = false;
     let exited = false, soEnd = false, seEnd = false, exitCode = null;
     const finish = (code) => {
@@ -98,7 +100,11 @@ async function worker(role, vars, { timeoutMs = 25 * 60_000 } = {}) {
   let prompt = ROLES[role];
   for (const [k, v] of Object.entries(vars)) prompt = prompt.split(`{{${k}}}`).join(v ?? '');
   log(`  [${role}] GLM worker started (timeout ${Math.round(timeoutMs / 60000)}m)`);
-  const r = await run('opencode', ['run', prompt], { timeoutMs });
+  // PRO-73: pid воркера — в .task-board/worker.pid; свежий тик оркестратора видит
+  // живой pid и завершается до detach origin/main (воркер мог ещё ничего не
+  // закоммитить — дерево «чисто», но его ветку срывать нельзя). Файл остаётся и
+  // после смерти воркера: мёртвый pid тик не блокирует, а краш-сирота — блокирует.
+  const r = await run('opencode', ['run', prompt], { timeoutMs, onSpawn: (pid) => writeFileSync(WORKER_PID, `${pid}\n`) });
   const tail = r.all.slice(-4000);
   log(`  [${role}] finished code=${r.code}`);
   log(`  [${role}] tail: ${short(tail, 600)}`);
@@ -186,9 +192,35 @@ const extractVerdict = (all) => {
   return { verdict: 'RETURN', notes: seg.split('\n').slice(1).join('\n').slice(0, 800).trim() || 'RETURN' };
 };
 
+// PRO-73: живой воркер этого репо. `opencode run` грузится 10–30 с и за это время ещё
+// не сделал ни одной правки — дерево «чисто», и следующий тик срывает его ветку
+// `git checkout --detach origin/main`. Guard отличает воркера от переиспользованного
+// pid (команда должна быть opencode, cwd — корень этого репо); недоступный cwd трактуем
+// консервативно (пропуск лишнего тика безвреден, сорванная ветка — нет).
+// Возвращает pid живого воркера или 0.
+async function tickWorkerAlive() {
+  let pid = 0;
+  try { pid = parseInt(readFileSync(WORKER_PID, 'utf8').trim(), 10) || 0; } catch { return 0; } // нет файла — воркера нет
+  if (pid < 2) return 0;
+  try { process.kill(pid, 0); } catch (e) {
+    if (e && e.code === 'EPERM') return pid; // чужой процесс — консервативно считаем живым
+    return 0; // ESRCH: процесса нет — клейм-сирота мертва, тик можно продолжать
+  }
+  const ps = await run('ps', ['-p', String(pid), '-o', 'command=', '-ww'], { timeoutMs: 10_000 });
+  if (!/opencode/.test(ps.out)) return 0; // pid переиспользован посторонним процессом
+  const cwd = await run('bash', ['-c', `lsof -p ${pid} 2>/dev/null | awk '$4=="cwd"{print $NF; exit}'`], { timeoutMs: 10_000 });
+  const dir = cwd.out.trim();
+  return (dir === ROOT || !dir) ? pid : 0; // cwd другого репо — не наш воркер, не блокируем
+}
+
 async function main() {
   if (!existsSync(resolve(ROOT, 'pyproject.toml'))) throw new Error('run from the product-factory-strategist repo root');
   mkdirSync(LOGS, { recursive: true });
+  // PRO-73: пропуск тика при живом воркере — ДО лока, stuck-requeue, pick и detach:
+  // тик завершается чисто (код 0), не заходя в pick до смерти воркера. Не throw:
+  // exit 1 гонит супервизор в немедленный рестарт-цикл.
+  const alivePid = await tickWorkerAlive();
+  if (alivePid) { log(`worker pid ${alivePid} alive — tick skipped (PRO-73: no detach under a running worker)`); return; }
   const lock = resolve(STATE, 'lock');
   try {
     const fd = openSync(lock, 'wx');
