@@ -251,8 +251,14 @@ class MermaidGroupTests(unittest.TestCase):
 
     def _block(self, path):
         text = (REPO / path).read_text(encoding="utf-8")
+        n = len(loaded_skills())
         m = re.search(r'SK\["(\d+) (?:навык(?:а|ов)?|skills)"\]', text)
-        self.assertIsNotNone(m, f"в {path} нет узла SK[\"100 …\"] второго mermaid-блока")
+        self.assertIsNotNone(
+            m, f'в {path} нет узла SK["<N> навык(а/ов)|skills"] второго mermaid-блока '
+               f'(ожидалось число навыков: {n})')
+        self.assertEqual(
+            int(m.group(1)), n,
+            f'в {path} узел SK["{m.group(1)} …"] не равен фактическому числу навыков ({n})')
         end = text.find("```", m.end())
         self.assertNotEqual(end, -1, f"в {path} не найдено закрытие mermaid-блока")
         return text[m.start():end]

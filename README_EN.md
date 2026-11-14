@@ -306,7 +306,7 @@ AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
   skills/ (101: base 13 · product-skills 27 · personal library · integrations)
   agents/ (8) · hooks/ (6: + pre_guard) · settings.json · opencode.json (permissions)
-.cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea)
+.cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea · producthunt)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
 knowledge/  methods/ (89 RU cards) · methods_en/ (89 EN mirrors (full bilingual base)) · INDEX.md · INDEX_EN.md
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions

@@ -372,7 +372,7 @@ AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject
                             pre_guard (реестры только через pfs; чтение вне репо — ask) ·
                             post_tool (журнал и автопроверка) · stop (стоимость) · _common
 .claude/settings.json
-.cursor/rules/       .github/ (Pages workflow) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable · rea)
+.cursor/rules/       .github/ (Pages workflow) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable · rea · producthunt)
 config/              models.json · pricing.json · quality_gate.json · question_blocks.json
 knowledge/           methods/ (89 карт RU) · methods_en/ (89 EN-зеркал — полная двуязычная база) · INDEX.md · INDEX_EN.md
 tools/pfs/           core · project · route · sources · claims · check · impact · decisions ·
