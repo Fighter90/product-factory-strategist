@@ -44,6 +44,9 @@ PRODUCT = [
 INTEGRATIONS = ["sdd", "deck", "premortem", "ph-trends"]
 
 # Файлы с числовыми счётчиками (именные списки правятся вручную).
+# site_src/help.html — исходник справки: site/help.html собирает
+# scripts/build_site.py (числа тестов подставляет токеном {{N_TESTS}},
+# править сгенерённый файл вручную нельзя — перезапишется сборкой).
 TARGETS = [
     "README.md",
     "README_EN.md",
@@ -51,7 +54,7 @@ TARGETS = [
     "docs/HELP.md",
     "docs/HELP_EN.md",
     "docs/COMPLIANCE.md",
-    "site/help.html",
+    "site_src/help.html",
 ]
 
 
