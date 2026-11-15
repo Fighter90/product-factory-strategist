@@ -790,5 +790,212 @@ class TestValidationCardsFromPlan(SiteI18NBase):
         self.assertIn(f"no lower than {self.nps}", en)
 
 
+# ---------- раунд 3 (ревью PRO-61): регистр закрывающих тегов, docstring,
+# ---------- числа рынка из реестра ----------
+
+class TestEndTagCase(unittest.TestCase):
+    """Ревью PRO-61 r3 №1: фильтр языка сохраняет регистр закрывающих тегов.
+
+    HTMLParser отдаёт имена тегов в нижнем регистре; открывающий тег выводится
+    через get_starttag_text() с исходным регистром (<linearGradient>), поэтому
+    reconstructed закрывающий </lineargradient> ломал парность SVG-тегов.
+    """
+
+    def setUp(self):
+        self.mod = load_module()
+
+    SVG_SRC = (
+        '<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"></head><body>'
+        '<svg viewBox="0 0 40 40">'
+        '<linearGradient id="lg"><stop offset="0" stop-color="#fff"/></linearGradient>'
+        '<clipPath id="c"><rect x="1" y="2" width="3" height="4"/></clipPath>'
+        '<g lang="en"><text>EN only</text></g>'
+        '<text lang="ru">Русский текст</text>'
+        '</svg></body></html>')
+
+    def test_end_tags_keep_source_case(self):
+        out = self.mod.filter_lang(self.SVG_SRC, "ru")
+        self.assertIn('<linearGradient id="lg">', out)
+        self.assertIn("</linearGradient>", out)
+        self.assertIn('<clipPath id="c">', out)
+        self.assertIn("</clipPath>", out)
+
+    def test_no_lowercase_close_leaks(self):
+        out = self.mod.filter_lang(self.SVG_SRC, "ru")
+        self.assertNotIn("</lineargradient>", out)
+        self.assertNotIn("</clippath>", out)
+
+    def test_foreign_lang_block_removed(self):
+        out = self.mod.filter_lang(self.SVG_SRC, "ru")
+        self.assertNotIn("EN only", out)
+        self.assertNotIn('<g lang="en">', out)
+
+    def test_selfclosing_camel_tag_no_phantom_close(self):
+        src = ('<html lang="ru"><body>'
+               '<svg><feGaussianBlur stdDeviation="2"/></svg></body></html>')
+        out = self.mod.filter_lang(src, "ru")
+        self.assertIn('<feGaussianBlur stdDeviation="2"/>', out)
+        self.assertNotIn("</feGaussianBlur>", out)
+
+    def test_end_tag_case_after_removed_sibling(self):
+        # соседний блок чужого языка удалён — парные теги живого блока целы
+        src = ('<html lang="ru"><body><div lang="en"><linearGradient id="x">'
+               "<text>en</text></linearGradient></div>"
+               '<div lang="ru"><linearGradient id="y"><text>ru</text>'
+               "</linearGradient></div></body></html>")
+        out = self.mod.filter_lang(src, "ru")
+        self.assertNotIn('id="x"', out)
+        self.assertIn('<linearGradient id="y">', out)
+        self.assertEqual(out.count("</linearGradient>"), 1)
+        self.assertNotIn("</lineargradient>", out)
+
+
+class TestEndTagCaseOnPages(SiteI18NBase):
+    """Собранные страницы: camelCase-теги из site_src закрываются в том же регистре."""
+
+    def test_camelcase_tags_close_same_case(self):
+        # имена берём из исходников site_src, а не из собранных страниц:
+        # так проверка не зависит от того, что ещё попадёт в теги страниц
+        names = set()
+        for src in sorted((ROOT / "site_src").glob("*.html")):
+            for m in re.finditer(r"<([A-Za-z][^\s>/]*)[\s>/]",
+                                 src.read_text(encoding="utf-8")):
+                name = m.group(1)
+                if any(c.isupper() for c in name[1:]):
+                    names.add(name)
+        self.assertTrue(names, "в site_src нет camelCase-тегов — проверка пустая")
+        for key, page in self.built.items():
+            for name in sorted(names):
+                self.assertNotIn(f"</{name.lower()}>", page,
+                                 f"{key}: </{name.lower()}> вместо </{name}>")
+                self.assertIsNone(
+                    re.search(rf"<{name.lower()}[\s>/]", page),
+                    f"{key}: открывающий <{name.lower()}> в нижнем регистре")
+
+
+class TestBuildDocstringScope(unittest.TestCase):
+    """Ревью PRO-61 r3 №2: docstring не противоречит сборке — demo/help/materials
+    генерируются из site_src + site/i18n, а не «остаются в прежней вёрстке»."""
+
+    def test_docstring_describes_generated_pages(self):
+        mod = load_module()
+        doc = mod.__doc__ or ""
+        self.assertNotIn("остаются в прежней вёрстке", doc,
+                         "docstring говорит, что страницы не генерируются, "
+                         "хотя PAGES_I18N их строит")
+        self.assertIn("site_src", doc,
+                      "docstring не описывает источник страниц site_src/")
+        self.assertIn("i18n", doc, "docstring не описывает словари site/i18n")
+
+    def test_every_page_in_i18n_has_source_and_dict(self):
+        mod = load_module()
+        ru = json.loads((ROOT / "site" / "i18n" / "ru.json").read_text(encoding="utf-8"))
+        for page in mod.PAGES_I18N:
+            self.assertTrue((ROOT / "site_src" / f"{page}.html").exists(),
+                            f"нет site_src/{page}.html")
+            self.assertIn(mod.PAGE_DICT[page], ru, page)
+
+
+class TestMarketNumbersFromRegistry(unittest.TestCase):
+    """Ревью PRO-61 r3 №3: MARKET_RU/MARKET_EN, AI_CAGR, RECRUIT_MARKET/RECRUIT_CAGR
+    берутся из реестра утверждений демо (C005 и C011), а не набиты константами.
+    Текст утверждения потерял структуру — сборка падает громко."""
+
+    def setUp(self):
+        self.mod = load_module()
+        self.claims = _jsonl(DEMO / ("claims" + ".jsonl"))
+
+    def test_values_parsed_from_registry(self):
+        mk = self.mod.market_numbers(self.claims)
+        self.assertEqual(mk["MARKET_RU"], "$1,2–2,4 млрд")
+        self.assertEqual(mk["MARKET_EN"], "$1.2–2.4B")
+        self.assertEqual(mk["AI_CAGR"], 13.1)
+        self.assertEqual(mk["RECRUIT_MARKET"], 37.97)
+        self.assertEqual(mk["RECRUIT_CAGR"], 7.1)
+
+    def test_corridor_follows_registry(self):
+        claims = [dict(c, text=c["text"].replace("$1,2–2,4 млрд", "$2,0–3,1 млрд"))
+                  if c["id"] == "C005" else c for c in self.claims]
+        mk = self.mod.market_numbers(claims)
+        self.assertEqual(mk["MARKET_RU"], "$2,0–3,1 млрд")
+        self.assertEqual(mk["MARKET_EN"], "$2.0–3.1B")
+
+    def test_missing_c005_is_loud(self):
+        with self.assertRaisesRegex(self.mod.BuildError, "C005"):
+            self.mod.market_numbers([c for c in self.claims if c["id"] != "C005"])
+
+    def test_missing_c011_is_loud(self):
+        with self.assertRaisesRegex(self.mod.BuildError, "C011"):
+            self.mod.market_numbers([c for c in self.claims if c["id"] != "C011"])
+
+    def test_broken_c005_structure_is_loud(self):
+        claims = [dict(c, text="Рынок resume builders: формулировка изменилась")
+                  if c["id"] == "C005" else c for c in self.claims]
+        with self.assertRaisesRegex(self.mod.BuildError, "C005"):
+            self.mod.market_numbers(claims)
+
+    def test_broken_c011_structure_is_loud(self):
+        claims = [dict(c, text="Мировой рынок онлайн-рекрутинга: пересчитан")
+                  if c["id"] == "C011" else c for c in self.claims]
+        with self.assertRaisesRegex(self.mod.BuildError, "C011"):
+            self.mod.market_numbers(claims)
+
+    def test_page_values_reads_market_numbers(self):
+        seen = []
+        real = self.mod.market_numbers
+
+        def spy(claims):
+            seen.append(claims)
+            return real(claims)
+
+        self.mod.market_numbers = spy
+        try:
+            vals = self.mod.page_values()
+        finally:
+            self.mod.market_numbers = real
+        self.assertTrue(seen, "page_values() не читает market_numbers()")
+        self.assertEqual(vals["AI_CAGR"], ("pct1", 13.1))
+        self.assertEqual(vals["RECRUIT_MARKET"], ("recruit", 37.97))
+        self.assertEqual(vals["MARKET_RU"], ("str", "$1,2–2,4 млрд"))
+
+    def test_market_kind_uses_parsed_pair(self):
+        pair = ("$2,0–3,1 млрд", "$2.0–3.1B")
+        self.assertEqual(self.mod.render_value("market", pair, "ru"), pair[0])
+        self.assertEqual(self.mod.render_value("market", pair, "en"), pair[1])
+
+
+class TestMarketNumbersOnPages(SiteI18NBase):
+    """Числа рынка на собранных страницах = числа из реестра утверждений."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        rows = _jsonl(DEMO / ("claims" + ".jsonl"))
+        c5 = next(c for c in rows if c["id"] == "C005")
+        c11 = next(c for c in rows if c["id"] == "C011")
+        cls.corridor_ru = re.search(r"\$[\d,]+–[\d,]+ млрд", c5["text"]).group(0)
+        cls.ai_cagr = re.search(r"CAGR ([\d,]+)%", c5["text"]).group(1)
+        cls.recruit_ru = re.search(r"\$[\d,]+ млрд", c11["text"]).group(0)
+        cls.recruit_cagr = re.search(r"CAGR ([\d,]+)%", c11["text"]).group(1)
+
+    def test_demo_market_tiles(self):
+        ru = visible_text(self.built[("ru", "demo")])
+        en = visible_text(self.built[("en", "demo")])
+        self.assertIn(self.corridor_ru, ru)
+        self.assertIn(f"{self.ai_cagr}%", ru)
+        self.assertIn(self.recruit_ru, ru)
+        self.assertIn(f"{self.recruit_cagr}%", ru)
+        en_corridor = self.corridor_ru.replace(",", ".").replace(" млрд", "B")
+        en_recruit = self.recruit_ru.replace(",", ".").replace(" млрд", "B")
+        self.assertIn(en_corridor, en)
+        self.assertIn(f"{self.ai_cagr.replace(',', '.')}%", en)
+        self.assertIn(en_recruit, en)
+        self.assertIn(f"{self.recruit_cagr.replace(',', '.')}%", en)
+
+    def test_materials_market_mention(self):
+        ru = visible_text(self.built[("ru", "materials")])
+        self.assertIn(self.corridor_ru, ru)
+
+
 if __name__ == "__main__":
     unittest.main()

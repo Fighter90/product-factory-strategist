@@ -9,11 +9,11 @@ OG-картинки по языкам, числа — из репозитори�
 Только стандартная библиотека. Счётчик Метрики в репозиторий не пишется:
 подключается флагом `--ym-id` (см. site/ANALYTICS.md).
 
-Скоуп PRO-66: эта система генерирует `/` (RU) и `/en/` (EN). Страницы site/demo.html,
-site/help.html и site/materials.html остаются в прежней вёрстке — их перевод в новую
-систему вынесен в отдельную задачу; тёмные фото, относящиеся к ним (обложка demo
-на основе dark-hero-paper), подключаются вместе с конвертацией. Сейчас dark-hero-paper
-используется как OG-картинка site/assets/og/og.jpg, dossier-dark — в финальном CTA
+Скоуп PRO-66 — лендинг: эта система генерирует `/` (RU) и `/en/` (EN). PRO-61 добавил
+те же две статические версии для demo/help/materials: исходники — `site_src/<page>.html`
+(языконейтральный шаблон с токенами `{{<page>.<lang>.kNNN}}`), строки — словари
+`site/i18n/{ru,en}.json`, числа — из демо-проекта `projects/демо`. Тёмные фото:
+dark-hero-paper — OG-картинка site/assets/og/og.jpg, dossier-dark — в финальном CTA
 лендинга; dark-double-diamond убрана с лендинга по решению владельца.
 
 Запуск: python3 scripts/build_site.py [--out site] [--ym-id 12345678]
@@ -1425,6 +1425,55 @@ def ground_claims(data_en: dict, demo: Path | None = None) -> dict:
     return out
 
 
+# Числа рынка показываются как данные демо-проекта, поэтому читаются из реестра
+# утверждений, а не набиваются константами (ревью PRO-61 r3):
+# коридор рынка resume builders и CAGR ИИ-подсегмента — C005,
+# рынок онлайн-рекрутинга и его CAGR — C011.
+CLAIM_MARKET = "C005"
+CLAIM_RECRUIT = "C011"
+
+
+def market_numbers(claims: list) -> dict:
+    """MARKET_RU/MARKET_EN, AI_CAGR — из {CLAIM_MARKET};
+    RECRUIT_MARKET, RECRUIT_CAGR — из {CLAIM_RECRUIT}.
+
+    Утверждение исчезло или потеряло структуру «$N–N млрд» / «CAGR N%» —
+    сборка падает громко, а не показывает на сайте числа без реестра.
+    """
+    rows = {c.get("id"): c for c in claims}
+    m = rows.get(CLAIM_MARKET)
+    if not m:
+        raise BuildError(f"В реестре демо нет {CLAIM_MARKET} — "
+                         f"MARKET_RU/MARKET_EN/AI_CAGR брать неоткуда")
+    mtext = m.get("text", "")
+    m_corr = re.search(r"\$([\d,]+)–([\d,]+)\s*млрд", mtext)
+    m_cagr = re.search(r"CAGR\s*([\d,]+)\s*%", mtext)
+    if not (m_corr and m_cagr):
+        raise BuildError(f"В {CLAIM_MARKET} нет коридора «$N–N млрд» или «CAGR N%»: {mtext!r}")
+    r = rows.get(CLAIM_RECRUIT)
+    if not r:
+        raise BuildError(f"В реестре демо нет {CLAIM_RECRUIT} — "
+                         f"RECRUIT_MARKET/RECRUIT_CAGR брать неоткуда")
+    rtext = r.get("text", "")
+    r_amt = re.search(r"\$([\d,]+)\s*млрд", rtext)
+    r_cagr = re.search(r"CAGR\s*([\d,]+)\s*%", rtext)
+    if not (r_amt and r_cagr):
+        raise BuildError(f"В {CLAIM_RECRUIT} нет «$N млрд» или «CAGR N%»: {rtext!r}")
+
+    def dot(s: str) -> str:
+        return s.replace(",", ".")
+
+    corridor_ru = f"${m_corr.group(1)}–{m_corr.group(2)} млрд"
+    corridor_en = f"${dot(m_corr.group(1))}–{dot(m_corr.group(2))}B"
+    return {
+        "MARKET_RU": corridor_ru,
+        "MARKET_EN": corridor_en,
+        "AI_CAGR": float(dot(m_cagr.group(1))),
+        "RECRUIT_MARKET": float(dot(r_amt.group(1))),
+        "RECRUIT_CAGR": float(dot(r_cagr.group(1))),
+    }
+
+
 def page_values() -> dict:
     """{{TOKEN}} -> (kind, value) для страниц demo/help/materials."""
     reg = repo_numbers()
@@ -1440,6 +1489,7 @@ def page_values() -> dict:
     cac = float(ue["cac"]); churn = float(ue["churn_month"])
     cm = arpu * (1 - vc)
     ltv = cm / churn
+    mk = market_numbers(claims)
     n_xlsx = len(list((DEMO / "outputs" / "attachments").glob("*.xlsx")))
     n_six = len(list((DEMO / "outputs").glob("SIX_PAGER*")))
     n_shots = len(list((ROOT / "site" / "assets").glob("cv_*.jpg")))
@@ -1493,10 +1543,12 @@ def page_values() -> dict:
         "MRR_TARGET_RU": ("mrr", plan["mrr_target"]), "MRR_TARGET_EN": ("mrr", plan["mrr_target"]),
         "ARR_W12_RU": ("arr", plan["mrr_w12"] * 12 / 1000),
         "ARR_W12_EN": ("arr", plan["mrr_w12"] * 12 / 1000),
-        "MARKET": ("market", None), "MARKET_RU": ("str", "$1,2–2,4 млрд"),
-        "MARKET_EN": ("str", "$1.2–2.4B"),
-        "AI_CAGR": ("pct1", 13.1),
-        "RECRUIT_MARKET": ("recruit", 37.97), "RECRUIT_CAGR": ("pct1", 7.1),
+        "MARKET": ("market", (mk["MARKET_RU"], mk["MARKET_EN"])),
+        "MARKET_RU": ("str", mk["MARKET_RU"]),
+        "MARKET_EN": ("str", mk["MARKET_EN"]),
+        "AI_CAGR": ("pct1", mk["AI_CAGR"]),
+        "RECRUIT_MARKET": ("recruit", mk["RECRUIT_MARKET"]),
+        "RECRUIT_CAGR": ("pct1", mk["RECRUIT_CAGR"]),
         "COMMIT_RU": ("str", ru_date(dec["commit_date"])),
         "COMMIT_EN": ("str", dec["commit_date"]),
         "REVIEW_RU": ("str", ru_date(dec["review_date"])),
@@ -1526,7 +1578,8 @@ def render_value(kind, val, lang: str) -> str:
     if kind == "arr":
         return ("$" + fmt(val, lang, 1) + " тыс") if lang == "ru" else ("$" + fmt(val, lang, 1) + "K")
     if kind == "market":
-        return ("$1,2–2,4 млрд" if lang == "ru" else "$1.2–2.4B")
+        ru_v, en_v = val
+        return ru_v if lang == "ru" else en_v
     if kind == "recruit":
         return "$" + fmt(val, lang, 2) + (" млрд" if lang == "ru" else "B")
     if kind == "str":
@@ -1550,15 +1603,30 @@ class PageLangFilter(HTMLParser):
         super().__init__(convert_charrefs=False)
         self.lang = lang
         self.out = []
+        # стек: (тег в нижнем регистре, skip, тег как в исходнике)
         self.stack = []
+        # регистр исходника по нижнему регистру — для закрывающих тегов вне стека
+        self.tagcase = {}
 
     def _skipping(self):
-        return any(s for _, s in self.stack)
+        return any(skip for _, skip, _ in self.stack)
+
+    def _remember_case(self):
+        """HTMLParser даёт имена тегов в нижнем регистре, а get_starttag_text()
+        — исходный текст тега. Запоминаем регистр (<linearGradient>), чтобы
+        закрывающий тег не превратился в </lineargradient> (ревью PRO-61 r3)."""
+        m = re.match(r"<\s*([^\s>/]+)", self.get_starttag_text() or "")
+        if m:
+            name = m.group(1)
+            self.tagcase[name.lower()] = name
+            return name
+        return ""
 
     def handle_starttag(self, tag, attrs):
+        orig = self._remember_case() or tag
         if tag == "html":
             self.out.append(f'<html lang="{self.lang}">')
-            self.stack.append(("html", False))
+            self.stack.append(("html", False, "html"))
             return
         if tag in self.VOID:
             if not self._skipping():
@@ -1568,11 +1636,12 @@ class PageLangFilter(HTMLParser):
             return
         own = dict(attrs).get("lang")
         skip = self._skipping() or (own is not None and own != self.lang)
-        self.stack.append((tag, skip))
+        self.stack.append((tag, skip, orig))
         if not skip:
             self.out.append(self.get_starttag_text())
 
     def handle_startendtag(self, tag, attrs):
+        self._remember_case()
         if tag == "html":
             self.out.append(f'<html lang="{self.lang}">')
             return
@@ -1582,12 +1651,13 @@ class PageLangFilter(HTMLParser):
                 self.out.append(self.get_starttag_text())
 
     def handle_endtag(self, tag):
+        orig = self.tagcase.get(tag, tag)
         if self.stack and self.stack[-1][0] == tag:
-            _, skip = self.stack.pop()
+            _, skip, orig = self.stack.pop()
             if not skip:
-                self.out.append(f"</{tag}>")
+                self.out.append(f"</{orig}>")
         elif not self._skipping():
-            self.out.append(f"</{tag}>")
+            self.out.append(f"</{orig}>")
 
     def handle_data(self, data):
         if not self._skipping():
