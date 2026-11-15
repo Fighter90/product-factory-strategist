@@ -423,6 +423,17 @@ async function main() {
       if (clean.out.trim()) throw new Error('working tree is not clean — aborting before pick');
       await sh('git fetch origin -q && git checkout -q --detach origin/main');
 
+      // Материалы агента (knowledge/) живут в отдельном приватном репо и не входят
+      // в этот: после каждого чекаута свежего main подтягиваем их (PRO-реструкруктура).
+      if (!existsSync('knowledge/INDEX.md')) {
+        try {
+          await sh('git clone --depth 1 https://github.com/Fighter90/product-factory-strategist-base.git knowledge', { timeoutMs: 120_000 });
+          log('  materials: knowledge/ pulled from strategist-base');
+        } catch (e) {
+          log(`  materials pull failed: ${short(String(e), 120)}`);
+        }
+      }
+
       // краш-безопасность (PRO-68): single-instance lock гарантирует, что в момент
       // pick ни один прогон задачу не держит — всё In Progress с меткой swarm висит
       // после краша. Зависшая (клейма нет или старше STUCK_MIN минут) → Todo.
@@ -658,6 +669,17 @@ async function main() {
         }
 
         await sh('git fetch origin -q && git checkout -q --detach origin/main');
+
+        // Материалы агента (knowledge/) живут в отдельном приватном репо и не входят
+        // в этот: после каждого чекаута свежего main подтягиваем их (PRO-реструкруктура).
+        if (!existsSync('knowledge/INDEX.md')) {
+          try {
+            await sh('git clone --depth 1 https://github.com/Fighter90/product-factory-strategist-base.git knowledge', { timeoutMs: 120_000 });
+            log('  materials: knowledge/ pulled from strategist-base');
+          } catch (e) {
+            log(`  materials pull failed: ${short(String(e), 120)}`);
+          }
+        }
         // PRO-68: версия = max(существующих тегов) + patch — pyproject отставал от тегов
         // (считал 1.2.20/1.2.21 при существующих v1.2.20–v1.2.24) → коллизии тегов и CHANGELOG
         await sh('git fetch --tags -q');
