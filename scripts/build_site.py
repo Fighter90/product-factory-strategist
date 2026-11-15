@@ -1343,11 +1343,18 @@ def validation_data(demo: Path | None = None) -> dict:
     if not (m_gdpr and m_infra and m_nps):
         raise BuildError(f"Не удалось разобрать контрметрики (GDPR/инференс/NPS) "
                          f"в {demo}/outputs/06_validation_plan.md")
+    # Цель «MRR ≥ $N» — из интро плана. Без неё брейк-евен не от чего считать
+    # (ревью PRO-61: считали от факта недели 12 и расходились с цитатой six-pager).
+    # Проверяем последней, чтобы диагностические ошибки воронки/порогов были первыми.
+    m_target = re.search(r"MRR ≥ \$([\d ]+)", plan)
+    if not m_target:
+        raise BuildError(f"В {demo}/outputs/06_validation_plan.md нет цели «MRR ≥ $N»")
     g = lambda m: [x.replace(" ", "") for x in m.groups()]
     return {
         "visitors": int(g(m_funnel)[0]), "signups": int(g(m_funnel)[1]),
         "activations": int(g(m_funnel)[2]), "paid_w12": int(g(m_funnel)[3]),
         "mrr_w12": int(g(m_funnel)[4]),
+        "mrr_target": int(m_target.group(1).replace(" ", "")),
         "paid_target": int(m_cont.group(1)), "funnel_weeks": int(m_cont.group(2)),
         "act_target": int(m_cont.group(3)), "churn_max": int(m_cont.group(4)),
         "paid_change_low": int(m_adj.group(1)), "paid_high": int(m_adj.group(2)),
@@ -1462,7 +1469,7 @@ def page_values() -> dict:
         "VC_NEG": ("neg2", arpu * vc),
         "CM": ("money2", cm), "LTV": ("money2", ltv),
         "LTV_CAC": ("num2", ltv / cac), "PAYBACK": ("num1", cac / cm),
-        "BREAKEVEN": ("int", math.ceil(plan["mrr_w12"] / cm) if cm else 0),
+        "BREAKEVEN": ("int", math.ceil(plan["mrr_target"] / cm) if cm else 0),
         "PRO_PRICE": ("str", "$" + dec["tiers"][0]),
         "UNLIMITED_PRICE": ("str", "$" + dec["tiers"][1]),
         "PRICE_ALT": ("str", "$" + plan["price_alt"] + "?"),
@@ -1483,7 +1490,7 @@ def page_values() -> dict:
         "SIGNUPS_W12": ("count", plan["signups"]),
         "ACTIVATIONS_W12": ("count", plan["activations"]),
         "MRR_W12_RU": ("mrr", plan["mrr_w12"]), "MRR_W12_EN": ("mrr", plan["mrr_w12"]),
-        "MRR_TARGET_RU": ("mrr", 1500), "MRR_TARGET_EN": ("mrr", 1500),
+        "MRR_TARGET_RU": ("mrr", plan["mrr_target"]), "MRR_TARGET_EN": ("mrr", plan["mrr_target"]),
         "ARR_W12_RU": ("arr", plan["mrr_w12"] * 12 / 1000),
         "ARR_W12_EN": ("arr", plan["mrr_w12"] * 12 / 1000),
         "MARKET": ("market", None), "MARKET_RU": ("str", "$1,2–2,4 млрд"),

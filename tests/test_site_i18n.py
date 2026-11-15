@@ -4,6 +4,7 @@ from __future__ import annotations
 import html as html_mod
 import importlib.util
 import json
+import math
 import re
 import subprocess
 import sys
@@ -479,6 +480,61 @@ class TestDemoNumbersOnSite(SiteI18NBase):
                 self.assertEqual(len(set(names)), len(names),
                                  f"{lang}/{page}: дубли имён шагов: {names}")
 
+    def test_phase_grid_matches_step_numbers(self):
+        """Сетка фаз согласована с нумерацией шагов 1–12 (ревью PRO-61):
+        раньше сетка говорила «0–3/4–6/7–9/10–11» при шагах 1–12."""
+        expected = [("1", "4"), ("5", "7"), ("8", "10"), ("11", "12")]
+        for lang in ("ru", "en"):
+            page = self.built[(lang, "demo")]
+            ranges = re.findall(r'<div class="tl-cell[^"]*"><b>(\d+)–(\d+) · ', page)
+            self.assertEqual(ranges, expected,
+                             f"{lang}/demo: сетка фаз не согласована с шагами 1–12")
+
+    def test_econ_svg_labels_meaningful(self):
+        """Подписи под столбцами экономики — содержательные, а не дубль числа
+        над столбцом (ревью PRO-61: «$29»/«~25%» вместо «ARPU платящего / мес»
+        и «инференс + инфра ~25%»)."""
+        expected0 = {"ru": "ARPU платящего / мес", "en": "payer ARPU / mo"}
+        for lang in ("ru", "en"):
+            page = self.built[(lang, "demo")]
+            labels = re.findall(
+                r'<text x="\d+" y="252"[^>]*><tspan lang="%s">([^<]+)</tspan>' % lang, page)
+            self.assertEqual(len(labels), 4, f"{lang}/demo: не 4 подписи столбцов")
+            self.assertEqual(labels[0], expected0[lang],
+                             f"{lang}/demo: подпись ARPU: {labels[0]!r}")
+            self.assertIn("инференс" if lang == "ru" else "infra", labels[1],
+                          f"{lang}/demo: подпись переменных затрат: {labels[1]!r}")
+            for lab in labels:
+                self.assertIsNone(re.fullmatch(r"[~$−-]?[\d.,]+%?", lab),
+                                  f"{lang}/demo: подпись дублирует число: {lab!r}")
+
+    def test_breakeven_consistent_on_page_and_from_target(self):
+        """Брейк-евен на странице — одно число и считается от цели
+        «MRR ≥ $N» плана проверки, а не от факта модели недели 12
+        (ревью PRO-61: в SVG 71 от $1 537, в цитате six-pager 69 от $1 500)."""
+        v06 = (DEMO / "outputs" / "06_validation_plan.md").read_text(encoding="utf-8")
+        m = re.search(r"MRR ≥ \$([\d ]+)", v06)
+        self.assertIsNotNone(m, "в 06_validation_plan.md нет цели «MRR ≥ $N»")
+        target = int(m.group(1).replace(" ", ""))
+        ue = json.loads((DEMO / "calcs.json").read_text(encoding="utf-8"))["unit_econ"]
+        cm = float(ue["arpu"]) * (1 - float(ue["vc_share"]))
+        want = str(math.ceil(target / cm))
+        for lang, word in (("ru", "брейк-евен"), ("en", "break-even")):
+            text = visible_text(self.built[(lang, "demo")])
+            nums = re.findall(rf"{word} [≈ ]*(\d+)", text)
+            self.assertEqual(set(nums), {want},
+                             f"{lang}/demo: числа брейк-евена на странице расходятся: {nums}")
+
+    def test_beta_expectation_sentence_boundary(self):
+        """Фраза «Ожидание беты» не склеена: после скобки «(…12 недель)» —
+        точка и новое предложение «Факт модели нед. 12 …» (ревью PRO-61)."""
+        ru = visible_text(self.built[("ru", "demo")])
+        self.assertNotRegex(ru, r"недель\) факт")
+        self.assertRegex(ru, r"недель\)\. Факт модели")
+        en = visible_text(self.built[("en", "demo")])
+        self.assertNotRegex(en, r"weeks\) the week-")
+        self.assertRegex(en, r"weeks\)\. The week-")
+
 
 class TestNoJsVisibility(SiteI18NBase):
     def test_counters_are_static(self):
@@ -603,6 +659,24 @@ class TestLoudFailures(unittest.TestCase):
                        "## Контрметрики\n"
                        "- Инференс-затраты free-тира > $200/мес\n")
         with self.assertRaisesRegex(self.mod.BuildError, "контрметрики"):
+            self.mod.validation_data()
+
+    def test_missing_mrr_target_is_loud(self):
+        """Без цели «MRR ≥ $N» брейк-евен не от чего считать — сборка падает громко
+        (ревью PRO-61: BREAKEVEN считали от факта недели 12)."""
+        self._demo(v06="# 06 · План проверки — бета (90 дней)\n"
+                       "Запуск hosted-беты: нед. 12 — **50–60 платящих (модель: 53)**.\n"
+                       "32 603 посетителей → 1 793 регистрации → 1 111 активаций → "
+                       "53 платящих (MRR $1 537)\n"
+                       "- **Продолжить**: paid ≥ 40 к нед. 12, activation ≥ 50%, "
+                       "churn платящих ≤ 10%/мес\n"
+                       "- **Изменить**: paid 20–40 → пересобрать тир/цену ($19?)\n"
+                       "- **Остановить**: paid < 20 к нед. 12 при activation < 35%\n"
+                       "## Контрметрики\n"
+                       "- GDPR-запросы > 5 шт\n"
+                       "- Инференс-затраты free-тира > $200/мес\n"
+                       "- NPS беты < 30\n")
+        with self.assertRaisesRegex(self.mod.BuildError, "MRR"):
             self.mod.validation_data()
 
     def test_missing_threshold_is_loud(self):
