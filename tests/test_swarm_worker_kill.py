@@ -26,6 +26,8 @@ test_swarm_attempts.py), а слои 1–2 дополнительно испол
 оба). node нужен оркестратору и swarm-машине; если node недоступен, поведенческие
 тесты пропускаются, а проверки по исходнику остаются обязательными.
 """
+from __future__ import annotations
+
 import json
 import os
 import shutil
