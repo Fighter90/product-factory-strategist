@@ -1,9 +1,10 @@
 """Минимальный XLSX-писатель на стандартной библиотеке (zipfile + XML).
 
-Зачем: Excel-приложения к six-pager без сторонних пакетов — сохраняем принцип
-«ноль зависимостей». Поддерживает: несколько листов, текст, числа, формулы
+Зачем: Excel-приложения к six-pager и роудмапы без сторонних пакетов — сохраняем
+принцип «ноль зависимостей». Поддерживает: несколько листов, текст, числа, формулы
 (=A1*B2, с необязательным кэшированным значением для предпросмотра), жирный
-шрифт и процентный формат. Открывается Excel / Numbers / Google Sheets / LibreOffice.
+шрифт, процентный формат и сплошные заливки (стили статусов роудмапа, PRO-70).
+Открывается Excel / Numbers / Google Sheets / LibreOffice.
 """
 from __future__ import annotations
 
@@ -18,17 +19,38 @@ NS_MAIN = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
 NS_REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 NS_PKG_REL = "http://schemas.openxmlformats.org/package/2006/relationships"
 
-# Стили: 0 обычный, 1 жирный, 2 процентный, 3 жирный процентный.
-_STYLES = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+# Заливки статусов роудмапа (PRO-70): палитра Excel «хорошо/нейтрально/плохо» + синий/серый.
+STYLE_FILLS = {"green": "FFC6EFCE", "yellow": "FFFFEB9C", "red": "FFC7CE",
+               "blue": "FFBDD7EE", "gray": "FFD9D9D9"}
+
+
+def _fill_style(fill: str, bold: bool) -> int:
+    """Индекс стиля заливки: 0–3 заняты базовыми (обычный/жирный/процент/жирный %),
+    дальше по 2 комбинации (обычная/жирная) на цвет — базовые книги не меняются."""
+    return 4 + list(STYLE_FILLS).index(fill) * 2 + (1 if bold else 0)
+
+
+def _styles_xml() -> str:
+    """styleSheet с базовыми стилями и заливками STYLE_FILLS (индексы 4…3+2·N)."""
+    extra_fills = "".join('<fill><patternFill patternType="solid">'
+                          f'<fgColor rgb="{rgb}"/><bgColor indexed="64"/></patternFill></fill>'
+                          for rgb in STYLE_FILLS.values())
+    fill_xfs = "".join(f'<xf fillId="{i + 2}" applyFill="1"/>'
+                       f'<xf fillId="{i + 2}" fontId="1" applyFill="1" applyFont="1"/>'
+                       for i in range(len(STYLE_FILLS)))
+    return f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="{NS_MAIN}">
 <numFmts count="1"><numFmt numFmtId="164" formatCode="0.0%"/></numFmts>
 <fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts>
-<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>
+<fills count="{2 + len(STYLE_FILLS)}"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>{extra_fills}</fills>
 <borders count="1"><border/></borders>
 <cellStyleXfs count="1"><xf/></cellStyleXfs>
-<cellXfs count="4"><xf/><xf fontId="1" applyFont="1"/><xf numFmtId="164" applyNumberFormat="1"/><xf fontId="1" numFmtId="164" applyFont="1" applyNumberFormat="1"/></cellXfs>
+<cellXfs count="{4 + 2 * len(STYLE_FILLS)}"><xf/><xf fontId="1" applyFont="1"/><xf numFmtId="164" applyNumberFormat="1"/><xf fontId="1" numFmtId="164" applyFont="1" applyNumberFormat="1"/>{fill_xfs}</cellXfs>
 <cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
 </styleSheet>"""
+
+
+_STYLES = _styles_xml()
 
 
 def col_letter(n: int) -> str:
@@ -52,7 +74,9 @@ def _fmt_number(v) -> str:
 class Sheet:
     """Строки листа. Ячейка: None | str | int/float | dict
     dict: {"v": значение} или {"f": "=формула без =", "cached": число},
-    флаги "bold", "pct" (процентный формат)."""
+    флаги "bold", "pct" (процентный формат), "fill" (имя из STYLE_FILLS:
+    green|yellow|red|blue|gray — заливка роудмапа, с "bold" совместима,
+    с "pct" не совмещается)."""
 
     def __init__(self, name: str, widths: dict[int, float] | None = None):
         self.name = _safe_name(name)
@@ -68,13 +92,18 @@ class Sheet:
         if value is None:
             return ""
         bold = pct = False
-        formula = cached = None
+        formula = cached = fill = None
         if isinstance(value, dict):
             bold, pct = bool(value.get("bold")), bool(value.get("pct"))
-            formula, cached = value.get("f"), value.get("cached")
+            formula, cached, fill = value.get("f"), value.get("cached"), value.get("fill")
             value = value.get("v")
-        style = (1 if bold else 0) + (2 if pct else 0)
-        s_attr = f' s="{style}"' if style else ""
+        if fill:
+            if fill not in STYLE_FILLS:
+                raise ValueError(f"Неизвестная заливка: {fill}; доступные: {', '.join(STYLE_FILLS)}")
+            s_attr = f' s="{_fill_style(fill, bold)}"'
+        else:
+            style = (1 if bold else 0) + (2 if pct else 0)
+            s_attr = f' s="{style}"' if style else ""
         if formula is not None:
             f = formula[1:] if formula.startswith("=") else formula
             v = f"<v>{_fmt_number(cached)}</v>" if cached is not None else ""

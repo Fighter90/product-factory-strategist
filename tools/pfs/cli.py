@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 from . import (ab, calc, check, claims, core, cost, data, decisions, docx, export, finish, gaps, i18n, impact,
-               kb, models, participate, project, review, route, sources)
+               kb, models, participate, project, review, roadmap, route, sources)
 from .core import PfsError
 
 
@@ -94,6 +94,11 @@ def cmd_step(a):
     cards = kb.cards_for(a.step)
     if cards:
         print(i18n.t(lang, "step_cards", cards=", ".join(cards)))
+    if a.step == "strategy" and a.status == "done":  # PRO-70: роудмап — вместе со стратегией
+        try:
+            print(f"Роудмап: {roadmap.run(pdir)} (обе раскладки: «Проекты» и «Фичи по проектам»)")
+        except core.PfsError as exc:
+            print(f"Роудмап не собран: {exc}")
 
 
 def cmd_next(a):
@@ -458,6 +463,10 @@ def cmd_export(a):
             print(f"Six-pager EN: {export.build_six_pager(pdir, with_calcs=not a.no_calcs, lang='en')}")
     else:
         print(f"Отчёт: {export.build(pdir)}")
+    try:  # PRO-70: экспорт вместе со стратегией обновляет и роудмап; нет 04/roadmap.json — не мешаем
+        print(f"Роудмап: {roadmap.run(pdir)}")
+    except core.PfsError:
+        pass
     export.save_state(pdir)  # реестр попадает в REPORT/SIX_PAGER — фиксируем снимок после сборки
 
 
@@ -469,6 +478,12 @@ def cmd_calc(a):
         return
     for p in calc.run(_p(a), a.which):
         print(f"Excel-приложение: {p}")
+
+
+def cmd_roadmap(a):
+    """Роудмап в xlsx (PRO-70): «по проектам» + «по фичам/по проектам» из 04/roadmap.json."""
+    path = roadmap.run(_p(a), spec=a.spec, granularity=a.granularity)
+    print(f"Роудмап: {path.resolve()} — листы «Проекты» и «Фичи по проектам», статусы — заливкой (Легенда)")
 
 
 def cmd_docx(a):
@@ -747,6 +762,12 @@ def build_parser() -> argparse.ArgumentParser:
                    choices=["all", "unit-econ", "growth", "cohort", "market", "scaffold"],
                    help="scaffold — каркас calcs.json из 02/04/06/07 (null — дописать вручную)")
     s.set_defaults(f=cmd_calc)
+    s = sp.add_parser("roadmap", help="роудмап в xlsx: «по проектам» и «по фичам/по проектам» (PRO-70)")
+    s.add_argument("--spec", help="файл-спецификация roadmap.json (по умолчанию projects/<slug>/roadmap.json; "
+                                  "путь: каталог проекта → cwd); без него — этапы outcome-роадмапа из 04")
+    s.add_argument("--granularity", choices=["week", "month", "quarter"],
+                   help="шаг колонок-периодов с заливкой (по умолчанию quarter)")
+    s.set_defaults(f=cmd_roadmap)
     s = sp.add_parser("docx", help="Markdown → DOCX (без зависимостей)")
     s.add_argument("file", help=".md файл (относительный путь: каталог проекта → cwd)"); s.add_argument("--out")
     s.set_defaults(f=cmd_docx)

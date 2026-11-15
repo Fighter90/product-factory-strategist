@@ -31,6 +31,14 @@ description: Шаг 6. Согласованные продуктовая и ко
 Согласованность: аудитория, задача и метрики в двух документах совпадают; каждое обещание коммуникации опирается на
 функцию/свойство из продуктовой стратегии. `pfs check` → `pfs step strategy done`.
 
+**Роудмап (PRO-70):** вместе со стратегией соберите роудмап — `pfs step strategy done` делает это сам, либо
+`pfs roadmap` вручную. Получается `outputs/roadmap-<slug>.xlsx` в двух листах-форматах быстрых гибких роудмапов
+(Google Sheets): «Проекты» — по проектам, «Фичи по проектам» — фичи, сгруппированные по проектам; колонки периодов
+(кварталы по умолчанию; `pfs roadmap --granularity week|month|quarter`), отрезки задач отмечены заливкой статуса
+(зелёный — сделано, жёлтый — в работе, синий — план, красный — риск; расшифровка — лист «Легенда»). Данные берутся
+из pfs-проекта: этапы outcome-роадмапа 04 → проекты, тактики → фичи (даты-план по кварталам); точные даты, команды,
+приоритеты и статусы задаются в `projects/<slug>/roadmap.json` (передать: `pfs roadmap --spec файл`).
+
 ## English
 
 # Product and communication strategy
@@ -61,3 +69,12 @@ Templates: `knowledge/templates/product_strategy.md`, `knowledge/templates/comms
 
 Consistency: audience, job and metrics match across the two documents; every communication promise rests on a
 feature/property from the product strategy. `pfs check` → `pfs step strategy done`.
+
+**Roadmap (PRO-70):** build the roadmap together with the strategy — `pfs step strategy done` does it
+automatically, or run `pfs roadmap` manually. It writes `outputs/roadmap-<slug>.xlsx` with two sheets in the quick
+agile Google-Sheets roadmap format: «Проекты» (by projects) and «Фичи по проектам» (features grouped by projects);
+period columns (quarters by default; `pfs roadmap --granularity week|month|quarter`) with task spans filled by the
+status color (green — done, yellow — in progress, blue — planned, red — at risk; see the «Легенда» sheet). Data
+comes from the pfs project: the outcome-roadmap stages of 04 become projects, tactics become features (plan dates
+by sequential quarters); exact dates, teams, priorities and statuses go into `projects/<slug>/roadmap.json`
+(pass a custom file: `pfs roadmap --spec <file>`).
