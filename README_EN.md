@@ -81,7 +81,7 @@ a tracker, a job map; 100% local; 18 BYOK LLM providers; 19 languages; ~7,602 au
 
 What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_PAGER_RU and SIX_PAGER_EN — each as
 .md/.pdf/.docx**, attachments/*.xlsx — 4 workbooks, img/ screenshots), `projects/демо/interviews/synthetic/`. The six-pager follows the growth-strategy reference format: subsections 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs in two planes, source footnotes; the draft is assembled by `pfs export --six-pager` (spec: `knowledge/templates/SIX_PAGER_PROMPT.md`)
-(2 AI personas), `projects/демо/analysis/` (generators + funnel CSV). Product screenshots: `site/assets/`.
+(2 AI personas), `projects/демо/analysis/` (generators + funnel CSV). Product screenshots: `https://strategyproduct.ru/assets/` (public site).
 Full RU breakdown with a task-requirements mapping table — in
 [README.md](README.md#демонстрационный-проект-cvstart--полный-разбор).
 
