@@ -24,9 +24,19 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 ```bash
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
-./scripts/install.sh          # uv tool install -e . (or venv+symlink)
+./scripts/install.sh
 pfs --help
 ```
+
+> **The install pulls all three repositories** and verifies the result:
+>
+> | Repository | Access | Pulled | Into |
+> |---|---|---|---|
+> | [product-factory-strategist-agent](https://github.com/Fighter90/product-factory-strategist-agent) | public | this code | current dir |
+> | [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base) | **private** (invite required) | RU/EN knowledge maps, templates, rubrics | `knowledge/` |
+> | [product-factory-strategist-site](https://github.com/Fighter90/product-factory-strategist-site) | public | strategyproduct.ru | `site/` |
+>
+
 
 Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INSTALL_EN.md](docs/INSTALL_EN.md).
 
