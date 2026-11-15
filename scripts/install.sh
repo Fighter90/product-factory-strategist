@@ -7,7 +7,10 @@
 #   3. этот репозиторий (код) → pfs (uv tool install -e . или venv + symlink)
 #   4. проверка: pfs doctor + наличие INDEX.md/index.html
 set -euo pipefail
-cd "$(git rev-parse --show-toplevel 2>/dev/null || dirname "$0")/.."
+# корень репозитория — каталогом выше scripts/ (работает и для ./scripts/install.sh,
+# и для bash scripts/install.sh, и для запуска из другого каталога)
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
 
 BASE_REPO="https://github.com/Fighter90/product-factory-strategist-base.git"
 SITE_REPO="https://github.com/Fighter90/product-factory-strategist-site.git"
