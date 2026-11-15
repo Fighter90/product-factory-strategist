@@ -1,0 +1,8 @@
+---
+description: Стратег Фабрики продуктов — правила агента
+alwaysApply: true
+---
+Следуй инструкциям из файла AGENTS.md в корне репозитория. Процедуры шагов лежат в .claude/skills/<навык>/SKILL.md,
+роли помощников — в .claude/agents/*.md (в Cursor выполняй их сам или в отдельном чате с моделью из config/models.json).
+Инструменты: python3 -m tools.pfs … или MCP-сервер pfs-strategist (.mcp.json → Cursor Settings → MCP).
+В начале работы всегда выполняй: python3 -m tools.pfs status

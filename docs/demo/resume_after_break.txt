@@ -1,0 +1,27 @@
+[pfs] Продолжение работы. Состояние проекта (из файлов, а не из памяти чата):
+ПРОЕКТ: Защита от спам- и мошеннических звонков  [demo-antispam]
+Запрос: Платная защита от спам- и мошеннических звонков у оператора теряет подписчиков: после антифрод-закона и бесплатных функций у конкурентов люди не понимают, зачем платить. Что делать с продуктом и что говорить абонентам?
+Шаги: ✔intake ✔sources ✔research ✔situation ✔options ✔choice ▶strategy ·validation ·review ·decision ·monitoring
+Текущий шаг: strategy | Следующее действие: Дождаться 05_comms_strategy.md от comms-strategist, проверить согласованность с 04, затем план проверки и review
+Открытые вопросы: Нет реальных данных оттока подписки по месяцам жизни и тарифам — запросить выгрузку у аналитики (когорты, тариф, канал подключения) до решения комитета; Не подтверждена цена и состав платной опции МегаФона: на сайте оператора не найдено, обзор S006 говорит лишь о «большом наборе платных опций»; Статус законопроекта о бесплатности антиспам-сервисов (S005, июль 2025) не подтверждён — проверить в СОЗД
+Источники: 19 | Утверждения: 40 {'assumption': 4, 'fact': 22, 'hypothesis': 5, 'inference': 7, 'forecast': 2} | Решения: 0
+Стоимость: $8.07 (~767 ₽)  токенов 17 229 305
+Последние действия:
+  2026-11-05T14:54 [step] choice → done
+  2026-11-05T14:54 [tool] pfs: sed -i '' 's/без обещания «100%»\./без обещания «100%». <!-- no-tag -->/; s/«Защита близких 249 руб.» в п
+  2026-11-05T14:54 [tool] pfs: cat > projects/demo-antispam/outputs/04_product_strategy.md <<'EOF'
+# Продуктовая стратегия: «Защита близ
+  2026-11-05T14:54 [tool] pfs: ls projects/demo-antispam projects/demo-antispam/outputs && python3 -m tools.pfs claim list
+  2026-11-05T14:54 [tool] pfs: python3 -m tools.pfs check 2>&1 | head -40; grep -n "def \|превосх\|синт\|superl\|100%" tools/pfs/cli.py 
+  2026-11-05T14:55 [tool] pfs: cat > projects/demo-antispam/outputs/06_validation_plan.md <<'EOF'
+# План проверки: «Защита близких»
+
+> К
+  2026-11-05T14:55 [tool] pfs: T=~/.claude/projects/-Users-sergejemelanov-Projects-product-factory-strategist/bdaf6459-c3c5-44ce-92dd-65
+  2026-11-05T14:55 [step] strategy → in_progress
+Документы: 00_brief.md, 01_research_plan.md, 02_situation.md, 03_options.md, 04_product_strategy.md, 06_validation_plan.md
+
+Поддержка решений:
+Нет просроченных обязательств, пересмотров и устаревших оснований.
+
+Прочитайте outputs/ текущего шага перед продолжением; выполненные шаги не повторяйте.

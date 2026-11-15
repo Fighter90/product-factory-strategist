@@ -1,0 +1,14 @@
+@AGENTS.md
+
+> English version: [AGENTS_EN.md](AGENTS_EN.md) — agent instructions in English.
+
+## Особенности Claude Code
+
+- Навыки (`.claude/skills/*`) вызываются через Skill tool или `/имя`: `/strategist` — полный процесс или продолжение.
+- Субагенты (`.claude/agents/*`) запускаются через Agent tool по имени; модель каждого прописана во frontmatter
+  из `config/models.json` (`python3 -m tools.pfs models sync`).
+- Хуки (`.claude/settings.json`): SessionStart — состояние проекта; PreToolUse(WebFetch) — разрешённые домены;
+  PostToolUse — журнал, проверка на внедрённые инструкции, автопроверка документов; Stop — стоимость сессии.
+- MCP-сервер `pfs-strategist` (`.mcp.json`) дублирует ключевые команды CLI.
+
+> Материалы агента (`knowledge/`) подтягиваются из приватного репозитория product-factory-strategist-base при запуске scripts/install.sh.

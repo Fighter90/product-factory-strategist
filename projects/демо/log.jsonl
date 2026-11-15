@@ -1,0 +1,162 @@
+{"ts": "2026-11-06T15:32:43+03:00", "kind": "action", "msg": "Создан проект «CVStart»", "step": "intake"}
+{"ts": "2026-11-06T15:32:43+03:00", "kind": "human", "msg": "Ответ руководителя: intake-decision: выбор стратегии коммерциализации cvstart.org и глобального GTM (сравнить содержательно разные варианты: hosted SaaS / B2B-лицензии / open-core / статус-кво / закрытие)", "step": "intake"}
+{"ts": "2026-11-06T15:32:43+03:00", "kind": "human", "msg": "Ответ руководителя: intake-success: рост платящих подписчиков и ARR hosted-версии — ось сравнения вариантов", "step": "intake"}
+{"ts": "2026-11-06T15:32:43+03:00", "kind": "human", "msg": "Ответ руководителя: intake-constraints: open-source core остаётся MIT и бесплатным; соло-разработчик (ограниченные ресурсы поддержки); не ломать доверие локального/приватного режима", "step": "intake"}
+{"ts": "2026-11-06T15:35:04+03:00", "kind": "source", "msg": "S001 добавлен: CVStart — сайт продукта: концепция, позиционирование, ограничения", "tool": "pfs source add", "url": "https://cvstart.org/"}
+{"ts": "2026-11-06T15:35:04+03:00", "kind": "source", "msg": "S002 добавлен: career-ops-ui — README репозитория (фичи, стек, ~7602 автотеста)", "tool": "pfs source add"}
+{"ts": "2026-11-06T15:35:04+03:00", "kind": "source", "msg": "S003 добавлен: Рынок resume builders: коридор ,2–2,4 млрд; AI-сегмент CAGR 13%", "tool": "pfs source add", "url": "https://www.wiseguyreports.com/reports/resume-builder-market"}
+{"ts": "2026-11-06T15:35:04+03:00", "kind": "source", "msg": "S004 добавлен: Конкуренты и цены: Kickresume/Rezi/Teal/Enhancv/Novoresume/Zety/resume.io", "tool": "pfs source add", "url": "https://www.rezi.ai/pricing"}
+{"ts": "2026-11-06T15:35:04+03:00", "kind": "source", "msg": "S005 добавлен: AI в поиске работы 2025–2026: 31–74% соискателей; 1,2 млн AI-юзеров Kickresume", "tool": "pfs source add", "url": "https://www.kickresume.com/en/press/ai-job-search-data/"}
+{"ts": "2026-11-06T15:35:04+03:00", "kind": "source", "msg": "S006 добавлен: Job boards ,97 млрд (2025); ATS ,5–3,3 млрд; LinkedIn/Indeed/Bayt", "tool": "pfs source add", "url": "https://www.skyquestt.com/report/online-recruitment-market"}
+{"ts": "2026-11-06T15:36:13+03:00", "kind": "source", "msg": "S006 добавлен: Рынок resume builders: коридор $1,2–2,4 млрд; AI-сегмент CAGR 13%", "tool": "pfs source add", "url": "https://www.wiseguyreports.com/reports/resume-builder-market"}
+{"ts": "2026-11-06T15:36:13+03:00", "kind": "source", "msg": "S007 добавлен: Job boards $37,97 млрд (2025); ATS $2,5–3,3 млрд; LinkedIn/Indeed/Bayt", "tool": "pfs source add", "url": "https://www.skyquestt.com/report/online-recruitment-market"}
+{"ts": "2026-11-06T15:36:13+03:00", "kind": "source", "msg": "S008 добавлен: Синтетическая воронка hosted-беты CVStart (12 недель, seed=7) — демонстрация ана", "tool": "pfs source add"}
+{"ts": "2026-11-06T15:36:13+03:00", "kind": "step", "msg": "intake → done", "step": "intake"}
+{"ts": "2026-11-06T15:36:13+03:00", "kind": "step", "msg": "sources → done", "step": "sources"}
+{"ts": "2026-11-06T15:37:18+03:00", "kind": "step", "msg": "discovery → done", "step": "discovery"}
+{"ts": "2026-11-06T15:37:18+03:00", "kind": "step", "msg": "situation → done", "step": "situation"}
+{"ts": "2026-11-06T15:38:46+03:00", "kind": "source", "msg": "S009 добавлен: ИИ-респондент: Sarah, 32, software engineer (US) — гипотезы EN-сегмента", "tool": "pfs source add"}
+{"ts": "2026-11-06T15:38:46+03:00", "kind": "source", "msg": "S010 добавлен: ИИ-респондент: Markus, 35, PM (Берлин) — гипотезы EU/не-EN сегмента", "tool": "pfs source add"}
+{"ts": "2026-11-06T15:38:46+03:00", "kind": "claim", "msg": "C001 [факт] Продукт CVStart (career-ops UI): скан ~129 джоб-бордов, AI-скоринг вакансий 0.0–5.0, CV St", "sources": ["S001"]}
+{"ts": "2026-11-06T15:38:46+03:00", "kind": "claim", "msg": "C002 [факт] Монетизации у проекта сейчас нет: полностью бесплатный, «$0 forever (MIT)»; на лендинге ср", "sources": ["S001"]}
+{"ts": "2026-11-06T15:38:46+03:00", "kind": "claim", "msg": "C003 [факт] Ограничения продукта: нет публично хостимой версии (нужен родительский репозиторий career-", "sources": ["S001"]}
+{"ts": "2026-11-06T15:38:46+03:00", "kind": "claim", "msg": "C004 [факт] Интерфейс продукта и сайта переведён на 19 языков (en, ru, uk, es, pt-BR, fr, pl, de, it, ", "sources": ["S002"]}
+{"ts": "2026-11-06T15:38:46+03:00", "kind": "claim", "msg": "C005 [факт] Рынок resume builders: коридор оценок $1,2–2,4 млрд (2024–2025); AI-подсегмент $1,3→1,47 м", "sources": ["S006"]}
+{"ts": "2026-11-06T15:38:46+03:00", "kind": "claim", "msg": "C006 [факт] 7 прямых конкурентов (Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi) работа", "sources": ["S004"]}
+{"ts": "2026-11-06T15:38:46+03:00", "kind": "claim", "msg": "C007 [факт] Языковое покрытие прямых конкурентов узкое: Kickresume — 6 языков интерфейса, Enhancv/Teal", "sources": ["S004"]}
+{"ts": "2026-11-06T15:38:47+03:00", "kind": "claim", "msg": "C008 [факт] 98% компаний Fortune 500 используют ATS в найме (многолетняя методология Jobscan: реверс-и", "sources": ["S007"]}
+{"ts": "2026-11-06T15:38:47+03:00", "kind": "claim", "msg": "C009 [факт] AI в поиске работы используют 31–74% соискателей (разные опросы 2025–2026); 84% говорят, ч", "sources": ["S005"]}
+{"ts": "2026-11-06T15:38:47+03:00", "kind": "claim", "msg": "C010 [факт] 1,2+ млн job seekers использовали AI-функции Kickresume в 2025 году", "sources": ["S005"]}
+{"ts": "2026-11-06T15:38:47+03:00", "kind": "claim", "msg": "C011 [факт] Мировой рынок онлайн-рекрутинга: $37,97 млрд (2025), CAGR 7,1% до 2033; Indeed — 60+ стран", "sources": ["S007"]}
+{"ts": "2026-11-06T15:38:47+03:00", "kind": "claim", "msg": "C012 [факт] LinkedIn: 1 млрд+ members в 200+ странах, интерфейс на 36 языках; Premium Career $39,99/ме", "sources": ["S007"]}
+{"ts": "2026-11-06T15:38:47+03:00", "kind": "claim", "msg": "C013 [гипотеза] Незанятая ниша: мультиязычный (19 локалей) приватный AI-резюме-билдер с открытым кодом — з"}
+{"ts": "2026-11-06T15:38:47+03:00", "kind": "claim", "msg": "C014 [гипотеза] Честное ценообразование (без автопродлений) и open-source — работающий дифференциатор прот"}
+{"ts": "2026-11-06T15:38:47+03:00", "kind": "claim", "msg": "C015 [допущение] Решение — о коммерческой версии и глобальном GTM на 12 месяцев; open-source core остаётся ", "sources": ["S001"]}
+{"ts": "2026-11-06T15:38:47+03:00", "kind": "claim", "msg": "C016 [допущение] Юнит-допущения модели (демо): paid-тариф $29/мес, переменные (инференс+инфра) 25%, CAC $60"}
+{"ts": "2026-11-06T15:38:47+03:00", "kind": "claim", "msg": "C017 [гипотеза] Гипотеза (синтетика, Sarah): техническая аудитория США готова платить $10–15/мес за честны", "sources": ["S009"]}
+{"ts": "2026-11-06T15:38:48+03:00", "kind": "claim", "msg": "C018 [гипотеза] Гипотеза (синтетика, Markus): не-EN сегменты (EU) недообслужены — интерфейс и локальные ко", "sources": ["S010"]}
+{"ts": "2026-11-06T15:38:48+03:00", "kind": "step", "msg": "research → done", "step": "research"}
+{"ts": "2026-11-06T15:43:57+03:00", "kind": "source", "msg": "S011 добавлен: Ответ руководителя (демо): вариант B — hosted freemium SaaS с митигациями red te", "tool": "pfs source add"}
+{"ts": "2026-11-06T15:43:57+03:00", "kind": "claim", "msg": "C019 [допущение] Комитет (демо) выбрал вариант B — hosted freemium SaaS глобально; обязательные митигации: ", "sources": ["S011"]}
+{"ts": "2026-11-06T15:43:57+03:00", "kind": "step", "msg": "options → done", "step": "options"}
+{"ts": "2026-11-06T15:43:57+03:00", "kind": "step", "msg": "choice → done", "step": "choice"}
+{"ts": "2026-11-06T15:45:35+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:45:35+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:45:35+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:45:35+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:45:35+03:00", "kind": "step", "msg": "strategy → done", "step": "strategy"}
+{"ts": "2026-11-06T15:45:35+03:00", "kind": "step", "msg": "validation → done", "step": "validation"}
+{"ts": "2026-11-06T15:45:36+03:00", "kind": "step", "msg": "review → done", "step": "review"}
+{"ts": "2026-11-06T15:45:36+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-06T15:45:36+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:45:36+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:45:36+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:45:36+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:45:36+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-06T15:45:36+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
+{"ts": "2026-11-06T15:52:25+03:00", "kind": "claim", "msg": "C020 [допущение] Модельные и аналитические вилки для сравнения вариантов (экономика C: white-label $200–500"}
+{"ts": "2026-11-06T15:54:13+03:00", "kind": "decision", "msg": "D001 принято: Коммерческая версия CVStart: hosted freemium SaaS, глобально (отв. соло-разработчик CVStart (руководитель проекта))", "step": "decision"}
+{"ts": "2026-11-06T15:54:13+03:00", "kind": "step", "msg": "decision → done", "step": "decision"}
+{"ts": "2026-11-06T15:54:13+03:00", "kind": "step", "msg": "monitoring → in_progress", "step": "monitoring"}
+{"ts": "2026-11-06T15:54:13+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-06T15:54:14+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:54:14+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:54:14+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:54:14+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T15:54:14+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-06T15:54:14+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
+{"ts": "2026-11-06T16:20:38+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-06T16:20:38+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T16:20:38+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T16:20:38+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T16:20:38+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-06T16:20:38+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-06T16:47:00+03:00", "kind": "route", "msg": "Сценарий: retention (high); доп.: —"}
+{"ts": "2026-11-06T16:56:10+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T00:06:16+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-07T00:43:04+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
+{"ts": "2026-11-07T00:44:52+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-07T01:16:41+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-07T01:31:48+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:31:48+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:31:48+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:31:48+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:31:49+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
+{"ts": "2026-11-07T01:32:13+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:32:13+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:32:13+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:32:13+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:32:33+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:32:33+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:32:33+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:32:33+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:32:33+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-07T01:32:33+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
+{"ts": "2026-11-07T01:46:57+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-07T01:47:53+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-07T01:47:53+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:47:53+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:47:53+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:47:53+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T01:47:53+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-07T01:50:08+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-07T02:45:21+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T02:45:21+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T02:45:21+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T02:45:21+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T02:45:21+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-07T02:45:21+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-07T03:33:12+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:33:12+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:33:13+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:34:08+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:34:08+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:34:08+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:34:49+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:34:49+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:34:49+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:35:02+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:35:02+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:35:02+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:39:45+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-07T03:39:45+03:00", "kind": "route", "msg": "Сценарий: keep_or_kill (medium); доп.: —"}
+{"ts": "2026-11-07T03:39:58+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T03:39:58+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T03:39:58+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T03:39:58+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-07T03:39:58+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-07T03:39:58+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
+{"ts": "2026-11-07T03:39:58+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-07T03:40:34+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:40:34+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:40:34+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-07T03:41:30+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:41:30+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:41:30+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-07T03:43:37+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:43:37+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:43:37+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-07T03:44:53+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:44:53+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:44:54+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-07T03:46:00+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:46:52+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:46:52+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:46:52+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-07T03:47:25+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:47:25+03:00", "kind": "route", "msg": "Сценарий: growth (low); доп.: —"}
+{"ts": "2026-11-07T03:47:25+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-07T03:48:21+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:48:21+03:00", "kind": "route", "msg": "Сценарий: go_to_market (medium); доп.: —"}
+{"ts": "2026-11-07T03:48:22+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-07T03:49:59+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-07T03:50:00+03:00", "kind": "route", "msg": "Сценарий: go_to_market (medium); доп.: —"}
+{"ts": "2026-11-07T03:50:00+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-10T10:19:16+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T10:19:16+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T10:19:16+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T10:19:16+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-10T10:19:16+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-10T10:19:16+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md (формат референса)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-10T10:19:16+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
+{"ts": "2026-11-10T10:19:16+03:00", "kind": "action", "msg": "Собран финальный пакет: unit_economics.xlsx, growth_model.xlsx, cohort_retention.xlsx, market_sizing.xlsx, REPORT.md, SIX_PAGER.md, REPORT.docx, SIX_PAGER.docx, deck.html", "tool": "pfs finish"}

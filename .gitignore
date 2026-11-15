@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+!.env.example
+.claude/hooks/hook_errors.log
+.claude/settings.local.json
+projects/**/.tmp-*
+# указатель активного проекта — локальное состояние, в git не попадает (PRO-67)
+projects/.active
+*.swp
+.task-board/
+
+# личные сессии не публикуем
+projects/*/*_session.json
+product_factory_strategist.egg-info/
