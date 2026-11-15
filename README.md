@@ -25,15 +25,19 @@ Windsurf, Copilot.
 ```bash
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
-./scripts/install.sh          # подтягивает материалы агента (приватный репозиторий) и ставит pfs
+./scripts/install.sh          # подтягивает все три репозитория (материалы + сайт) и ставит pfs с автопроверкой
 pfs --help
 ```
 
-> **Материалы агента** (карты знаний RU/EN, шаблоны, рубрики — `knowledge/`) лежат в отдельном
-> приватном репозитории [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base)
-> и подтягиваются `scripts/install.sh` автоматически. Нужен доступ к этому репозиторию
-> ( приглашение выдаёт владелец). Детали — [docs/INSTALL.md](docs/INSTALL.md):
-> PEP 668, обновление, удаление, тестирование и troubleshooting.
+> **Установка подтягивает все три репозитория проекта** и проверяет результат:
+>
+> | Репозиторий | Доступ | Что подтягивается | Куда |
+> |---|---|---|---|
+> | [product-factory-strategist-agent](https://github.com/Fighter90/product-factory-strategist-agent) | public | этот код | текущий каталог |
+> | [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base) | **private** (нужен доступ) | карты знаний RU/EN, шаблоны, рубрики | `knowledge/` |
+> | [product-factory-strategist-site](https://github.com/Fighter90/product-factory-strategist-site) | public | сайт strategyproduct.ru | `site/` |
+>
+> Детали, PEP 668, обновление, удаление, тестирование и troubleshooting — [docs/INSTALL.md](docs/INSTALL.md).
 
 ```bash
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
