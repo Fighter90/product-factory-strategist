@@ -1,0 +1,23 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull agent materials (private base repo)
+        run: git clone --depth 1 https://x-access-token:${{ secrets.BASE_TOKEN }}@github.com/Fighter90/product-factory-strategist-base.git knowledge
+        if: ${{ secrets.BASE_TOKEN != '' }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests
+      - name: Doctor
+        run: python3 -m tools.pfs doctor
+      - name: KB lint (PRO-60)
+        run: python3 -m tools.pfs kb lint

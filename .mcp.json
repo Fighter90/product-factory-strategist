@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "pfs-strategist": {
+      "command": "python3",
+      "args": ["-m", "tools.pfs.mcp_server"],
+      "env": {}
+    },
+    "linear": {
+      "comment": "Ключ берётся из .env (LINEAR_API_KEY, не коммитится). Требуется node/npx в PATH.",
+      "command": "sh",
+      "args": ["-c", "LINEAR_ACCESS_TOKEN=$(grep -E '^LINEAR_API_KEY=' .env | head -1 | cut -d= -f2-) exec npx -y mcp-server-linear"]
+    },
+    "lovable": {
+      "comment": "Lovable MCP (https://mcp.lovable.dev). Только OAuth: один раз выполните в клиенте '/mcp' → lovable → Authenticate (браузер). Потом: 'создай проект в Lovable'. create_project/send_message расходуют кредиты Lovable.",
+      "type": "http",
+      "url": "https://mcp.lovable.dev",
+      "enabled": true
+    },
+    "producthunt": {
+      "comment": "Product Hunt MCP (https://mcp.producthunt.com/mcp, streamable HTTP). Только OAuth: в клиенте '/mcp' → producthunt → Authenticate (браузер); API-ключа нет. Чтение (лидерборды, категории, запуски, профили) — свободно; запись в аккаунт (черновики запуска) — только с явным подтверждением. Скилл: ph-trends («тренды → применение к продукту»).",
+      "type": "http",
+      "url": "https://mcp.producthunt.com/mcp",
+      "enabled": true
+    },
+    "rea": {
+      "comment": "REA — reverse-engineering MCP (https://github.com/morluto/rea). Для Hopper-интеграции (macOS, установлен Hopper) переменная HOPPER_LAUNCHER_PATH опциональна — при нестандартном пути добавьте её в env.",
+      "command": "npx",
+      "args": ["-y", "rea-agents@6.7.0", "mcp"],
+      "env": {}
+    }
+  }
+}
