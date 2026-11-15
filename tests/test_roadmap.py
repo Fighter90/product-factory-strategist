@@ -243,6 +243,16 @@ class CliIntegrationTests(unittest.TestCase):
             rc = cli.main(["--project", pdir.name, "roadmap"])
         self.assertEqual(rc, 2)
 
+    def test_cli_roadmap_missing_spec_is_rc2(self):
+        # явно указанный несуществующий --spec — rc=2 с сообщением, без traceback;
+        # 04 на месте: без проверки откат прошёл бы «успешно»
+        pdir = project.create("Роудмап CLI нет spec", "Вопрос?", slug="rm-cli-nospec")
+        make_04(pdir)
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            rc = cli.main(["--project", pdir.name, "roadmap", "--spec", "no-such.json"])
+        self.assertEqual(rc, 2)
+
 
 class RoadmapValidationTests(unittest.TestCase):
     """Ошибки входа: битые даты, перевёрнутый диапазон, спецификация без проектов."""
@@ -250,6 +260,14 @@ class RoadmapValidationTests(unittest.TestCase):
     def test_bad_date(self):
         with self.assertRaises(PfsError):
             roadmap.parse_date("январь 2026")
+
+    def test_calendar_invalid_dates_are_pfs_error(self):
+        # даты по формату, но недопустимые по календарю — чистая PfsError, а не ValueError
+        for bad in ("2026-02-31", "31.04.2026", "29.02.2025", "0000-Q1", "0000-05"):
+            with self.assertRaises(PfsError, msg=bad):
+                roadmap.parse_date(bad)
+            with self.assertRaises(PfsError, msg=f"{bad} (as_end)"):
+                roadmap.parse_date(bad, as_end=True)
 
     def test_date_formats(self):
         self.assertEqual(roadmap.parse_date("2026-Q2"), dt.date(2026, 4, 1))
@@ -273,6 +291,26 @@ class RoadmapValidationTests(unittest.TestCase):
         (pdir / "roadmap.json").write_text("[]", encoding="utf-8")
         with self.assertRaises(PfsError):
             roadmap.run(pdir)
+
+    def test_broken_json_spec_is_pfs_error(self):
+        # битый JSON спецификации — чистая PfsError, а не traceback JSONDecodeError
+        pdir = project.create("Роудмап ломаный json", "Вопрос?", slug="rm-broken")
+        (pdir / "roadmap.json").write_text("{bad json", encoding="utf-8")
+        with self.assertRaises(PfsError):
+            roadmap.run(pdir)
+
+    def test_missing_explicit_spec_is_hard_error(self):
+        # --spec указан явно, файла нет — жёсткая PfsError, а не тихий откат к 04
+        pdir = project.create("Роудмап нет spec", "Вопрос?", slug="rm-nospec")
+        make_04(pdir)  # 04 на месте: без проверки откат прошёл бы «успешно»
+        with self.assertRaises(PfsError):
+            roadmap.load_spec(pdir, "no-such-roadmap.json")
+
+    def test_directory_as_spec_is_pfs_error(self):
+        pdir = project.create("Роудмап каталог как spec", "Вопрос?", slug="rm-dirspec")
+        (pdir / "outputs").mkdir(parents=True, exist_ok=True)
+        with self.assertRaises(PfsError):
+            roadmap.load_spec(pdir, "outputs")
 
     def test_strategy_without_stages(self):
         pdir = project.create("Роудмап 04 без этапов", "Вопрос?", slug="rm-nostage")

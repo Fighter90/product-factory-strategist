@@ -86,32 +86,54 @@ def parse_date(value, as_end: bool = False) -> dt.date:
         q = int(m.group(2))
         if as_end:
             y = int(m.group(1))
-            return _eom(y, q * 3)
-        return dt.date(int(m.group(1)), q * 3 - 2, 1)
+            return _eom(y, q * 3) or _fail_date(s)
+        d = _mk_date(int(m.group(1)), q * 3 - 2, 1)
+        if d:
+            return d
     for i, rx in enumerate(_DATE_RES[1:4], 1):
         m = rx.match(s)
         if m:
             y = int(m.group(1))
             if len(m.groups()) == 1:  # только год: «2026»
-                return dt.date(y, 12, 31) if as_end else dt.date(y, 1, 1)
+                d = _mk_date(y, 12, 31) if as_end else _mk_date(y, 1, 1)
+                if d:
+                    return d
+                break
             mo = int(m.group(2))
             if i == 1:
-                d = int(m.group(3))
-                if 1 <= mo <= 12 and 1 <= d <= 31:
-                    return dt.date(y, mo, d)
-                break
+                d = _mk_date(y, mo, int(m.group(3)))
+                if d:
+                    return d
+                break  # недопустимая по календарю («2026-02-31») — в PfsError внизу
             if not 1 <= mo <= 12:
                 break
             if as_end:
-                return _eom(y, mo) if i == 2 else dt.date(y, 12, 31)
-            return dt.date(y, mo, 1)
+                return (_eom(y, mo) if i == 2 else _mk_date(y, 12, 31)) or _fail_date(s)
+            d = _mk_date(y, mo, 1)
+            if d:
+                return d
     m = _DATE_RES[4].match(s)
     if m:
-        d, mo, y = int(m.group(1)), int(m.group(2)), int(m.group(3))
-        if 1 <= mo <= 12 and 1 <= d <= 31:
-            return dt.date(y, mo, d)
+        d = _mk_date(int(m.group(3)), int(m.group(2)), int(m.group(1)))
+        if d:
+            return d
     raise core.PfsError(f"не разобрать дату роудмапа: {s!r} "
                         "(форматы: YYYY-QN, YYYY-MM-DD, YYYY-MM, YYYY, DD.MM.YYYY)")
+
+
+def _fail_date(s: str) -> None:
+    """Недопустимая по календарю дата (2026-02-31) — та же чистая ошибка, что и для формата."""
+    raise core.PfsError(f"не разобрать дату роудмапа: {s!r} "
+                        "(форматы: YYYY-QN, YYYY-MM-DD, YYYY-MM, YYYY, DD.MM.YYYY)")
+
+
+def _mk_date(y: int, m: int, d: int) -> dt.date | None:
+    """dt.date без ValueError: недопустимая по календарю дата («2026-02-31») — None,
+    не падение: вызывающий код переводит её в чистую PfsError."""
+    try:
+        return dt.date(y, m, d)
+    except ValueError:
+        return None
 
 
 def _month_add(y: int, m: int, k: int) -> tuple[int, int]:
@@ -119,8 +141,14 @@ def _month_add(y: int, m: int, k: int) -> tuple[int, int]:
     return t // 12, t % 12 + 1
 
 
-def _eom(y: int, m: int) -> dt.date:
-    return dt.date(y, m, calendar.monthrange(y, m)[1])
+def _eom(y: int, m: int) -> dt.date | None:
+    """Последний день месяца; недопустимая пара (год 0, месяц вне 1–12) — None."""
+    if not 1 <= m <= 12:
+        return None
+    try:
+        return dt.date(y, m, calendar.monthrange(y, m)[1])
+    except ValueError:
+        return None
 
 
 def make_periods(start: dt.date, end: dt.date, granularity: str) -> list[tuple[str, dt.date, dt.date]]:
@@ -267,10 +295,20 @@ def normalize_spec(data: dict) -> dict:
 
 def load_spec(pdir: Path, spec: str | Path | None = None) -> tuple[dict, str]:
     """Вход роудмапа: --spec файл (путь: каталог проекта → cwd), затем
-    projects/<slug>/roadmap.json, иначе этапы 04. → (нормализованная спецификация, источник)."""
-    path = core.resolve_input(spec, pdir) if spec else pdir / "roadmap.json"
+    projects/<slug>/roadmap.json, иначе этапы 04. → (нормализованная спецификация, источник).
+    Явно указанный --spec, которого нет, — жёсткая ошибка, не тихий откат к 04."""
+    if spec:
+        path = core.resolve_input(spec, pdir)
+        if not path.exists():
+            raise core.PfsError(f"файл спецификации роудмапа не найден: {spec} "
+                                "(путь: каталог проекта или cwd) — создайте файл или уберите --spec")
+    else:
+        path = pdir / "roadmap.json"
     if path.exists():
-        data = core.read_json(path)
+        try:
+            data = core.read_json(path)
+        except (ValueError, OSError) as exc:  # битый JSON / каталог вместо файла
+            raise core.PfsError(f"{path}: не прочитать спецификацию роудмапа — {exc}") from exc
         if not isinstance(data, dict):
             raise core.PfsError(f"{path}: спецификация роудмапа — JSON-объект, а не список")
         return normalize_spec(data), "roadmap.json"
