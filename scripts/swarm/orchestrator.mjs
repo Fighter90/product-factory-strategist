@@ -60,11 +60,64 @@ function log(msg) {
 }
 const short = (s, n = 400) => String(s).replace(/\s+/g, ' ').trim().slice(0, n);
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// PRO-69: живые потомки pid по ps (включая сам pid, если жив) — обходом pid+ppid.
+async function descendants(rootPid) {
+  const ps = await new Promise((res) => {
+    const q = spawn('ps', ['-axo', 'pid=,ppid='], { stdio: ['ignore', 'pipe', 'ignore'] });
+    let out = '';
+    q.stdout.on('data', (d) => { out += d; });
+    q.on('close', () => res(out));
+    q.on('error', () => res(''));
+  });
+  const kids = new Map();
+  for (const line of ps.split('\n')) {
+    const m = line.match(/^\s*(\d+)\s+(\d+)\s*$/);
+    if (!m) continue;
+    const c = Number(m[1]), pp = Number(m[2]);
+    if (!kids.has(pp)) kids.set(pp, []);
+    kids.get(pp).push(c);
+  }
+  const found = [], queue = [rootPid], seen = new Set();
+  while (queue.length) {
+    const pid = queue.pop();
+    if (seen.has(pid)) continue;
+    seen.add(pid);
+    for (const c of kids.get(pid) || []) queue.push(c);
+    if (pid !== rootPid) found.push(pid);
+  }
+  try { process.kill(rootPid, 0); found.push(rootPid); } catch (e) { if (e && e.code === 'EPERM') found.push(rootPid); }
+  return found;
+}
+
+// PRO-69 (инцидент 2026-11-12: ревьюер прожил 83.7 мин при timeoutMs 12 мин —
+// group-kill «прошёл» без исключения, но цель не достиг, а прямой kill был только
+// в catch-ветке). Убийство обязано ДОХОДИТЬ: (1) снапшот поддерева по ps ДО первого
+// удара — после смерти корня сироты перерождаются на init и связь теряется;
+// (2) group-kill + прямой kill БЕЗУСЛОВНО (группа могла не содержать процесс);
+// (3) эскалация по живым из снапшота с проверкой живости (poll kill(pid, 0),
+// EPERM = жив), пока поддерево не умрёт. Возвращает true, если поддерево мертво.
+async function killTree(rootPid, child = null) {
+  const targets = await descendants(rootPid);
+  try { process.kill(-rootPid, 'SIGKILL'); } catch {} // группа (detached → pgid == pid)
+  try { if (child) child.kill('SIGKILL'); } catch {} // напрямую — группа могла не достать
+  const alivePids = (list) => list.filter((pid) => { try { process.kill(pid, 0); return true; } catch (e) { return e && e.code === 'EPERM'; } });
+  for (let i = 0; i < 6; i++) {
+    const alive = alivePids(targets);
+    if (!alive.length) return true;
+    for (const pid of alive) { try { process.kill(pid, 'SIGKILL'); } catch {} }
+    await sleep(250);
+  }
+  return !alivePids(targets).length;
+}
+
 function run(cmd, args_, { timeoutMs = 600_000, cwd = ROOT, onSpawn = null } = {}) {
   // Три требования: (1) полный захват stdout/stderr — resolve на 'exit' гонится с доставкой
   // данных (под нагрузкой данные могли прийти пустыми → ревьюер получал ПУСТОЙ дифф);
   // (2) никакого вечного висения — grandchildren держат pipe'ы, 'close' может не наступить
-  // никогда → 3-секундный grace после exit; (3) таймаут убивает ГРУППУ (kill(-pid)).
+  // никогда → 3-секундный grace после exit; (3) таймаут убивает через killTree —
+  // group-kill мог «пройти» мимо цели (PRO-69), поэтому слой 2: прямой kill + эскалация.
   return new Promise((res) => {
     const p = spawn(cmd, args_, { cwd, env: process.env, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
     if (onSpawn) { try { onSpawn(p.pid); } catch {} } // PRO-73: pid живого воркера — наружу (worker.pid)
@@ -79,7 +132,10 @@ function run(cmd, args_, { timeoutMs = 600_000, cwd = ROOT, onSpawn = null } = {
     };
     const maybe = () => { if (exited && soEnd && seEnd) finish(exitCode); };
     const t = setTimeout(() => {
-      try { process.kill(-p.pid, 'SIGKILL'); } catch { try { p.kill('SIGKILL'); } catch {} }
+      // PRO-69: ревьюер не живёт дольше timeout + 5 с — killTree добивает поддерево,
+      // а finish(-1) гарантирует resolve, даже если эскалация не подтвердила смерть
+      // (сигнал-убийство: exit-код null → -1, как в инциденте).
+      killTree(p.pid, p).then(() => finish(-1), () => finish(-1));
     }, timeoutMs);
     let g = null;
     p.stdout.on('data', (d) => { out += d; });
@@ -101,6 +157,19 @@ const sh = async (cmd, opts) => {
   return r;
 };
 
+// PRO-69: воркер не переживает оркестратор — осиротевшие воркеры воевали за дерево
+// (инциденты 19:0x/19:2x). Живые воркеры реапятся при любом выходе (exit, сигнал,
+// краш): два синхронных слоя (группа + напрямую) — эскалацию по ps делает killTree
+// на таймауте воркера и guard сироты на следующем тике.
+const activeWorkers = new Set();
+const killActiveWorkers = () => {
+  for (const pid of activeWorkers) {
+    try { process.kill(-pid, 'SIGKILL'); } catch { try { process.kill(pid, 'SIGKILL'); } catch {} }
+  }
+};
+process.on('exit', killActiveWorkers);
+for (const sig of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.on(sig, () => { killActiveWorkers(); process.exit(1); });
+
 async function worker(role, vars, { timeoutMs = WORKER_TIMEOUT_MS } = {}) {
   let prompt = ROLES[role];
   for (const [k, v] of Object.entries(vars)) prompt = prompt.split(`{{${k}}}`).join(v ?? '');
@@ -110,7 +179,12 @@ async function worker(role, vars, { timeoutMs = WORKER_TIMEOUT_MS } = {}) {
   // закоммитить — дерево «чисто», но его ветку срывать нельзя). Файл остаётся и
   // после смерти воркера: мёртвый pid тик не блокирует, а краш-сирота — блокирует
   // (но только до mtime-границы протухания, см. tickWorkerAlive).
-  const r = await run('opencode', ['run', prompt], { timeoutMs, onSpawn: (pid) => writeFileSync(WORKER_PID, `${pid}\n`) });
+  // PRO-69: рядом с pid воркера пишется pid владельца (оркестратора) — по нему
+  // guard следующего тика отличит сироту (владелец мёртв, убить) от воркера
+  // живого владельца (PRO-73 skip).
+  let pid = 0;
+  const r = await run('opencode', ['run', prompt], { timeoutMs, onSpawn: (p) => { pid = p; activeWorkers.add(p); writeFileSync(WORKER_PID, `${p} ${process.pid}\n`); } });
+  if (pid) activeWorkers.delete(pid); // PRO-69: живой воркер снят с учёта реапа
   const tail = r.all.slice(-4000);
   log(`  [${role}] finished code=${r.code}`);
   log(`  [${role}] tail: ${short(tail, 600)}`);
@@ -227,8 +301,16 @@ const extractVerdict = (all) => {
 // Возвращает pid живого воркера или 0.
 async function tickWorkerAlive() {
   let pid = 0;
+  let owner = 0;
   let mtimeMs = 0;
-  try { pid = parseInt(readFileSync(WORKER_PID, 'utf8').trim(), 10) || 0; mtimeMs = statSync(WORKER_PID).mtimeMs; } catch { return 0; } // нет файла — воркера нет
+  try {
+    // PRO-69: формат pid-файла — «pid воркера pid владельца»; старый формат (только
+    // pid) читается как владелец 0 → сирота-логика не срабатывает (совместимость).
+    const parts = readFileSync(WORKER_PID, 'utf8').trim().split(/\s+/);
+    pid = parseInt(parts[0], 10) || 0;
+    owner = parseInt(parts[1] || '', 10) || 0;
+    mtimeMs = statSync(WORKER_PID).mtimeMs;
+  } catch { return 0; } // нет файла — воркера нет
   if (pid < 2) return 0;
   if (Date.now() - mtimeMs > WORKER_TIMEOUT_MS + PID_STALE_GRACE_MS) return 0; // протух: воркер не может жить дольше своего таймаута — сирота не блокирует очередь
   try { process.kill(pid, 0); } catch (e) {
@@ -239,7 +321,20 @@ async function tickWorkerAlive() {
   if (!/opencode/.test(ps.out)) return 0; // pid переиспользован посторонним процессом
   const cwd = await run('bash', ['-c', `lsof -a -p ${pid} -d cwd -Fn 2>/dev/null | awk 'match($0,/^ncwd/){print substr($0,5); exit} match($0,/^n/){print substr($0,2); exit}'`], { timeoutMs: 10_000 });
   const dir = cwd.out.trim();
-  return (dir === ROOT || !dir) ? pid : 0; // cwd другого репо — не наш воркер, не блокируем
+  if (!(dir === ROOT || !dir)) return 0; // cwd другого репо — не наш воркер, не блокируем
+  // PRO-69: воркер опознан (opencode этого репо), но владелец мёртв — это СИРОТА:
+  // её вывод никто не заберёт, а воюя за дерево она срывает новый тик (инциденты
+  // 19:0x/19:2x). Убиваем поддерево (группа могла не достать), хвосты executor'а —
+  // в помеченный stash (как в run.sh / blocked-пути), pid-файл стираем, тик идёт дальше.
+  const ownerAlive = () => { try { process.kill(owner, 0); return true; } catch (e) { return e && e.code === 'EPERM'; } };
+  if (owner && owner !== process.pid && !ownerAlive()) {
+    log(`worker pid ${pid} — сирота (владелец ${owner} мёртв): killTree + stash (PRO-69)`);
+    await killTree(pid);
+    await run('bash', ['-c', 'git stash push --include-untracked -q -m ' + JSON.stringify(`orphan worker ${pid} leftovers (PRO-69)`) + ' 2>/dev/null; true'], { timeoutMs: 60_000 });
+    try { unlinkSync(WORKER_PID); } catch {}
+    return 0; // очередь не простаивает остаток жизни сироты
+  }
+  return pid; // живой владелец — guard-skip PRO-73 как прежде
 }
 
 async function main() {
