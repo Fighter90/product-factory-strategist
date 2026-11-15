@@ -56,7 +56,7 @@ python3 -m unittest discover -s tests          # 787 тестов
 
 ## Демонстрационный проект: CVStart — полный разбор
 
-Живой пример сквозного прогона: реальная задача руководителя, 12 шагов агента, пять вариантов с атакой red team, обе стратегии, six-pager на двух языках (формат референса стратегии роста: подпункты 1.1/1.2 и 2.1/2.2, матрица тактик, KPI в двух плоскостях, сноски; черновик собирает `pfs export --six-pager`, спецификация — `knowledge/templates/SIX_PAGER_PROMPT.md`) с Excel-моделью. Проект лежит в `projects/демо/`, скриншоты продукта — в `projects/демо/outputs/img/` и `site/assets/`.
+Живой пример сквозного прогона: реальная задача руководителя, 12 шагов агента, пять вариантов с атакой red team, обе стратегии, six-pager на двух языках (формат референса стратегии роста: подпункты 1.1/1.2 и 2.1/2.2, матрица тактик, KPI в двух плоскостях, сноски; черновик собирает `pfs export --six-pager`, спецификация — `knowledge/templates/SIX_PAGER_PROMPT.md`) с Excel-моделью. Проект лежит в `projects/демо/`, скриншоты продукта — в `projects/демо/outputs/img/` и `https://strategyproduct.ru/assets/` (публичный сайт).
 
 ### Задача и продукт
 
@@ -68,7 +68,7 @@ python3 -m unittest discover -s tests          # 787 тестов
 
 Сайт и README продукта зарегистрированы первыми источниками (S001–S002, origin=own).
 
-![Лендинг CVStart](site/assets/cv_landing_ru.jpg)
+![Лендинг CVStart](https://strategyproduct.ru/assets/cv_landing_ru.jpg)
 
 ### Как агент работал: 12 шагов
 
@@ -115,7 +115,7 @@ python3 -m unittest discover -s tests          # 787 тестов
 | **Six-pager EN** (MD · **PDF** · DOCX) | `projects/демо/outputs/SIX_PAGER_EN.md` · `.pdf` · `.docx` |
 | Полный отчёт | `projects/демо/outputs/REPORT.md` |
 | Excel-модель (4 книги) | `projects/демо/outputs/attachments/` (unit_economics · growth_model · cohort_retention · market_sizing) |
-| Скриншоты продукта | `projects/демо/outputs/img/`, `site/assets/` |
+| Скриншоты продукта | `projects/демо/outputs/img/`, `https://strategyproduct.ru/assets/` (публичный сайт) |
 | Синтетические интервью (2 персоны) | `projects/демо/interviews/synthetic/` |
 | Синтетика + анализ данных | `projects/демо/analysis/` (gen_synthetic.py, synthetic_funnel.csv, md_to_pdf.py) |
 | Реестр и журнал | `projects/демо/claims.jsonl`, `decisions.jsonl`, `log.jsonl` |
@@ -138,7 +138,7 @@ python3 -m unittest discover -s tests          # 787 тестов
 | Прозрачность | log.jsonl; цепочка C### → S###; `pfs impact` |
 | **Дополнительный уровень** | |
 | Интервью и синтетика | 2 ИИ-персоны (S009–S010), origin=synthetic — только гипотезы, чекер факты на них не пускает |
-| Изображения и медиа | скриншоты продукта RU/EN в `outputs/img/` и `site/assets/`; сайт и README — источниками S001–S002 |
+| Изображения и медиа | скриншоты продукта RU/EN в `outputs/img/` и `https://strategyproduct.ru/assets/` (публичный сайт); сайт и README — источниками S001–S002 |
 | Анализ данных | синтетическая воронка [S008]: `analysis/synthetic_funnel.csv`, воспроизводится скриптом |
 | Поддержка решений и пересмотр | D001 + `pfs decision due`; `pfs impact` показывает затронутые выводы |
 | Маршрутизация, skills/hooks/subagents | `pfs route` → сценарий вывода на рынок; red-team субагент |
