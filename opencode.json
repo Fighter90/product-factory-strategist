@@ -1,0 +1,50 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "external_directory": "ask",
+    "edit": {
+      "projects/**/claims.jsonl": "deny",
+      "projects/**/sources.jsonl": "deny",
+      "projects/**/decisions.jsonl": "deny",
+      "projects/**/state.json": "deny"
+    },
+    "bash": {
+      "*sed -i*claims.jsonl*": "deny",
+      "*sed -i*sources.jsonl*": "deny",
+      "*sed -i*decisions.jsonl*": "deny",
+      "*sed -i*state.json*": "deny",
+      "*perl -i*claims.jsonl*": "deny",
+      "*perl -i*sources.jsonl*": "deny",
+      "*perl -i*decisions.jsonl*": "deny",
+      "*perl -i*state.json*": "deny",
+      "*python3 -c*claims.jsonl*": "deny",
+      "*python3 -c*sources.jsonl*": "deny",
+      "*python3 -c*decisions.jsonl*": "deny",
+      "*python3 -c*state.json*": "deny",
+      "*python -c*claims.jsonl*": "deny",
+      "*python -c*sources.jsonl*": "deny",
+      "*python -c*decisions.jsonl*": "deny",
+      "*python -c*state.json*": "deny",
+      "*tee *claims.jsonl*": "deny",
+      "*tee *sources.jsonl*": "deny",
+      "*tee *decisions.jsonl*": "deny",
+      "*tee *state.json*": "deny",
+      "*rm *claims.jsonl*": "deny",
+      "*rm *sources.jsonl*": "deny",
+      "*rm *decisions.jsonl*": "deny",
+      "*rm *state.json*": "deny",
+      "*mv *claims.jsonl*": "deny",
+      "*mv *sources.jsonl*": "deny",
+      "*mv *decisions.jsonl*": "deny",
+      "*mv *state.json*": "deny",
+      "*> *claims.jsonl*": "deny",
+      "*> *sources.jsonl*": "deny",
+      "*> *decisions.jsonl*": "deny",
+      "*> *state.json*": "deny",
+      "*>>*claims.jsonl*": "deny",
+      "*>>*sources.jsonl*": "deny",
+      "*>>*decisions.jsonl*": "deny",
+      "*>>*state.json*": "deny"
+    }
+  }
+}

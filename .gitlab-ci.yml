@@ -1,0 +1,23 @@
+stages:
+  - test
+
+test:
+  stage: test
+  image: python:3.12-slim
+  before_script:
+    - |
+      if [ -n "$BASE_TOKEN" ]; then
+        git clone --depth 1 "https://bot:$BASE_TOKEN@gitlab.com/Fighter90/product-factory-strategist-base.git" knowledge || true
+      fi
+  script:
+    - python3 -m unittest discover -s tests -v
+    - python3 -m tools.pfs doctor
+    - python3 -m tools.pfs kb lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  artifacts:
+    when: always
+    paths:
+      - docs/
+    expire_in: 1 week

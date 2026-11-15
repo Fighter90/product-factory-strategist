@@ -1,0 +1,110 @@
+{
+  "_comment": "Автоматические проверки документов (pfs check). Блок выбирается по языку проекта (project.json → lang, PRO-57): \"ru\" или \"en\". Заголовки ищутся без учёта регистра как подстроки строк, начинающихся с #. Меняйте здесь, не в коде. EN-заголовки согласованы с knowledge/templates/en/.",
+  "ru": {
+    "documents": {
+      "02_situation.md": {
+        "required_sections": ["Что известно", "Чего мы не знаем", "Вопросы, которые могут изменить решение"],
+        "numbers_need_tags": true
+      },
+      "03_options.md": {
+        "min_options": 3,
+        "option_heading_regex": "^##\\s+Вариант\\s+[A-ZА-Я0-9]",
+        "status_quo_keywords": ["оставить как есть", "статус-кво", "ничего не менять"],
+        "exit_keywords": ["закрыть", "свернуть", "выход из направления"],
+        "per_option_sections": ["Возражения"],
+        "numbers_need_tags": true
+      },
+      "04_product_strategy.md": {
+        "required_sections": ["Аудитория", "Альтернативы", "Выбранное направление", "Осознанные отказы", "Экономика"],
+        "numbers_need_tags": true
+      },
+      "05_comms_strategy.md": {
+        "required_sections": ["Аудитория и ситуация", "Барьер", "Ключевое сообщение", "Подтверждение", "Роль каналов", "Соответствие обещаний продукту"],
+        "promise_table_section": "Соответствие обещаний продукту",
+        "numbers_need_tags": true
+      },
+      "06_validation_plan.md": {
+        "required_sections": ["Ожидаемое изменение", "С чем сравниваем", "Срок наблюдения", "Нежелательные последствия", "Критерии решения"],
+        "numbers_need_tags": false
+      }
+    },
+    "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|п\\.п\\.|₽|руб|млн|млрд|тыс|\\$|раз[а]?\\b|пользоват|абонент)",
+    "exempt_line_markers": ["<!-- no-tag -->", "|---", "Цель:", "Срок наблюдения:"],
+    "_banned_terms_comment": "PRO-52: языковой линтер документа комитета (outputs/SIX_PAGER.md). replace — англицизм/жаргон, всегда заменяем (термин → как писать по-русски, глоссарий в knowledge/templates/STYLE_RU.md); decode — допустимо только с расшифровкой при первом упоминании: «SERP (страница результатов поиска)» или «SERP — страница результатов поиска». Слова ищутся с учётом формы (replace — любое окончание), аббревиатуры — точным токеном.",
+    "banned_terms": {
+      "replace": {
+        "тоннальность": "тональность",
+        "гейт": "контрольная точка",
+        "фидбек": "обратная связь",
+        "асап": "как можно скорее"
+      },
+      "decode": {
+        "SERP": "страница результатов поиска",
+        "SEO": "поисковое продвижение",
+        "hreflang": "атрибут hreflang (языково-региональная версия страницы)",
+        "OSS": "открытый код (open source)",
+        "BYOK": "использование своего ключа (bring your own key)",
+        "MoR": "ставка монетизации — доля выручки, оставляемая платформой (merchant of record)",
+        "KD": "сложность ключевого запроса (keyword difficulty)",
+        "DR": "доменный рейтинг (domain rating)",
+        "SC": "Search Console — панель вебмастера поисковой системы",
+        "WBS": "структура декомпозиции работ (work breakdown structure)",
+        "NSM": "метрика «северная звезда» (north star metric)",
+        "trial-trap": "ловушка триала — пробный период, который не конвертирует в оплату",
+        "answer-first": "сначала ответ — вывод в первом абзаце, детали дальше",
+        "CAC": "стоимость привлечения клиента (customer acquisition cost)",
+        "LTV": "пожизненная ценность клиента (lifetime value)",
+        "MRR": "месячная регулярная выручка (monthly recurring revenue)",
+        "ARR": "годовая регулярная выручка (annual recurring revenue)",
+        "DAU": "дневная активная аудитория (daily active users)",
+        "MAU": "месячная активная аудитория (monthly active users)",
+        "CTR": "доля кликов (click-through rate)",
+        "CPA": "цена за действие (cost per action)",
+        "ROAS": "окупаемость расходов на рекламу (return on ad spend)",
+        "KPI": "ключевой показатель эффективности (key performance indicator)",
+        "NPS": "индекс готовности рекомендовать (net promoter score)",
+        "UGC": "пользовательский контент (user generated content)",
+        "GTM": "стратегия выхода на рынок (go-to-market)",
+        "JTBD": "работа, на которую «нанимают» продукт (jobs to be done)",
+        "PMF": "соответствие продукта рынку (product-market fit)",
+        "MVP": "минимальный жизнеспособный продукт (minimum viable product)",
+        "TAM": "объём всего рынка (total addressable market)",
+        "SAM": "объём доступного рынка (serviceable addressable market)",
+        "SOM": "объём реально достижимого рынка (serviceable obtainable market)",
+        "OKR": "цели и ключевые результаты (objectives and key results)",
+        "CPL": "цена за лид (cost per lead)"
+      }
+    }
+  },
+  "en": {
+    "documents": {
+      "02_situation.md": {
+        "required_sections": ["What we know", "What we don't know", "Questions that could change the decision"],
+        "numbers_need_tags": true
+      },
+      "03_options.md": {
+        "min_options": 3,
+        "option_heading_regex": "^##\\s+Option\\s+[A-Z0-9]",
+        "status_quo_keywords": ["keep as is", "status quo", "do nothing"],
+        "exit_keywords": ["shut down", "wind down", "exit the direction", "close the direction"],
+        "per_option_sections": ["Objections"],
+        "numbers_need_tags": true
+      },
+      "04_product_strategy.md": {
+        "required_sections": ["Audience", "Alternatives", "Chosen direction", "Conscious trade-offs", "Economics"],
+        "numbers_need_tags": true
+      },
+      "05_comms_strategy.md": {
+        "required_sections": ["Audience and situation", "Barrier", "Key message", "Proof", "Role of channels", "Promises backed by the product"],
+        "promise_table_section": "Promises backed by the product",
+        "numbers_need_tags": true
+      },
+      "06_validation_plan.md": {
+        "required_sections": ["Expected change", "Comparison baseline", "Observation window", "Counter-metrics", "Decision criteria"],
+        "numbers_need_tags": false
+      }
+    },
+    "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|pp\\b|₽|RUB|mln|bn|k\\b|\\$|times|users|subscribers|customers|weeks|months|days)",
+    "exempt_line_markers": ["<!-- no-tag -->", "|---", "Goal:", "Observation window:"]
+  }
+}

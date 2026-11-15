@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CVStart: six-pager</title>
+<style>
+  :root { --bg: #070b13; --fg: #e8eef8; --a1: #4fd1c5; --a2: #8b7bff; --dim: #9aa7bd; }
+  * { box-sizing: border-box; }
+  html { scroll-snap-type: y mandatory; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  section.slide { width: 100vw; height: auto; aspect-ratio: 16/9; min-height: 100vh;
+                  max-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+                  display: flex; flex-direction: column; justify-content: center; gap: .6em;
+                  padding: clamp(24px, 6vw, 80px); overflow: hidden;
+                  border-bottom: 1px solid rgba(139, 123, 255, .18); }
+  h1, h2 { margin: 0; line-height: 1.15; font-weight: 700;
+           background: linear-gradient(90deg, var(--a1), var(--a2));
+           -webkit-background-clip: text; background-clip: text; color: transparent; }
+  h1 { font-size: clamp(28px, 5vw, 56px); }
+  h2 { font-size: clamp(22px, 3.6vw, 40px); }
+  ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: .45em;
+       font-size: clamp(15px, 2vw, 24px); }
+  li::marker { color: var(--a1); }
+  p { margin: 0; font-size: clamp(15px, 2vw, 24px); color: var(--fg); }
+  .query { color: var(--dim); font-size: clamp(16px, 2.2vw, 26px); }
+  .query b { color: var(--a1); }
+</style>
+</head>
+<body>
+<section class="slide title-slide">
+<h1>CVStart: six-pager</h1>
+<p class="query"><b>Запрос:</b> Разработать коммерческую версию проекта cvstart.org (open-source AI-конструктор резюме и поиск вакансий: скан 129 джоб-бордов, AI-скоринг, CV Studio, локальный пайплайн, 19 языков) — формирование резюме, поиск вакансий — и стратегию вывода на рынок на весь мир. Продукт: https://cvstart.org/, репозиторий: https://github.com/Fighter90/career-ops-ui</p>
+</section>
+<section class="slide">
+<h2>FAQ-1. Анализ текущего состояния</h2>
+<ul><li>**Продукт** [S001][S002]: дашборд над AI-пайплайном поиска работы — скан ~129 джоб-бордов, AI-скоринг 0.0–5.0, CV Studio (тюминг под JD, humanize, ATS-буллеты)…</li><li>**Языки**: 19 локалей интерфейса (app + сайт), hreflang на cvstart.org [S001][S002].</li><li>**Рынок**: resume builders — коридор $1,2–2,4 млрд [S006]; AI-подсегмент CAGR 13% [S006]; online recruitment $37,97 млрд (2025) [S007]; ATS $2,5–3,3 млрд, +12,…</li><li>**Конкуренты**: 7 прямых на freemium, платный $8–40/мес, агрессивные автопродления [S004]; языковое покрытие узкое (EN+5) [S004]; 98% Fortune 500 используют AT…</li><li>**Тренд**: AI в поиске работы применяют 31–74% соискателей (разные опросы 2025–2026) [S005]; 1,2+ млн AI-юзеров у Kickresume [S005].</li><li>**Монетизации сейчас нет** [S001][S002]: проект бесплатный (MIT), «$0 forever».</li></ul>
+</section>
+<section class="slide">
+<h2>FAQ-2. User Persona. Кто является целевой аудиторией?</h2>
+<ul><li>**Ядро (EN-first):** соискатели tech 25–40, глобально, EN-резюме, ищут работу активно, не хотят платить $29–40/мес за «магию», ценят приватность.</li><li>**Второй контур:** не-EN сегменты (RU, DE, ES, PT-BR, JA...) — 19 локалей уже есть, конкуренты их не покрывают.</li><li>Персоны-гипотезы из синтетики: см.</li><li>Таблица персон (заполните):</li><li>**Кто они?**</li><li>**Что используют сегодня и почему?**</li></ul>
+</section>
+<section class="slide">
+<h2>FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.</h2>
+<ul><li>Экономика — формулы на допущениях [C016]; рынок — [C005][C011]; конкуренты — [C006][C007].</li><li>Экономика: $0 выручки; затраты — время соло-разработчика + инфраструктура GitHub (~$0–20/мес).</li><li>Возражения red team: (1) **ноль по оси задачи** — $0 ARR при цели «рост платящих»; домен, CI и 129 интеграций субсидируются из кармана бессрочно; (2) **MIT = ч…</li><li>Скрытое допущение: что локальность/приватность — реальный драйвер выбора для массового пользователя; если большинство хочет «открыл с телефона → готово», локал…</li><li>Условие верности: если цель — портфолио и комьюнити, а не коммерция (противоречит интейк-брифу).</li><li>Экономика [C016]: paid $29/мес; переменные 25% → CM $21,75; LTV ≈ $272; LTV/CAC ≈ 4,5; окупаемость CAC ≈ 2,8 мес.</li></ul>
+</section>
+<section class="slide">
+<h2>FAQ-4. Тактики. Детализируйте каждую инициативу до конкретных тактик.</h2>
+<ul><li>Основание: выбор руководителя — вариант B, hosted freemium SaaS глобально с митигациями [C019]; рынок и тренды [C005][C009]; ограничения интейк (MIT core, соло…</li><li>**Ядро (EN-first):** соискатели tech/цифровых профессий 25–40 лет, глобально (US, EU, удалёнка), активно ищущие работу 1–6 месяцев.</li><li>**Волна 2 (не-EN сегменты):** DE, ES, PT-BR, JA, ZH — 19 локалей уже существуют в продукте [C004], конкуренты покрывают EN+5 [C007]; синтетика (Маркус, Берлин)…</li><li>Платные SaaS: Jobscan $49,95/мес, Teal $29/30 дней, Rezi $29, Zety $23,70 (автопродление), resume.io ≈$39/мес эффективно [C006]; ручной ChatGPT (бесплатно, но…</li><li>1.</li><li>2.</li></ul>
+</section>
+<section class="slide">
+<h2>FAQ-5. Высокоуровневый план реализации</h2>
+<ul><li>Запуск hosted-беты: нед.</li><li>База — синтетическая модель воронки [S008] (методическая кривая) + публичные ориентиры freemium-конверсии 2–5% [red team B3].</li><li>**90 дней** (~13 недель) hosted-беты; еженедельный разбор воронки.</li><li>Отток OSS-комьюнити: падение звёзд/форков GitHub после анонса облака [red team B2].</li><li>Жалобы на приватность/GDPR-запросы &gt; 5 шт — сигнал ломки доверия [red team B1].</li><li>Инференс-затраты free-тира &gt; $200/мес — экономика free ломается.</li></ul>
+</section>
+<section class="slide">
+<h2>FAQ-6. Метрики успеха. KPI в двух плоскостях</h2>
+<ul><li>KPI в двух направлениях: **1) Бизнес** — деньги и база (выручка/MRR, платящие, конверсия в оплату, доля тарифов, фактический LTV/CAC); **2) Продукт** — активац…</li></ul>
+</section>
+<section class="slide">
+<h2>Источники (сноски)</h2>
+<ul><li>1.</li><li>2.</li><li>3.</li><li>4.</li><li>5.</li><li>6.</li></ul>
+</section>
+<section class="slide">
+<h2>Приложения (Excel)</h2>
+<ul><li>Файл</li><li>cohort_retention.xlsx</li><li>growth_model.xlsx</li><li>market_sizing.xlsx</li><li>unit_economics.xlsx</li><li>Формулы пересчитываются при открытии (Excel / Numbers / LibreOffice).</li></ul>
+</section>
+</body>
+</html>
