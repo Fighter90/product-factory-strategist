@@ -2,6 +2,17 @@
 
 Формат — Keep a Changelog; версионирование — SemVer.
 
+## Unreleased · PRO-60
+
+### Changed
+- База знаний как зеркало: «Двойной роман» → «Двойной алмаз» (карты и INDEX); 18 RU-карт переименованы по id — имя файла = id без префикса `M-`.
+- EN-карты переписаны как полные зеркала RU: тот же id без суффикса `-en` (язык в поле `lang: en`), `related` заполнен, те же разделы H2, объём ≥ 80% RU, без служебных тегов `en`/`summary` и строки «RU-версия».
+- Новые карты (RU + EN): six-pager-etalon, committee-doc-style, pricing-ladder, gtm-market-entry, retention-winback, message-house, scenario-modeling, weighted-scoring; итого 100 карт RU + 100 EN-зеркал; INDEX.md/INDEX_EN.md перегенерированы `pfs kb index` — попутно в индекс вернулись три карты, добавленные ранее, но пропущенные старым индексом (ab-test-checklist, ab-test-design-template, ai-experiment-review-context).
+- `pfs kb lint`: новое правило — пустой `related` у EN-карт; правила frontmatter, битых `[[ссылок]]`, дублей тегов, пустых разделов, паритета RU/EN (разделы H2, объём EN ≥ 80%) и совпадения id/имени уже были в линтере к выпуску 1.2.31. Новым в этой итерации стало подключение линта к CI (шаг в `.gitlab-ci.yml`, новый `.github/workflows/ci.yml`).
+
+### Notes
+- Поиск BM25 и генерация INDEX в `tools/pfs/kb.py` не менялись; линт расширен только правилом пустого `related` у EN-карт.
+
 
 ## 1.2.31 — 2026-11-15 · swarm PRO-61: Сайт RU/EN: 105 русских строк в английской версии, неперевед
 

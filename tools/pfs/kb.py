@@ -238,6 +238,8 @@ def _lint_card(p: Path, d: str, all_ids: set[str]) -> tuple[list[str], str | Non
             problems.append(f"{d}/{p.name}: служебные теги «en, summary» не допускаются: {', '.join(bad_tags)}")
         if "RU-версия" in text:
             problems.append(f"{d}/{p.name}: осталась служебная строка «RU-версия»")
+        if not [r for r in (meta.get("related") if isinstance(meta.get("related"), list) else [])]:
+            problems.append(f"{d}/{p.name}: related пуст — EN-зеркалу нужны связи RU-карты")
     for m in WIKI.findall(text):
         if m not in all_ids:
             problems.append(f"{d}/{p.name}: битая [[ссылка]] → {m}")

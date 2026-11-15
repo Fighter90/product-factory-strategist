@@ -34,7 +34,7 @@ Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INST
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 770 tests
+python3 -m unittest discover -s tests          # 787 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -137,7 +137,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>grounds · commitments"] --> MON["decision due<br/>what to decide now"]
   end
-  KB["knowledge/ — 94 cards across categories (RU) + 94 EN mirrors (full bilingual base) (methods_en/) + INDEX_EN.md<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
+  KB["knowledge/ — 100 cards across categories (RU) + 100 EN mirrors (full bilingual base) (methods_en/) + INDEX_EN.md<br/>+ frameworks: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Kano"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → primary sources → S###"| S
   EX --> ATT["outputs/attachments/*.xlsx<br/>recalculated on open"]
@@ -218,7 +218,7 @@ flowchart LR
   IMP --> REV["revision: supersede · rebase"]
 ```
 
-### 2. Knowledge base (94 cards across categories (RU) + 94 EN mirrors (full bilingual base) + EN index)
+### 2. Knowledge base (100 cards across categories (RU) + 100 EN mirrors (full bilingual base) + EN index)
 Knowledge sets by category: growth strategy · unit economics & monetization · product management · UX & customer
 metrics · data analysis & A/B · platform solutions · Gen AI in products. Framework layer: Double Diamond, Lean
 Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Kano. Techniques only — no brands. Search: `pfs kb search` (BM25,
@@ -308,7 +308,7 @@ AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
   agents/ (8) · hooks/ (6: + pre_guard) · settings.json · opencode.json (permissions)
 .cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea · producthunt)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/  methods/ (89 RU cards) · methods_en/ (89 EN mirrors (full bilingual base)) · INDEX.md · INDEX_EN.md
+knowledge/  methods/ (100 RU cards) · methods_en/ (100 EN mirrors (full bilingual base)) · INDEX.md · INDEX_EN.md
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions
             data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/
@@ -316,5 +316,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/               (770) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/               (787) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```

@@ -35,7 +35,7 @@ pfs --help
 git clone https://github.com/Fighter90/product-factory-strategist.git
 cd product-factory-strategist
 python3 -m tools.pfs doctor                    # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 770 тестов
+python3 -m unittest discover -s tests          # 787 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -201,7 +201,7 @@ flowchart TB
     CH --> EX
     DEC["decisions D###<br/>основания · обязательства"] --> MON["decision due<br/>что решать сейчас"]
   end
-  KB["knowledge/ — 94 карты по категориям (RU) + 94 EN-зеркала — полная двуязычная база (methods_en/) + INDEX_EN.md<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
+  KB["knowledge/ — 100 карт по категориям (RU) + 100 EN-зеркал — полная двуязычная база (methods_en/) + INDEX_EN.md<br/>+ фреймворки: Double Diamond · Lean Canvas · RICE/ICE/WSJF · AARRR/HEART/Кано"]
   ENV -->|kb search / route| KB
   FEY["Feynman (feynman.is)<br/>deepresearch · lit · compare"] -->|"provenance → первоисточники → S###"| S
   SUB -->|"отчёты"| ENV
@@ -278,7 +278,7 @@ flowchart LR
   IMP --> REV["пересмотр: supersede · rebase"]
 ```
 
-### 2. База знаний (94 карты по категориям (RU) + 94 EN-зеркала — полная двуязычная база и EN-индекс)
+### 2. База знаний (100 карт по категориям (RU) + 100 EN-зеркал — полная двуязычная база и EN-индекс)
 Наборы знаний по категориям: стратегия и рост · юнит-экономика и монетизация · продуктовый менеджмент ·
 UX и клиентские метрики · анализ данных и A/B · платформенные решения · Gen AI в продукте. Поверх —
 фреймворки: Double Diamond, Lean Canvas, RICE/ICE/WSJF, HADI, AARRR/HEART/Кано. Только методики —
@@ -374,7 +374,7 @@ AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject
 .claude/settings.json
 .cursor/rules/       .github/ (Pages workflow) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable · rea · producthunt)
 config/              models.json · pricing.json · quality_gate.json · question_blocks.json
-knowledge/           methods/ (89 карт RU) · methods_en/ (89 EN-зеркал — полная двуязычная база) · INDEX.md · INDEX_EN.md
+knowledge/           methods/ (100 карт RU) · methods_en/ (100 EN-зеркал — полная двуязычная база) · INDEX.md · INDEX_EN.md
 tools/pfs/           core · project · route · sources · claims · check · impact · decisions ·
                      data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl · log.jsonl · costs.json ·
@@ -386,5 +386,5 @@ site/                index.html · en/index.html — генератор scripts/
                      materials.html · help.html (RU/EN)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
-tests/               (770)
+tests/               (787)
 ```
