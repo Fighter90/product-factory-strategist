@@ -457,13 +457,14 @@ class TestCountersTests(unittest.TestCase):
         actual = script.counts()["tests"]
         rules = script.build_rules(script.counts())
         stale = str(actual + 7)
+        form = script.ru_plural(actual, "тест", "теста", "тестов")  # форма слова — от числа (PRO-73)
         samples = [
             f"tests/               ({stale})",
             f"tests/ ({stale})",
             f"| Тесты | {stale} (`OK`) |",
             f"# 1. Тесты инструментов ({stale}, без установки пакетов)",
-            f"| unittest | {stale} тестов инструментов | tests/ |",
-            f"$ python3 -m unittest discover -s tests   # {stale} тестов, опционально",
+            f"| unittest | {stale} {form} инструментов | tests/ |",
+            f"$ python3 -m unittest discover -s tests   # {stale} {form}, опционально",
             f"$ python3 -m unittest discover -s tests   # {stale} tests, optional",
         ]
         for sample in samples:
