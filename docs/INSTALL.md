@@ -20,27 +20,23 @@ Editable-режим: обновления `main` (`git pull`) подхватыв
 Обновление самой установки: `uv tool upgrade product-factory-strategist --force` или
 повторный `uv tool install -e . --force`.
 
-## Материалы агента (приватный репозиторий)
+## Все три репозитория проекта
 
-Карты знаний (100 RU + 100 EN-зеркал), шаблоны документов и рубрики оценки живут
-в отдельном **приватном** репозитории
-[product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base)
-и в публичный репозиторий агента не входят.
+Установка (`scripts/install.sh`) автоматически подтягивает все три репозитория проекта и
+проверяет результат — pfs, базу знаний и сайт:
 
-`scripts/install.sh` при установке проверяет `knowledge/INDEX.md` и, если материалов нет,
-клонирует базу:
+| Репозиторий | Доступ | Что подтягивается | Куда |
+|---|---|---|---|
+| `product-factory-strategist-agent` | public | этот код | текущий каталог |
+| `product-factory-strategist-base` | **private** | карты знаний RU/EN, шаблоны, рубрики | `knowledge/` |
+| `product-factory-strategist-site` | public | сайт strategyproduct.ru | `site/` |
 
-```bash
-git clone --depth 1 https://github.com/Fighter90/product-factory-strategist-base.git knowledge
-```
-
-- Нужен доступ к приватному репозиторию — приглашение выдаёт владелец
-  (`Settings → Collaborators` в репозитории `-base`).
-- Обновление материалов до свежей версии: `cd knowledge && git pull`.
-- `pfs doctor` проверяет наличие `knowledge/INDEX.md` и подскажет, если материалов нет.
-- CI репозитория агента подтягивает базу тем же способом через секрет `BASE_TOKEN`
-  (fine-grained PAT с правом read на `product-factory-strategist-base`).
-
+- База — приватная: нужен доступ (приглашение выдаёт владелец, GitHub → Settings → Collaborators).
+- Обновление материалов после установки: `cd knowledge && git pull`.
+- `pfs doctor` проверяет наличие `knowledge/INDEX.md`; install.sh сам падает с понятной
+  ошибкой, если доступ к базе не выдан.
+- CI репозитория агента подтягивает базу секретом `BASE_TOKEN`
+  (fine-grained PAT с read-доступом к `product-factory-strategist-base`).
 
 ## Способ 2 — install.sh (сам выбирает путь)
 

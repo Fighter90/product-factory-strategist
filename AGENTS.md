@@ -67,7 +67,7 @@
 > **Материалы агента** (`knowledge/` — карты, шаблоны, рубрики) не хранятся в этом репозитории:
 > они подтягиваются из приватного репозитория
 > [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base)
-> при запуске `scripts/install.sh` (или `git clone …-base knowledge` вручную).
+> при запуске `scripts/install.sh` — вместе с сайтом (site/), с автопроверкой.
 
 ## 2. Где что лежит (знания разделены)
 

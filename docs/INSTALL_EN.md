@@ -16,27 +16,23 @@ Editable-режим: обновления `main` (`git pull`) подхватыв
 Обновление самой установки: `uv tool upgrade product-factory-strategist --force` или
 повторный `uv tool install -e . --force`.
 
-## Agent materials (private repository)
+## The three project repositories
 
-The knowledge maps (100 RU + 100 EN mirrors), document templates and scoring rubrics live
-in a separate **private** repository
-[product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base)
-and are not part of the public agent repository.
+`scripts/install.sh` automatically pulls all three project repositories and verifies the
+result — pfs, the knowledge base and the site:
 
-`scripts/install.sh` checks for `knowledge/INDEX.md` and, when the materials are missing,
-clones the base:
+| Repository | Access | Pulled | Into |
+|---|---|---|---|
+| `product-factory-strategist-agent` | public | this code | current dir |
+| `product-factory-strategist-base` | **private** | RU/EN knowledge maps, templates, rubrics | `knowledge/` |
+| `product-factory-strategist-site` | public | strategyproduct.ru | `site/` |
 
-```bash
-git clone --depth 1 https://github.com/Fighter90/product-factory-strategist-base.git knowledge
-```
-
-- Access to the private repository is required — the owner sends invitations
-  (`Settings → Collaborators` in the `-base` repository).
-- Update the materials: `cd knowledge && git pull`.
-- `pfs doctor` checks for `knowledge/INDEX.md` and hints when the materials are missing.
-- The repository CI pulls the base the same way via the `BASE_TOKEN` secret
+- The base is private: access is required (the owner sends invitations, GitHub → Settings → Collaborators).
+- Update materials after install: `cd knowledge && git pull`.
+- `pfs doctor` checks for `knowledge/INDEX.md`; install.sh fails with a clear error when
+  base access is not granted.
+- The agent repository CI pulls the base via the `BASE_TOKEN` secret
   (a fine-grained PAT with read access to `product-factory-strategist-base`).
-
 
 ## Способ 2 — install.sh (сам выбирает путь)
 

@@ -74,7 +74,7 @@ The default is `ru`.
 > **Agent materials** (`knowledge/` — maps, templates, rubrics) are not stored in this repository:
 > they are pulled from the private repository
 > [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base)
-> by running `scripts/install.sh` (or `git clone …-base knowledge` manually).
+> by running `scripts/install.sh` — together with the site (site/), with a self-check.
 
 ## 2. Where things live (knowledge is separated)
 
