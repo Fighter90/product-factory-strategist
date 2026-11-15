@@ -9,12 +9,12 @@ OG-картинки по языкам, числа — из репозитори�
 Только стандартная библиотека. Счётчик Метрики в репозиторий не пишется:
 подключается флагом `--ym-id` (см. site/ANALYTICS.md).
 
-Скоуп PRO-66: эта система генерирует `/` (RU) и `/en/` (EN). Страницы site/demo.html,
-site/help.html и site/materials.html остаются в прежней вёрстке — их перевод в новую
-систему вынесен в отдельную задачу; тёмные фото, относящиеся к ним (обложка demo
-на основе dark-hero-paper), подключаются вместе с конвертацией. Сейчас dark-hero-paper
-используется как OG-картинка site/assets/og/og.jpg, dark-double-diamond и dossier-dark —
-в разделах «Процесс» и финальном CTA лендинга.
+Скоуп PRO-66 — лендинг: эта система генерирует `/` (RU) и `/en/` (EN). PRO-61 добавил
+те же две статические версии для demo/help/materials: исходники — `site_src/<page>.html`
+(языконейтральный шаблон с токенами `{{<page>.<lang>.kNNN}}`), строки — словари
+`site/i18n/{ru,en}.json`, числа — из демо-проекта `projects/демо`. Тёмные фото:
+dark-hero-paper — OG-картинка site/assets/og/og.jpg, dossier-dark — в финальном CTA
+лендинга; dark-double-diamond убрана с лендинга по решению владельца.
 
 Запуск: python3 scripts/build_site.py [--out site] [--ym-id 12345678]
 """
@@ -24,6 +24,7 @@ import argparse
 import html
 import json
 import re
+import math
 import sys
 from pathlib import Path
 
@@ -458,9 +459,8 @@ blockquote{margin:6px 0 0;padding:18px 20px;border-radius:14px;background:var(--
 /* final CTA and footer */
 .final{position:relative;overflow:hidden;text-align:center;border-bottom:0}
 .final .box{position:relative;margin:0 auto;max-width:980px;padding:80px 28px;border:1px solid rgba(238,138,60,.4);border-radius:28px;background:radial-gradient(ellipse at 50% 0%,rgba(238,138,60,.16),rgba(11,10,9,0) 60%),var(--bg2);display:flex;flex-direction:column;align-items:center;gap:22px}
-.procfig{margin:44px auto 0;max-width:760px}
 .dosfig{margin:0 auto;width:100%;max-width:520px}
-.procfig img,.dosfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
+.dosfig img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line2)}
 footer{border-top:1px solid var(--line);padding:36px 0 calc(36px + env(safe-area-inset-bottom,0px));font-size:14px;color:var(--muted)}
 footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
 footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}footer nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 2px}footer a:hover{color:var(--strong)}
@@ -732,12 +732,6 @@ RU_BODY = f"""
       <div class="ph"><h3>Разработать</h3><ol><li><span class="n">8</span>Стратегии</li><li><span class="n">9</span>План проверки</li><li><span class="n">10</span>Ревью качества</li></ol></div>
       <div class="ph"><h3>Довести</h3><ol><li class="h"><span class="n">11</span>Решение</li><li><span class="n">12</span>Мониторинг</li></ol></div>
     </div>
-    <figure class="procfig">
-      <picture>
-        <source type="image/avif" srcset="{{{{A}}}}assets/dark-double-diamond.avif">
-        <img src="{{{{A}}}}assets/dark-double-diamond.webp" width="1800" height="1350" alt="Двойной алмаз процесса: расходящиеся и сходящиеся линии, выложенные нитью на тёмной бумаге" loading="lazy" decoding="async">
-      </picture>
-    </figure>
   </div>
 </section>
 
@@ -1035,12 +1029,6 @@ EN_BODY = f"""
       <div class="ph"><h3>Develop</h3><ol><li><span class="n">8</span>Strategies</li><li><span class="n">9</span>Validation plan</li><li><span class="n">10</span>Quality review</li></ol></div>
       <div class="ph"><h3>Deliver</h3><ol><li class="h"><span class="n">11</span>Decision</li><li><span class="n">12</span>Monitoring</li></ol></div>
     </div>
-    <figure class="procfig">
-      <picture>
-        <source type="image/avif" srcset="{{{{A}}}}assets/dark-double-diamond.avif">
-        <img src="{{{{A}}}}assets/dark-double-diamond.webp" width="1800" height="1350" alt="Double-diamond process: diverging and converging lines laid out with thread on dark paper" loading="lazy" decoding="async">
-      </picture>
-    </figure>
   </div>
 </section>
 
@@ -1093,7 +1081,7 @@ EN_BODY = f"""
       <div class="label">Demo project</div>
       <h2 id="demo-h">CVStart: <span class="acc">a paid version</span> and a go-to-market plan</h2>
       <p>The product lead’s request, word for word: “Build a commercial version of cvstart.org and a strategy to take it to market worldwide.” Numbers come from the project, not from hands.</p>
-      <div><a class="pill pill-b pill-sm" href="../demo.html" data-goal="cta_demo_click">Open the walkthrough{ARROW}</a></div>
+      <div><a class="pill pill-b pill-sm" href="demo.html" data-goal="cta_demo_click">Open the walkthrough{ARROW}</a></div>
     </div>
     <div>
       <!-- numbers are substituted by scripts/build_site.py from the demo project -->
@@ -1180,7 +1168,7 @@ EN_BODY = f"""
 <footer>
   <div class="wrap">
     <span style="color:var(--strong);font-weight:500">Product Factory Strategist</span>
-    <nav aria-label="Links"><a href="https://github.com/Fighter90/product-factory-strategist">GitHub</a><a href="../help.html">Help</a><a href="../materials.html">Demo materials</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/CHANGELOG.md">Changelog</a></nav>
+    <nav aria-label="Links"><a href="https://github.com/Fighter90/product-factory-strategist">GitHub</a><a href="help.html">Help</a><a href="materials.html">Demo materials</a><a href="https://github.com/Fighter90/product-factory-strategist/blob/main/CHANGELOG.md">Changelog</a></nav>
     <span>MIT · open source</span>
   </div>
 </footer>
@@ -1225,6 +1213,9 @@ def build(out: Path, ym_id: str | None) -> list[Path]:
                "DATE": tokens["DATE_RU"], "USAGE": tokens["USAGE_RU"], "REVIEW": tokens["REVIEW_RU"],
                "DOM": tokens["C_DOM"], "A": "", "BRAND": BRAND_SVG, "YOU": "вы"})
     en = dict(tokens)
+    # EN-лендинг: десятичные точки вместо русских запятых в плитке Excel
+    for k in ("XL_CM", "XL_LTV", "XL_RATIO"):
+        en[k] = en[k].replace(",", ".")
     en.update({"KIND": tokens["KIND_EN"], "TEXT": tokens["TEXT_EN"], "SEG": tokens["SEG_EN"],
                "DATE": tokens["DATE_EN"], "USAGE": tokens["USAGE_EN"], "REVIEW": tokens["REVIEW_EN"],
                "DOM": tokens["C_DOM"], "A": "../", "BRAND": BRAND_SVG, "YOU": "you",
@@ -1257,6 +1248,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     try:
         written = build(args.out.resolve(), args.ym_id)
+        written += build_pages(args.out.resolve())
     except BuildError as e:
         print(f"Ошибка сборки: {e}", file=sys.stderr)
         return 1
@@ -1268,6 +1260,552 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Записан {shown} ({p.stat().st_size} байт)")
     return 0
 
+
+
+# ==================== PRO-61: страницы demo/help/materials ====================
+# Источники: site_src/<page>.html — языконейтральный шаблон с токенами
+# {{<page>.<lang>.kNNN}} (пары RU/EN из бывшего двухъязычного DOM),
+# site/i18n/{ru,en}.json — словарь строк страниц, projects/демо — числа.
+
+SITE_SRC = ROOT / "site_src"
+html_mod = html  # страницы используют то же экранирование, что и лендинг
+from html.parser import HTMLParser  # фильтр языка готовых страниц
+I18N_DIR = ROOT / "site" / "i18n"
+PAGES_I18N = ("demo", "help", "materials")
+PAGE_DICT = {"demo": "demo_page", "help": "help_page", "materials": "materials_page"}
+LANGSWITCH = {
+    ("demo", "ru"): '<a href="demo.html" class="on" aria-current="true">RU</a><a href="en/demo.html" hreflang="en" data-goal="lang_switch">EN</a>',
+    ("demo", "en"): '<a href="../demo.html" hreflang="ru" data-goal="lang_switch">RU</a><a href="demo.html" class="on" aria-current="true">EN</a>',
+    ("help", "ru"): '<a href="help.html" class="on" aria-current="true">RU</a><a href="en/help.html" hreflang="en" data-goal="lang_switch">EN</a>',
+    ("help", "en"): '<a href="../help.html" hreflang="ru" data-goal="lang_switch">RU</a><a href="help.html" class="on" aria-current="true">EN</a>',
+    ("materials", "ru"): '<a href="materials.html" class="on" aria-current="true">RU</a><a href="en/materials.html" hreflang="en" data-goal="lang_switch">EN</a>',
+    ("materials", "en"): '<a href="../materials.html" hreflang="ru" data-goal="lang_switch">RU</a><a href="materials.html" class="on" aria-current="true">EN</a>',
+}
+
+
+def _rnd(v, nd: int) -> str:
+    """Округление half-up, чтобы совпадать с six-pager (271,875 -> 271,88)."""
+    from decimal import Decimal, ROUND_HALF_UP
+    q = Decimal(1).scaleb(-nd)
+    return str(Decimal(str(v)).quantize(q, rounding=ROUND_HALF_UP))
+
+
+def fmt(v, lang: str, nd: int = 2) -> str:
+    s = _rnd(v, nd)
+    return s.replace(".", ",") if lang == "ru" else s
+
+
+def _id_range(ids: list) -> str:
+    """Сплошной ряд — «S001–S003», ряд с дырой — «S001–S002, S004–S011»."""
+    nums = sorted(int(x[1:]) for x in ids)
+    runs = []
+    for n in nums:
+        if runs and n == runs[-1][-1] + 1:
+            runs[-1].append(n)
+        else:
+            runs.append([n])
+    prefix = ids[0][0] if ids else "S"
+    parts = []
+    for r in runs:
+        a, b = r[0], r[-1]
+        parts.append(f"{prefix}{a:03d}–{prefix}{b:03d}" if b > a else f"{prefix}{a:03d}")
+    return ", ".join(parts)
+
+
+def ru_date(iso: str) -> str:
+    y, m, d = iso.split("-")
+    return f"{d}.{m}.{y}"
+
+
+def validation_data(demo: Path | None = None) -> dict:
+    demo = demo or DEMO
+    """Воронка, пороги и срок беты — из outputs/06_validation_plan.md демо."""
+    plan = (demo / "outputs" / "06_validation_plan.md").read_text(encoding="utf-8")
+    m_funnel = re.search(r"(\d[\d ]*) посетителей → (\d[\d ]*) регистрации → "
+                         r"(\d[\d ]*) активаций → (\d+) платящих \(MRR \$([\d ]+)\)", plan)
+    if not m_funnel:
+        raise BuildError(f"Не удалось разобрать воронку недели 12 в {demo}/outputs/06_validation_plan.md")
+    m_cont = re.search(r"paid ≥ (\d+) к нед\. (\d+), activation ≥ (\d+)%, churn платящих ≤ (\d+)%/мес", plan)
+    m_adj = re.search(r"paid (\d+)–(\d+) → пересобрать тир/цену \(\$(\d+)\?\)", plan)
+    m_stop = re.search(r"paid < (\d+) к нед\. (\d+) при activation < (\d+)%", plan)
+    if not (m_cont and m_adj and m_stop):
+        raise BuildError(f"Не удалось разобрать пороги (Продолжить/Изменить/Остановить) "
+                         f"в {demo}/outputs/06_validation_plan.md")
+    m_days = re.search(r"\((\d+) дней\)", plan)
+    if not m_days:
+        raise BuildError(f"В {demo}/outputs/06_validation_plan.md нет срока беты «(N дней)»")
+    m_range = re.search(r"нед\. 12 — \*\*(\d+)–(\d+) платящих", plan)
+    if not m_range:
+        raise BuildError(f"В {demo}/outputs/06_validation_plan.md нет диапазона ожидания «50–60 платящих»")
+    m_gdpr = re.search(r"GDPR-запросы > (\d+)", plan)
+    m_infra = re.search(r"free-тира > \$(\d+)/мес", plan)
+    m_nps = re.search(r"NPS беты < (\d+)", plan)
+    if not (m_gdpr and m_infra and m_nps):
+        raise BuildError(f"Не удалось разобрать контрметрики (GDPR/инференс/NPS) "
+                         f"в {demo}/outputs/06_validation_plan.md")
+    # Цель «MRR ≥ $N» — из интро плана. Без неё брейк-евен не от чего считать
+    # (ревью PRO-61: считали от факта недели 12 и расходились с цитатой six-pager).
+    # Проверяем последней, чтобы диагностические ошибки воронки/порогов были первыми.
+    m_target = re.search(r"MRR ≥ \$([\d ]+)", plan)
+    if not m_target:
+        raise BuildError(f"В {demo}/outputs/06_validation_plan.md нет цели «MRR ≥ $N»")
+    g = lambda m: [x.replace(" ", "") for x in m.groups()]
+    return {
+        "visitors": int(g(m_funnel)[0]), "signups": int(g(m_funnel)[1]),
+        "activations": int(g(m_funnel)[2]), "paid_w12": int(g(m_funnel)[3]),
+        "mrr_w12": int(g(m_funnel)[4]),
+        "mrr_target": int(m_target.group(1).replace(" ", "")),
+        "paid_target": int(m_cont.group(1)), "funnel_weeks": int(m_cont.group(2)),
+        "act_target": int(m_cont.group(3)), "churn_max": int(m_cont.group(4)),
+        "paid_change_low": int(m_adj.group(1)), "paid_high": int(m_adj.group(2)),
+        "price_alt": m_adj.group(3),
+        "paid_low": int(m_stop.group(1)), "act_stop": int(m_stop.group(3)),
+        "target_lo": int(m_range.group(1)), "target_hi": int(m_range.group(2)),
+        "gdpr_max": int(m_gdpr.group(1)), "infra_max": int(m_infra.group(1)),
+        "nps_min": int(m_nps.group(1)),
+        "beta_days": int(m_days.group(1)),
+    }
+
+
+def decision_data(demo: Path | None = None) -> dict:
+    demo = demo or DEMO
+    """D001: тарифы, срок беты, метрика, триггеры, обязательство, основания."""
+    d1 = next((d for d in _jsonl(demo / ("decisions" + ".jsonl")) if d.get("id") == "D001"), None)
+    if not d1:
+        raise BuildError("В реестре решений демо-проекта нет D001")
+    metrics = d1.get("metrics") or []
+    if not metrics:
+        raise BuildError("У D001 нет метрик — сайт не покажет метрику беты")
+    m = re.search(r"Pro \$(\d+) / Unlimited \$(\d+)", d1.get("decision", ""))
+    if not m:
+        raise BuildError("В решении D001 нет строки тарифов «Pro $N / Unlimited $N»")
+    days_dec = re.search(r"(\d+)-дневная бета", d1.get("decision", ""))
+    days_plan = validation_data(demo)["beta_days"]
+    if not days_dec:
+        raise BuildError("В решении D001 нет срока беты «N-дневная бета»")
+    if int(days_dec.group(1)) != days_plan:
+        raise BuildError(f"Срок беты в D001 ({days_dec.group(1)} дней) расходится "
+                         f"с планом проверки ({days_plan} дней)")
+    review = d1.get("review") or {}
+    date = review.get("date", "")
+    if not re.match(r"^\d{4}-\d{2}-\d{2}$", date):
+        raise BuildError(f"У D001 нет даты пересмотра YYYY-MM-DD: {date!r}")
+    commitments = d1.get("commitments") or []
+    due_m = re.search(r"(\d{4}-\d{2}-\d{2})", (commitments[0].get("due") if commitments else "") or "")
+    if not due_m:
+        raise BuildError("У первого обязательства D001 нет даты")
+    return {
+        "tiers": (m.group(1), m.group(2)),
+        "beta_days": int(days_dec.group(1)),
+        "metric": metrics[0],
+        "review_date": date,
+        "triggers": review.get("triggers") or [],
+        "commit_date": due_m.group(1),
+        "grounds": [c for c in (d1.get("grounds") or [])],
+    }
+
+
+def ground_claims(data_en: dict, demo: Path | None = None) -> dict:
+    demo = demo or DEMO
+    """Тексты оснований D001: RU — из реестра, EN — из demo_data_en (сверка чисел)."""
+    rows = {c["id"]: c for c in _jsonl(demo / ("claims" + ".jsonl"))}
+    grounds = decision_data(demo)["grounds"]
+    out = {"ru": [], "en": []}
+    for cid in grounds:
+        row = rows.get(cid)
+        if not row:
+            raise BuildError(f"Основание {cid} решения D001 отсутствует в реестре утверждений")
+        out["ru"].append((cid, row.get("text", "")))
+        tr = (data_en.get("claims") or {}).get(cid)
+        if not tr:
+            raise BuildError(f"Нет EN-перевода утверждения {cid} (demo_data_en.claims в site/i18n/en.json)")
+        if sorted(_num_tokens(row.get("text", ""))) != sorted(_num_tokens(tr)):
+            raise BuildError(f"Числа EN-перевода {cid} расходятся с реестром — обновите demo_data_en")
+        out["en"].append((cid, tr))
+    return out
+
+
+# Числа рынка показываются как данные демо-проекта, поэтому читаются из реестра
+# утверждений, а не набиваются константами (ревью PRO-61 r3):
+# коридор рынка resume builders и CAGR ИИ-подсегмента — C005,
+# рынок онлайн-рекрутинга и его CAGR — C011.
+CLAIM_MARKET = "C005"
+CLAIM_RECRUIT = "C011"
+
+
+def market_numbers(claims: list) -> dict:
+    """MARKET_RU/MARKET_EN, AI_CAGR — из {CLAIM_MARKET};
+    RECRUIT_MARKET, RECRUIT_CAGR — из {CLAIM_RECRUIT}.
+
+    Утверждение исчезло или потеряло структуру «$N–N млрд» / «CAGR N%» —
+    сборка падает громко, а не показывает на сайте числа без реестра.
+    """
+    rows = {c.get("id"): c for c in claims}
+    m = rows.get(CLAIM_MARKET)
+    if not m:
+        raise BuildError(f"В реестре демо нет {CLAIM_MARKET} — "
+                         f"MARKET_RU/MARKET_EN/AI_CAGR брать неоткуда")
+    mtext = m.get("text", "")
+    m_corr = re.search(r"\$([\d,]+)–([\d,]+)\s*млрд", mtext)
+    m_cagr = re.search(r"CAGR\s*([\d,]+)\s*%", mtext)
+    if not (m_corr and m_cagr):
+        raise BuildError(f"В {CLAIM_MARKET} нет коридора «$N–N млрд» или «CAGR N%»: {mtext!r}")
+    r = rows.get(CLAIM_RECRUIT)
+    if not r:
+        raise BuildError(f"В реестре демо нет {CLAIM_RECRUIT} — "
+                         f"RECRUIT_MARKET/RECRUIT_CAGR брать неоткуда")
+    rtext = r.get("text", "")
+    r_amt = re.search(r"\$([\d,]+)\s*млрд", rtext)
+    r_cagr = re.search(r"CAGR\s*([\d,]+)\s*%", rtext)
+    if not (r_amt and r_cagr):
+        raise BuildError(f"В {CLAIM_RECRUIT} нет «$N млрд» или «CAGR N%»: {rtext!r}")
+
+    def dot(s: str) -> str:
+        return s.replace(",", ".")
+
+    corridor_ru = f"${m_corr.group(1)}–{m_corr.group(2)} млрд"
+    corridor_en = f"${dot(m_corr.group(1))}–{dot(m_corr.group(2))}B"
+    return {
+        "MARKET_RU": corridor_ru,
+        "MARKET_EN": corridor_en,
+        "AI_CAGR": float(dot(m_cagr.group(1))),
+        "RECRUIT_MARKET": float(dot(r_amt.group(1))),
+        "RECRUIT_CAGR": float(dot(r_cagr.group(1))),
+    }
+
+
+def page_values() -> dict:
+    """{{TOKEN}} -> (kind, value) для страниц demo/help/materials."""
+    reg = repo_numbers()
+    plan = validation_data()
+    dec = decision_data()
+    claims = _jsonl(DEMO / ("claims" + ".jsonl"))
+    sources = _jsonl(DEMO / ("sources" + ".jsonl"))
+    kinds = {}
+    for c in claims:
+        kinds[c.get("kind", "?")] = kinds.get(c.get("kind", "?"), 0) + 1
+    ue = json.loads((DEMO / "calcs.json").read_text(encoding="utf-8"))["unit_econ"]
+    arpu = float(ue["arpu"]); vc = float(ue["vc_share"])
+    cac = float(ue["cac"]); churn = float(ue["churn_month"])
+    cm = arpu * (1 - vc)
+    ltv = cm / churn
+    mk = market_numbers(claims)
+    n_xlsx = len(list((DEMO / "outputs" / "attachments").glob("*.xlsx")))
+    n_six = len(list((DEMO / "outputs").glob("SIX_PAGER*")))
+    n_shots = len(list((ROOT / "site" / "assets").glob("cv_*.jpg")))
+    n_mcp = len(set(re.findall(r'"(pfs_[a-z_]+)"',
+        (ROOT / "tools" / "pfs" / "mcp_server.py").read_text(encoding="utf-8"))))
+    v = {
+        "SOURCES_COUNT": ("int", len(sources)),
+        "S_RANGE": ("str", _id_range([x["id"] for x in sources])),
+        "CLAIMS_COUNT": ("int", len(claims)),
+        "C_RANGE": ("str", _id_range([c["id"] for c in claims])),
+        "FACTS_COUNT": ("int", kinds.get("fact", 0)),
+        "XLSX_COUNT": ("int", n_xlsx),
+        "SIX_COUNT": ("int", n_six),
+        "SHOTS_COUNT": ("int", n_shots),
+        "N_MAPS": ("int", reg["N_MAPS"]), "N_SKILLS": ("int", reg["N_SKILLS"]),
+        "N_AGENTS": ("int", reg["N_AGENTS"]), "N_HOOKS": ("int", reg["N_HOOKS"]),
+        "N_TESTS": ("int", reg["N_TESTS"]),
+        "N_MCP": ("int", n_mcp),
+        "OPT_COUNT": ("int", len(demo_numbers()["D_OPT_LAST"]) and (ord(demo_numbers()["D_OPT_LAST"]) - 64)),
+        "OPT_LAST": ("str", demo_numbers()["D_OPT_LAST"]),
+        "D_OBJ": ("int", demo_numbers()["D_OBJ"]),
+        "D_ASM": ("int", demo_numbers()["D_ASM"]),
+        "RT_HITS": ("int", demo_numbers()["D_OBJ"] + demo_numbers()["D_ASM"]),
+        "ARPU": ("money0", arpu), "CAC": ("money0", cac),
+        "VC_PCT": ("int", round(vc * 100)),
+        "VC_COEF_RU": ("str", fmt(vc, "ru", 2)), "VC_COEF_EN": ("str", fmt(vc, "en", 2)),
+        "VC_NEG": ("neg2", arpu * vc),
+        "CM": ("money2", cm), "LTV": ("money2", ltv),
+        "LTV_CAC": ("num2", ltv / cac), "PAYBACK": ("num1", cac / cm),
+        "BREAKEVEN": ("int", math.ceil(plan["mrr_target"] / cm) if cm else 0),
+        "PRO_PRICE": ("str", "$" + dec["tiers"][0]),
+        "UNLIMITED_PRICE": ("str", "$" + dec["tiers"][1]),
+        "PRICE_ALT": ("str", "$" + plan["price_alt"] + "?"),
+        "BETA_DAYS": ("int", plan["beta_days"]),
+        "FUNNEL_WEEKS": ("int", plan["funnel_weeks"]),
+        "PAID_W12": ("int", plan["paid_w12"]),
+        "PAID_TARGET": ("int", plan["paid_target"]),
+        "PAID_LOW": ("int", plan["paid_low"]),
+        "TARGET_LO": ("int", plan["target_lo"]), "TARGET_HI": ("int", plan["target_hi"]),
+        "CONT_GDPR": ("int", plan["gdpr_max"]), "CONT_INFRA": ("int", plan["infra_max"]),
+        "CONT_NPS": ("int", plan["nps_min"]),
+        "PAID_CHANGE_LOW": ("int", plan["paid_change_low"]),
+        "PAID_HIGH": ("int", plan["paid_high"]),
+        "ACT_TARGET": ("int", plan["act_target"]),
+        "ACT_STOP": ("int", plan["act_stop"]),
+        "CHURN_MAX": ("int", plan["churn_max"]),
+        "VISITORS_W12": ("count", plan["visitors"]),
+        "SIGNUPS_W12": ("count", plan["signups"]),
+        "ACTIVATIONS_W12": ("count", plan["activations"]),
+        "MRR_W12_RU": ("mrr", plan["mrr_w12"]), "MRR_W12_EN": ("mrr", plan["mrr_w12"]),
+        "MRR_TARGET_RU": ("mrr", plan["mrr_target"]), "MRR_TARGET_EN": ("mrr", plan["mrr_target"]),
+        "ARR_W12_RU": ("arr", plan["mrr_w12"] * 12 / 1000),
+        "ARR_W12_EN": ("arr", plan["mrr_w12"] * 12 / 1000),
+        "MARKET": ("market", (mk["MARKET_RU"], mk["MARKET_EN"])),
+        "MARKET_RU": ("str", mk["MARKET_RU"]),
+        "MARKET_EN": ("str", mk["MARKET_EN"]),
+        "AI_CAGR": ("pct1", mk["AI_CAGR"]),
+        "RECRUIT_MARKET": ("recruit", mk["RECRUIT_MARKET"]),
+        "RECRUIT_CAGR": ("pct1", mk["RECRUIT_CAGR"]),
+        "COMMIT_RU": ("str", ru_date(dec["commit_date"])),
+        "COMMIT_EN": ("str", dec["commit_date"]),
+        "REVIEW_RU": ("str", ru_date(dec["review_date"])),
+        "REVIEW_EN": ("str", dec["review_date"]),
+    }
+    return v
+
+
+def render_value(kind, val, lang: str) -> str:
+    if kind in ("int", "count"):
+        return f"{val:,}" if (kind == "count" and lang == "en" and val >= 1000) else str(val)
+    if kind == "money0":
+        return "$" + fmt(val, lang, 0)
+    if kind == "money2":
+        return "$" + fmt(val, lang, 2)
+    if kind == "neg2":
+        return "−$" + fmt(val, lang, 2)
+    if kind == "num2":
+        return fmt(val, lang, 2)
+    if kind == "num1":
+        return fmt(val, lang, 1)
+    if kind == "pct1":
+        return fmt(val, lang, 1 if val % 1 else 0) + "%"
+    if kind == "mrr":
+        d = str(int(val))
+        return ("$" + d[:-3] + "\u202f" + d[-3:]) if lang == "ru" and len(d) > 3 else "$" + f"{int(val):,}"
+    if kind == "arr":
+        return ("$" + fmt(val, lang, 1) + " тыс") if lang == "ru" else ("$" + fmt(val, lang, 1) + "K")
+    if kind == "market":
+        ru_v, en_v = val
+        return ru_v if lang == "ru" else en_v
+    if kind == "recruit":
+        return "$" + fmt(val, lang, 2) + (" млрд" if lang == "ru" else "B")
+    if kind == "str":
+        return str(val)
+    raise BuildError(f"Неизвестный тип значения {kind!r}")
+
+
+def _grounds_html(pairs: list) -> str:
+    return " · ".join(f"<b>{cid}</b> — {text}" for cid, text in pairs)
+
+
+
+
+class PageLangFilter(HTMLParser):
+    """Убирает элементы чужого языка из готовой страницы (фрагменты с lang=...)."""
+
+    VOID = {"meta", "link", "br", "hr", "img", "input", "source", "track", "wbr",
+            "area", "base", "col", "embed", "param"}
+
+    def __init__(self, lang: str):
+        super().__init__(convert_charrefs=False)
+        self.lang = lang
+        self.out = []
+        # стек: (тег в нижнем регистре, skip, тег как в исходнике)
+        self.stack = []
+        # регистр исходника по нижнему регистру — для закрывающих тегов вне стека
+        self.tagcase = {}
+
+    def _skipping(self):
+        return any(skip for _, skip, _ in self.stack)
+
+    def _remember_case(self):
+        """HTMLParser даёт имена тегов в нижнем регистре, а get_starttag_text()
+        — исходный текст тега. Запоминаем регистр (<linearGradient>), чтобы
+        закрывающий тег не превратился в </lineargradient> (ревью PRO-61 r3)."""
+        m = re.match(r"<\s*([^\s>/]+)", self.get_starttag_text() or "")
+        if m:
+            name = m.group(1)
+            self.tagcase[name.lower()] = name
+            return name
+        return ""
+
+    def handle_starttag(self, tag, attrs):
+        orig = self._remember_case() or tag
+        if tag == "html":
+            self.out.append(f'<html lang="{self.lang}">')
+            self.stack.append(("html", False, "html"))
+            return
+        if tag in self.VOID:
+            if not self._skipping():
+                d = dict(attrs)
+                if d.get("lang") in (None, self.lang):
+                    self.out.append(self.get_starttag_text())
+            return
+        own = dict(attrs).get("lang")
+        skip = self._skipping() or (own is not None and own != self.lang)
+        self.stack.append((tag, skip, orig))
+        if not skip:
+            self.out.append(self.get_starttag_text())
+
+    def handle_startendtag(self, tag, attrs):
+        self._remember_case()
+        if tag == "html":
+            self.out.append(f'<html lang="{self.lang}">')
+            return
+        if not self._skipping():
+            own = dict(attrs).get("lang")
+            if own in (None, self.lang):
+                self.out.append(self.get_starttag_text())
+
+    def handle_endtag(self, tag):
+        orig = self.tagcase.get(tag, tag)
+        if self.stack and self.stack[-1][0] == tag:
+            _, skip, orig = self.stack.pop()
+            if not skip:
+                self.out.append(f"</{orig}>")
+        elif not self._skipping():
+            self.out.append(f"</{orig}>")
+
+    def handle_data(self, data):
+        if not self._skipping():
+            self.out.append(data)
+
+    def handle_entityref(self, name):
+        if not self._skipping():
+            self.out.append(f"&{name};")
+
+    def handle_charref(self, name):
+        if not self._skipping():
+            self.out.append(f"&#{name};")
+
+    def handle_comment(self, data):
+        if not self._skipping():
+            self.out.append(f"<!--{data}-->")
+
+    def handle_decl(self, decl):
+        self.out.append(f"<!{decl}>")
+
+    def handle_pi(self, data):
+        self.out.append(f"<?{data}>")
+
+
+def filter_lang(html: str, lang: str) -> str:
+    p = PageLangFilter(lang)
+    p.feed(html)
+    p.close()
+    return "".join(p.out)
+
+def build_pages(out: Path) -> list:
+    """RU- и EN-версии demo/help/materials: статический HTML одного языка."""
+    ru_d = json.loads((I18N_DIR / "ru.json").read_text(encoding="utf-8"))
+    en_d = json.loads((I18N_DIR / "en.json").read_text(encoding="utf-8"))
+    # паритет ключей словарей — громко, а не тихая утечка
+    def keyset(obj, prefix=""):
+        ks = set()
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                pk = f"{prefix}.{k}" if prefix else str(k)
+                ks.add(pk)
+                ks |= keyset(v, pk)
+        return ks
+    ru_keys = {k for k in keyset(ru_d) if not k.startswith("demo_data_en")}
+    en_keys = {k for k in keyset(en_d) if not k.startswith("demo_data_en")}
+    if ru_keys != en_keys:
+        raise BuildError(f"Ключи site/i18n расходятся: {sorted(ru_keys ^ en_keys)[:8]}")
+
+    data_en = en_d["demo_data_en"]
+    gc = ground_claims(data_en)
+    dec = decision_data()
+    metric = dec["metric"]
+    metric_en = data_en.get("metric_target")
+    if not metric_en or sorted(_num_tokens(metric["target"] + " " + metric["baseline"])) != \
+            sorted(_num_tokens(metric_en)):
+        raise BuildError("Числа demo_data_en.metric_target расходятся с метрикой D001")
+    tr_ru = " ; ".join(dec["triggers"])
+    tr_en = " ; ".join(data_en.get("triggers") or [])
+    if sorted(_num_tokens(tr_ru)) != sorted(_num_tokens(tr_en)):
+        raise BuildError("Числа EN-перевода триггеров расходятся с D001.review.triggers")
+
+    values = page_values()
+    written = []
+    for page in PAGES_I18N:
+        src = (SITE_SRC / f"{page}.html").read_text(encoding="utf-8")
+        for lang in ("ru", "en"):
+            d = ru_d if lang == "ru" else en_d
+            pd_ = d[PAGE_DICT[page]]
+            html = src
+            # 0) head-мета без языка: title/description/og_title/og_url из словаря
+            for mk in ("title", "description", "og_title", "og_url"):
+                html = html.replace("{{" + page + "." + mk + "}}", pd_[mk])
+            # 1) чужие токены позиций — долой
+            html = re.sub(r"\{\{" + page + r"\.(ru|en)\.[A-Za-z0-9_]+\}\}",
+                          lambda m: "" if m.group(1) != lang else m.group(0), html)
+            # 2) пары страниц из словаря (готовая разметка — без экранирования)
+            html = re.sub(r"\{\{" + page + r"\." + lang + r"\.([A-Za-z0-9_]+)\}\}",
+                          lambda m: pd_[m.group(1)], html)
+            # 3) ui-строки
+            html = re.sub(r"\{\{ui\.([a-z_]+)\}\}", lambda m: d["ui"][m.group(1)], html)
+            # 4) числа демо — с форматом языка и экранированием строковых
+            def repl(m):
+                key = m.group(1)
+                if key in ("GROUNDS_RU", "GROUNDS_EN", "TRIGGERS_RU", "TRIGGERS_EN",
+                           "METRIC_RU", "METRIC_EN"):
+                    if key == "GROUNDS_RU": return _grounds_html(gc["ru"])
+                    if key == "GROUNDS_EN": return _grounds_html(gc["en"])
+                    if key == "TRIGGERS_RU": return html_mod.escape(tr_ru, quote=False)
+                    if key == "TRIGGERS_EN": return html_mod.escape(tr_en, quote=False)
+                    if key == "METRIC_RU":
+                        return html_mod.escape(f"{metric['name']}: {metric['target']} "
+                                               f"к {ru_date(metric['by'])} (базовый {metric['baseline']})", quote=False)
+                    return html_mod.escape(metric_en, quote=False)
+                base = key[:-3] if key.endswith(("_RU", "_EN")) else key
+                if base in values and key.endswith(("_RU", "_EN")):
+                    kind, val = values[base]
+                    return render_value(kind, val, "ru" if key.endswith("_RU") else "en")
+                if key not in values:
+                    raise BuildError(f"{page}/{lang}: неизвестный токен {{{{{key}}}}}")
+                kind, val = values[key]
+                text = render_value(kind, val, lang)
+                if kind == "str":
+                    text = html_mod.escape(text, quote=True)
+                return text
+            html = re.sub(r"\{\{([A-Z_0-9]+)\}\}", repl, html)
+            # 5) head: единые title/description/OG/canonical/hreflang. Родные
+            #    строки head'а источника убираем — иначе задвоение (вредно
+            #    для краулеров и превью ссылок).
+            meta = pd_
+            canon = f"{BASE}/" if page == "index" else f"{BASE}/{page}.html"
+            canon = f"{BASE}/en/" if (page == "index" and lang == "en") else (
+                f"{BASE}/en/{page}.html" if lang == "en" else canon)
+            head = (f"<title>{html_mod.escape(meta['title'], quote=True)}</title>\n"
+                    f'<meta name="description" content="{html_mod.escape(meta["description"], quote=True)}">\n'
+                    f'<meta property="og:type" content="website">\n'
+                    f'<meta property="og:title" content="{html_mod.escape(meta["og_title"], quote=True)}">\n'
+                    f'<meta property="og:description" content="{html_mod.escape(meta["description"], quote=True)}">\n'
+                    f'<meta property="og:url" content="{canon}">\n'
+                    f'<link rel="canonical" href="{canon}">\n'
+                    f'<link rel="alternate" hreflang="ru" href="{BASE}/{page}.html">\n'
+                    f'<link rel="alternate" hreflang="en" href="{BASE}/en/{page}.html">\n'
+                    f'<link rel="alternate" hreflang="x-default" href="{BASE}/{page}.html">')
+            html, n_title = re.subn(r"<title>.*?</title>\n?", "", html, flags=re.S)
+            html, n_desc = re.subn(r'<meta name="description"[^>]*>\n?', "", html)
+            html = re.subn(r'<meta property="og:[a-z_]+"[^>]*>\n?', "", html)[0]
+            if n_title != 1 or n_desc != 1:
+                raise BuildError(f"{page}: в исходнике не ровно одна строка title/description "
+                                 f"(title={n_title}, description={n_desc}) — проверьте site_src")
+            mark = '<meta charset="UTF-8">'
+            if mark not in html:
+                raise BuildError(f"{page}: нет {mark}")
+            html = html.replace(mark, mark + "\n" + head, 1)
+            # 6) переключатель языка — ссылки вместо JS
+            html = html.replace("<!--LANGSWITCH-->", LANGSWITCH[(page, lang)], 1)
+            if lang == "en":
+                # навигация остаётся в дереве /en/ (logo, «← Landing page», якоря),
+                # ../ нужен только ассетам и переключателю (LANGSWITCH)
+                html = re.sub(r'((?:src|href)=")assets/', r"\1../assets/", html)
+            html = filter_lang(html, lang)
+            html = re.sub(r"\n{3,}", "\n\n", html)
+            if "{{" in html:
+                left = sorted(set(re.findall(r"\{\{([^}]+)\}\}", html)))
+                raise BuildError(f"{page}/{lang}: неразрешённые токены: {left[:6]}")
+            dest = out / (f"en/{page}.html" if lang == "en" else f"{page}.html")
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_text(html, encoding="utf-8")
+            written.append(dest)
+    return written
 
 if __name__ == "__main__":
     sys.exit(main())

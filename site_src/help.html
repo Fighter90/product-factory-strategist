@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>{{help.title}}</title>
+<meta name="description" content="{{help.description}}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{help.og_title}}">
+<meta property="og:url" content="{{help.og_url}}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='.55' stop-color='%23818cf8'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='11' fill='%2305070f'/%3E%3Cg fill='none' stroke='url(%23g)' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M14 10H34L42 19L24 42L6 19Z'/%3E%3Cpath d='M6 19H42' opacity='.7'/%3E%3Cpath d='M14 10L20 19L24 42' opacity='.55'/%3E%3Cpath d='M34 10L28 19L24 42' opacity='.55'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --bg:#05070f; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06);
+  --text:#eef2ff; --muted:#9aa7bd; --line:rgba(148,163,184,.16);
+  --accent:#2dd4bf; --accent2:#818cf8; --accent3:#f472b6; --warn:#f6ad55; --ok:#48bb78;
+  --code:rgba(8,12,24,.75);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+[id]{scroll-margin-top:92px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+body{background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;overflow-x:hidden;transition:opacity .18s ease}
+body.lang-switching{opacity:.55}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(1200px 800px at 78% -12%,rgba(129,140,248,.10),transparent 62%),radial-gradient(1000px 760px at -12% 32%,rgba(45,212,191,.08),transparent 62%),radial-gradient(1100px 820px at 108% 92%,rgba(244,114,182,.06),transparent 62%)}
+::selection{background:rgba(45,212,191,.3)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora{position:fixed;inset:-25%;z-index:0;pointer-events:none;opacity:.24;filter:blur(110px);
+  background:conic-gradient(from 0deg at 32% 28%,rgba(45,212,191,.15),transparent 28%,rgba(129,140,248,.15) 52%,transparent 76%,rgba(244,114,182,.12));
+  animation:auroraSpin 44s linear infinite}
+.noise{position:absolute;inset:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+
+#bar{position:fixed;top:0;left:0;height:2.5px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));box-shadow:0 0 12px rgba(129,140,248,.7)}
+header{position:sticky;top:0;z-index:50;background:rgba(5,7,15,.66);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:16px;padding:13px 0;flex-wrap:wrap}
+.logo{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:.2px}
+.logo-t{background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo .mark{width:25px;height:25px;flex:none;filter:drop-shadow(0 0 10px rgba(45,212,191,.28));transition:filter .3s,transform .45s cubic-bezier(.2,.6,.2,1)}
+.logo:hover{text-decoration:none}
+.logo:hover .mark{transform:rotate(10deg) scale(1.06);filter:drop-shadow(0 0 14px rgba(129,140,248,.55))}
+.nav a.nl{color:var(--muted);font-size:14px;position:relative}
+.nav a.nl::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));transition:width .25s}
+.nav a.nl:hover{color:var(--text);text-decoration:none}
+.nav a.nl:hover::after{width:100%}
+.nav a.nl.on{color:var(--accent)}
+.nav a.nl.on::after{width:100%}
+.lang{margin-left:auto;display:flex;gap:6px}
+.lang a{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:8px;cursor:pointer;font-size:13px;transition:.2s}
+.lang a.on{color:#05070f;background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,var(--accent3));border-color:transparent;font-weight:700}
+
+.help-hero{position:relative;padding:72px 0 56px;overflow:hidden;border-bottom:1px solid var(--line)}
+.help-art{position:absolute;inset:0;z-index:0;overflow:hidden}
+.help-art img{width:100%;height:100%;object-fit:cover;opacity:.42;
+  -webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent 100%);mask-image:linear-gradient(to bottom,#000 30%,transparent 100%)}
+.help-hero h1{font-size:clamp(30px,4vw,44px);font-weight:850;letter-spacing:-.8px;position:relative}
+.help-hero h1 .grad{background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 45%,var(--accent3) 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.help-hero .sub{color:var(--muted);font-size:16.5px;max-width:860px;margin:14px 0 0;position:relative}
+.help-hero .meta{position:relative;margin-top:14px;color:rgba(154,167,189,.85);font-size:13px}
+.search{margin-top:24px;max-width:560px;position:relative}
+.search input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px 12px 42px;color:var(--text);font-size:14px;outline:none;backdrop-filter:blur(8px);transition:border-color .2s}
+.search input:focus{border-color:var(--accent)}
+.search input::placeholder{color:rgba(154,167,189,.75)}
+.search::before{content:"⌕";position:absolute;left:15px;top:50%;transform:translateY(-52%);color:var(--muted);font-size:17px}
+
+.layout{display:grid;grid-template-columns:262px 1fr;gap:44px;padding:48px 0 72px;position:relative;z-index:2}
+.side{position:sticky;top:96px;align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 120px);overflow-y:auto;padding-right:6px;scrollbar-width:thin}
+.side .cap{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:rgba(154,167,189,.6);padding:14px 12px 6px}
+.side .cap:first-child{padding-top:0}
+.side a{color:var(--muted);font-size:13px;padding:5px 12px;border-left:2px solid var(--line);transition:.2s}
+.side a:hover{color:var(--text);border-color:var(--accent);text-decoration:none}
+.side a.on{color:var(--accent);border-color:var(--accent);background:rgba(45,212,191,.06)}
+.content{min-width:0}
+.noresult{display:none;color:var(--muted);border:1px dashed var(--line);border-radius:12px;padding:18px 20px;font-size:14px}
+
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:14px}
+.kp{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 17px;backdrop-filter:blur(8px);transition:border-color .25s,transform .25s}
+.kp:hover{border-color:rgba(129,140,248,.5);transform:translateY(-2px)}
+.kp b{display:block;font-size:13.5px;margin-bottom:5px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.kp span{color:var(--muted);font-size:13px}
+
+.steps12{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;list-style:none;margin:14px 0 4px;padding:0}
+.steps12 li{display:flex;align-items:center;gap:8px;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:13px}
+.steps12 .n{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:50%;border:1px solid var(--accent2);color:var(--accent);font-weight:700;font-size:11px}
+.cmdrow{display:flex;align-items:center;gap:10px;max-width:720px;padding:6px 6px 6px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-top:8px}
+.cmdrow code{flex:1;overflow-x:auto;white-space:nowrap;font-size:13px;color:var(--text)}
+.copy{flex:none;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:12px;cursor:pointer}
+.copy:hover{border-color:var(--accent);color:var(--text)}
+.faq{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:14px;backdrop-filter:blur(8px);position:relative;overflow:hidden}
+.faq::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2.5px;background:linear-gradient(to bottom,var(--accent),var(--accent2),var(--accent3));opacity:.55}
+.faq.hidden{display:none}
+.faq h3{font-size:15.5px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:9px}
+.faq p{color:var(--muted);font-size:14.5px;margin-bottom:8px}
+.faq p b{color:var(--text)}
+.faq .lbl{display:inline-block;font-size:11.5px;color:var(--accent3);border:1px solid rgba(244,114,182,.3);border-radius:6px;padding:0 8px;margin-right:6px;background:rgba(244,114,182,.06)}
+.note{border-left:3px solid var(--accent);background:var(--card);padding:13px 17px;border-radius:0 12px 12px 0;color:var(--muted);font-size:14px;margin:16px 0}
+.pause{color:var(--warn);font-weight:700}
+.ok{color:var(--ok);font-weight:700}
+
+pre{background:var(--code);border:1px solid var(--line);border-radius:14px;padding:16px 20px;overflow-x:auto;font-size:13px;line-height:1.65;margin:12px 0}
+code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+p code,li code,td code,.kp code,.faq b code{background:var(--code);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.9em;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;display:block;overflow-x:auto}
+th{background:var(--card2);text-align:left;padding:9px 12px;border:1px solid var(--line);font-weight:700;white-space:nowrap}
+td{padding:8px 12px;border:1px solid var(--line);color:var(--muted);vertical-align:top;overflow-wrap:anywhere}
+td code{white-space:nowrap}
+
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
+
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:14px;position:relative;z-index:2}
+footer .wrap{display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;gap:26px;padding-top:34px}
+  .side{position:static;flex-direction:row;flex-wrap:wrap;gap:8px;max-height:none;overflow:visible}
+  .side .cap{display:none}
+  .side a{border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+  .side a.on{border-color:var(--accent)}
+}
+@media(max-width:700px){.nav a.nl,.nav a.nl.keep{display:none}.logo{font-size:15px}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .aurora{display:none}
+  .rv{animation:rvIn linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="aurora"></div><div class="noise"></div></div>
+<div id="bar"></div>
+
+<header><div class="wrap nav">
+  <a class="logo" href="index.html"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></lineargradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t"><span lang="ru">Стратег Фабрики продуктов</span><span lang="en">Product Factory Strategist</span></span></a>
+  {{help.ru.k001}}{{help.en.k001}}
+  {{help.ru.k002}}{{help.en.k002}}
+  {{help.ru.k003}}{{help.en.k003}}
+  {{help.ru.k004}}{{help.en.k004}}
+  {{help.ru.k005}}{{help.en.k005}}
+  {{help.ru.k006}}{{help.en.k006}}
+  <div class="lang" role="group" aria-label="{{ui.aria_lang}}"><!--LANGSWITCH--></div>
+</div></header>
+
+<div class="help-hero"><div class="wrap">
+  <div class="help-art" aria-hidden="true"><img src="assets/help_network.jpg" alt=""></div>
+  {{help.ru.k007}}{{help.en.k007}}
+  {{help.ru.lead}}
+  {{help.en.lead}}
+  {{help.ru.k009}}
+  {{help.en.k009}}
+  <div class="search"><input id="q" type="search" placeholder="Поиск по справке… / Search the help…" aria-label="Поиск по справке / Search the help"></div>
+</div></div>
+
+<div class="wrap"><div class="layout">
+  <nav class="side" aria-label="Разделы справки">
+    {{help.ru.k010}}{{help.en.k010}}
+    {{help.ru.k011}}{{help.en.k011}}
+    {{help.ru.k012}}{{help.en.k012}}
+    {{help.ru.k013}}{{help.en.k013}}
+    {{help.ru.k014}}{{help.en.k014}}
+    {{help.ru.k015}}{{help.en.k015}}
+    {{help.ru.k016}}{{help.en.k016}}
+
+    {{help.ru.k017}}{{help.en.k017}}
+    {{help.ru.k018}}{{help.en.k018}}
+    <a href="#h-step0" lang="ru">1 · Бриф</a><a href="#h-step0" lang="en">1 · Brief</a><a href="#h-step1" lang="ru">2 · Источники</a><a href="#h-step1" lang="en">2 · Sources</a><a href="#h-step2" lang="ru">3 · Исследование</a><a href="#h-step2" lang="en">3 · Research</a><a href="#h-step3" lang="ru">4 · Дискавери</a><a href="#h-step3" lang="en">4 · Discovery</a>
+    <a href="#h-step4" lang="ru">5 · Ситуация</a><a href="#h-step4" lang="en">5 · Situation</a><a href="#h-step5" lang="ru">6 · Варианты</a><a href="#h-step5" lang="en">6 · Options</a><a href="#h-step6" lang="ru">7 · Выбор</a><a href="#h-step6" lang="en">7 · Choice</a><a href="#h-step7" lang="ru">8 · Стратегии</a><a href="#h-step7" lang="en">8 · Strategies</a>
+    <a href="#h-step8" lang="ru">9 · План проверки</a><a href="#h-step8" lang="en">9 · Validation plan</a><a href="#h-step9" lang="ru">10 · Ревью качества</a><a href="#h-step9" lang="en">10 · Quality review</a><a href="#h-step10" lang="ru">11 · Решение</a><a href="#h-step10" lang="en">11 · Decision</a><a href="#h-step11" lang="ru">12 · Мониторинг</a><a href="#h-step11" lang="en">12 · Monitoring</a>
+
+    {{help.ru.k019}}{{help.en.k019}}
+    {{help.ru.k020}}{{help.en.k020}}
+    {{help.ru.k021}}{{help.en.k021}}
+    {{help.ru.k022}}{{help.en.k022}}
+    {{help.ru.k023}}{{help.en.k023}}
+    {{help.ru.k024}}{{help.en.k024}}
+    {{help.ru.k025}}{{help.en.k025}}
+    {{help.ru.k026}}{{help.en.k026}}
+
+    {{help.ru.k027}}{{help.en.k027}}
+    {{help.ru.k028}}{{help.en.k028}}
+    {{help.ru.k029}}{{help.en.k029}}
+    {{help.ru.k030}}{{help.en.k030}}
+    {{help.ru.k031}}{{help.en.k031}}
+    {{help.ru.k032}}{{help.en.k032}}
+    {{help.ru.k033}}{{help.en.k033}}
+
+    {{help.ru.k034}}{{help.en.k034}}
+    {{help.ru.k035}}{{help.en.k035}}
+    {{help.ru.k036}}{{help.en.k036}}
+    {{help.ru.k037}}{{help.en.k037}}
+    {{help.ru.k038}}{{help.en.k038}}
+    {{help.ru.k039}}{{help.en.k039}}
+    {{help.ru.k040}}{{help.en.k040}}
+    {{help.ru.k041}}{{help.en.k041}}
+    {{help.ru.k042}}{{help.en.k042}}
+    {{help.ru.k043}}{{help.en.k043}}
+    {{help.ru.k044}}{{help.en.k044}}
+
+    {{help.ru.k045}}{{help.en.k045}}
+    {{help.ru.k046}}{{help.en.k046}}
+    {{help.ru.k047}}{{help.en.k047}}
+    {{help.ru.k048}}{{help.en.k048}}
+    {{help.ru.k049}}{{help.en.k049}}
+    {{help.ru.k050}}{{help.en.k050}}
+
+    {{help.ru.k051}}{{help.en.k051}}
+    {{help.ru.k052}}{{help.en.k052}}
+    {{help.ru.k053}}{{help.en.k053}}
+    {{help.ru.k054}}{{help.en.k054}}
+    {{help.ru.k055}}{{help.en.k055}}
+    {{help.ru.k056}}{{help.en.k056}}
+    {{help.ru.k057}}{{help.en.k057}}
+  </nav>
+
+  <div class="content" id="clist">
+
+    <div class="faq rv" id="h-keypoints">{{help.ru.k058}}{{help.en.k058}}
+      <div class="kgrid">
+        <div class="kp">{{help.ru.k059}}{{help.en.k059}}{{help.ru.k060}}{{help.en.k060}}</div>
+        <div class="kp">{{help.ru.k061}}{{help.en.k061}}{{help.ru.k062}}{{help.en.k062}}</div>
+        <div class="kp">{{help.ru.k063}}{{help.en.k063}}{{help.ru.k064}}{{help.en.k064}}</div>
+        <div class="kp">{{help.ru.k065}}{{help.en.k065}}{{help.ru.k066}}{{help.en.k066}}</div>
+        <div class="kp">{{help.ru.k067}}{{help.en.k067}}{{help.ru.k068}}{{help.en.k068}}</div>
+        <div class="kp">{{help.ru.k069}}{{help.en.k069}}{{help.ru.k070}}{{help.en.k070}}</div>
+      </div>
+    </div>
+
+    <div class="faq rv" id="h-communicate">{{help.ru.k071}}{{help.en.k071}}
+      {{help.ru.k072}}
+      {{help.en.k072}}
+      {{help.ru.k073}}
+      {{help.en.k073}}</div>
+
+    <div class="faq rv" id="h-phrases">{{help.ru.k074}}{{help.en.k074}}
+      {{help.ru.k075}}
+      {{help.en.k075}}
+    </div>
+
+    <div class="faq rv" id="h-quickstart">{{help.ru.k076}}{{help.en.k076}}
+      <pre lang="ru">$ git clone https://github.com/Fighter90/product-factory-strategist.git
+$ cd product-factory-strategist
+$ python3 -m tools.pfs doctor      # проверка окружения
+$ python3 -m unittest discover -s tests          # {{N_TESTS}} тестов, опционально
+$ pfs new "Почему падает удержание" "запрос дословно"</pre>
+      <pre lang="en">$ git clone https://github.com/Fighter90/product-factory-strategist.git
+$ cd product-factory-strategist
+$ python3 -m tools.pfs doctor      # environment check
+$ python3 -m unittest discover -s tests          # {{N_TESTS}} tests, optional
+$ pfs new "Why is retention dropping" "the request verbatim"</pre>
+      {{help.ru.k077}}<div class="cmdrow"><code>git clone https://github.com/Fighter90/product-factory-strategist.git</code><button class="copy" type="button" data-copy="0" data-ok="{{ui.copy_ok}}">{{ui.copy}}</button></div><div class="cmdrow"><code>cd product-factory-strategist &amp;&amp; ./scripts/install.sh</code><button class="copy" type="button" data-copy="1" data-ok="{{ui.copy_ok}}">{{ui.copy}}</button></div><div class="cmdrow"><code>pfs doctor</code><button class="copy" type="button" data-copy="2" data-ok="{{ui.copy_ok}}">{{ui.copy}}</button></div><div class="cmdrow"><code>opencode</code><button class="copy" type="button" data-copy="3" data-ok="{{ui.copy_ok}}">{{ui.copy}}</button></div>
+      {{help.en.k077}}</div>
+
+    <div class="faq rv" id="h-first">{{help.ru.k078}}{{help.en.k078}}
+      {{help.ru.k079}}
+      {{help.en.k079}}
+      {{help.ru.k080}}
+      {{help.en.k080}}</div>
+
+    
+    <div class="faq rv" id="h-demo">{{help.ru.k081}}{{help.en.k081}}
+      {{help.ru.k082}}
+      {{help.en.k082}}
+      {{help.ru.k083}}
+      {{help.en.k083}}
+      {{help.ru.k084}}
+      {{help.en.k084}}
+      <pre lang="ru">$ python3 -m tools.pfs use демо     # переключиться на демо
+$ python3 -m tools.pfs next        # что решать сейчас
+$ python3 -m tools.pfs check --strict
+# своя задача:
+$ python3 -m tools.pfs new "Название" "Запрос дословно"</pre>
+      {{help.ru.k085}}
+      {{help.en.k085}}
+      {{help.ru.k086}}
+      {{help.en.k086}}
+    </div>
+
+<div class="faq rv" id="h-workflow">{{help.ru.k087}}{{help.en.k087}}
+      {{help.ru.k088}}
+      <div lang="ru"><ol class="steps12"><li><span class="n">1</span>Бриф</li><li><span class="n">2</span>Источники</li><li><span class="n">3</span>Исследование</li><li><span class="n">4</span>Сегменты</li><li><span class="n">5</span>Ситуация</li><li><span class="n">6</span>Варианты и red team</li><li><span class="n">7</span>Выбор</li><li><span class="n">8</span>Стратегии</li><li><span class="n">9</span>План проверки</li><li><span class="n">10</span>Ревью качества</li><li><span class="n">11</span>Решение</li><li><span class="n">12</span>Мониторинг</li></ol></div><div lang="en"><ol class="steps12"><li><span class="n">1</span>Brief</li><li><span class="n">2</span>Sources</li><li><span class="n">3</span>Research</li><li><span class="n">4</span>Segments</li><li><span class="n">5</span>Situation</li><li><span class="n">6</span>Options & red team</li><li><span class="n">7</span>Choice</li><li><span class="n">8</span>Strategies</li><li><span class="n">9</span>Validation plan</li><li><span class="n">10</span>Quality review</li><li><span class="n">11</span>Decision</li><li><span class="n">12</span>Monitoring</li></ol></div>
+      {{help.en.k088}}</div>
+
+    <div class="faq rv" id="h-step0"><h3><span class="lbl" lang="ru">шаг 1</span><span class="lbl" lang="en">step 1</span>{{help.ru.k089}}{{help.en.k089}}</h3>
+      {{help.ru.k090}}
+      {{help.en.k090}}</div>
+
+    <div class="faq rv" id="h-step1"><h3><span class="lbl" lang="ru">шаг 2</span><span class="lbl" lang="en">step 2</span>{{help.ru.k091}}{{help.en.k091}}</h3>
+      {{help.ru.k092}}
+      {{help.en.k092}}</div>
+
+    <div class="faq rv" id="h-step2"><h3><span class="lbl" lang="ru">шаг 3</span><span class="lbl" lang="en">step 3</span>{{help.ru.k093}}{{help.en.k093}}</h3>
+      {{help.ru.k094}}
+      {{help.en.k094}}</div>
+
+    <div class="faq rv" id="h-step3"><h3><span class="lbl" lang="ru">шаг 4</span><span class="lbl" lang="en">step 4</span>{{help.ru.k095}}{{help.en.k095}}</h3>
+      {{help.ru.k096}}
+      {{help.en.k096}}</div>
+
+    <div class="faq rv" id="h-step4"><h3><span class="lbl" lang="ru">шаг 5</span><span class="lbl" lang="en">step 5</span>{{help.ru.k097}}{{help.en.k097}}</h3>
+      {{help.ru.k098}}
+      {{help.en.k098}}</div>
+
+    <div class="faq rv" id="h-step5"><h3><span class="lbl" lang="ru">шаг 6</span><span class="lbl" lang="en">step 6</span>{{help.ru.k099}}{{help.en.k099}}</h3>
+      {{help.ru.k100}}
+      {{help.en.k100}}</div>
+
+    <div class="faq rv" id="h-step6"><h3><span class="lbl" lang="ru">шаг 7</span><span class="lbl" lang="en">step 7</span>{{help.ru.k101}}{{help.en.k101}}</h3>
+      {{help.ru.k102}}
+      {{help.en.k102}}</div>
+
+    <div class="faq rv" id="h-step7"><h3><span class="lbl" lang="ru">шаг 8</span><span class="lbl" lang="en">step 8</span>{{help.ru.k103}}{{help.en.k103}}</h3>
+      {{help.ru.k104}}
+      {{help.en.k104}}</div>
+
+    <div class="faq rv" id="h-step8"><h3><span class="lbl" lang="ru">шаг 9</span><span class="lbl" lang="en">step 9</span>{{help.ru.k105}}{{help.en.k105}}</h3>
+      {{help.ru.k106}}
+      {{help.en.k106}}</div>
+
+    <div class="faq rv" id="h-step9"><h3><span class="lbl" lang="ru">шаг 10</span><span class="lbl" lang="en">step 10</span>{{help.ru.k107}}{{help.en.k107}}</h3>
+      {{help.ru.k108}}
+      {{help.en.k108}}</div>
+
+    <div class="faq rv" id="h-step10"><h3><span class="lbl" lang="ru">шаг 11</span><span class="lbl" lang="en">step 11</span>{{help.ru.k109}}{{help.en.k109}}</h3>
+      {{help.ru.k110}}
+      {{help.en.k110}}</div>
+
+    <div class="faq rv" id="h-step11"><h3><span class="lbl" lang="ru">шаг 12</span><span class="lbl" lang="en">step 12</span>{{help.ru.k111}}{{help.en.k111}}</h3>
+      {{help.ru.k112}}
+      {{help.en.k112}}</div>
+
+    <div class="faq rv" id="h-sources">{{help.ru.k113}}{{help.en.k113}}
+      {{help.ru.k114}}
+      {{help.en.k114}}
+      {{help.ru.k115}}
+      {{help.en.k115}}</div>
+
+    <div class="faq rv" id="h-source-types">{{help.ru.k116}}{{help.en.k116}}
+      {{help.ru.k117}}
+      {{help.en.k117}}
+    </div>
+
+    <div class="faq rv" id="h-claims">{{help.ru.k118}}{{help.en.k118}}
+      {{help.ru.k119}}
+      {{help.en.k119}}
+      <pre lang="ru">pfs claim add "рынок 280 млрд ₽" --kind fact --source S003 --grade B --quote "цитата из источника"
+pfs claim add "сегмент «семья» заплатит" --kind hypothesis --from C012,C014
+pfs claim add "вывод: фокус на семье" --kind inference --from C001,C012,C047</pre>
+      {{help.ru.k120}}
+      {{help.en.k120}}
+    </div>
+
+    <div class="faq rv" id="h-grades">{{help.ru.k121}}{{help.en.k121}}
+      {{help.ru.k122}}
+      {{help.en.k122}}
+      {{help.ru.k123}}
+      {{help.en.k123}}</div>
+
+    <div class="faq rv" id="h-supersede">{{help.ru.k124}}{{help.en.k124}}
+      <pre lang="ru"># данные обновились: старое остаётся в истории со статусом superseded
+pfs claim supersede --id C005 "рынок 320 млрд ₽" --reason "свежая оценка ЦБ" --source S012
+# утверждение неверно целиком
+pfs claim retract --id C006 --reason "методология выборки неверна"
+# выводы, опиравшиеся на заменённое, перенаправить на замену
+pfs claim rebase --id C005
+pfs decision rebase --id D001 --note "основания обновлены"</pre>
+      {{help.ru.k125}}
+      {{help.en.k125}}</div>
+
+    <div class="faq rv" id="h-impact">{{help.ru.k126}}{{help.en.k126}}
+      {{help.ru.k127}}
+      {{help.en.k127}}</div>
+
+    <div class="faq rv" id="h-decisions">{{help.ru.k128}}{{help.en.k128}}
+      <pre lang="ru">pfs decision add --title "Фокус на сегменте «семья»" \
+  --decision "вариант B: бесплатный базовый + платный пакет «Защита близких»" \
+  --owner "PM" --grounds C012,C047,C059 \
+  --metric "конверсия в пакет: 2% -> 4% @2027-03-01" \
+  --review 2027-01-15 --trigger "конверсия < 2.5% к декабрю" \
+  --commit "лендинг пакета | дизайн | до 15.12"</pre>
+      {{help.ru.k129}}
+      {{help.en.k129}}</div>
+
+    <div class="faq rv" id="h-docs">{{help.ru.k130}}{{help.en.k130}}
+      {{help.ru.k131}}
+      {{help.en.k131}}</div>
+
+    <div class="faq rv" id="h-report">{{help.ru.k132}}{{help.en.k132}}
+      {{help.ru.k133}}
+      {{help.en.k133}}</div>
+
+    <div class="faq rv" id="h-sixpager">{{help.ru.k134}}{{help.en.k134}}
+      {{help.ru.k135}}
+      {{help.en.k135}}</div>
+
+    <div class="faq rv" id="h-calcs">{{help.ru.k136}}{{help.en.k136}}
+      {{help.ru.k137}}
+      {{help.en.k137}}
+      {{help.ru.k138}}
+      {{help.en.k138}}
+    </div>
+
+    <div class="faq rv" id="h-excel">{{help.ru.k139}}{{help.en.k139}}
+      {{help.ru.k140}}
+      {{help.en.k140}}
+      {{help.ru.k141}}
+      {{help.en.k141}}</div>
+
+    <div class="faq rv" id="h-deck">{{help.ru.k142}}{{help.en.k142}}
+      {{help.ru.k143}}
+      {{help.en.k143}}</div>
+
+    <div class="faq rv" id="h-cli">{{help.ru.k144}}{{help.en.k144}}
+      {{help.ru.k145}}
+      {{help.en.k145}}</div>
+
+    <div class="faq rv" id="h-mcp">{{help.ru.k146}}{{help.en.k146}}
+      {{help.ru.k147}}
+      {{help.en.k147}}
+      {{help.ru.k148}}
+      {{help.en.k148}}
+    </div>
+
+    <div class="faq rv" id="h-skills">{{help.ru.k149}}{{help.en.k149}}
+      {{help.ru.k150}}
+      {{help.en.k150}}
+      {{help.ru.k151}}
+      {{help.en.k151}}</div>
+
+    <div class="faq rv" id="h-subagents">{{help.ru.k152}}{{help.en.k152}}
+      {{help.ru.k153}}
+      {{help.en.k153}}</div>
+
+    <div class="faq rv" id="h-hooks">{{help.ru.k154}}{{help.en.k154}}
+      {{help.ru.k155}}
+      {{help.en.k155}}</div>
+
+    <div class="faq rv" id="h-models">{{help.ru.k156}}{{help.en.k156}}
+      {{help.ru.k157}}
+      {{help.en.k157}}</div>
+
+    <div class="faq rv" id="h-cost">{{help.ru.k158}}{{help.en.k158}}
+      {{help.ru.k159}}
+      {{help.en.k159}}</div>
+
+    <div class="faq rv" id="h-data">{{help.ru.k160}}{{help.en.k160}}
+      <pre lang="ru">pfs data profile file.csv                 # типы, пропуски, диапазоны, уникальные
+pfs data cohort file.csv --user id --date dt --save cohorts   # когорты по месяцам
+pfs data funnel events.csv --steps visit,signup,pay --user id  # воронка
+pfs data stats file.csv --col revenue --group seg              # статистика с ДИ 95%</pre>
+      {{help.ru.k161}}
+      {{help.en.k161}}</div>
+
+    <div class="faq rv" id="h-interviews">{{help.ru.k162}}{{help.en.k162}}
+      {{help.ru.k163}}
+      {{help.en.k163}}</div>
+
+    <div class="faq rv" id="h-media-ux">{{help.ru.k164}}{{help.en.k164}}
+      {{help.ru.k165}}
+      {{help.en.k165}}</div>
+
+    <div class="faq rv" id="h-env-claude">{{help.ru.k166}}{{help.en.k166}}
+      {{help.ru.k167}}
+      {{help.en.k167}}</div>
+
+    <div class="faq rv" id="h-env-others">{{help.ru.k168}}{{help.en.k168}}
+      {{help.ru.k169}}
+      {{help.en.k169}}</div>
+
+    <div class="faq rv" id="h-env-linear">{{help.ru.k170}}{{help.en.k170}}
+      {{help.ru.k171}}
+      {{help.en.k171}}</div>
+
+    <div class="faq rv" id="h-env-lovable">{{help.ru.k172}}{{help.en.k172}}
+      {{help.ru.k173}}
+      {{help.en.k173}}</div>
+
+    <div class="faq rv" id="h-env-misc">{{help.ru.k174}}{{help.en.k174}}
+      {{help.ru.k175}}
+      {{help.en.k175}}</div>
+
+    <div class="faq rv" id="h-resume">{{help.ru.k176}}{{help.en.k176}}
+      {{help.ru.k177}}
+      {{help.en.k177}}</div>
+
+    <div class="faq rv" id="h-portability">{{help.ru.k178}}{{help.en.k178}}
+      {{help.ru.k179}}
+      {{help.en.k179}}</div>
+
+    <div class="faq rv" id="h-security">{{help.ru.k180}}{{help.en.k180}}
+      {{help.ru.k181}}
+      {{help.en.k181}}</div>
+
+    <div class="faq rv" id="h-check">{{help.ru.k182}}{{help.en.k182}}
+      {{help.ru.k183}}
+      {{help.en.k183}}</div>
+
+    <div class="faq rv" id="h-trouble">{{help.ru.k184}}{{help.en.k184}}
+      {{help.ru.k185}}
+      {{help.en.k185}}</div>
+
+    <div class="faq rv" id="h-glossary">{{help.ru.k186}}{{help.en.k186}}
+      {{help.ru.k187}}
+      {{help.en.k187}}</div>
+
+    <div class="noresult" id="nores">{{help.ru.k188}}{{help.en.k188}}</div>
+    <p class="backline rv">{{help.ru.k189}}{{help.en.k189}}</p>
+  </div>
+</div></div>
+
+<footer><div class="wrap">
+  <div>
+    <div class="logo"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgN" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset=".55" stop-color="#818cf8"/><stop offset="1" stop-color="#f472b6"/></lineargradient></defs><g fill="none" stroke="url(#lgN)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M14 10H34L42 19L24 42L6 19Z"/><path d="M6 19H42" opacity=".65"/><path d="M14 10L20 19L24 42" opacity=".5"/><path d="M34 10L28 19L24 42" opacity=".5"/></g><circle cx="41" cy="7" r="2" fill="#f472b6"/></svg><span class="logo-t"><span lang="ru">Стратег Фабрики продуктов</span><span lang="en">Product Factory Strategist</span></span></div>
+    {{help.ru.k190}}
+    {{help.en.k190}}
+  </div>
+  <div>
+    {{help.ru.k191}}{{help.en.k191}} ·
+    {{help.ru.k192}}{{help.en.k192}} ·
+    <a href="https://github.com/Fighter90/product-factory-strategist/wiki">Wiki</a> ·
+    {{help.ru.k193}}
+    {{help.en.k193}}
+  </div>
+</div></footer>
+
+<script>
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const bar = document.getElementById('bar');
+function frame(){
+  const y = window.scrollY;
+  const h = document.documentElement.scrollHeight - innerHeight;
+  bar.style.width = (h > 0 ? (y/h*100) : 0) + '%';
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+const io = new IntersectionObserver(() => {});
+
+// scrollspy сайдбара
+const sio = new IntersectionObserver(es => es.forEach(e => {
+  const l = document.querySelector('.side a[href="#' + e.target.id + '"]');
+  if (l) l.classList.toggle('on', e.isIntersecting);
+}), {rootMargin:'-25% 0px -65% 0px'});
+document.querySelectorAll('.faq[id]').forEach(s => sio.observe(s));
+
+// поиск-фильтр по всем блокам
+(function(){
+  const q = document.getElementById('q');
+  if (!q) return;
+  const blocks = [...document.querySelectorAll('.content > .faq')];
+  const nores = document.getElementById('nores');
+  q.addEventListener('input', () => {
+    const v = q.value.trim().toLowerCase();
+    let vis = 0;
+    for (const b of blocks){
+      const hit = !v || b.textContent.toLowerCase().includes(v);
+      b.classList.toggle('hidden', !hit);
+      if (hit){ vis++; b.classList.add('in'); }
+    }
+    if (nores) nores.style.display = vis ? 'none' : 'block';
+  });
+})();
+</script>
+<script>
+document.querySelectorAll('.copy').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=b.parentNode.querySelector('code').textContent;
+    var done=function(){var o=b.textContent;b.textContent=b.dataset.ok||'OK';setTimeout(function(){b.textContent=o},1600)};
+    try{navigator.clipboard.writeText(t).then(done,done)}catch(e){done()}
+  });
+});
+</script>
+</body>
+</html>
