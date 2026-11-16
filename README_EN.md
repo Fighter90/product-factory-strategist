@@ -44,7 +44,7 @@ Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INST
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 740 tests
+python3 -m unittest discover -s tests          # 757 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -73,7 +73,8 @@ a tracker, a job map; 100% local; 18 BYOK LLM providers; 19 languages; ~7,602 au
   stop <20 at activation <35%; counter-metrics: GitHub stars, GDPR complaints, NPS ≥30, free-tier inference
   ≤$200/mo) → review `check --strict` **100/100** → decision D001 (beta in 3 EN geos by 2026-12-15,
   review 2027-02-10) → monitoring.
-- Evidence: 11 sources, 20 claims with types and grades A–D (12 facts, 4 hypotheses, 4 assumptions); market
+- Evidence: 11 sources (S001–S012; S003 superseded during source verification — PRO-50), 20 claims with
+  types and grades A–D (12 facts, 4 hypotheses, 4 assumptions); market
   facts: resume builders $1.2–2.4B (aggregators disagree 2×), AI segment CAGR 13.1%, online recruiting $37.97B
   (2025), ATS at 98% of F500, 7 competitors at $8–40/mo with auto-renewals; unit economics [C016]: ARPU $29,
   CM $21.75, LTV ≈ $271.88, LTV/CAC ≈ 4.5, break-even ≈ 69 paying; synthetic funnel [S008] is a method,
@@ -99,32 +100,41 @@ python3 -m tools.pfs new "Title" "Request verbatim"  # your own task
 
 At every step the agent **reads the mandatory knowledge cards** (printed by `pfs step`), passes a
 **question block** (`pfs questions <step>` — at least 1–3 questions to you; skipping requires a log note),
-and hits **quality gates**. Double Diamond phases: Discover (0–3) → Define (4–6) → Develop (7–9) →
-Deliver (10–11).
+and hits **quality gates**. Double Diamond phases: Discover (1–4) → Define (5–7) → Develop (8–10) →
+Deliver (11–12). The 1–12 numbering matches the CLI, the docs and the site.
 
 ```mermaid
 flowchart TD
   Q["director's request"] --> R["route: scenario · cards · models"]
-  R --> S0["0 intake: brief"] --> S1["1 sources"] --> S2["2 research"] --> S3["3 discovery: personas/JTBD"] --> S4["4 situation"] --> S5["5 options + red team"] --> S6{{"6 choice: HUMAN"}} --> S7["7 strategy"] --> S8["8 validation"] --> S9["9 review: check + rubric + six-pager"] --> S10{{"10 decision: HUMAN"}} --> S11["11 monitoring"]
-  S6 -.->|"pfs questions"| QB["question blocks"]
-  S9 --> DECK["six-pager + 4 Excel"]
-  S11 -->|"new data"| REF["impact → supersede → rebase"]
+  R --> S1["1 intake: brief"] --> S2["2 sources"] --> S3["3 research"] --> S4["4 discovery: personas/JTBD"] --> S5["5 situation"] --> S6["6 options + red team"] --> S7{{"7 choice: HUMAN"}} --> S8["8 strategy"] --> S9["9 validation"] --> S10["10 review: check + rubric + six-pager"] --> S11{{"11 decision: HUMAN"}} --> FIN["finish: REPORT + six-pager RU/EN + Excel — end of the run"]
+  S12["12 monitoring: a separate mode — on command or `decision due`"]
+  S11 -.-> S12
+  S7 -.->|"pfs questions"| QB["question blocks"]
+  S10 --> DECK["six-pager + 4 Excel"]
+  S12 -->|"new data"| REF["impact → supersede → rebase"]
 ```
 
 | # | Step | What the agent does | Mandatory cards | Question block | Gate |
 |---|---|---|---|---|---|
-| 0 | intake | ≤3 questions, brief, assumptions | M-brief-hypotheses, M-customers, M-jtbd | intake-* | **human approves** |
-| 1 | sources | Web/PDF/DOCX/XLSX/CSV → S###, dedup, protection | M-source-criticism, M-research-types | intake-constraints | allowed domains |
-| 2 | research | Plan from decision-changing questions; calculations; interviews | M-research-types, M-quant-methods, M-ab-testing, M-sql-for-pm | discovery-jtbd | answered or gap named |
-| 3 | discovery | Personas, JTBD, user alternatives | M-jtbd, M-audience-research, M-customers | discovery-segment | segment+personas fixed |
-| 4 | situation | Known / unknown / contradictions | M-source-criticism, M-external-environment, M-competitors | situation-gaps | `pfs check` |
-| 5 | options | ≥3 options + red team + falsifiers | M-goals-drivers-bets, M-risks, M-double-diamond, M-lean-canvas | options-criteria | check + red team |
-| 6 | choice | Comparison and recommendation | M-decision-daci | choice-reversibility | **human decides** |
-| 7 | strategy | Product + communication | M-usp, M-product-communication, M-monetization, M-unit-economics | strategy-promise | promises ↔ product |
-| 8 | validation | Metric, baseline, duration, counter-metrics | M-ab-testing, M-success-metrics | validation-metric | 5 sections |
-| 9 | review | check + rubric + six-pager with Excel | M-six-pager, M-source-criticism | — | rubric ≥ threshold |
-| 10 | decision | Grounds, owners, commitments | M-decision-daci, M-model-validation | decision-commitments | **human approves** |
-| 11 | monitoring | Deadlines, new data, revisions | M-loyalty-metrics | — | `pfs decision due` empty |
+| 1 | intake | ≤3 questions, brief, assumptions | M-brief-hypotheses, M-customers, M-jtbd | intake-* | **human approves** |
+| 2 | sources | Web/PDF/DOCX/XLSX/CSV → S###, dedup, protection | M-source-criticism, M-research-types | intake-constraints | allowed domains |
+| 3 | research | Plan from decision-changing questions; calculations; interviews | M-research-types, M-quant-methods, M-ab-testing, M-sql-for-pm | discovery-jtbd | answered or gap named |
+| 4 | discovery | Personas, JTBD, user alternatives | M-jtbd, M-audience-research, M-customers | discovery-segment | segment+personas fixed |
+| 5 | situation | Known / unknown / contradictions | M-source-criticism, M-external-environment, M-competitors | situation-gaps | `pfs check` |
+| 6 | options | ≥3 options + red team + falsifiers | M-goals-drivers-bets, M-risks, M-double-diamond, M-lean-canvas | options-criteria | check + red team |
+| 7 | choice | Comparison and recommendation | M-decision-daci | choice-reversibility | **human decides** |
+| 8 | strategy | Product + communication | M-usp, M-product-communication, M-monetization, M-unit-economics | strategy-promise | promises ↔ product |
+| 9 | validation | Metric, baseline, duration, counter-metrics | M-ab-testing, M-success-metrics | validation-metric | 5 sections |
+| 10 | review | check + rubric + six-pager with Excel | M-six-pager, M-source-criticism | — | rubric ≥ threshold |
+| 11 | decision | Grounds, owners, commitments | M-decision-daci, M-model-validation | decision-commitments | **human approves** |
+| 12 | monitoring | A separate mode: deadlines, new data, revisions — on command or `decision due` | M-loyalty-metrics | — | `pfs decision due` empty |
+
+Stop points — only intake, choice, decision and `pfs finish`: between them the agent moves without pauses.
+After decision the agent assembles the final pack `pfs finish` (REPORT, six-pager RU and EN, Excel, DOCX, deck)
+and sends one final message with links — "continue" is no longer needed. Monitoring never ends by definition
+and starts only on command (`pfs next`, "check the commitments") or on the `pfs decision due` trigger; decision
+commitments (WBS, drafts) are not executed without an explicit request. QA and CI have the autopilot mode
+`PFS_AUTOPILOT=1`: pauses take the recommended option, every pause and answer is logged.
 
 ---
 
@@ -325,5 +335,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/               (740) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/               (757) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```

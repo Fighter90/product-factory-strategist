@@ -43,7 +43,7 @@ pfs --help
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
 python3 -m tools.pfs doctor                    # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 740 тестов
+python3 -m unittest discover -s tests          # 757 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -132,7 +132,7 @@ python3 -m unittest discover -s tests          # 740 тестов
 | ≥3 варианта, вкл. «оставить как есть» и «закрыть»; возражения | `03_options.md`: A–E; red team — 20 ударов (15 возражений + 5 скрытых допущений) |
 | Продуктовая + коммуникационная стратегия | `04_product_strategy.md`, `05_comms_strategy.md`, таблица «обещание → подтверждение» |
 | План проверки | `06_validation_plan.md`: 90 дней, пороги 40 / 20–40 / <20, контр-метрики, критерии решения |
-| Workflow с паузами человека | 12 шагов, паузы на брифе (0), выборе B (6) и утверждении D001 (10) |
+| Workflow с паузами человека | 12 шагов, паузы на брифе (1), выборе B (7) и утверждении D001 (11); конец прогона — `pfs finish` |
 | Порядок в знаниях | инструкции / knowledge / projects/демо / state.json — раздельно |
 | Продолжение после перерыва | состояние в state.json; `pfs status` восстанавливает контекст |
 | Прозрачность | log.jsonl; цепочка C### → S###; `pfs impact` |
@@ -161,32 +161,42 @@ python3 -m tools.pfs new "Название" "Запрос дословно"
 
 На каждом шаге агент **читает обязательные карты базы знаний** (печатаются в `pfs step`), проходит
 **вопросный блок** (`pfs questions <шаг>` — 1–3 вопроса руководителю, пропуск — только через журнал)
-и упирается в **ворота качества**. Фазы двойного романа: Discover (0–3) → Define (4–6) → Develop (7–9) →
-Deliver (10–11).
+и упирается в **ворота качества**. Фазы двойного романа: Discover (1–4) → Define (5–7) → Develop (8–10) →
+Deliver (11–12). Нумерация 1–12 совпадает в CLI, документации и на сайте.
 
 ```mermaid
 flowchart TD
   Q["запрос руководителя"] --> R["route: сценарий · карты · модели"]
-  R --> S0["0 intake: бриф"] --> S1["1 sources: источники"] --> S2["2 research: исследование"] --> S3["3 discovery: персоны/JTBD"] --> S4["4 situation: ситуация"] --> S5["5 options: варианты + red team"] --> S6{{"6 choice: выбор — ЧЕЛОВЕК"}} --> S7["7 strategy: стратегии"] --> S8["8 validation: проверка"] --> S9["9 review: ревью + six-pager"] --> S10{{"10 decision: решение — ЧЕЛОВЕК"}} --> S11["11 monitoring: мониторинг"]
-  S6 -.->|"pfs questions"| QB["вопросные блоки"]
-  S9 --> DECK["six-pager + 4 Excel"]
-  S11 -->|"новые данные"| REF["impact → supersede → rebase"]
+  R --> S1["1 intake: бриф"] --> S2["2 sources: источники"] --> S3["3 research: исследование"] --> S4["4 discovery: персоны/JTBD"] --> S5["5 situation: ситуация"] --> S6["6 options: варианты + red team"] --> S7{{"7 choice: выбор — ЧЕЛОВЕК"}} --> S8["8 strategy: стратегии"] --> S9["9 validation: проверка"] --> S10["10 review: ревью + six-pager"] --> S11{{"11 decision: решение — ЧЕЛОВЕК"}} --> FIN["finish: REPORT + six-pager RU/EN + Excel — конец прогона"]
+  S12["12 monitoring: отдельный режим — по команде или `decision due`"]
+  S11 -.-> S12
+  S7 -.->|"pfs questions"| QB["вопросные блоки"]
+  S10 --> DECK["six-pager + 4 Excel"]
+  S12 -->|"новые данные"| REF["impact → supersede → rebase"]
 ```
 
 | # | Шаг | Что делает агент | Карты (обязательные) | Вопросный блок | Ворота |
 |---|---|---|---|---|---|
-| 0 | intake | ≤3 вопроса, бриф, допущения | M-brief-hypotheses, M-customers, M-jtbd | intake-* | **человек подтверждает** |
-| 1 | sources | Сайты/PDF/DOCX/XLSX/CSV → S###, дедуп, защита | M-source-criticism, M-research-types | intake-constraints | домены разрешены |
-| 2 | research | План от вопросов, меняющих решение; расчёты; интервью | M-research-types, M-quant-methods, M-ab-testing, M-sql-for-pm | discovery-jtbd | вопросы закрыты или пробел назван |
-| 3 | discovery | Персоны, JTBD, альтернативы пользователя | M-jtbd, M-audience-research, M-customers | discovery-segment | сегмент+персоны зафиксированы |
-| 4 | situation | Известно/не знаем/противоречия | M-source-criticism, M-external-environment, M-competitors | situation-gaps | `pfs check` |
-| 5 | options | ≥3 варианта + red team + фальсификаторы | M-goals-drivers-bets, M-risks, M-double-diamond, M-lean-canvas | options-criteria | check + red team |
-| 6 | choice | Сравнение и рекомендация | M-decision-daci | choice-reversibility | **человек выбирает** |
-| 7 | strategy | Продуктовая + коммуникационная | M-usp, M-product-communication, M-monetization, M-unit-economics | strategy-promise | обещания ↔ продукт |
-| 8 | validation | Метрика, база, срок, контрметрики | M-ab-testing, M-success-metrics | validation-metric | 5 разделов |
-| 9 | review | check + рубрика + six-pager с Excel | M-six-pager, M-source-criticism | — | рубрика ≥ порога |
-| 10 | decision | Основания, ответственные, обязательства | M-decision-daci, M-model-validation | decision-commitments | **человек утверждает** |
-| 11 | monitoring | Сроки, новые данные, пересмотр | M-loyalty-metrics | — | `pfs decision due` пуст |
+| 1 | intake | ≤3 вопроса, бриф, допущения | M-brief-hypotheses, M-customers, M-jtbd | intake-* | **человек подтверждает** |
+| 2 | sources | Сайты/PDF/DOCX/XLSX/CSV → S###, дедуп, защита | M-source-criticism, M-research-types | intake-constraints | домены разрешены |
+| 3 | research | План от вопросов, меняющих решение; расчёты; интервью | M-research-types, M-quant-methods, M-ab-testing, M-sql-for-pm | discovery-jtbd | вопросы закрыты или пробел назван |
+| 4 | discovery | Персоны, JTBD, альтернативы пользователя | M-jtbd, M-audience-research, M-customers | discovery-segment | сегмент+персоны зафиксированы |
+| 5 | situation | Известно/не знаем/противоречия | M-source-criticism, M-external-environment, M-competitors | situation-gaps | `pfs check` |
+| 6 | options | ≥3 варианта + red team + фальсификаторы | M-goals-drivers-bets, M-risks, M-double-diamond, M-lean-canvas | options-criteria | check + red team |
+| 7 | choice | Сравнение и рекомендация | M-decision-daci | choice-reversibility | **человек выбирает** |
+| 8 | strategy | Продуктовая + коммуникационная | M-usp, M-product-communication, M-monetization, M-unit-economics | strategy-promise | обещания ↔ продукт |
+| 9 | validation | Метрика, база, срок, контрметрики | M-ab-testing, M-success-metrics | validation-metric | 5 разделов |
+| 10 | review | check + рубрика + six-pager с Excel | M-six-pager, M-source-criticism | — | рубрика ≥ порога |
+| 11 | decision | Основания, ответственные, обязательства | M-decision-daci, M-model-validation | decision-commitments | **человек утверждает** |
+| 12 | monitoring | Отдельный режим: сроки, новые данные, пересмотр — по команде или `decision due` | M-loyalty-metrics | — | `pfs decision due` пуст |
+
+Точки остановки — только intake, choice, decision и `pfs finish`: между ними агент идёт без пауз.
+После decision агент собирает финальный пакет `pfs finish` (REPORT, six-pager RU и EN, Excel, DOCX, дека)
+и отправляет одно финальное сообщение со ссылками — «продолжи» больше не нужен. Monitoring по определению
+не заканчивается и запускается только командой (`pfs next`, «проверь обязательства») или по триггеру
+`pfs decision due`; обязательства решения (WBS, черновики) без явного запроса не выполняются.
+Для QA и CI есть режим автопрогона `PFS_AUTOPILOT=1`: паузы принимают рекомендованный вариант,
+каждая пауза и ответ логируются.
 
 ---
 
@@ -391,5 +401,5 @@ projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl �
                      Excel · 100/100)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
-tests/               (740)
+tests/               (757)
 ```
