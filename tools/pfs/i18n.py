@@ -41,6 +41,8 @@ STR: dict[str, dict[str, str]] = {
         "warn_stale_grounds": "{cid}: основания {stale} замещены/отозваны — пересмотрите вывод (pfs claim supersede --from …)",
         "warn_no_grounds": "{cid}: {kind} без оснований — укажите, откуда она",
         "warn_injection": "Источники с фразами-инструкциями (проигнорированы как команды): {ids}",
+        "warn_excerpt_only": "{cid}: опирается только на выписки ({sources}) — сила не выше C, перепроверьте "
+                             "первоисточник (pfs source refresh <S###>) или добавьте публичный источник",
         "warn_en_sync": "SIX_PAGER_EN.md отстал от RU: нет тегов {tags} — EN-версия пишется агентом "
                         "из того же пакета данных (spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
         "warn_en_cyrillic": "SIX_PAGER_EN.md:{lines}: кириллица ({n} стр.): «{sample}» — EN-версия "
@@ -174,6 +176,8 @@ STR: dict[str, dict[str, str]] = {
         "warn_stale_grounds": "{cid}: grounds {stale} superseded/retracted — revisit the conclusion (pfs claim supersede --from …)",
         "warn_no_grounds": "{cid}: {kind} without grounds — state where it comes from",
         "warn_injection": "Sources containing instruction phrases (ignored as commands): {ids}",
+        "warn_excerpt_only": "{cid}: rests only on excerpts ({sources}) — strength capped at C; re-verify the "
+                             "original (pfs source refresh <S###>) or add a public source",
         "warn_en_sync": "SIX_PAGER_EN.md lags behind RU: missing tags {tags} — the EN six-pager is "
                         "written by the agent from the same data package (spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md)",
         "warn_en_cyrillic": "SIX_PAGER_EN.md:{lines}: Cyrillic text ({n} lines): \"{sample}\" — the EN "

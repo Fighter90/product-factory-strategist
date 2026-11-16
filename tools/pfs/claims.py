@@ -63,12 +63,55 @@ def _validate(pdir: Path, kind: str, sources: list[str], derived_from: list[str]
     return "agent" if kind == "inference" else ("source" if sources else "agent")
 
 
+def basis_sources(claims_by_id: dict[str, dict], sources: list[str], derived_from: list[str]) -> list[str]:
+    """Транзитивный набор источников опоры (PRO-59, ревью round 2): прямые sources плюс
+    sources всех утверждений derived_from в глубину. Вывод, построенный только на
+    фактах-выписках, ограничивается так же, как прямая выписка. Отсутствующие ID
+    пропускаются, циклы разрываются множеством виденных ID."""
+    out = list(dict.fromkeys(sources))
+    seen = set(out)
+    stack = [cid for cid in dict.fromkeys(derived_from) if cid not in seen]
+    while stack:
+        cid = stack.pop()
+        if cid in seen:
+            continue
+        seen.add(cid)
+        parent = claims_by_id.get(cid)
+        if parent is None:
+            continue
+        for sid in parent.get("sources") or []:
+            if sid not in seen:
+                seen.add(sid)
+                out.append(sid)
+        stack.extend(cid2 for cid2 in parent.get("derived_from") or [] if cid2 not in seen)
+    return out
+
+
+def _excerpt_grade_cap(pdir: Path, sources: list[str], grade: str | None,
+                       derived_from: list[str] | None = None) -> None:
+    """PRO-59: утверждение опирается только на выписки (origin=excerpt) — сила доказательства
+    не выше C, пока первоисточник не перепроверен (pfs source refresh снимает пометку выписки).
+    Опора считается транзитивно (basis_sources): вывод, построенный только на фактах-выписках,
+    ограничивается так же (ревью round 2). Grade A/B отклоняется; смешанный набор источников
+    ограничение не включает."""
+    if grade in ("A", "B") and (sources or derived_from):
+        rows = {s["id"]: s for s in src_mod.load(pdir)}
+        claims_by_id = {c["id"]: c for c in load(pdir)}
+        basis = basis_sources(claims_by_id, sources, derived_from or [])
+        if basis and all(rows.get(s, {}).get("origin") == "excerpt" for s in basis):
+            raise PfsError(f"Сила {grade} недопустима: утверждение опирается только на выписки "
+                           f"(origin=excerpt, в т.ч. транзитивно через derived_from) — сила не выше C, "
+                           f"пока первоисточник не перепроверен: pfs source refresh {basis[0]}, "
+                           "либо добавьте публичный источник")
+
+
 def add(pdir: Path, text: str, kind: str, sources: list[str] | None = None, derived_from: list[str] | None = None,
         confidence: str = "medium", note: str | None = None, quote: str | None = None, tags: list[str] | None = None, grade: str | None = None) -> dict:
     if grade and grade not in GRADES:
         raise PfsError(f"grade: {', '.join(GRADES)}")
     sources, derived_from = sources or [], derived_from or []
     basis = _validate(pdir, kind, sources, derived_from, confidence)
+    _excerpt_grade_cap(pdir, sources, grade, derived_from)
     rows = load(pdir)
     for r in rows:  # повторный вызов с тем же текстом не плодит дубли
         if r["text"].strip() == text.strip() and r["status"] == "active":
@@ -145,6 +188,7 @@ def add_batch(pdir: Path, path: Path) -> dict:
                 sources_list = _as_list(item.get("source") or item.get("sources"))
                 derived = _as_list(item.get("from") or item.get("derived_from"))
                 basis = _validate(pdir, kind, sources_list, derived, confidence)
+                _excerpt_grade_cap(pdir, sources_list, grade, derived)  # PRO-59: выписки — сила не выше C
                 recs.append({"id": core.next_id("C", rows + recs), "text": text, "kind": kind,
                              "sources": sources_list, "derived_from": derived, "confidence": confidence,
                              "basis": basis, "quote": item.get("quote"), "tags": _as_list(item.get("tags")),

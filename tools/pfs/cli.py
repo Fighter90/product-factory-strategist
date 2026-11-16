@@ -10,8 +10,8 @@ import shutil
 import sys
 from pathlib import Path
 
-from . import (ab, calc, check, claims, core, cost, data, decisions, docx, export, finish, gaps, i18n, impact,
-               kb, models, participate, project, review, roadmap, route, sources)
+from . import (ab, calc, check, claims, core, cost, data, decisions, docx, export, extract, finish, gaps, i18n,
+               impact, kb, models, participate, project, review, roadmap, route, sources)
 from .core import PfsError
 
 
@@ -168,6 +168,18 @@ def cmd_gap(a):
 def cmd_source(a):
     pdir = _p(a)
     if a.action == "add":
+        if getattr(a, "via_browser", False):
+            raise core.PfsError("--via-browser работает только с fetch: pfs source fetch <url> --via-browser")
+        if getattr(a, "excerpt", False):
+            # PRO-59: режим выписки — origin=excerpt с обязательным первоисточником и датой публикации
+            missing = [flag for flag, v in (("--text-file", a.text_file), ("--url", a.url),
+                                            ("--published", a.published)) if not v]
+            if missing:
+                raise core.PfsError("Выписка (--excerpt) требует: --text-file <файл с текстом>, --url <первоисточник>, "
+                                    "--published ГГГГ-ММ-ДД (дата публикации/среза). Не указано: " + ", ".join(missing))
+            if a.origin and a.origin != "excerpt":
+                raise core.PfsError("--excerpt задаёт origin=excerpt — уберите --origin или укажите excerpt")
+            a.origin = "excerpt"
         # относительные пути резолвятся от каталога проекта, если файла там нет — от cwd (PRO-36)
         is_url = bool(a.target and re.match(r"^https?://", a.target))
         target = a.target if is_url else (str(core.resolve_input(a.target, pdir)) if a.target else None)
@@ -183,8 +195,12 @@ def cmd_source(a):
         if (text_path or (not is_url and target)) and rec.get("path"):
             print(f"Файл: {(pdir / rec['path']).resolve()}")  # копия в sources/raw/ — след в проекте (PRO-58)
     elif a.action == "fetch":
+        if getattr(a, "excerpt", False):
+            raise core.PfsError("--excerpt работает с add: pfs source add --text-file <файл> --url <ссылка> "
+                                "--excerpt --published ГГГГ-ММ-ДД")
         rec, new, channel = sources.fetch(pdir, a.target, title=a.title, origin=a.origin,
-                                          note=a.note, published=a.published, force=a.force)
+                                          note=a.note, published=a.published, force=a.force,
+                                          via_browser=getattr(a, "via_browser", False))
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
         via = sources.VIA_LABELS.get(channel, channel)
         print(f"{'Добавлен' if new else 'Уже есть (повтор пропущен)'}: {rec['id']} — {rec['title']} "
@@ -196,6 +212,8 @@ def cmd_source(a):
         print(sources.show(pdir, a.target, a.max_chars))
     elif a.action == "refresh":
         res = sources.refresh(pdir, a.target, a.max_chars)
+        if res.get("verified"):  # PRO-59: первоисточник ответил напрямую — выписка перепроверена
+            print("Первоисточник ответил напрямую — выписка перепроверена (origin=public): сила выше C теперь допустима")
         if not res["changed"]:
             print(f"{a.target}: не изменился")
             return
@@ -576,6 +594,16 @@ def cmd_doctor(a):
         print("pypdf: есть")
     except ImportError:
         print("pypdf: нет (необязательно)")
+    # PRO-59: HTTPS-проверка окружения — TLS-цепочка certifi → truststore → SSL_CERT_FILE
+    probes = extract.https_probe()
+    line = ", ".join(f"{host}: {status}" for host, status in probes)
+    if any(status == "ssl" for _, status in probes):
+        print(f"⚠ HTTPS: {line}")
+        print(f"  {extract.cert_fix_hint()}")
+    elif all(status == "net" for _, status in probes):
+        print(f"HTTPS: {line} — сеть недоступна, TLS-проверка пропущена")
+    else:
+        print(f"HTTPS: {line}")
     projects = project.list_projects()
     active = core.active_slug()
     print(f"Карт в базе знаний: {len(kb.cards())}; проектов: {len(projects)}; активный: {active}")
@@ -633,13 +661,20 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("source", help="источники (add/fetch/list/show/refresh)")
     s.add_argument("action", choices=["add", "fetch", "list", "show", "refresh"],
                    help="fetch — недоступный URL (403/SSL/JS/таймаут): прямой запрос → r.jina.ai → web.archive.org; "
-                        "полный фейл — предложение --text-file")
+                        "JS-страница — fetch --via-browser; полный фейл — выписка: add --text-file --excerpt")
     s.add_argument("target", nargs="?",
                    help="URL или файл; относительный путь: сначала каталог проекта, затем cwd")
     s.add_argument("--text-file", help="файл с текстом выписки (путь: каталог проекта → cwd)")
     s.add_argument("--url"); s.add_argument("--title")
     s.add_argument("--origin", help="public | excerpt (выписка, первоисточник недоступен) | own | interview | synthetic | agent; "
                                     "для fetch по умолчанию: public при прямом успехе, excerpt при фолбэке (reader/архив)")
+    s.add_argument("--excerpt", action="store_true",
+                   help="режим выписки (только add): origin=excerpt, обязательны --text-file, --url и --published; "
+                        "сила утверждений по выписке — не выше C, пока первоисточник не перепроверен "
+                        "(pfs source refresh снимает пометку)")
+    s.add_argument("--via-browser", action="store_true",
+                   help="только fetch: отрендерить JS-страницу через Playwright (если установлен); "
+                        "нет Playwright — команда установки и фолбэк --excerpt")
     s.add_argument("--note"); s.add_argument("--published"); s.add_argument("--force", action="store_true")
     s.add_argument("--max-chars", type=int, default=4000, help="лимит знаков превью (show/refresh)")
     s.set_defaults(f=cmd_source)

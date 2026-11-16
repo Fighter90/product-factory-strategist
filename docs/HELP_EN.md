@@ -45,7 +45,7 @@ python3 -m unittest discover -s tests          # self-check (260 tests)
 > are pulled automatically by `./scripts/install.sh` — together with the site; the install verifies the result.
 > Without them `pfs doctor` hints; to update the materials run `cd knowledge && git pull`.
 
-`doctor` reports install mode (editable/venv/source), package version, `pfs` path (which), PATH health, projects dir location, Python version, pdftotext/pypdf availability, number of knowledge cards, active project.
+`doctor` reports install mode (editable/venv/source), package version, `pfs` path (which), PATH health, projects dir location, Python version, pdftotext/pypdf availability, an HTTPS check against three domains (TLS chain certifi → truststore → `SSL_CERT_FILE`; on failure it prints the «Install Certificates.command» / `pip install certifi` hint), number of knowledge cards, active project.
 CLI needs no API keys. Keys (e.g., Linear API) go into `.env` — it is git-ignored.
 
 ---
@@ -129,15 +129,21 @@ pfs source add https://example.com/report            # web page: fetched, cleane
 pfs source add ~/Downloads/report.pdf                # PDF/DOCX/XLSX/CSV/image
 pfs source add sources/raw/report.md                 # relative path: project directory first
                                                      # (projects/<slug>/…), then cwd; resolved path is printed
-pfs source add --text-file doc.md --url <url> --title "…"   # if a site blocks automated fetching
+pfs source add --text-file doc.md --url <url> --excerpt --published 2025-06-01   # excerpt mode:
+                                                    # origin=excerpt, claim strength capped at C
+                                                    # until the original is re-verified by refresh
+                                                    # (incl. inferences via derived_from — check warns)
 pfs source fetch <url> --title "…"                   # unreachable URL (403/SSL/JS/timeout) in one call:
                                                      # direct request → r.jina.ai → web.archive.org;
                                                      # origin: public on direct success, excerpt on fallback
+pfs source fetch <url> --via-browser                 # JS-rendered page via Playwright (if installed);
+                                                     # without it — install command and --excerpt fallback
 pfs source add interview.md --origin interview       # your interview (no personal data)
 pfs source add transcript.md --origin synthetic      # AI respondent: hypotheses only
 pfs source list | pfs source show S003
 pfs source refresh S003                 # refresh a web source: sha256 delta → old version backed up
-                                        # to raw/<S###>_old_<sha8>.txt → impact on claims built on it
+                                        # to raw/<S###>_old_<sha8>.txt → impact on claims built on it;
+                                        # a direct answer from the original clears the excerpt mark
 ```
 Rules: project domains (`project.json → allowed_sources`) are checked before the request; secret files
 (`.ssh`, keys, `.env`) are rejected; instruction-like phrases in texts are flagged and never executed.
