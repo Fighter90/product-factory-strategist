@@ -188,6 +188,10 @@ def run(pdir: Path) -> dict:
             warnings.append(tr("warn_stale_grounds", cid=c["id"], stale=", ".join(stale)))
         if c["kind"] in ("hypothesis", "forecast", "assumption") and not (c["sources"] or c["derived_from"]):
             warnings.append(tr("warn_no_grounds", cid=c["id"], kind=kind_label(c["kind"])))
+        # PRO-59: вывод опирается только на выписки (origin=excerpt) — сила ограничена C,
+        # текст мог быть искажён при ручном переносе, нужен refresh первоисточника
+        if c["sources"] and all(srcs.get(s, {}).get("origin") == "excerpt" for s in c["sources"]):
+            warnings.append(tr("warn_excerpt_only", cid=c["id"], sources=", ".join(c["sources"])))
     flagged = [s["id"] for s in srcs.values() if s.get("injection_flags")]
     if flagged:
         warnings.append(tr("warn_injection", ids=", ".join(flagged)))

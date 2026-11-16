@@ -62,10 +62,12 @@ class InstallLinesTests(unittest.TestCase):
 
 class DoctorOutputTests(unittest.TestCase):
     def test_doctor_prints_install_block(self):
-        from tools.pfs import cli
+        from tools.pfs import cli, extract
         buf = io.StringIO()
-        with redirect_stdout(buf):
-            cli.cmd_doctor(argparse.Namespace())
+        with mock.patch.object(extract, "https_probe",
+                               return_value=[("pypi.org", "ok"), ("www.python.org", "ok"), ("example.com", "ok")]):
+            with redirect_stdout(buf):
+                cli.cmd_doctor(argparse.Namespace())
         out = buf.getvalue()
         self.assertIn("Установка:", out)
         self.assertIn("pfs:", out)

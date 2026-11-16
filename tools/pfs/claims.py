@@ -63,12 +63,25 @@ def _validate(pdir: Path, kind: str, sources: list[str], derived_from: list[str]
     return "agent" if kind == "inference" else ("source" if sources else "agent")
 
 
+def _excerpt_grade_cap(pdir: Path, sources: list[str], grade: str | None) -> None:
+    """PRO-59: утверждение опирается только на выписки (origin=excerpt) — сила доказательства
+    не выше C, пока первоисточник не перепроверен (pfs source refresh снимает пометку выписки).
+    Grade A/B отклоняется; смешанный набор источников ограничение не включает."""
+    if grade in ("A", "B") and sources:
+        rows = {s["id"]: s for s in src_mod.load(pdir)}
+        if all(rows.get(s, {}).get("origin") == "excerpt" for s in sources):
+            raise PfsError(f"Сила {grade} недопустима: утверждение опирается только на выписки (origin=excerpt) — "
+                           f"сила не выше C, пока первоисточник не перепроверен: pfs source refresh {sources[0]}, "
+                           "либо добавьте публичный источник")
+
+
 def add(pdir: Path, text: str, kind: str, sources: list[str] | None = None, derived_from: list[str] | None = None,
         confidence: str = "medium", note: str | None = None, quote: str | None = None, tags: list[str] | None = None, grade: str | None = None) -> dict:
     if grade and grade not in GRADES:
         raise PfsError(f"grade: {', '.join(GRADES)}")
     sources, derived_from = sources or [], derived_from or []
     basis = _validate(pdir, kind, sources, derived_from, confidence)
+    _excerpt_grade_cap(pdir, sources, grade)
     rows = load(pdir)
     for r in rows:  # повторный вызов с тем же текстом не плодит дубли
         if r["text"].strip() == text.strip() and r["status"] == "active":
@@ -145,6 +158,7 @@ def add_batch(pdir: Path, path: Path) -> dict:
                 sources_list = _as_list(item.get("source") or item.get("sources"))
                 derived = _as_list(item.get("from") or item.get("derived_from"))
                 basis = _validate(pdir, kind, sources_list, derived, confidence)
+                _excerpt_grade_cap(pdir, sources_list, grade)  # PRO-59: выписки — сила не выше C
                 recs.append({"id": core.next_id("C", rows + recs), "text": text, "kind": kind,
                              "sources": sources_list, "derived_from": derived, "confidence": confidence,
                              "basis": basis, "quote": item.get("quote"), "tags": _as_list(item.get("tags")),

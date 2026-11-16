@@ -44,7 +44,7 @@ python3 -m unittest discover -s tests   # самопроверка (260 тест
 > подтягиваются автоматически при `./scripts/install.sh` — вместе с сайтом; установка проверяет результат.
 > Без них `pfs doctor` подскажет отсутствие; обновление материалов — `cd knowledge && git pull`.
 
-`doctor` показывает: способ установки (editable/venv/source), версию пакета, путь до `pfs` (which), здоровье PATH, расположение projects dir, версию Python, наличие pdftotext/pypdf, число карт в базе знаний, активный проект.
+`doctor` показывает: способ установки (editable/venv/source), версию пакета, путь до `pfs` (which), здоровье PATH, расположение projects dir, версию Python, наличие pdftotext/pypdf, HTTPS-проверку на трёх доменах (TLS-цепочка certifi → truststore → `SSL_CERT_FILE`; при сбое — подсказка «Install Certificates.command» / `pip install certifi`), число карт в базе знаний, активный проект.
 Никаких ключей для работы CLI не нужно. Ключи (например, Linear API) кладите в `.env` — он не коммитится.
 
 ---
@@ -130,14 +130,20 @@ pfs source add ~/Downloads/report.pdf               # PDF/DOCX/XLSX/CSV/изоб
 pfs source add sources/raw/report.md                # относительный путь: сначала каталог проекта
                                                     # (projects/<slug>/…), затем cwd; резолв-путь — в выводе
 pfs source add --text-file doc.md --url <url> --title "…"   # если сайт блокирует автоматическую загрузку
+pfs source add --text-file doc.md --url <url> --excerpt --published 2025-06-01   # режим выписки:
+                                                    # origin=excerpt, сила утверждений не выше C,
+                                                    # пока первоисточник не перепроверен refresh'ем
 pfs source fetch <url> --title "…"                  # недоступный URL (403/SSL/JS/таймаут) одним вызовом:
                                                     # прямой запрос → r.jina.ai → web.archive.org;
                                                     # origin: public при прямом успехе, excerpt при фолбэке
+pfs source fetch <url> --via-browser                # JS-страница: рендер через Playwright (если установлен);
+                                                    # нет Playwright — команда установки и фолбэк --excerpt
 pfs source add interview.md --origin interview      # ваше интервью (без персональных данных)
 pfs source add transcript.md --origin synthetic     # ИИ-респондент: только гипотезы
 pfs source list | pfs source show S003
 pfs source refresh S003                  # обновить web-источник: дельта sha256 → бэкап старой версии
-                                         # в raw/<S###>_old_<sha8>.txt → impact по утверждениям на нём
+                                         # в raw/<S###>_old_<sha8>.txt → impact по утверждениям на нём;
+                                         # прямой ответ первоисточника снимает пометку выписки (PRO-59)
 ```
 Правила: домены проекта (`project.json → allowed_sources`) проверяются до запроса; файлы-секреты
 (`.ssh`, ключи, `.env`) отклоняются; фразы-инструкции в текстах помечаются и не исполняются.
