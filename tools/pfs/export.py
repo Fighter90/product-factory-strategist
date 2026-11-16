@@ -20,8 +20,11 @@ STATE = ".export_state.json"
 
 def _registry_snapshot(pdir: Path) -> dict:
     """Снимок реестра на момент экспорта: числа строк, sha256 содержимого реестров
-    и mtimes расчётов (calcs.json и outputs/attachments/*.xlsx). Хеш ловит правки
-    на месте (retract/rebase/supersede, source refresh), которые число строк не меняют."""
+    и расчётов (calcs.json, outputs/attachments/*.xlsx). Хеш ловит правки на месте
+    (retract/rebase/supersede, source refresh), которые число строк не меняют.
+    PRO-63: расчёты сравниваются по СОДЕРЖИМОМУ, а не по mtime — время изменения
+    файлов невоспроизводимо при git clone (чистый клон давал ложное «Excel
+    пересобран»). mtime-поля сохраняются для совместимости со старыми снимками."""
     calcs = pdir / "calcs.json"
     att_mtime = max((p.stat().st_mtime for p in (pdir / "outputs" / "attachments").glob("*.xlsx")),
                     default=None)
@@ -30,6 +33,9 @@ def _registry_snapshot(pdir: Path) -> dict:
             "sources": len(core.read_jsonl(pdir / "sources.jsonl")),
             "claims_sha": _file_sha(pdir / "claims.jsonl"),
             "sources_sha": _file_sha(pdir / "sources.jsonl"),
+            "calcs_sha": _file_sha(calcs),
+            "att_shas": {p.name: _file_sha(p)
+                         for p in sorted((pdir / "outputs" / "attachments").glob("*.xlsx"))},
             "calcs_mtime": calcs.stat().st_mtime if calcs.exists() else None,
             "attachments_mtime": att_mtime}
 
@@ -53,8 +59,16 @@ def save_state(pdir: Path) -> dict:
 
 
 def _excel_changed(pdir: Path, snap: dict) -> bool:
-    """calcs.json или книги в outputs/attachments изменились после последнего экспорта."""
+    """calcs.json или книги в outputs/attachments изменились после последнего экспорта.
+    Снимки нового формата (PRO-63) сравниваются по sha256 — воспроизводимо на чистом
+    клоне; старые снимки (только mtime) — по mtime, как раньше."""
     calcs = pdir / "calcs.json"
+    if "calcs_sha" in snap or "att_shas" in snap:  # снимок нового формата
+        if snap.get("calcs_sha") != _file_sha(calcs):
+            return True
+        cur = {p.name: _file_sha(p)
+               for p in sorted((pdir / "outputs" / "attachments").glob("*.xlsx"))}
+        return cur != (snap.get("att_shas") or {})
     if (calcs.stat().st_mtime if calcs.exists() else None) != snap.get("calcs_mtime"):
         return True
     att_mtime = max((p.stat().st_mtime for p in (pdir / "outputs" / "attachments").glob("*.xlsx")),

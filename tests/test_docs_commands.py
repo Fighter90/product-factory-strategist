@@ -23,6 +23,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from tools.pfs import export, finish
+
 REPO = Path(__file__).resolve().parents[1]
 DOCS = ["README.md", "README_EN.md", "AGENTS.md", "AGENTS_EN.md"] \
        + sorted(glob.glob(str(REPO / "docs" / "HELP*.md"))) \
@@ -190,6 +192,23 @@ class DocsCommandsTests(unittest.TestCase):
         out = (r.stdout or "") + (r.stderr or "")
         self.assertNotIn("укажите тему", out, "guide требует --topic, хотя в доках он необязательный")
         self.assertIn("Гайд", out)
+
+    # ---------- п.3: свежесть экспорта на чистом клоне (критерий готовности) ----------
+    def test_demo_committed_export_state_has_no_stale_warnings(self):
+        """Закоммиченное состояние экспорта демо: сравнение по содержимому, не по mtime —
+        иначе на свежем клоне (mtime = время checkout) ложное «Реестр изменился» (PRO-63, п.3)."""
+        self.assertEqual(export.freshness_warnings(REPO / "projects" / "демо"), [],
+                         "в репозитории закоммичено состояние экспорта, которое даёт ложное "
+                         "предупреждение на чистом клоне")
+
+    def test_demo_finish_on_fresh_copy_has_no_registry_changed(self):
+        """Критерий готовности: на чистом клоне pfs finish по демо без «Реестр изменился»."""
+        copy = Path(tempfile.mkdtemp(prefix="pfs-democopy-")) / "демо"
+        shutil.copytree(REPO / "projects" / "демо", copy)
+        res = finish.run(copy, no_deck=True)
+        summary = finish.summary_text(res)
+        self.assertNotIn("Реестр изменился", summary, summary)
+        self.assertNotIn("Пересоберите", summary)
 
 
 if __name__ == "__main__":
