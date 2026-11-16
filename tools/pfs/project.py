@@ -153,10 +153,17 @@ def set_step(pdir: Path, step: str, status: str, note: str | None = None, next_a
 
 
 def ask_human(pdir: Path, question: str, options: list[str] | None = None) -> None:
+    auto = core.autopilot()
     state = load_state(pdir)
-    state["awaiting_human"] = {"question": question, "options": options or [], "asked": core.now()}
+    state["awaiting_human"] = {"question": question, "options": options or [], "asked": core.now(),
+                               "autopilot": auto}
     save_state(pdir, state)
-    core.log(pdir, "human", f"Вопрос руководителю: {question}", step=state.get("stage"))
+    if auto:
+        # PRO-54: в автопрогоне (QA/CI) пауза не ждёт человека — рекомендованный
+        # вариант агент принимает сам; факт паузы фиксируется отдельным kind.
+        core.log(pdir, "autopilot", f"Пауза (PFS_AUTOPILOT): {question}", step=state.get("stage"))
+    else:
+        core.log(pdir, "human", f"Вопрос руководителю: {question}", step=state.get("stage"))
 
 
 def answer_human(pdir: Path, answer: str) -> None:
@@ -165,7 +172,12 @@ def answer_human(pdir: Path, answer: str) -> None:
     state["awaiting_human"] = None
     state.setdefault("answers", []).append({"question": q, "answer": answer, "ts": core.now()})
     save_state(pdir, state)
-    core.log(pdir, "human", f"Ответ руководителя: {answer}", step=state.get("stage"))
+    if core.autopilot():
+        # PRO-54: в автопрогоне ответ (рекомендованный вариант) принимает агент — видно в журнале
+        core.log(pdir, "autopilot", f"Ответ принят автоматически (QA autopilot): {answer}",
+                 step=state.get("stage"))
+    else:
+        core.log(pdir, "human", f"Ответ руководителя: {answer}", step=state.get("stage"))
 
 
 def add_open_question(pdir: Path, text: str, close: bool = False) -> None:
@@ -188,10 +200,13 @@ def status_text(pdir: Path, brief: bool = False) -> str:
     lines = [tr("status_project", title=meta.get("title"), slug=meta.get("slug")),
              tr("status_question", question=meta.get("question"))]
     marks = {"done": "✔", "in_progress": "▶", "skipped": "–", "pending": "·"}
-    bar = " ".join(f"{marks.get(state['steps'].get(s['id'], {}).get('status', 'pending'), '·')}{s['id']}"
-                   for s in STAGES)
+    # PRO-54: нумерация шагов 1–12 видна прямо в строке статуса («Шаг 1/12 … 12/12»)
+    bar = " ".join(f"{step_num(s['id'])}{marks.get(state['steps'].get(s['id'], {}).get('status', 'pending'), '·')}"
+                   f"{s['id']}" for s in STAGES)
     lines.append(tr("status_steps", bar=bar))
-    lines.append(tr("status_stage", stage=state.get("stage"), next=state.get("next_action")))
+    lines.append(tr("status_stage", stage=step_label(state.get("stage")), next=state.get("next_action")))
+    if core.autopilot():
+        lines.append(tr("status_autopilot"))
     if state.get("awaiting_human"):
         ah = state["awaiting_human"]
         opts = tr("status_options", options=" / ".join(ah["options"])) if ah.get("options") else ""
@@ -235,6 +250,29 @@ def is_finished(pdir: Path) -> bool:
     return all(steps.get(sid, {}).get("status") in ("done", "skipped") for sid in STAGE_IDS)
 
 
+def process_done(pdir: Path) -> bool:
+    """Прогон дошёл до конца (PRO-54): шаги intake…decision отмечены done/skipped.
+
+    monitoring по определению не закрывается — это отдельный режим (только по команде
+    или триггеру `decision due`), поэтому готовность прогона его отметки не требует.
+    """
+    steps = load_state(pdir).get("steps", {})
+    return all(steps.get(sid, {}).get("status") in ("done", "skipped")
+               for sid in STAGE_IDS if sid != "monitoring")
+
+
+def step_num(step: str) -> int:
+    """Номер шага 1–12 (PRO-54): intake = 1 … monitoring = 12; неизвестный шаг — 0."""
+    return STAGE_IDS.index(step) + 1 if step in STAGE_IDS else 0
+
+
+def step_label(step: str | None) -> str:
+    """Шаг с номером 1–12 для вывода CLI: «3/12 research»; неизвестный — как есть."""
+    if not step or step_num(step) == 0:
+        return step or ""
+    return f"{step_num(step)}/{len(STAGE_IDS)} {step}"
+
+
 def six_pager_due(pdir: Path) -> bool:
     """Комитет-пакет нужен: шаг review пройден, а outputs/SIX_PAGER.md ещё не собран."""
     if (pdir / "outputs" / "SIX_PAGER.md").exists():
@@ -252,10 +290,15 @@ def next_text(pdir: Path) -> str:
     meta = core.read_json(pdir / "project.json", {})
     lang = i18n.lang_of(pdir)
     lines = [tr("next_header", title=meta.get("title"), slug=meta.get("slug"))]
-    lines.append(tr("next_stage", stage=state.get("stage"), next=state.get("next_action")))
+    lines.append(tr("next_stage", stage=step_label(state.get("stage")), next=state.get("next_action")))
     if six_pager_due(pdir):
         # PRO-32: six-pager собирают на review — напоминаем первым пунктом, пока его нет.
         lines.append(tr("next_sixpager", spec=i18n.SIX_PAGER_SPEC[lang]))
+    if process_done(pdir):
+        # PRO-54 п.5: после finish процесс завершён — «продолжи» не нужен, автозапуска нет.
+        # Мониторинг, правки, презентация — по запросу; просроченные обязательства ниже
+        # остаются: это и есть вход в monitoring по команде или триггеру `decision due`.
+        lines.append(tr("next_finished"))
     if state.get("awaiting_human"):
         ah = state["awaiting_human"]
         opts = f" ({' / '.join(ah['options'])})" if ah.get("options") else ""

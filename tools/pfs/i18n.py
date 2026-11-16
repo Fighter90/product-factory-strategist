@@ -67,6 +67,8 @@ STR: dict[str, dict[str, str]] = {
         "status_question": "Запрос: {question}",
         "status_steps": "Шаги: {bar}",
         "status_stage": "Текущий шаг: {stage} | Следующее действие: {next}",
+        "status_autopilot": "Режим автопрогона (PFS_AUTOPILOT=1): на паузах принимается рекомендованный "
+                            "вариант, каждая пауза и ответ логируются.",
         "status_awaiting": "⏸ ЖДЁМ РЕШЕНИЯ РУКОВОДИТЕЛЯ: {question}.{options}",
         "status_options": " Варианты: {options}",
         "status_open_questions": "Открытые вопросы: {items}",
@@ -79,6 +81,8 @@ STR: dict[str, dict[str, str]] = {
         # ---------- next ----------
         "next_header": "ЧТО РЕШАТЬ СЕЙЧАС — {title} [{slug}]",
         "next_stage": "Шаг: {stage} · Далее: {next}",
+        "next_finished": "✔ Процесс завершён. Доступно: мониторинг, правки, презентация — "
+                         "по запросу, без автозапуска.",
         "next_sixpager": "📋 Собрать комитет-пакет: pfs calc scaffold → pfs calc all → pfs export "
                          "--six-pager (spec: {spec})",
         "next_waiting": "⏸ Ждём вашего ответа: {question}{options}",
@@ -98,6 +102,8 @@ STR: dict[str, dict[str, str]] = {
         "new_created": "Создан проект {slug}. Следующий шаг: intake — уточнить запрос (см. {agents}).",
         "step_marked": "Шаг {step} → {status}. Текущий: {stage}. Далее: {next}",
         "step_cards": "Карты шага: {cards}",
+        "ask_autopilot": "PFS_AUTOPILOT=1: пауза принимает рекомендованный вариант — ответьте сами "
+                         "(pfs answer \"<вариант>\") и продолжайте без ожидания.",
         "lang_current": "Язык проекта: {lang} — инструкции: {agents}, шаблоны: {templates}, "
                         "проверки: {gate}",
         "lang_set": "Язык проекта: {lang} (было: {old}) — инструкции: {agents}, шаблоны: {templates}, "
@@ -202,6 +208,8 @@ STR: dict[str, dict[str, str]] = {
         "status_question": "Request: {question}",
         "status_steps": "Steps: {bar}",
         "status_stage": "Current step: {stage} | Next action: {next}",
+        "status_autopilot": "Autopilot mode (PFS_AUTOPILOT=1): pauses take the recommended option, "
+                            "every pause and answer is logged.",
         "status_awaiting": "⏸ AWAITING THE LEADER'S DECISION: {question}.{options}",
         "status_options": " Options: {options}",
         "status_open_questions": "Open questions: {items}",
@@ -213,6 +221,8 @@ STR: dict[str, dict[str, str]] = {
         "status_documents": "Documents: {docs}",
         "next_header": "WHAT TO DECIDE NOW — {title} [{slug}]",
         "next_stage": "Step: {stage} · Next: {next}",
+        "next_finished": "✔ Process complete. Available on request: monitoring, edits, presentation — "
+                         "nothing starts automatically.",
         "next_sixpager": "📋 Assemble the committee pack: pfs calc scaffold → pfs calc all → pfs export "
                          "--six-pager (spec: {spec})",
         "next_waiting": "⏸ Waiting for your answer: {question}{options}",
@@ -231,6 +241,8 @@ STR: dict[str, dict[str, str]] = {
         "new_created": "Project {slug} created. Next step: intake — clarify the request (see {agents}).",
         "step_marked": "Step {step} → {status}. Current: {stage}. Next: {next}",
         "step_cards": "Step maps: {cards}",
+        "ask_autopilot": "PFS_AUTOPILOT=1: the pause takes the recommended option — answer yourself "
+                         "(pfs answer \"<option>\") and continue without waiting.",
         "lang_current": "Project language: {lang} — instructions: {agents}, templates: {templates}, "
                         "checks: {gate}",
         "lang_set": "Project language: {lang} (was: {old}) — instructions: {agents}, templates: {templates}, "

@@ -75,7 +75,7 @@ def cmd_use(a):
 def cmd_list(a):
     for p in project.list_projects():
         mark = "*" if p["slug"] == core.active_slug() else " "
-        print(f"{mark} {p['slug']:<40} шаг: {p['stage']:<12} {p['title']}")
+        print(f"{mark} {p['slug']:<40} шаг: {project.step_label(p['stage']):<16} {p['title']}")
 
 
 def cmd_status(a):
@@ -89,8 +89,9 @@ def cmd_step(a):
     pdir = _p(a)
     st = project.set_step(pdir, a.step, a.status, a.note, a.next)
     lang = i18n.lang_of(pdir)
-    print(i18n.t(lang, "step_marked", step=a.step, status=a.status, stage=st["stage"],
-                 next=st.get("next_action")))
+    # PRO-54: шаг и текущий этап — с номером 1–12 («Шаг 2/12 sources → done»)
+    print(i18n.t(lang, "step_marked", step=project.step_label(a.step), status=a.status,
+                 stage=project.step_label(st["stage"]), next=st.get("next_action")))
     cards = kb.cards_for(a.step)
     if cards:
         print(i18n.t(lang, "step_cards", cards=", ".join(cards)))
@@ -140,8 +141,13 @@ def cmd_questions(a):
 
 
 def cmd_ask(a):
-    project.ask_human(_p(a), a.question, _split(a.options))
-    print("Вопрос записан. Агент ждёт ответа руководителя (pfs answer \"…\").")
+    pdir = _p(a)
+    project.ask_human(pdir, a.question, _split(a.options))
+    if core.autopilot():
+        # PRO-54: в автопрогоне пауза не ждёт человека — агент отвечает сам рекомендацией
+        print(i18n.t(i18n.lang_of(pdir), "ask_autopilot"))
+    else:
+        print("Вопрос записан. Агент ждёт ответа руководителя (pfs answer \"…\").")
 
 
 def cmd_answer(a):
@@ -520,7 +526,8 @@ def cmd_docx(a):
 
 def cmd_finish(a):
     pdir = _p(a)
-    res = finish.run(pdir, no_deck=a.no_deck, en=a.en)
+    # PRO-54: six-pager RU и EN собираются всегда (без вопроса пользователя); --no-en отключает EN
+    res = finish.run(pdir, no_deck=a.no_deck, en=not a.no_en)
     # предупреждения о несвежем реестре печатает summary_text (PRO-41: без дублей)
     print(check.report_text(res["check"], i18n.lang_of(pdir)))
     print(finish.summary_text(res, i18n.lang_of(pdir)))
@@ -819,9 +826,11 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("questions", help="вопросные блоки шага (настраиваемость стратегии)")
     s.add_argument("block", nargs="?", default=None, help="шаг или id блока, напр. options-criteria; без аргумента — обзор всех шагов")
     s.set_defaults(f=cmd_questions)
-    s = sp.add_parser("finish", help="собрать финальный пакет одной цепочкой: Excel → REPORT → six-pager → DOCX → deck")
+    s = sp.add_parser("finish", help="собрать финальный пакет одной цепочкой: Excel → REPORT → six-pager RU и EN → DOCX → deck (конец прогона)")
     s.add_argument("--no-deck", action="store_true", help="не собирать HTML-деку")
-    s.add_argument("--en", action="store_true", help="дополнительно EN-версия six-pager (SIX_PAGER_EN.md + DOCX)")
+    s.add_argument("--en", action="store_true",
+                   help="устарел: EN-версия six-pager собирается всегда (PRO-54); оставлен для совместимости")
+    s.add_argument("--no-en", action="store_true", help="не собирать EN-версию six-pager (SIX_PAGER_EN.md + DOCX)")
     s.set_defaults(f=cmd_finish)
     s = sp.add_parser("doctor", help="проверка установки, окружения и реестров источников")
     s.add_argument("--fix", action="store_true",

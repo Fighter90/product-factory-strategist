@@ -24,6 +24,15 @@ def projects_dir() -> Path:
     return Path(os.environ.get("PFS_PROJECTS_DIR", ROOT / "projects"))
 
 
+def autopilot() -> bool:
+    """Режим автопрогона (PRO-54): PFS_AUTOPILOT=1 — для QA и CI.
+
+    Паузы не ждут человека: агент сам принимает рекомендованный вариант
+    (pfs answer) и продолжает; каждая пауза и ответ логируются (kind autopilot).
+    """
+    return os.environ.get("PFS_AUTOPILOT", "").strip() == "1"
+
+
 # Шаги рабочего процесса. human=True — агент обязан остановиться и спросить человека.
 STAGES: tuple[dict[str, Any], ...] = (
     {"id": "intake", "title": "Постановка задачи", "human": True},

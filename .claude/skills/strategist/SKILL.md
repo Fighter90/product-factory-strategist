@@ -10,12 +10,17 @@ description: Точка входа агента «Стратег Фабрики 
      Если `awaiting_human` не пуст — сначала получи ответ (`pfs answer`).
    - Новая задача → `pfs new "<короткое название>" "<запрос дословно>"`.
 2. `pfs route` → сценарий, карты, план моделей. При `confidence: low` — один уточняющий вопрос.
-3. Выполняй шаги по таблице из AGENTS.md §3, перед каждым читая навык:
+3. Выполняй шаги по таблице из AGENTS.md §3 (нумерация 1–12), перед каждым читая навык:
    intake → research (вкл. sources) → situation → options → (choice: человек) → strategy → validation-plan →
-   review → decision-support (decision: человек) → monitoring.
-4. После каждого шага: `pfs step <шаг> done --next "<следующее действие>"` и строка прогресса пользователю.
+   review → decision-support (decision: человек). Точки остановки — только intake, choice, decision и finish;
+   между ними агент идёт без пауз.
+4. После каждого шага: `pfs step <шаг> done --next "<следующее действие>"` и строка прогресса
+   «Шаг N/12 · …» (N — 1…12).
 5. После `review`: `pfs export` и короткое резюме: рекомендация, 3 главных основания [C###], 3 главных неизвестных,
-   стоимость (`pfs cost`).
+   стоимость (`pfs cost`). После decision — конец прогона: `pfs finish` (REPORT, six-pager RU и EN, Excel, check →
+   DOCX → дека) и одно финальное сообщение со ссылками. Monitoring — отдельный режим: только по команде
+   пользователя («проверь обязательства», `pfs next`) или по триггеру `decision due`; обязательства решения
+   (WBS, черновики) без явного запроса не выполняй.
 
 Режимы по просьбе пользователя:
 - «быстро/экономно» → `pfs route --economy`, research ограничить 6–8 источниками, без интервью.
@@ -31,12 +36,17 @@ description: Точка входа агента «Стратег Фабрики 
      `next_action`. If `awaiting_human` is set — get the answer first (`pfs answer`).
    - New task → `pfs new "<short title>" "<request verbatim>"` (add `--lang en` for an English engagement).
 2. `pfs route` → scenario, maps, model plan. If `confidence: low` — ask one clarifying question.
-3. Run the steps per the table in AGENTS.md §3, reading the matching skill before each:
+3. Run the steps per the table in AGENTS.md §3 (numbering 1–12), reading the matching skill before each:
    intake → research (incl. sources) → situation → options → (choice: human) → strategy → validation-plan →
-   review → decision-support (decision: human) → monitoring.
-4. After each step: `pfs step <step> done --next "<next action>"` and a progress line for the user.
+   review → decision-support (decision: human). Stop points — only intake, choice, decision and finish;
+   between them the agent moves without pauses.
+4. After each step: `pfs step <step> done --next "<next action>"` and a progress line
+   "Step N/12 · …" (N is 1…12).
 5. After `review`: `pfs export` and a short summary: recommendation, top 3 grounds [C###], top 3 unknowns,
-   cost (`pfs cost`).
+   cost (`pfs cost`). After decision — the end of the run: `pfs finish` (REPORT, six-pager RU and EN, Excel,
+   check → DOCX → deck) and one final message with links. Monitoring is a separate mode: only on the user's
+   command ("check the commitments", `pfs next`) or on the `decision due` trigger; decision commitments
+   (WBS, drafts) are not executed without an explicit request.
 
 Project language (AGENTS.md §0 / AGENTS_EN.md §0): `lang: en` means AGENTS_EN.md, English templates
 (`knowledge/templates/en/`) and English outputs; the CLI switches via `pfs lang`.
