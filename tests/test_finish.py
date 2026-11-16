@@ -78,6 +78,10 @@ class FinishTests(unittest.TestCase):
 
     def test_idempotent(self):
         r1 = finish.run(self.pdir)
+        # PRO-47: затвор проверяет содержание six-pager — собранный каркас содержит
+        # незаполненные места и честно останавливает повторную сборку. Идемпотентность
+        # цепочки проверяем пересборкой с нуля: убираем six-pager перед вторым прогоном.
+        (self.pdir / "outputs" / "SIX_PAGER.md").unlink()
         r2 = finish.run(self.pdir)
         self.assertEqual({p.name for p in r1["artifacts"]}, {p.name for p in r2["artifacts"]})
         self.assertTrue((self.pdir / "outputs" / "REPORT.md").exists())

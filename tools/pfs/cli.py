@@ -271,9 +271,13 @@ def cmd_claim(a):
 
 def cmd_check(a):
     pdir = _p(a)
-    res = check.run(pdir, strict=a.strict)  # PRO-50: strict продвигает числовые расхождения в ошибки
+    # PRO-50: strict продвигает числовые расхождения в ошибки; PRO-47: --six-pager
+    # включает линтер содержания six-pager (в --strict — автоматически, если файл есть)
+    res = check.run(pdir, strict=a.strict, sixpager=a.six_pager or a.strict)
+    if a.six_pager and not res.get("sixpager_checked"):
+        res["warnings"].append(i18n.t(i18n.lang_of(pdir), "warn_doc_missing", name="SIX_PAGER.md"))
     print(json.dumps(res, ensure_ascii=False, indent=2) if a.json else check.report_text(res, i18n.lang_of(pdir)))
-    if a.strict and res["errors"]:
+    if (a.strict or a.six_pager) and res["errors"]:
         sys.exit(1)
 
 
@@ -707,7 +711,11 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(f=cmd_claim)
 
     s = sp.add_parser("check", help="контроль качества"); s.add_argument("--json", action="store_true")
-    s.add_argument("--strict", action="store_true"); s.set_defaults(f=cmd_check)
+    s.add_argument("--strict", action="store_true")
+    s.add_argument("--six-pager", action="store_true",
+                   help="линтер содержания SIX_PAGER.md (PRO-47): структура эталона, объём, "
+                        "остатки шаблона, таблицы, служебные ID, арифметика, сноски, язык")
+    s.set_defaults(f=cmd_check)
     s = sp.add_parser("review", help="lock вердикта review: снимок реестра после ревизии (PRO-27)")
     s.add_argument("action", choices=["lock"],
                    help="lock — sha256 claims/sources и документов 00–07 в outputs/.review_state.json; "

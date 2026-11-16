@@ -106,5 +106,60 @@
     },
     "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|pp\\b|₽|RUB|mln|bn|k\\b|\\$|times|users|subscribers|customers|weeks|months|days)",
     "exempt_line_markers": ["<!-- no-tag -->", "|---", "Goal:", "Observation window:"]
+  },
+  "sixpager": {
+    "_comment": "PRO-47: линтер содержания six-pager (outputs/SIX_PAGER.md) — pfs check --six-pager, автоматически в --strict и в затворе pfs finish, если файл существует. Проверяет документ комитета, а не теги: структуру эталона (FAQ-1…6, knowledge/templates/SIX_PAGER_PROMPT.md), объём, остатки шаблона, таблицы, служебные ID, арифметику, сноски и язык. Пороги, маркеры и паттерны меняйте здесь, не в коде. Блок sections выбирается по языку проекта.",
+    "max_words": 3500,
+    "warn_paragraph_words": 120,
+    "warn_table_cols": 6,
+    "en_file": "SIX_PAGER_EN.md",
+    "sections": {
+      "ru": {
+        "faq": ["FAQ-1", "FAQ-2", "FAQ-3", "FAQ-4", "FAQ-5", "FAQ-6"],
+        "subpoints": {"FAQ-1": ["1.1", "1.2"], "FAQ-2": ["2.1", "2.2"]},
+        "extra_h2_allowed": ["Источники", "Приложения"],
+        "exclude_from_words": ["Источники", "Приложения"],
+        "working_doc_headings": ["^\\d{2} · ", "^Варианты[ :]", "^Вариант\\s+[A-ZА-Я0-9]",
+                                 "^Продуктовая стратегия", "^План проверки", "^Сравнение",
+                                 "^Возражения", "^Рекомендация", "^Скрытые допущения"],
+        "footnotes_heading": "Источники (сноски)",
+        "contrib_lead": "распределение вклада",
+        "calc_table_cols": ["Расчёт", "Результат"],
+        "needs_solutions_cols": ["Потребности", "Решения"],
+        "template_markers": ["заполните", "__%", "укажите теги", "KPI в двух направлениях",
+                             "Сформулируйте 3–4 инициативы"],
+        "template_regexes": ["Сегмент\\s+\\d", "Инициатива\\s+\\d"],
+        "metric_labels": ["ARPU", "CAC", "LTV", "MRR", "churn", "NSM"],
+        "metric_ignore": ["до", "порог", "цель", "критерий", "окупаемость", "payback", "база"]
+      },
+      "en": {
+        "faq": ["FAQ-1", "FAQ-2", "FAQ-3", "FAQ-4", "FAQ-5", "FAQ-6"],
+        "subpoints": {"FAQ-1": ["1.1", "1.2"], "FAQ-2": ["2.1", "2.2"]},
+        "extra_h2_allowed": ["Sources", "Appendices"],
+        "exclude_from_words": ["Sources", "Appendices"],
+        "working_doc_headings": ["^\\d{2} · ", "^Options[ :]", "^Option\\s+[A-Z0-9]",
+                                 "^Product strategy", "^Validation plan", "^Comparison",
+                                 "^Objections", "^Recommendation", "^Hidden assumptions"],
+        "footnotes_heading": "Sources (footnotes)",
+        "contrib_lead": "contribution",
+        "calc_table_cols": ["Calculation", "Result"],
+        "needs_solutions_cols": ["Needs", "Solutions"],
+        "template_markers": ["fill in", "__%", "KPIs in two dimensions:",
+                             "Formulate 3–4 initiatives"],
+        "template_regexes": ["Segment\\s+\\d", "Initiative\\s+\\d"],
+        "metric_labels": ["ARPU", "CAC", "LTV", "MRR", "churn", "NSM"],
+        "metric_ignore": ["up to", "threshold", "target", "criterion", "payback", "baseline"]
+      }
+    },
+    "service_id_patterns": {
+      "решение D###": "D\\d{3}(?!\\s*\\**\\s*[—:–-])",
+      "гипотеза H#": "H\\d{1,2}(?!\\s*\\**\\s*[.::—–-])",
+      "веха M#": "M\\d{1,2}(?!\\s*\\**\\s*[.::—–-])",
+      "вопрос Q#": "Q\\d{1,2}(?!\\s*\\**\\s*[.::—–-])",
+      "пакет WBS P#": "WBS\\s+P\\d[\\d.]*",
+      "ссылка «02, Q#» / «см. 06» / «из 02»": "\\[\\s*\\d{2}\\s*,\\s*Q\\d+\\s*\\]|\\d{2}\\s*,\\s*Q\\d+\\b|см\\.?\\s+0\\d\\b|из\\s+0\\d\\b",
+      "имя файла 0x_*.md": "0\\d_[\\wа-яё-]+\\.md",
+      "C→A / C0xx": "[A-ZА-Я]→[A-ZА-Я]|\\bC0xx\\b"
+    }
   }
 }
