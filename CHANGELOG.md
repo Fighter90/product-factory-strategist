@@ -3,6 +3,19 @@
 Формат — Keep a Changelog; версионирование — SemVer.
 
 
+## 1.2.33 — 2026-11-16 · swarm PRO-59: Загрузка источников на macOS: SSL CERTIFICATE_VERIFY_FAILED,
+
+### Fixed
+- **Fix** Загрузка источников на macOS: TLS-цепочка собирается через certifi/truststore — исчезают ошибки SSL CERTIFICATE_VERIFY_FAILED и DNS-сбои; `pfs doctor` проверяет HTTPS-доступ, добавлены `--excerpt` и `--via-browser`, веб-источники хранят `path` к raw-файлу.
+
+### Notes
+- Deliberately NOT changed: проверка сертификатов не отключается «чтобы работало» и JS-страницы не рендерятся автоматически — это не должно ослаблять безопасность сети, рендер остаётся явным через `--via-browser`.
+
+> Загрузка источников на macOS падала с ошибками SSL CERTIFICATE_VERIFY_FAILED, DNS-сбоями и JS-страницами, которые сохранялись без текста. Рой собрал TLS-цепочку через certifi/truststore, добавил HTTPS-проверку в `pfs doctor` и флаги `--excerpt`/`--via-browser`, а `derived_from` в check/claims теперь учитывается транзитивно — capping строже, предупреждений больше. Пользователь получает надёжное сохранение источников с путём к raw-файлам, покрытое новыми тестами (15 в `tests/test_pro59_round2.py`).
+[0m
+> build · glm-5.3-flash
+
+
 ## 1.2.32 — 2026-11-15 · swarm PRO-60: База знаний: исправить ошибки, довести EN до настоящего зерк
 
 ### Fixed
