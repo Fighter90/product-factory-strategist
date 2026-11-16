@@ -298,6 +298,10 @@ def next_text(pdir: Path) -> str:
         # PRO-54 п.5: после finish процесс завершён — «продолжи» не нужен, автозапуска нет.
         # Мониторинг, правки, презентация — по запросу; просроченные обязательства ниже
         # остаются: это и есть вход в monitoring по команде или триггеру `decision due`.
+        if not (pdir / "outputs" / "REPORT.md").exists():
+            # замечание ревью PRO-54: баннер «завершён» до сборки пакета приглашает
+            # остановиться без артефактов — сначала явная подсказка про finish
+            lines.append(tr("next_finish_hint"))
         lines.append(tr("next_finished"))
     if state.get("awaiting_human"):
         ah = state["awaiting_human"]
