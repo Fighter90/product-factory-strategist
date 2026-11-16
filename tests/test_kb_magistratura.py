@@ -11,6 +11,20 @@
    (правило knowledge/inbox/magistratura/README.md).
 4. Счётчики карт в README/README_EN/COMPLIANCE/HELP/HELP_EN равны реальному числу
    карт базы знаний — знание растёт, документация следует за ним.
+5. Единая схема имён для всей базы (отклонение от буквы issue задокументировано):
+   issue формулирует пути «knowledge/methods/M-<id>.md» и «methods_en/M-<id>-en.md» —
+   это конвенция id карты (M-cjm и т.п.), а не имени файла. Инструмент kb lint
+   (tools/pfs/kb.py::_lint_card) для ВСЕХ карт базы (включая существовавшие до пакета
+   100) требует: id начинается с «M-», не содержит суффикса «-en» (язык живёт в поле
+   frontmatter «lang») и stem файла равен id без префикса «M-». Файлы M-<id>.md /
+   <id>-en.md сломали бы kb lint (DoD требует зелёный) и создали бы второй ярус имён
+   рядом со 100 существующими картами <id>.md. Поэтому для карт пакета 1 действует та
+   же единая схема: RU — knowledge/methods/<id>.md, EN-зеркало —
+   knowledge/methods_en/<id>.md (тот же stem), id — M-<id> в обоих файлах, «lang: en»
+   в EN. Проверки NamingSchemeTests закрепляют эту схему; двухъярусной схемы имён
+   в базе нет и быть не должно (test_kb_has_no_two_tier_filenames).
+6. Свежесть индекса как след поставки: каждый id пакета 1 присутствует в INDEX.md
+   (ссылка methods/<id>.md) и INDEX_EN.md (ссылка methods_en/<id>.md) — IndexFreshnessTests.
 
 Запуск: python3 -m unittest tests.test_kb_magistratura -v
 """
@@ -20,7 +34,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 KB = REPO / "knowledge"
 
-# Пакет 1 — продуктовое ядро (карты в клоне knowledge/, ветка main приватного -base)
+# Пакет 1 — продуктовое ядро (карты в клоне knowledge/, ветка main приватного -base).
+# Имена = id карты без префикса M-; файлы: methods/<id>.md и methods_en/<id>.md
+# (единая схема всей базы, см. пункт 5 докстринга).
 MAGISTRATURA_MAPS = [
     "b2b-validation", "competitor-teardown", "evidence-design", "guerrilla-research",
     "hypothesis-testing", "mvp-ds-assembly", "pnl-product-finance", "case-solving",
@@ -41,6 +57,11 @@ EN_ERRORS = ["Typical mistakes", "Common mistakes"]  # два равноправ
 def body(path: Path) -> str:
     """Тело карты без frontmatter."""
     return path.read_text(encoding="utf-8").split("---", 2)[2]
+
+
+def frontmatter(path: Path) -> str:
+    """Frontmatter карты (между первой и второй строкой «---»)."""
+    return path.read_text(encoding="utf-8").split("---", 2)[1]
 
 
 def h2_titles(text: str) -> list[str]:
@@ -110,6 +131,67 @@ class MagistraturaMapsTests(unittest.TestCase):
                     if len(content.strip()) < 30:
                         short.append(f"{sub}/{name}.md: «{title}» — {len(content.strip())} символов")
         self.assertEqual(short, [], "пустые/короткие разделы: " + ", ".join(short))
+
+
+class NamingSchemeTests(unittest.TestCase):
+    """Единая схема имён всей базы: methods/<id>.md + methods_en/<id>.md, id M-<id>.
+
+    Закрепляет отклонение от буквы issue (пункт 5 докстринга): файлы M-<id>.md /
+    <id>-en.md запрещены — kb lint требует stem == id без «M-», язык EN живёт в
+    поле «lang», а не в суффиксе. Двухъярусной схемы имён в базе быть не должно.
+    """
+
+    def test_new_maps_follow_single_naming_scheme(self):
+        bad = []
+        for name in MAGISTRATURA_MAPS:
+            ru, en = KB / "methods" / f"{name}.md", KB / "methods_en" / f"{name}.md"
+            if not ru.exists() or not en.exists():
+                bad.append(f"{name}: нет пары methods/{name}.md + methods_en/{name}.md")
+                continue
+            ru_id = en_id = None
+            for line in frontmatter(ru).splitlines():
+                if line.startswith("id:"):
+                    ru_id = line.split(":", 1)[1].strip()
+            for line in frontmatter(en).splitlines():
+                if line.startswith("id:"):
+                    en_id = line.split(":", 1)[1].strip()
+            if ru_id != f"M-{name}":
+                bad.append(f"RU {name}.md: id «{ru_id}» вместо M-{name}")
+            if en_id != f"M-{name}":
+                bad.append(f"EN {name}.md: id «{en_id}» вместо M-{name}")
+            if en_id and en_id.endswith("-en"):
+                bad.append(f"EN {name}.md: суффикс -en в id запрещён (язык — в поле lang)")
+            if "lang: en" not in frontmatter(en):
+                bad.append(f"EN {name}.md: нет «lang: en» во frontmatter")
+        self.assertEqual(bad, [], "нарушение единой схемы имён: " + "; ".join(bad))
+
+    def test_kb_has_no_two_tier_filenames(self):
+        """Во всей базе нет второго яруса имён: ни M-*.md, ни *-en.md в обеих папках."""
+        two_tier = sorted(
+            p.relative_to(KB).as_posix()
+            for sub in ("methods", "methods_en")
+            for pattern in ("M-*.md", "*-en.md")
+            for p in (KB / sub).glob(pattern)
+        )
+        self.assertEqual(
+            two_tier, [],
+            "второй ярус имён (M-*.md / *-en.md): " + ", ".join(two_tier),
+        )
+
+
+class IndexFreshnessTests(unittest.TestCase):
+    """Каждая карта пакета 1 присутствует в INDEX.md и INDEX_EN.md — индекс свежий."""
+
+    def test_new_maps_listed_in_indexes(self):
+        missing = []
+        for name in MAGISTRATURA_MAPS:
+            ru_index = (KB / "INDEX.md").read_text(encoding="utf-8")
+            en_index = (KB / "INDEX_EN.md").read_text(encoding="utf-8")
+            if f"](methods/{name}.md)" not in ru_index or f"`M-{name}`" not in ru_index:
+                missing.append(f"INDEX.md: нет methods/{name}.md / M-{name}")
+            if f"](methods_en/{name}.md)" not in en_index or f"`M-{name}`" not in en_index:
+                missing.append(f"INDEX_EN.md: нет methods_en/{name}.md / M-{name}")
+        self.assertEqual(missing, [], "индекс не содержит карт пакета 1: " + "; ".join(missing))
 
 
 class KnowledgeCountersTests(unittest.TestCase):
