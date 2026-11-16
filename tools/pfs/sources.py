@@ -13,9 +13,11 @@ from .core import PfsError
 ORIGINS = ("public", "excerpt", "own", "interview", "synthetic", "agent")
 # Файл блокировки реестра источников: выделение S### + запись идут под core.file_lock (PRO-34).
 LOCK_NAME = ".sources.lock"
-# Каналы pfs source fetch: прямой запрос → r.jina.ai (reader) → снапшот web.archive.org.
+# Каналы pfs source fetch: прямой запрос → r.jina.ai (reader) → снапшот web.archive.org;
+# --via-browser (PRO-59) — отдельный канал: JS-страница рендерится Playwright напрямую с сайта.
 FALLBACK_CHANNELS = (("direct", "{url}"), ("reader", "https://r.jina.ai/{url}"), ("archive", "https://web.archive.org/web/{url}"))
-VIA_LABELS = {"direct": "напрямую", "reader": "r.jina.ai (reader)", "archive": "web.archive.org"}
+VIA_LABELS = {"direct": "напрямую", "reader": "r.jina.ai (reader)", "archive": "web.archive.org",
+              "browser": "Playwright (браузер)"}
 EXCERPT_MARK = "ВЫПИСКА, первоисточник недоступен из среды"
 # Признаки внедрённых инструкций. Источник — данные, а не команды: такие места помечаются, а не исполняются.
 INJECTION_PATTERNS = [
@@ -85,15 +87,27 @@ def check_url_allowed(pdir: Path, url: str) -> tuple[bool, str]:
     return _domain_ok(core.read_json(pdir / "project.json", {}), url)
 
 
+def _save_raw(pdir: Path, url: str, data: bytes, ext: str) -> Path:
+    """Сырой ответ канала → sources/raw/<sha1(url)[:10]><ext> (ревью round 2, замечание 3).
+    Как у pdf: доказательство фактически полученного и возможность пере-извлечь текст
+    другим способом; имя по URL — повторная загрузка того же адреса перезаписывает файл."""
+    raw = pdir / "sources" / "raw" / (hashlib.sha1(url.encode()).hexdigest()[:10] + ext)
+    raw.parent.mkdir(parents=True, exist_ok=True)
+    raw.write_bytes(data)
+    return raw
+
+
 def _fetch_text(pdir: Path, url: str) -> tuple[str, str, str, Path | None]:
-    """Загрузить URL: (kind, body, заголовок_страницы, путь_к_raw_pdf). HTML→text и pdf-ветка — общие для add и refresh."""
+    """Загрузить URL: (kind, body, заголовок_страницы, путь_к_raw). Сырой HTML, как и pdf,
+    сохраняется в sources/raw/ — общий для add и refresh; короткий ответ (страница под
+    JavaScript) raw не оставляет — add() даст ошибку-подсказку без файла-мусора."""
     data, ctype = extract.fetch_url(url)
     if "pdf" in ctype or url.lower().endswith(".pdf"):
-        raw_path = pdir / "sources" / "raw" / (hashlib.sha1(url.encode()).hexdigest()[:10] + ".pdf")
-        raw_path.write_bytes(data)
+        raw_path = _save_raw(pdir, url, data, ".pdf")
         return "pdf", extract.pdf_to_text(raw_path), "", raw_path
     page_title, body = extract.html_to_text(data.decode("utf-8", errors="replace"))
-    return "web", body, page_title, None
+    raw_path = _save_raw(pdir, url, data, ".html") if len(body.strip()) >= 200 else None
+    return "web", body, page_title, raw_path
 
 
 def _source_md(rec: dict, body: str, flags: list[str]) -> str:
@@ -302,6 +316,8 @@ def _fetch_via_chain(pdir: Path, url: str, *, prefer: str | None = None) -> tupl
                     page_title = _t
             if kind in ("web", "pdf") and len(body.strip()) < 200:
                 raise PfsError(f"извлечено {len(body.strip())} знаков — страница рендерится JavaScript или пуста")
+            if channel != "direct":  # сырое сохраняем только после проверки — короткий ответ не оставляет файл
+                raw_path = _save_raw(pdir, url, data, ".txt" if channel == "reader" else ".html")
             if channel == "reader":
                 page_title = page_title or _reader_title(body)
             return kind, body, page_title, raw_path, channel
@@ -313,13 +329,16 @@ def _fetch_via_chain(pdir: Path, url: str, *, prefer: str | None = None) -> tupl
 
 
 def fetch(pdir: Path, url: str, *, title: str | None = None, origin: str | None = None,
-          note: str | None = None, published: str | None = None, force: bool = False) -> tuple[dict, bool, str]:
-    """Зарегистрировать web-источник цепочкой попыток: прямой запрос → r.jina.ai (reader) → web.archive.org.
+          note: str | None = None, published: str | None = None, force: bool = False,
+          via_browser: bool = False) -> tuple[dict, bool, str]:
+    """Зарегистрировать web-источник цепочкой попыток: прямой запрос → r.jina.ai (reader) → web.archive.org;
+    via_browser (PRO-59) — вместо цепочки страница рендерится Playwright напрямую с сайта (--via-browser).
 
     Возвращает (запись, создан_ли_новый, канал). URL с 403/SSL/таймаутом/JS-пустышкой регистрируется
-    одним вызовом через фолбэк-канал. origin: None — origin=public при прямом успехе, excerpt при
-    reader/archive (текст получен не напрямую с сайта); явный --origin перекрывает. Полный фейл —
-    ошибка с предложением сохранить выписку вручную (pfs source add --text-file … --url … --origin excerpt).
+    одним вызовом через фолбэк-канал; сырой ответ каждого канала (HTML / reader-текст / DOM браузера)
+    сохраняется в sources/raw/. origin: None — origin=public при прямом успехе (в т.ч. браузерном),
+    excerpt при reader/archive (текст получен не напрямую с сайта); явный --origin перекрывает. Полный фейл —
+    ошибка с предложением сохранить выписку вручную (pfs source add --text-file … --url … --excerpt).
     """
     if origin is not None and origin not in ORIGINS:
         raise PfsError(f"origin: {', '.join(ORIGINS)}")
@@ -331,13 +350,23 @@ def fetch(pdir: Path, url: str, *, title: str | None = None, origin: str | None 
     for r in load(pdir):
         if r.get("url") == url:
             return r, False, "existing"
+    raw_path = None
     try:
-        kind, body, page_title, raw_path, channel = _fetch_via_chain(pdir, url)
+        if via_browser:
+            html = extract.fetch_via_browser(url)
+            page_title, body = extract.html_to_text(html)
+            kind, channel = "web", "browser"
+            if len(body.strip()) < 200:
+                raise PfsError(f"браузерный рендер дал {len(body.strip())} знаков — страница пуста даже после JS")
+            raw_path = _save_raw(pdir, url, html.encode("utf-8"), ".html")  # сырой DOM — как у других каналов
+        else:
+            kind, body, page_title, raw_path, channel = _fetch_via_chain(pdir, url)
     except PfsError as exc:
         raise PfsError(f"{exc}\nСохраните выписку вручную и зарегистрируйте одним вызовом: "
-                       f"pfs source add --text-file <файл> --url {url} --origin excerpt "
-                       f"(пометка «{EXCERPT_MARK.lower()}»)")
-    resolved_origin = origin or ("public" if channel == "direct" else "excerpt")
+                       f"pfs source add --text-file <файл> --url {url} --excerpt --published ГГГГ-ММ-ДД "
+                       f"(эквивалент: --origin excerpt; пометка «{EXCERPT_MARK.lower()}», "
+                       "сила утверждений по выписке — не выше C)") from exc
+    resolved_origin = origin or ("public" if channel in ("direct", "browser") else "excerpt")
     if kind == "web":
         title = title or page_title
     rec, created = _register_web(pdir, url=url, kind=kind, body=body, title=title, origin=resolved_origin,
@@ -347,17 +376,22 @@ def fetch(pdir: Path, url: str, *, title: str | None = None, origin: str | None 
 
 
 def refresh(pdir: Path, sid: str, max_chars: int = 4000) -> dict:
-    """Перезагрузить web-источник. Текст не изменился — файл, бэкап и журнал не трогаем
-    (идемпотентность); в реестре обновляется только отметка проверки retrieved, чтобы
-    напоминание «источник не проверялся дольше N дн.» в pfs next снялось самим refresh (PRO-28).
+    """Перезагрузить web-источник (или выписку kind=text с ссылкой — перепроверка PRO-59).
+    Текст не изменился — файл, бэкап и журнал не трогаем (идемпотентность); в реестре
+    обновляется только отметка проверки retrieved, чтобы напоминание «источник не проверялся
+    дольше N дн.» в pfs next снялось самим refresh (PRO-28). Исключение (PRO-59): прямой ответ
+    первоисточника снимает пометку выписки (origin=excerpt → public) — тогда шапка файла
+    переписывается, чтобы согласовать новую пометку.
 
     Изменился — старый файл уходит в sources/raw/<sid>_old_<sha8>.txt, новый пишется с тем же
     заголовком, что и при add, запись в sources.jsonl перезаписывается (без дубля).
     """
     rec = get(pdir, sid)
     url = rec.get("url")
-    if rec.get("kind") != "web" or not url:
-        raise PfsError(f"{sid} — не web-источник (тип {rec.get('kind')}); обновите вручную: "
+    if not url or rec.get("kind") not in ("web", "text"):
+        # PRO-59: выписку (kind=text) с ссылкой можно перепроверить refresh'ем — прямой ответ
+        # первоисточника снимает пометку; текст без ссылки по-прежнему только вручную.
+        raise PfsError(f"{sid} — нет ссылки или тип {rec.get('kind')} не перезагружается; обновите вручную: "
                        f"pfs source add --text-file <новый> --url {url or '<url>'}")
     ok, why = _domain_ok(core.read_json(pdir / "project.json", {}), url)
     if not ok:
@@ -372,11 +406,21 @@ def refresh(pdir: Path, sid: str, max_chars: int = 4000) -> dict:
         raise PfsError(f"{sid} не обновлён: {exc}\nИсточник не изменён; обновите вручную: "
                        "pfs source add --text-file <новый> --url <ссылка>")
     new_digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
+    # PRO-59: первоисточник ответил напрямую — выписка перепроверена, пометка origin=excerpt снимается
+    # (открывает утверждениям силу выше C, pfs check больше не предупреждает «только на выписках»).
+    verified = channel == "direct" and rec.get("origin") == "excerpt"
+    if verified:
+        rec["origin"] = "public"
     if new_digest == rec["sha256"]:
         rows = load(pdir)
         rec["retrieved"] = core.now()  # источник проверен — напоминание снимается
+        if verified:  # шапка файла должна согласовать новую пометку (текст не трогаем)
+            core.atomic_write(path, _source_md(rec, body, scan_injection(body)))
         core.write_jsonl(pdir / "sources.jsonl", [{**r, **rec} if r["id"] == sid else r for r in rows])
-        return {"sid": sid, "changed": False}
+        res = {"sid": sid, "changed": False}  # идемпотентность: без изменений — без новых полей
+        if verified:
+            res["verified"] = True
+        return res
     old_sha8 = rec["sha256"][:8]
     old_chars = rec.get("chars")
     flags = scan_injection(body)
@@ -387,9 +431,10 @@ def refresh(pdir: Path, sid: str, max_chars: int = 4000) -> dict:
     rows = load(pdir)
     core.write_jsonl(pdir / "sources.jsonl",
                      [{**r, **rec} if r["id"] == sid else r for r in rows])  # перезапись полей, без дубля
-    core.log(pdir, "source", f"{sid} обновлён (изменился sha256, chars {old_chars if old_chars is not None else '?'}→{len(body)})",
+    core.log(pdir, "source", f"{sid} обновлён (изменился sha256, chars {old_chars if old_chars is not None else '?'}→{len(body)})"
+             + ("; выписка перепроверена напрямую, origin=public" if verified else ""),
              tool="pfs source refresh", url=url, injection_flags=len(flags) or None)
-    return {"sid": sid, "changed": True, "old_chars": old_chars, "new_chars": len(body),
+    return {"sid": sid, "changed": True, "verified": verified, "old_chars": old_chars, "new_chars": len(body),
             "old_sha8": old_sha8, "new_sha8": new_digest[:8], "flags": len(flags), "preview": body[:max_chars]}
 
 
