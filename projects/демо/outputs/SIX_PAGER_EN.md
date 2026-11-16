@@ -125,10 +125,10 @@ Key directions:
 - A public Methodology page: ATS-scoring criteria are open (transparency as trust against the
   98%-ATS reality [C008]).
 
-Unit economics calculation (assumptions [C016]): CM = $29 × 0.75 = **$21.75**; LTV = $21.75 / 0.08 =
-**$271.88**; LTV/CAC = $271.88 / $60 = **4.53**; CAC payback = $60 / $21.75 = **2.8 months**;
-break-even = $1,500 / $21.75 ≈ **69 paying users** — reachable on organic traffic (0.21% of
-week-12 visitors in the funnel model).
+Unit economics calculation (assumptions [C016]): tiers Pro $12 / Unlimited $29 → weighted ARPU
+$18.80 (60/40 mix of paying users); CM = $18.80 × 0.75 = **$14.10**; LTV = $14.10 / 0.08 = **$176.25**;
+freemium: free→paid CR 5.5% → paying-user CAC = $60 / 0.055 = **$1,090.91**; LTV/CAC (paying) = **0.16** —
+a paid channel does not pay back at that CR (inference — see the Scenarios sheet of unit_economics.xlsx).
 
 **Beta funnel calculation — step by step** (model [S008], seed=7; starting base 3,000 visitors, 22%/wk growth):
 
@@ -217,7 +217,7 @@ KPIs are set in two directions:
 - Signup → paid conversion: **≥ 4%** (freemium benchmark 2–5% [C020]);
 - Annual-plan share among payers: **≥ 30%** (testing the Markus hypothesis [C018]);
 - Non-EN wave share of new payers after locales open: **≥ 20%**;
-- Actual LTV/CAC: **≥ 3** (model: 4.53) — below 3, paid channels stay closed.
+- Actual paying-user LTV/CAC: **paid-channel gate** (model: 0.16 at 5.5% CR — paid channels stay closed until the gate; grow organically first).
 
 **2) Product**
 

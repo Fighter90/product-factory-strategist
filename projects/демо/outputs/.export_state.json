@@ -1,9 +1,9 @@
 {
-  "at": "2026-11-10T10:19:16+03:00",
+  "at": "2026-11-14T08:44:02+03:00",
   "claims": 20,
-  "sources": 10,
-  "claims_sha": "5c22363ff637fa672514993455ec8157ac6b476ce702a932e116450bcf0505d1",
-  "sources_sha": "1545271df5851cdd3095d450ad90866d7c339614df5cb4a910c0f484d01f73c9",
-  "calcs_mtime": 1794276470.1455011,
-  "attachments_mtime": 1794295156.1094077
+  "sources": 11,
+  "claims_sha": "778a72558276b19bfdc4fa2f1461d6911bb616432a6cddd906aa911a9f85658b",
+  "sources_sha": "76e3f2a5d52a3de9d558c2b9d8431e4774fb2e73c683da0abcf664c458b00cfd",
+  "calcs_mtime": 1794635024.7929673,
+  "attachments_mtime": 1794635042.8620913
 }
