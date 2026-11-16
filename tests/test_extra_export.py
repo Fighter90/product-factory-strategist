@@ -179,10 +179,13 @@ class SixPagerAssemblyTests(unittest.TestCase):
                 "origin": "public", "retrieved": "2026-11-09T00:00:00",
                 "published": "2026-10-01" if i == 1 else None, "path": ""}, ensure_ascii=False))
         (pdir / "sources.jsonl").write_text("\n".join(rows) + "\n", encoding="utf-8")
+        # PRO-49: в сноски попадают только процитированные источники — S001 (C001) и S002 (C002)
+        claims.add(pdir, "рынок 40 млрд, отток растёт", "hypothesis", ["S001"], grade="B")
+        claims.add(pdir, "региональные цены поднимают выручку", "hypothesis", ["S002"], grade="C")
         cls.text = export.build_six_pager(pdir, with_calcs=False).read_text(encoding="utf-8")
 
     def test_no_duplicated_sections(self):
-        self.assertEqual(self.text.count("рынок 40 млрд, отток [C001]"), 1)
+        self.assertEqual(self.text.count("рынок 40 млрд, отток [^1]"), 1)
         self.assertEqual(self.text.count("### Короткий ответ"), 1)
         self.assertNotIn("## Короткий ответ", self.text.splitlines())  # чужих H2 нет
         self.assertNotIn("### Рынок\n", self.text)         # пустых секций-призраков нет
@@ -208,13 +211,18 @@ class SixPagerAssemblyTests(unittest.TestCase):
         self.assertEqual(self.text.count("абоненты 55+ и семьи"), 1)
 
     def test_full_footnotes(self):
-        for i in range(1, 21):
-            self.assertIn(f"**S{i:03d}** — Источник {i} — https://example.com/{i}", self.text)
-        self.assertIn("— 2026-10-01", self.text)  # дата публикации, когда известна
+        # PRO-49: только процитированные источники (S001←C001, S002←C002) — сквозные сноски
+        self.assertIn("[^1]: **S001** — example.com — Источник 1 — 2026-10-01 — "
+                      "https://example.com/1 — сила B", self.text)
+        self.assertIn("[^2]: **S002** — example.com — Источник 2 — 2026-11-09 — "
+                      "https://example.com/2 — сила C", self.text)
+        self.assertNotIn("**S003**", self.text)  # непроцитированные не попадают в список
+        self.assertNotIn("**S020**", self.text)
         self.assertNotIn("ещё", self.text)
 
     def test_unit_econ_note_and_sensitivity(self):
-        self.assertIn("Допущения: ARPU по коридору конкурентов [C057]", self.text)
+        self.assertIn("Допущения: ARPU по коридору конкурентов", self.text)
+        self.assertNotIn("[C057]", self.text)  # неизвестный тег уходит из six-pager (реестр — REPORT.md)
         # пороги LTV/CAC ≥ 3: churn 21,75/(3·60) = 12,08 %/мес; CAC 271,875/3 = 90,62;
         # доля переменных 1 − 180/271,875 = 33,79 %
         self.assertIn("держится до churn ≈ 12,08 %/мес", self.text)
@@ -231,9 +239,9 @@ class SixPagerAssemblyTests(unittest.TestCase):
     def test_kpi_table_from_validation_plan(self):
         self.assertIn("| Плоскость | Гипотеза | Метрика | База → цель к сроку | Порог действия (остановить) |",
                       self.text)
-        self.assertIn("| Продукт | H1 — семейный пакет удерживает [C001] | удержание M1 | "
+        self.assertIn("| Продукт | H1 — семейный пакет удерживает [^1] | удержание M1 | "
                       "база 38% до запуска пакета → 38% → 45% к дню 90 | < 40% → откат |", self.text)
-        self.assertIn("| Бизнес | H2 — региональные цены поднимают выручку [C002]", self.text)
+        self.assertIn("| Бизнес | H2 — региональные цены поднимают выручку [^2]", self.text)
         self.assertIn("разницы нет → откат |", self.text)
 
 

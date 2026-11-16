@@ -9,7 +9,8 @@
    поэтому RU-текста и маркеров перевода в собранном каркасе нет.
 3. Числа юнит-экономики в EN-каркасе — EN-формат (1,234.5), в RU — русский (1234,50).
 4. Каркас-черновик (pending-строки «> EN draft») не считается «отставшим» в
-   сверке тегов RU↔EN; сверка работает для дописанного EN-документа.
+   сверке RU↔EN; сверка работает по источникам сносок S### и маркерам [^n]
+   (PRO-49): сырые теги C### в EN не ждутся — реестр тегов в REPORT.md.
 
 Запуск: python3 -m unittest tests.test_en_lint -v
 """
@@ -85,7 +86,7 @@ class EnLintTests(unittest.TestCase):
         self.assertNotIn("Рынок 40 млрд", en, "RU-контент документов 00–07 не вставляется")
         self.assertIn("> EN draft", en, "pending-строки показывают writer'у, что писать")
         ru = export.build_six_pager(self.pdir, with_calcs=False).read_text(encoding="utf-8")
-        self.assertIn("Рынок 40 млрд [C001]", ru, "RU-версия не пострадала")
+        self.assertIn("Рынок 40 млрд [^1]", ru, "RU-версия не пострадала")
 
     def test_en_unit_econ_numbers_use_en_format(self):
         core.write_json(self.pdir / "calcs.json",
@@ -103,22 +104,38 @@ class EnLintTests(unittest.TestCase):
         self.assertEqual(check.en_sync_warnings(self.pdir), [],
                          "каркас-черновик EN — не «отставшая» версия: его допишет writer")
 
-    def test_written_en_missing_tag_warns_and_draft_exempts(self):
+    def test_completed_en_with_footnotes_not_flagged_and_old_format_lags(self):
         export.build_six_pager(self.pdir, with_calcs=False)
         en_path = self.pdir / "outputs" / "SIX_PAGER_EN.md"
-        # дописанный writer'ом EN: маркера каркаса нет, есть тег C001
+        # завершённый writer'ом EN: сноски [^n] с источниками S###, сырых тегов C### нет —
+        # PRO-49 переносит теги в REPORT.md, поэтому их отсутствие в EN не «отставание»
+        en_path.write_text("# Demo: Six-pager (EN)\n\nMarket is large[^1].\n\n"
+                           "## Sources (footnotes)\n\n"
+                           "[^1]: S001 — Example — Market report — https://example.org/r — grade B\n",
+                           encoding="utf-8")
+        self.assertEqual(check.en_sync_warnings(self.pdir), [],
+                         "готовый EN со сносками и S### не отстал: теги C### живут в REPORT.md")
+        # EN в старом теговом формате: RU уже со сносками [^n], в EN их нет — предупреждение
         en_path.write_text("# Demo: Six-pager (EN)\n\nMarket is large [C001].\n", encoding="utf-8")
-        self.assertEqual(check.en_sync_warnings(self.pdir), [])
-        # в RU добавили драйвер C002, EN не переписан — check предупреждает
+        warns = check.en_sync_warnings(self.pdir)
+        self.assertTrue(warns, "EN без сносок [^n] при RU со сносками — отстал (старый формат)")
+        self.assertIn("S001", warns[0], "сигнал свёрки — источники S###, не теги C###")
+        # в RU добавили источник, EN не переписан — check предупреждает по S###
+        sources.add(self.pdir, text="Публичный отчёт: удержание 92% при семейном пакете",
+                    title="Удержание", url="https://example.org/churn")                # S002
         claims.add(self.pdir, "Драйвер: семейный пакет даёт +5 п.п. удержания",
-                   "hypothesis", ["S001"], grade="C")
+                   "hypothesis", ["S002"], grade="C")                                  # C002
         out = self.pdir / "outputs" / "03_options.md"
-        out.write_text("# 03 · Варианты\n\n## Драйверы\n\n- **Первый драйвер:** пакет [C002]\n",
-                       encoding="utf-8")
+        out.write_text("# 03 · Варианты\n\n## Вариант A: оставить как есть\n\n### Возражения\n\n"
+                       "- отток продолжится\n\n## Вариант B: семейный пакет\n\n### Возражения\n\n"
+                       "- риск каннибализации\n\n## Вариант C: закрыть направление\n\n"
+                       "## Драйверы выбранного направления\n\n"
+                       "- **Первый драйвер:** семейный пакет [C002]\n", encoding="utf-8")
         export.build_six_pager(self.pdir, with_calcs=False)
         warns = check.en_sync_warnings(self.pdir)
-        self.assertTrue(warns, "дописанный EN без нового тега — предупреждение")
-        self.assertIn("C002", warns[0])
+        self.assertTrue(warns, "дописанный EN без нового источника — предупреждение")
+        self.assertIn("S002", warns[0])
+        self.assertNotIn("C002", warns[0], "теги C### — не сигнал свёрки: реестр в REPORT.md")
         # пересборка EN даёт каркас-черновик — предупреждение снято (EN переделывают)
         export.build_six_pager(self.pdir, with_calcs=False, lang="en")
         self.assertEqual(check.en_sync_warnings(self.pdir), [])

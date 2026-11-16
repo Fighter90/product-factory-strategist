@@ -8,7 +8,7 @@ from pathlib import Path
 TMP = tempfile.mkdtemp(prefix="pfs-test-sp-")
 os.environ["PFS_PROJECTS_DIR"] = TMP
 
-from tools.pfs import calc, export, project  # noqa: E402
+from tools.pfs import calc, claims, export, project  # noqa: E402
 from tools.pfs.xlsx import Workbook, sheet_names  # noqa: E402
 
 
@@ -55,7 +55,7 @@ class CalcAndSixPagerTests(unittest.TestCase):
             "### Возражения\n- отток продолжится\n## Вариант B: переупаковка\n## Вариант C: закрыть\n",
             encoding="utf-8")
         (out / "04_product_strategy.md").write_text(
-            "# Стратегия\n## Аудитория\nабоненты 55+ и их семьи\n## Тактики\n- семейный пакет с уведомлениями\n"
+            "# Стратегия\n## Аудитория\nабоненты 55+ и их семьи\n## Тактики\n- семейный пакет с уведомлениями [C002]\n"
             "## Метрики\nудержание M1 с 38% до 45% [C001]\n", encoding="utf-8")
         (out / "06_validation_plan.md").write_text(
             "# План\n## Ожидаемое изменение\nудержание M1 +7 п.п.\n## Критерии решения\nпродолжаем, если +3 п.п.\n",
@@ -69,6 +69,9 @@ class CalcAndSixPagerTests(unittest.TestCase):
             '{"id": "S002", "title": "Внутренний файл", "url": "", '
             '"origin": "own", "retrieved": "2026-11-07T00:00:00", "path": "notes.md"}\n',
             encoding="utf-8")
+        # PRO-49: в сноски попадают только процитированные источники — S001 (C001) и S002 (C002)
+        claims.add(cls.pdir, "Рынок 40 млрд", "fact", ["S001"], grade="B")
+        claims.add(cls.pdir, "Семейный пакет с уведомлениями", "hypothesis", ["S002"], grade="C")
 
     def test_calc_builds_four_valid_books(self):
         paths = calc.run(self.pdir, "all")
@@ -103,8 +106,9 @@ class CalcAndSixPagerTests(unittest.TestCase):
                      "### 2.1 Сегменты", "### 2.2 Барьеры на каждом этапе пути",
                      "Первый драйвер", "Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики)",
                      "KPI в двух плоскостях", "## Источники (сноски)",
-                     "**S001** — Рынок (агрегатор) — https://example.com/market",
-                     "**S002** — Внутренний файл"):
+                     "[^1]: **S001** — example.com — Рынок (агрегатор) — 2026-11-07 — "
+                     "https://example.com/market — сила B",
+                     "[^2]: **S002** — Внутренний файл — 2026-11-07 — notes.md — сила C"):
             self.assertIn(head, text)
         # юнит-экономика посчитана из calcs.json: CM = 29 * 0.75 = 21.75
         self.assertIn("21,75", text)
@@ -118,7 +122,7 @@ class CalcAndSixPagerTests(unittest.TestCase):
         self.assertIn("Допущения [укажите теги]", text)
         # без дублей секций и маркеров обрезки
         self.assertNotIn("обрезано", text)
-        self.assertEqual(text.count("Отток растёт, рынок 40 млрд [C001]"), 1)
+        self.assertEqual(text.count("Отток растёт, рынок 40 млрд [^1]"), 1)
         self.assertNotIn("## Короткий ответ", text.splitlines())  # чужих H2 нет
         # 03 вставлен целиком с понижением заголовков: варианты и возражения полные
         self.assertIn("### Варианты", text)
