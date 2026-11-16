@@ -7,7 +7,7 @@
 
 | Счётчик | Значение | Проверка |
 |---|---|---|
-| Тесты | 787 (`OK`) | `python3 -m unittest discover -s tests` |
+| Тесты | 626 (`OK`) | `python3 -m unittest discover -s tests` |
 | Карты знаний | 100 RU (`knowledge/methods/`) + 100 EN-зеркал — полная двуязычная база (`knowledge/methods_en/`) + `knowledge/INDEX_EN.md` | `ls knowledge/methods \| wc -l` → 100; `ls knowledge/methods_en \| wc -l` → 100 |
 | Навыки | 101 | `ls .claude/skills \| wc -l` → 101 |
 | Субагенты | 8 | `ls .claude/agents \| wc -l` → 8 |
@@ -88,7 +88,7 @@ PDF/DOCX, cover letters, трекер, карта вакансий; 100% лок�
 ## 4. Как проверить
 
 ```bash
-# 1. Тесты инструментов (787, без установки пакетов)
+# 1. Тесты инструментов (626, без установки пакетов)
 python3 -m unittest discover -s tests
 
 # 2. Quality gate демо-проекта (100/100)

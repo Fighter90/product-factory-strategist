@@ -17,6 +17,20 @@
 
 ## Unreleased · PRO-60
 
+## Unreleased · разделение репозиториев
+
+### Changed
+- Репозиторий проекта разделён на три: **агент** (этот репозиторий, публичный — код, тесты, скиллы),
+  **база знаний** ([product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base),
+  приватный — 100 карт RU + 100 EN-зеркал, шаблоны, рубрики; растёт: дистилляция внешних методологических материалов, PRO-76),
+  **сайт** ([product-factory-strategist-site](https://github.com/Fighter90/product-factory-strategist-site),
+  публичный — strategyproduct.ru, legacy Pages без Actions).
+- `knowledge/` и `site/` удалены из дерева агента; `scripts/install.sh` подтягивает все три репозитория
+  автоматически (база — при наличии доступа) и проверяет результат.
+- Счётчик автотестов 787 → 626: вместе с сайтом из сюиты агента ушли ~161 site-тест
+  (`test_site_build`, `test_build_site`, `test_site_i18n`) — они живут в репозитории сайта.
+
+
 ### Changed
 - База знаний как зеркало: «Двойной роман» → «Двойной алмаз» (карты и INDEX); 18 RU-карт переименованы по id — имя файла = id без префикса `M-`.
 - EN-карты переписаны как полные зеркала RU: тот же id без суффикса `-en` (язык в поле `lang: en`), `related` заполнен, те же разделы H2, объём ≥ 80% RU, без служебных тегов `en`/`summary` и строки «RU-версия».
