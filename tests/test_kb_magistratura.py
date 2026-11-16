@@ -7,8 +7,9 @@
    case-solving, impact-uncertainty, metric-drop-diagnosis, ux-prototyping.
 2. Каждая карта методическая: «Когда применять», «Суть», процедура/шаги, «Критерии
    качества», «Типичные ошибки»; разделы непустые; EN-зеркала структурно параллельны RU.
-3. В картах нет брендов: ни вузов, ни преподавателей, ни компаний-заказчиков
-   (правило knowledge/inbox/magistratura/README.md).
+3. В картах нет брендов ни в одном регистре и падеже: ни вузов, ни преподавателей,
+   ни компаний-заказчиков (правило knowledge/inbox/magistratura/README.md);
+   сравнение регистронезависимое, фамилии — с падежными формами.
 4. Счётчики карт в README/README_EN/COMPLIANCE/HELP/HELP_EN равны реальному числу
    карт базы знаний — знание растёт, документация следует за ним.
 5. Единая схема имён для всей базы (отклонение от буквы issue задокументировано):
@@ -25,6 +26,11 @@
    в базе нет и быть не должно (test_kb_has_no_two_tier_filenames).
 6. Свежесть индекса как след поставки: каждый id пакета 1 присутствует в INDEX.md
    (ссылка methods/<id>.md) и INDEX_EN.md (ссылка methods_en/<id>.md) — IndexFreshnessTests.
+7. В проверяемых документах (README RU/EN, COMPLIANCE, HELP RU/EN, lovable-brief)
+   нет забытых старых счётчиков («100 карт по категориям», «670 тестов»,
+   «89 method cards» и их EN-варианты): presence-only проверка
+   test_docs_state_actual_map_count пропускает устаревшие числа, оставшиеся рядом
+   с новыми. lovable-brief повторяет статистику README и проверяется отдельно.
 
 Запуск: python3 -m unittest tests.test_kb_magistratura -v
 """
@@ -43,11 +49,18 @@ MAGISTRATURA_MAPS = [
     "impact-uncertainty", "metric-drop-diagnosis", "ux-prototyping",
 ]
 
-# Запрещённые бренды: вузы, преподаватели, компании-заказчики и их продукты
+# Запрещённые бренды: вузы, преподаватели, компании-заказчики и их продукты.
+# Сравнение регистронезависимое (brand.lower() in text.lower()); фамилии — с
+# падежными формами: номинатив-стем («Винокуров») сам покрывает «Винокурова/у»,
+# но «Дмитренко», «Путилова», «Царьков» при склонении меняют окончание —
+# формы перечислены явно.
 BRANDS = ["ВШЭ", "HSE", "Высшей школы", "университет", "Университет", "магистратур",
           "студент", "преподават", "Авито", "Avito", "Ozon", "Озон", "Яндекс", "Yandex",
           "Сбер", "Sber", "Тинькофф", "Tinkoff", "ЦИАН", "CIAN", "МегаФон", "Nodul",
-          "n8n", "ResumeCraft", "Винокуров", "Аветисян", "Дмитренко", "Путилова", "Царьков"]
+          "n8n", "ResumeCraft",
+          "Винокуров", "Винокурова", "Винокурову", "Аветисян", "Аветисяна", "Аветисяну",
+          "Дмитренко", "Дмитренку", "Дмитренком", "Дмитренке",
+          "Путилова", "Путиловой", "Путилову", "Царьков", "Царькова", "Царькову", "Царьковым"]
 
 RU_REQUIRED = ["Когда применять", "Суть", "Процедура", "Критерии качества", "Типичные ошибки"]
 EN_REQUIRED = ["When to use", "Core idea", "Procedure", "Quality criteria"]
@@ -119,7 +132,7 @@ class MagistraturaMapsTests(unittest.TestCase):
             for sub in ("methods", "methods_en"):
                 text = (KB / sub / f"{name}.md").read_text(encoding="utf-8")
                 for brand in BRANDS:
-                    if brand in text:
+                    if brand.lower() in text.lower():
                         found.append(f"{sub}/{name}.md: «{brand}»")
         self.assertEqual(found, [], "бренды в картах магистратуры: " + ", ".join(found))
 
@@ -216,6 +229,30 @@ class KnowledgeCountersTests(unittest.TestCase):
         missing = [f"{p.relative_to(REPO).as_posix()} ← «{needle}»"
                    for p, needle in checks if needle not in p.read_text(encoding="utf-8")]
         self.assertEqual(missing, [], f"счётчики карт устарели (в базе {n_ru}): " + "; ".join(missing))
+
+    def test_docs_free_of_stale_counters(self):
+        """В проверяемых документах нет забытых старых счётчиков.
+
+        До пакета 1 в базе было 100 карт RU (+89/100 EN-зеркал) и 670 тестов;
+        presence-only проверка выше не ловит старое число, оставшееся рядом
+        с новым. lovable-brief повторяет статистику README — тоже проверяем.
+        """
+        stale = [
+            (REPO / "README.md",
+             ["100 карт по категориям", "100 EN-зеркал", "670 тест", "(670)"]),
+            (REPO / "README_EN.md",
+             ["100 cards across categories", "100 EN mirrors", "670 tests"]),
+            (REPO / "docs" / "COMPLIANCE.md",
+             ["| Карты знаний | 100", "100 карт RU", "100 EN-зеркал", "| Тесты | 670"]),
+            (REPO / "docs" / "HELP.md", ["100 карт методов", "100 EN-зеркал"]),
+            (REPO / "docs" / "HELP_EN.md",
+             ["89 method cards", "89 EN mirrors", "100 method cards", "100 EN mirrors"]),
+            (REPO / "docs" / "lovable-brief.md", ["100 карт", "100 EN-зеркал"]),
+        ]
+        found = [f"{p.relative_to(REPO).as_posix()} ← «{needle}»"
+                 for p, needles in stale for needle in needles
+                 if needle in p.read_text(encoding="utf-8")]
+        self.assertEqual(found, [], "забытые старые счётчики: " + "; ".join(found))
 
 
 if __name__ == "__main__":
