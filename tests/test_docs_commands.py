@@ -204,11 +204,19 @@ class DocsCommandsTests(unittest.TestCase):
                          "предупреждение на чистом клоне")
 
     def test_demo_finish_on_fresh_copy_has_no_registry_changed(self):
-        """Критерий готовности: на чистом клоне pfs finish по демо без «Реестр изменился»."""
+        """Критерий PRO-63: на чистом клоне нет ложного «Реестр изменился».
+        PRO-47: затвор теперь падает и на содержании six-pager (демо с остатками
+        шаблона по критерию задачи не проходит линтер) — проверяем, что среди
+        причин остановки нет ложного предупреждения о реестре."""
         copy = Path(tempfile.mkdtemp(prefix="pfs-democopy-")) / "демо"
         shutil.copytree(REPO / "projects" / "демо", copy)
-        res = finish.run(copy, no_deck=True)
-        summary = finish.summary_text(res)
+        from tools.pfs import finish as finish_mod
+        from tools.pfs.core import PfsError
+        try:
+            res = finish_mod.run(copy, no_deck=True)
+            summary = finish_mod.summary_text(res)
+        except PfsError as exc:  # честный затвор: остатки шаблона демо останавливают сборку
+            summary = str(exc)
         self.assertNotIn("Реестр изменился", summary, summary)
         self.assertNotIn("Пересоберите", summary)
 

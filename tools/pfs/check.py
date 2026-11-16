@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import calc as calc_mod, claims as claims_mod, core, gaps, i18n, review, sources as src_mod
+from . import calc as calc_mod, claims as claims_mod, core, gaps, i18n, review, sixpager_lint, sources as src_mod
 from .impact import TAG
 
 # PRO-26: числовой кросс-чек. Число — целое или десятичное (в т.ч. русская запятая: «8,5»);
@@ -244,11 +244,13 @@ def calcs_mismatch_errors(pdir: Path) -> list[str]:
     return out
 
 
-def run(pdir: Path, strict: bool = False) -> dict:
+def run(pdir: Path, strict: bool = False, sixpager: bool = False) -> dict:
     """PRO-50: strict — «серьёзное расхождение» чисел утверждения с источником и
     выдуманные цитаты (числа цитаты отсутствуют в тексте источника) считаются
     ошибками, а не предупреждениями; CLI (`pfs check --strict`) завершается с
-    кодом 1, если есть хоть одна ошибка."""
+    кодом 1, если есть хоть одна ошибка. PRO-47: sixpager — плюс линтер содержания
+    six-pager (документ комитета: структура, объём, остатки шаблона, таблицы, ID,
+    арифметика, сноски, язык)."""
     cfg_all = core.read_json(core.CONFIG / "quality_gate.json", {})
     # PRO-57: язык проекта выбирает блок проверок; EN-заголовки — quality_gate.json → "en".
     lang = i18n.lang_of(pdir)
@@ -365,8 +367,16 @@ def run(pdir: Path, strict: bool = False) -> dict:
     # 7. PRO-52: языковой линтер документа комитета — запрещённые англицизмы, жаргон
     #    и аббревиатуры без расшифровки (quality_gate.json → banned_terms)
     warnings.extend(language_warnings(pdir, block, tr))
+    # 8. PRO-47: содержание six-pager — документ комитета, а не только теги
+    sp_checked = False
+    if sixpager:
+        sp = sixpager_lint.run(pdir)
+        sp_checked = bool(sp.get("checked"))
+        errors.extend(sp.get("errors") or [])
+        warnings.extend(sp.get("warnings") or [])
     score = max(0, 100 - 10 * len(errors) - 2 * len(warnings))
-    return {"errors": errors, "warnings": warnings, "passed": passed, "score": score}
+    return {"errors": errors, "warnings": warnings, "passed": passed, "score": score,
+            "sixpager_checked": sp_checked}
 
 
 def language_warnings(pdir: Path, block: dict, tr) -> list[str]:

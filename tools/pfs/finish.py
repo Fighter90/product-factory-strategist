@@ -19,7 +19,8 @@ def run(pdir: Path, no_deck: bool = False, en: bool = True) -> dict:
 
     Затвор строгий: перед сборкой выполняется pfs check (--strict: «серьёзное
     расхождение» чисел с источником и выдуманные цитаты — тоже ошибки, PRO-50),
-    и ЛЮБАЯ его ошибка останавливает сборку; предупреждения сборке не мешают.
+    и ЛЮБАЯ его ошибка останавливает сборку; линтер содержания six-pager включён
+    всегда (PRO-47); предупреждения сборке не мешают.
     Пакет из невалидного реестра не собираем.
     PRO-54: six-pager собирается в finish всегда в двух версиях — RU и EN
     (en=True по умолчанию; en=False / CLI --no-en отключает EN) — без вопроса
@@ -31,7 +32,7 @@ def run(pdir: Path, no_deck: bool = False, en: bool = True) -> dict:
     # поэтому призыв «Пересоберите» в сводке finish неуместен (PRO-63, п.3)
     stale = [w.split("Пересоберите")[0].rstrip(" .—-") + " (снято этой пересборкой)"
              for w in export.freshness_warnings(pdir)]
-    qc = check.run(pdir, strict=True)  # строгий затвор: ошибки числового кросс-чека тоже останавливают (PRO-50)
+    qc = check.run(pdir, strict=True, sixpager=True)  # строгий затвор + линтер содержания six-pager (PRO-47, PRO-50)
     if qc["errors"]:  # строгий затвор: любая ошибка check останавливает сборку (см. докстрингу)
         tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
         raise core.PfsError(tr("finish_gate_error",
