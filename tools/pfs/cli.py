@@ -257,11 +257,15 @@ def cmd_claim(a):
                                _split(a.from_ref) if a.from_ref else None, grade=a.grade)
         print(f"{a.id} замещено {new['id']}")
         print(impact.impact_text(impact.impact(pdir, a.id)))
+    elif a.action == "fix-source":
+        rec = claims.fix_source(pdir, a.id, _split(a.source), a.quote)
+        print(f"{a.id}: источник → {', '.join(rec['sources'])}; цитата перепроверена по телу источника")
+        print("Сверка: pfs check --strict · влияние: pfs impact " + a.id)
 
 
 def cmd_check(a):
     pdir = _p(a)
-    res = check.run(pdir)
+    res = check.run(pdir, strict=a.strict)  # PRO-50: strict продвигает числовые расхождения в ошибки
     print(json.dumps(res, ensure_ascii=False, indent=2) if a.json else check.report_text(res, i18n.lang_of(pdir)))
     if a.strict and res["errors"]:
         sys.exit(1)
@@ -467,6 +471,13 @@ def cmd_models(a):
         print(models.sync_agents() or "Модели субагентов уже соответствуют config/models.json")
 
 
+def cmd_roadmap(a):
+    """Роудмап в xlsx (PRO-70): «по проектам» + «по фичам/по проектам» из 04/roadmap.json."""
+    path = roadmap.run(_p(a), spec=a.spec, granularity=a.granularity)
+    print(f"Роудмап: {path.resolve()} — листы «Проекты» и «Фичи по проектам», статусы — заливкой (Легенда)")
+
+
+
 def cmd_export(a):
     pdir = _p(a)
     # снимки сравниваются ДО сборки; «⚠ » для review-пометки — на месте вывода
@@ -495,13 +506,7 @@ def cmd_calc(a):
               f"null-поля допишите вручную, затем pfs calc all")
         return
     for p in calc.run(_p(a), a.which):
-        print(f"Excel-приложение: {p}")
-
-
-def cmd_roadmap(a):
-    """Роудмап в xlsx (PRO-70): «по проектам» + «по фичам/по проектам» из 04/roadmap.json."""
-    path = roadmap.run(_p(a), spec=a.spec, granularity=a.granularity)
-    print(f"Роудмап: {path.resolve()} — листы «Проекты» и «Фичи по проектам», статусы — заливкой (Легенда)")
+        print(f"{'Таблица' if p.suffix == '.md' else 'Excel-приложение'}: {p}")
 
 
 def cmd_docx(a):
@@ -680,10 +685,13 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(f=cmd_source)
 
     s = sp.add_parser("claim", help="утверждения")
-    s.add_argument("action", choices=["add", "add-batch", "list", "retract", "supersede", "rebase", "retag"],
+    s.add_argument("action", choices=["add", "add-batch", "list", "retract", "supersede", "rebase", "retag",
+                                      "fix-source"],
                    help="add-batch — пачка из JSONL-файла (text/kind/source/grade/quote/from); "
                         "невалидная строка отменяет весь батч; retag — перенумерация тегов [C###] "
-                        "во всех outputs одной командой (--from C003 --to C059) с журналом")
+                        "во всех outputs одной командой (--from C003 --to C059) с журналом; "
+                        "fix-source — перепривязка утверждения к верному источнику с перепроверкой "
+                        "цитаты (--id C008 --source S012 [--quote «дословная цитата»], PRO-50)")
     s.add_argument("text", nargs="?"); s.add_argument("--id"); s.add_argument("--kind", choices=claims.KINDS)
     s.add_argument("--source"); s.add_argument("--from", dest="from_ref"); s.add_argument("--to")
     s.add_argument("--confidence", default="medium")
@@ -794,18 +802,18 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(f=cmd_export)
     s = sp.add_parser("calc", help="Excel-приложения: юнит-экономика, модель роста, когорты, рынок")
     s.add_argument("which", nargs="?", default="all",
-                   choices=["all", "unit-econ", "growth", "cohort", "market", "scaffold"],
-                   help="scaffold — каркас calcs.json из 02/04/06/07 (null — дописать вручную)")
+                   choices=["all", "unit-econ", "growth", "cohort", "market", "options", "scaffold"],
+                   help="scaffold — каркас calcs.json из 02/04/06/07 (null — дописать вручную); options — взвешенный скоринг вариантов 03 (таблица + лист Excel)")
     s.set_defaults(f=cmd_calc)
+    s = sp.add_parser("docx", help="Markdown → DOCX (без зависимостей)")
+    s.add_argument("file", help=".md файл (относительный путь: каталог проекта → cwd)"); s.add_argument("--out")
+    s.set_defaults(f=cmd_docx)
     s = sp.add_parser("roadmap", help="роудмап в xlsx: «по проектам» и «по фичам/по проектам» (PRO-70)")
     s.add_argument("--spec", help="файл-спецификация roadmap.json (по умолчанию projects/<slug>/roadmap.json; "
                                   "путь: каталог проекта → cwd); без него — этапы outcome-роадмапа из 04")
     s.add_argument("--granularity", choices=["week", "month", "quarter"],
                    help="шаг колонок-периодов с заливкой (по умолчанию quarter)")
     s.set_defaults(f=cmd_roadmap)
-    s = sp.add_parser("docx", help="Markdown → DOCX (без зависимостей)")
-    s.add_argument("file", help=".md файл (относительный путь: каталог проекта → cwd)"); s.add_argument("--out")
-    s.set_defaults(f=cmd_docx)
     s = sp.add_parser("next", help="что решать сейчас: шаг, обязательства, устаревшие источники (с командой refresh), пересмотры, открытые вопросы")
     s.set_defaults(f=cmd_next)
     s = sp.add_parser("questions", help="вопросные блоки шага (настраиваемость стратегии)")

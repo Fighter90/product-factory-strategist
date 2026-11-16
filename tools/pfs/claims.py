@@ -310,6 +310,52 @@ def rebase(pdir: Path, cid: str) -> list[str]:
     return changes
 
 
+def fix_source(pdir: Path, cid: str, sources_list: list[str], quote: str | None = None) -> dict:
+    """Перепривязать утверждение к верному источнику с перепроверкой цитаты (PRO-50).
+
+    Кейс: «98% Fortune 500 используют ATS» было привязано к отчёту о рынке
+    онлайн-рекрутинга, а не к Jobscan — числовой кросс-чек это видит, но как
+    предупреждение, которое доживает до финала. Команда заменяет список источников
+    и ДО записи проверяет числа цитаты (старой или переданной в --quote) против тел
+    новых источников: расхождение отменяет правку целиком — сначала
+    `pfs source add`, потом fix-source с дословной цитатой. Синтетика и выводы
+    агента фактом подтверждаться не могут — как в add().
+    """
+    rows = load(pdir)
+    rec = next((r for r in rows if r["id"] == cid), None)
+    if not rec:
+        raise PfsError(f"Утверждение {cid} не найдено")
+    if rec["status"] != "active":
+        raise PfsError(f"{cid} не активно ({rec['status']}) — правьте через supersede")
+    src_rows = {s["id"]: s for s in src_mod.load(pdir)}
+    for sid in sources_list:
+        if sid not in src_rows:
+            raise PfsError(f"Источник {sid} не зарегистрирован (pfs source add …)")
+    if rec["kind"] == "fact" and all(src_rows[s]["origin"] in ("synthetic", "agent") for s in sources_list):
+        raise PfsError("Синтетические материалы и выводы агента не могут подтверждать факт — "
+                       "понизьте утверждение: pfs claim supersede --kind hypothesis")
+    if sources_list == rec["sources"]:
+        raise PfsError(f"{cid} уже привязано к {', '.join(sources_list)} — менять нечего")
+    from . import check as check_mod  # отложенный импорт: check импортирует этот модуль
+    new_quote = quote if quote is not None else rec.get("quote")
+    for sid in sources_list:  # перепроверка цитаты ДО записи: ошибка отменяет правку целиком
+        body = check_mod._source_body(pdir, sid)
+        missing = {v: raw for v, raw in check_mod._numbers(new_quote or "").items()
+                   if v not in check_mod._numbers(body)}
+        if missing:
+            raise PfsError(f"Перепроверка цитаты: числа ({check_mod._fmt(missing)}) отсутствуют "
+                           f"в тексте sources/{sid}.md — привяжите дословную цитату: --quote «…»")
+    old = list(rec["sources"])
+    rec["sources"] = list(sources_list)
+    if quote is not None:
+        rec["quote"] = quote.strip()
+    rec.setdefault("history", []).append({"ts": core.now(), "fix_source": {"from": old, "to": sources_list}})
+    core.write_jsonl(pdir / "claims.jsonl", rows)
+    core.log(pdir, "claim", f"{cid}: источник перенаправлен {', '.join(old) or '—'} → "
+                            f"{', '.join(sources_list)}; цитата перепроверена")
+    return rec
+
+
 def table(rows: list[dict]) -> str:
     out = ["| ID | Тип | Утверждение | Источники / основания | Сила | Статус |", "|---|---|---|---|---|---|"]
     for c in rows:

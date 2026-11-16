@@ -4,14 +4,22 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import claims as claims_mod, core, gaps, i18n, review, sources as src_mod
+from . import calc as calc_mod, claims as claims_mod, core, gaps, i18n, review, sources as src_mod
 from .impact import TAG
 
 # PRO-26: числовой кросс-чек. Число — целое или десятичное (в т.ч. русская запятая: «8,5»);
 # годы 1900–2099 — даты, а не показатели: без этого исключения любой заголовок
 # «Отчёт за 2025 год» давал бы ложную тревогу с каждым числовым утверждением.
+# PRO-50: датами являются также «25.09», «25.09.2025» и «2026-11-08», а «041» — это ID
+# (ведущий ноль, как в S041), «v1.267.1» — номер версии: всё это не числа утверждения,
+# иначе дата проверки «2026-11-08» ловилась как «серьёзное расхождение (08, 11)» с каждым
+# источником, а дата в заголовке «Сводка за 25.09» — как ложное несовпадение показателей.
 NUM_TOKEN = re.compile(r"\d+(?:[.,]\d+)?")
 YEAR_TOKEN = re.compile(r"^(?:19|20)\d{2}$")
+LEADING_ZERO_TOKEN = re.compile(r"^0\d+$")
+DATE_TOKEN = re.compile(r"(?<![\d.])(?:3[01]|[12]\d|[1-9])\.(?:1[0-2]|0?[1-9])(?:\.(?:\d{2}|\d{4}))?(?![\d.])")
+ISO_DATE_TOKEN = re.compile(r"\d{4}-\d{2}-\d{2}")
+VERSION_TOKEN = re.compile(r"(?<![\w.])[vV]?\d+(?:\.\d+){2,}(?![\d.])")
 
 
 def _sections(text: str) -> list[str]:
@@ -91,12 +99,15 @@ def en_style_warnings(pdir: Path) -> list[str]:
 
 
 def _numbers(text: str) -> dict[float, str]:
-    """Числа текста: {значение: как написано}. Годы исключаются (см. NUM_TOKEN)."""
+    """Числа текста: {значение: как написано}. Годы, даты (25.09, 2026-11-08),
+    ID с ведущим нулём (041) и версии (v1.267.1) исключаются (PRO-26, PRO-50)."""
+    clean = ISO_DATE_TOKEN.sub(" ", DATE_TOKEN.sub(" ", VERSION_TOKEN.sub(" ", text or "")))
     out: dict[float, str] = {}
-    for m in NUM_TOKEN.finditer(text):
+    for m in NUM_TOKEN.finditer(clean):
         raw = m.group(0)
-        if not YEAR_TOKEN.match(raw):
-            out.setdefault(float(raw.replace(",", ".")), raw)
+        if YEAR_TOKEN.match(raw) or LEADING_ZERO_TOKEN.match(raw):
+            continue
+        out.setdefault(float(raw.replace(",", ".")), raw)
     return out
 
 
@@ -112,15 +123,18 @@ def _source_body(pdir: Path, sid: str) -> str:
     return text[head:] if head != -1 else text
 
 
-def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict]) -> list[str]:
+def numeric_items(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict]) -> list[tuple[str, str]]:
     """PRO-26: числовой кросс-чек реестра — ловит расхождение «заголовок 17 vs утверждение 19»,
     которое иначе доживает до финального аудита. Сообщения — на языке проекта (PRO-57).
+    Возвращает пары (категория, сообщение): «title» — мягкое «возможно, разные показатели»
+    (число подтверждено телом источника), «serious» — серьёзное расхождение, «quote» —
+    выдуманная цитата (PRO-50: последние два в check --strict становятся ошибками).
     1) числа активного утверждения против чисел заголовка источника, на который оно ссылается:
-       оба набора непусты и не пересекаются → warning с парой C###/S### (пересечение хотя бы
+       оба набора непусты и не пересекаются → сообщение с парой C###/S### (пересечение хотя бы
        по одному числу расхождением не считается — утверждение вправе содержать числа сверх заголовка);
-    2) числа цитаты (quote) против текста sources/S###.md: числа, которых в тексте нет → warning."""
+    2) числа цитаты (quote) против текста sources/S###.md: числа, которых в тексте нет."""
     tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
-    out: list[str] = []
+    out: list[tuple[str, str]] = []
     bodies: dict[str, set[float]] = {}
     for c in claims.values():
         if c["status"] != "active":
@@ -142,21 +156,93 @@ def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict])
                 if set(cnums) & body:
                     # числа подтверждены текстом источника — заголовок может нести
                     # другую метрику (кейс C004/S002: звёзды vs локали), это не устаревание
-                    out.append(tr("warn_num_title_mismatch", cid=c["id"], sid=sid,
-                                  tnums=_fmt(tnums), cnums=_fmt(cnums)))
+                    out.append(("title", tr("warn_num_title_mismatch", cid=c["id"], sid=sid,
+                                            tnums=_fmt(tnums), cnums=_fmt(cnums))))
                 else:
-                    out.append(tr("warn_num_serious", cid=c["id"], sid=sid,
-                                  tnums=_fmt(tnums), cnums=_fmt(cnums)))
+                    out.append(("serious", tr("warn_num_serious", cid=c["id"], sid=sid,
+                                              tnums=_fmt(tnums), cnums=_fmt(cnums))))
             quote = c.get("quote")
             if quote:
                 if sid in bodies:
                     missing = {v: raw for v, raw in _numbers(quote).items() if v not in bodies[sid]}
                     if missing:
-                        out.append(tr("warn_quote_numbers", cid=c["id"], sid=sid, nums=_fmt(missing)))
+                        out.append(("quote", tr("warn_quote_numbers", cid=c["id"], sid=sid, nums=_fmt(missing))))
     return out
 
 
-def run(pdir: Path) -> dict:
+def numeric_warnings(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict]) -> list[str]:
+    """Сообщения числового кросс-чека без категорий (совместимость с прежним API)."""
+    return [msg for _kind, msg in numeric_items(pdir, claims, srcs)]
+
+
+# PRO-51: производные числа (LTV, LTV/CAC, CAC платящего) пересчитываются из calcs.json.
+# Зазор между меткой и числом — до 12 символов без цифр и «|» (колонки таблиц, где после
+# метки идут operands деления «150 / 1500», не проверяем — там не значение); «≥ 3» сразу
+# после метки — критерий, а не производное число. Дробные и тысячные: «7,81», «1 500».
+CALCS_NUM = r"\d[\d\u00a0\u202f ]*(?:[.,]\d+)?"
+CALCS_METRICS = (
+    ("LTV/CAC", re.compile(rf"LTV\s*/\s*CAC[^0-9|\n]{{0,12}}")),
+    ("LTV", re.compile(rf"\bLTV\b(?!\s*/)[^0-9|\n]{{0,12}}")),
+    ("CAC платящего", re.compile(rf"(?<!LTV/)CAC\s+платящ\w*[^0-9|\n]{{0,12}}")),
+)
+CALCS_DOCS = ("03_options.md", "04_product_strategy.md", "06_validation_plan.md",
+              "SIX_PAGER.md", "SIX_PAGER_EN.md")
+
+
+def calcs_mismatch_errors(pdir: Path) -> list[str]:
+    """PRO-51: каждое производное число в 03/04/06 и six-pager должно сходиться с пересчётом
+    из calcs.json (единая математика unit_metrics); расхождение — ошибка, а не предупреждение:
+    «LTV/CAC 7,81» при взвешенном ARPU и CAC платящего доживало до комитета. calcs.json нет —
+    проверять нечего; совпадение с точностью округления (2 знака / 0,5%) тревогой не считается."""
+    if not (pdir / "calcs.json").exists():
+        return []
+    ue = core.read_json(pdir / "calcs.json", {}).get("unit_econ") or {}
+    ue = {k: v for k, v in ue.items() if not k.startswith("_") and v is not None}
+    if not ue:
+        return []
+    m = calc_mod.unit_metrics(ue)
+    expected = {"LTV/CAC": m["ltv_cac"], "LTV": m["ltv"], "CAC платящего": m["cac_paying"]}
+    lang = i18n.lang_of(pdir)
+    tr = lambda key, **kw: i18n.t(lang, key, **kw)
+    fmt = (lambda v: f"{v:,.2f}") if lang == "en" else (lambda v: f"{v:.2f}".replace(".", ","))
+    out: list[str] = []
+    for name in CALCS_DOCS:
+        path = pdir / "outputs" / name
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        if name == "SIX_PAGER_EN.md" and core.EN_DRAFT_MARK in text:
+            continue
+        for i, line in enumerate(text.splitlines(), 1):
+            if line.lstrip().startswith("#"):
+                continue
+            for metric, rx in CALCS_METRICS:
+                want = expected.get(metric)
+                if want is None:
+                    continue
+                for mo in rx.finditer(line):
+                    before = line[max(0, mo.end() - 2):mo.end()]
+                    if any(ch in before for ch in ("≥", "≤", ">", "<", "[", "]")):
+                        continue  # «LTV/CAC ≥ 3», «≤ 59» — критерий/порог, не значение
+                    nm = re.match(CALCS_NUM, line[mo.end():])
+                    if not nm:
+                        continue
+                    tail = line[mo.end() + nm.end():].lstrip()
+                    if tail.startswith("/") or tail.startswith(")"):
+                        continue  # operand формулы («= 60 / 0,055») или нумерация («; 2) Продукт»)
+                    got = calc_mod._num(nm.group(0))
+                    if abs(got - want) > max(0.011, abs(want) * 0.005):
+                        out.append(tr("err_calcs_mismatch", name=name, i=i, metric=metric,
+                                      num=nm.group(0).strip(), expected=fmt(want)))
+                        break  # одна ошибка на метрику в строке
+    return out
+
+
+def run(pdir: Path, strict: bool = False) -> dict:
+    """PRO-50: strict — «серьёзное расхождение» чисел утверждения с источником и
+    выдуманные цитаты (числа цитаты отсутствуют в тексте источника) считаются
+    ошибками, а не предупреждениями; CLI (`pfs check --strict`) завершается с
+    кодом 1, если есть хоть одна ошибка."""
     cfg_all = core.read_json(core.CONFIG / "quality_gate.json", {})
     # PRO-57: язык проекта выбирает блок проверок; EN-заголовки — quality_gate.json → "en".
     lang = i18n.lang_of(pdir)
@@ -262,8 +348,13 @@ def run(pdir: Path) -> dict:
     # 5. PRO-27: реестр изменился после lock вердикта review — вердикт устарел
     warnings.extend(review.stale_warnings(pdir))
     # 6. PRO-26: числовой кросс-чек — числа активных утверждений против заголовков источников,
-    #    числа цитат против текста источников (sources/S###.md)
-    warnings.extend(numeric_warnings(pdir, claims, srcs))
+    #    числа цитат против текста источников (sources/S###.md); PRO-50: в strict
+    #    «серьёзное расхождение» и выдуманная цитата — ошибки, не предупреждения
+    for kind, msg in numeric_items(pdir, claims, srcs):
+        (errors if strict and kind in ("serious", "quote") else warnings).append(msg)
+    # 6a. PRO-51: производные числа (LTV, LTV/CAC, CAC платящего) пересчитываются из calcs.json;
+    #     расхождение числа в тексте с пересчётом — ошибка
+    errors.extend(calcs_mismatch_errors(pdir))
     # 7. PRO-52: языковой линтер документа комитета — запрещённые англицизмы, жаргон
     #    и аббревиатуры без расшифровки (quality_gate.json → banned_terms)
     warnings.extend(language_warnings(pdir, block, tr))
