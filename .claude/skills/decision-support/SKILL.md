@@ -1,6 +1,6 @@
 ---
 name: decision-support
-description: Шаги 9–10 и работа после решения — фиксация решения с основаниями, ответственными, показателями и условиями пересмотра; контроль обязательств; пересмотр выводов при новых данных. Используй после выбора стратегии, при возвращении к проекту, при появлении новых сведений.
+description: Шаги 10–11 и работа после решения — фиксация решения с основаниями, ответственными, показателями и условиями пересмотра; контроль обязательств; пересмотр выводов при новых данных. Используй после выбора стратегии, при возвращении к проекту, при появлении новых сведений.
 ---
 
 # Поддержка решения и пересмотр
@@ -13,9 +13,13 @@ description: Шаги 9–10 и работа после решения — фи�
    --commit "<что>|<кто>|<когда>"` — по одному `--commit` на обязательство.
    Основания — только активные C###; условия пересмотра — наблюдаемые («удержание M1 < 40% два месяца подряд»).
 2. Покажи запись человеку на утверждение (`pfs ask`). `pfs step decision done`.
+   Это конец прогона: дальше — `pfs finish` (REPORT, six-pager RU и EN, Excel, DOCX, дека) и одно финальное
+   сообщение со ссылками; не начинай monitoring и не создавай файлы без запроса.
 
-## Сопровождение (monitoring) — при каждом возвращении к проекту
+## Сопровождение (monitoring) — отдельный режим, по команде или триггеру
 3. `pfs decision due` → что решать сейчас, просроченные обязательства, устаревшие основания. Начни ответ с этого.
+   Monitoring запускается только командой пользователя («проверь обязательства», `pfs next`) или по триггеру
+   `decision due`; обязательства решения (WBS, черновики, посты) без явного запроса не выполняешь.
 4. Выполнено → `pfs decision done --id D001 --commitment K1`.
 
 ## Новые данные
@@ -40,9 +44,13 @@ Maps: `M-decision-daci`, `M-outcome-roadmap`, `M-risks`, `M-success-metrics`.
    --commit "<what>|<who>|<when>"` — one `--commit` per commitment. Grounds — active C###s only; review conditions
    must be observable ("M1 retention < 40% for two months in a row").
 2. Show the record to the human for approval (`pfs ask`). `pfs step decision done`.
+   That is the end of the run: next comes `pfs finish` (REPORT, six-pager RU and EN, Excel, DOCX, deck) and one
+   final message with links; do not start monitoring and do not create files without a request.
 
-## Monitoring — every time you return to the project
+## Monitoring — a separate mode, on command or trigger
 3. `pfs decision due` → what to decide now, overdue commitments, stale grounds. Start the reply with this.
+   Monitoring starts only on the user's command ("check the commitments", `pfs next`) or on the `decision due`
+   trigger; decision commitments (WBS, drafts, posts) are not executed without an explicit request.
 4. Done → `pfs decision done --id D001 --commitment K1`.
 
 ## New data

@@ -14,13 +14,16 @@ from pathlib import Path
 from . import calc, check, core, docx, export, i18n
 
 
-def run(pdir: Path, no_deck: bool = False, en: bool = False) -> dict:
+def run(pdir: Path, no_deck: bool = False, en: bool = True) -> dict:
     """Собрать финальный пакет в правильном порядке.
 
     Затвор строгий: перед сборкой выполняется pfs check (--strict: «серьёзное
     расхождение» чисел с источником и выдуманные цитаты — тоже ошибки, PRO-50),
     и ЛЮБАЯ его ошибка останавливает сборку; предупреждения сборке не мешают.
     Пакет из невалидного реестра не собираем.
+    PRO-54: six-pager собирается в finish всегда в двух версиях — RU и EN
+    (en=True по умолчанию; en=False / CLI --no-en отключает EN) — без вопроса
+    пользователя. Это конец прогона: после finish «продолжи» не нужен.
     Возвращает {check, artifacts, missing_docs, stale_warnings} — stale_warnings
     это предупреждения о несвежих основаниях ДО пересборки (свежая сборка их снимает).
     """
@@ -39,8 +42,8 @@ def run(pdir: Path, no_deck: bool = False, en: bool = False) -> dict:
     export.save_state(pdir)  # 4. снимок реестра ПОСЛЕ сборки — свежесть считается от неё
     for name in ("REPORT.md", "SIX_PAGER.md"):
         artifacts.append(docx.convert(pdir / "outputs" / name))
-    if en:  # 5. EN-черновик six-pager (скелет на английском, содержимое — как написано)
-        en_path = export.build_six_pager(pdir, with_calcs=False, lang="en")
+    if en:  # 5. EN-версия six-pager — по умолчанию (PRO-54): скелет на английском,
+        en_path = export.build_six_pager(pdir, with_calcs=False, lang="en")  # содержимое — как написано
         artifacts += [en_path, docx.convert(en_path)]
     if not no_deck:  # 6. дека из готового SIX_PAGER
         artifacts.append(export.build_deck(pdir))

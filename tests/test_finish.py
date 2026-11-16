@@ -2,7 +2,7 @@
 
 Порядок критичен: Excel ДО REPORT (Приложение E полно) и ДО SIX_PAGER (таблица
 приложений полна), снимок реестра — ПОСЛЕ сборки, дека — из готового SIX_PAGER.
-Повторный вызов идемпотентен. Флаги: no_deck, en (EN-черновик six-pager).
+Повторный вызов идемпотентен. Флаги: no_deck; PRO-54: EN six-pager собирается по умолчанию (en=False отключает).
 PRO-41: предупреждения о несвежем реестре печатаются ровно один раз.
 
 Запуск: python3 -m unittest tests.test_finish -v
@@ -71,7 +71,8 @@ class FinishTests(unittest.TestCase):
         self.assertTrue(deck.exists())
         self.assertIn("Финиш тест: six-pager", deck.read_text(encoding="utf-8"))
         # 5. Артефакты в результате
-        self.assertEqual(len(res["artifacts"]), 9)
+        # PRO-54: EN six-pager собирается по умолчанию — +2 артефакта (SIX_PAGER_EN.md + DOCX)
+        self.assertEqual(len(res["artifacts"]), 11)
         # 6. Снимок реестра зафиксирован ПОСЛЕ сборки — предупреждений о несвежести нет
         self.assertEqual(export.freshness_warnings(self.pdir), [])
 
@@ -90,7 +91,7 @@ class FinishTests(unittest.TestCase):
         self.assertFalse((self.pdir / "outputs" / "presentations" / "deck.html").exists())
         self.assertTrue((self.pdir / "outputs" / "REPORT.md").exists())
         self.assertTrue((self.pdir / "outputs" / "SIX_PAGER.docx").exists())
-        self.assertEqual(len(res["artifacts"]), 8)
+        self.assertEqual(len(res["artifacts"]), 10)  # PRO-54: EN-версия в пакете по умолчанию
 
     def test_en_flag_builds_en_version_and_keeps_ru(self):
         finish.run(self.pdir, en=True)

@@ -101,24 +101,41 @@ with `--override`.
 
 | # | Step (`pfs step`) | What you do | Skill / subagent | Output | Gate |
 |---|---|---|---|---|---|
-| 0 | `intake` | Clarify the question, decision, goal, audience, constraints, data | skill `intake` | `00_brief.md` | **The human** approves the brief |
-| 1 | `sources` | Register the user's materials and open sources | skill `research`, subagent `researcher` | `sources/S###.md` | No blocked domains |
-| 2 | `research` | A plan built from questions that could change the decision; search; calculations; interviews | skills `research`, `interviews`, `data-analysis`, `ux-review` | `01_research_plan.md`, `analysis/`, `claims.jsonl` | Every key question: answered with a C###, or a gap is named |
-| 3 | `discovery` | Personas, JTBD, user alternatives — the "Segments" section in 02 | skill `research`, discovery question block | 02 "Segments" | segment is fixed |
-| 4 | `situation` | What is known (and from where), what we don't know (and why), contradictions | skill `situation` | `02_situation.md` | `pfs check` with no errors |
-| 5 | `options` | ≥3 meaningfully different options, incl. "keep as is" and "shut down"; strong objections | skill `options`, subagent `red-team` | `03_options.md` | `pfs check`; red team has responded |
-| 6 | `choice` | Present the comparison and recommendation, wait for the choice | `pfs ask` | answer in state.json | **The human** chooses |
-| 7 | `strategy` | Product and communication strategies, aligned with each other | skill `strategy`, subagent `comms-strategist` | `04_product_strategy.md`, `05_comms_strategy.md` | Every promise is backed by the product |
-| 8 | `validation` | Expected change, comparison baseline, observation window, counter-metrics, decision criteria | skill `validation-plan` | `06_validation_plan.md` | All 5 sections |
-| 9 | `review` | Auto-check + independent scoring against the rubric | `pfs check`, subagent `evidence-auditor`; six-pager — assemble, then proofread via the `editor` subagent (STYLE_RU.md) | `07_quality_review.md`; for the committee — a six-pager with Excel (`pfs export --six-pager`, skill `six-pager`) | Score ≥ threshold, or fixed |
-| 10 | `decision` | Record the decision: grounds, owners, metrics, review date, commitments | skill `decision-support` | `decisions.jsonl` | **The human** approves |
-| 11 | `monitoring` | Track deadlines and new data; revisit affected conclusions | skill `decision-support` | document updates | `pfs decision due` is empty |
+| 1 | `intake` | Clarify the question, decision, goal, audience, constraints, data | skill `intake` | `00_brief.md` | **The human** approves the brief |
+| 2 | `sources` | Register the user's materials and open sources | skill `research`, subagent `researcher` | `sources/S###.md` | No blocked domains |
+| 3 | `research` | A plan built from questions that could change the decision; search; calculations; interviews | skills `research`, `interviews`, `data-analysis`, `ux-review` | `01_research_plan.md`, `analysis/`, `claims.jsonl` | Every key question: answered with a C###, or a gap is named |
+| 4 | `discovery` | Personas, JTBD, user alternatives — the "Segments" section in 02 | skill `research`, discovery question block | 02 "Segments" | segment is fixed |
+| 5 | `situation` | What is known (and from where), what we don't know (and why), contradictions | skill `situation` | `02_situation.md` | `pfs check` with no errors |
+| 6 | `options` | ≥3 meaningfully different options, incl. "keep as is" and "shut down"; strong objections | skill `options`, subagent `red-team` | `03_options.md` | `pfs check`; red team has responded |
+| 7 | `choice` | Present the comparison and recommendation, wait for the choice | `pfs ask` | answer in state.json | **The human** chooses |
+| 8 | `strategy` | Product and communication strategies, aligned with each other | skill `strategy`, subagent `comms-strategist` | `04_product_strategy.md`, `05_comms_strategy.md` | Every promise is backed by the product |
+| 9 | `validation` | Expected change, comparison baseline, observation window, counter-metrics, decision criteria | skill `validation-plan` | `06_validation_plan.md` | All 5 sections |
+| 10 | `review` | Auto-check + independent scoring against the rubric | `pfs check`, subagent `evidence-auditor`; six-pager — assemble, then proofread via the `editor` subagent (STYLE_RU.md) | `07_quality_review.md`; for the committee — a six-pager with Excel (`pfs export --six-pager`, skill `six-pager`) | Score ≥ threshold, or fixed |
+| 11 | `decision` | Record the decision: grounds, owners, metrics, review date, commitments | skill `decision-support` | `decisions.jsonl` | **The human** approves |
+| 12 | `monitoring` | A separate mode: deadlines, new data and revisiting conclusions — only on the user's command ("check the commitments", `pfs next`) or on the `decision due` trigger; decision commitments (WBS, drafts, posts) are not executed without an explicit request | skill `decision-support` | document updates | `pfs decision due` is empty |
 
 Before each step, read the corresponding `.claude/skills/<skill>/SKILL.md` and the template from `knowledge/templates/`.
 Take methods from the maps: `pfs kb search "<what you need>"` → open 1–3 of the maps found.
 
+**Stop points — only four:** intake (the brief), choice (the option), decision (the decision approval)
+and finish (the final pack). Between them the agent moves without pauses or extra questions; at every pause —
+`pfs ask` with options and a recommendation (the recommendation comes first).
+
+**End of the run:** after decision do not start monitoring and do not create files without a request — assemble
+the final pack with one command `pfs finish` (check → Excel → REPORT → six-pager RU and EN → DOCX → deck) and
+send one final message with links to the artifacts. That is the end: "continue" is no longer needed.
+
+**Autopilot (QA and CI):** with `PFS_AUTOPILOT=1` pauses do not wait for the human — accept the recommended
+option (`pfs answer "<option>"`, marked "QA autopilot") and continue; every pause and answer is logged, the run
+is carried through to `pfs finish`.
+
 ### Managing the human
-- Start every response with one line: `Step N/12 · <step> · what's done · what's next`.
+- Start every response with one line: `Step N/12 · <step> · what's done · what's next`
+  (N is the step number 1–12: intake = 1/12 … monitoring = 12/12; the CLI prints the numbers in
+  `pfs status/next/step/list`).
+- "Continue" means "keep working until the next stop point", not "start monitoring": after decision, carry the
+  run through to `pfs finish` and the final message with links. Monitoring and decision commitments (WBS,
+  drafts, posts) — only on the user's explicit request or on the `decision due` trigger.
 - The user can say "stop," "clarify the task," "rewrite section X" at any moment. Stop, record it
   (`pfs log`, `pfs question`), and redo only what was affected.
 - If the human edits a document by hand — read the edit, don't overwrite it; if the edit contradicts a C###, say so.
