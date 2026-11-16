@@ -133,6 +133,7 @@ pfs source add --text-file doc.md --url <url> --title "…"   # если сай�
 pfs source add --text-file doc.md --url <url> --excerpt --published 2025-06-01   # режим выписки:
                                                     # origin=excerpt, сила утверждений не выше C,
                                                     # пока первоисточник не перепроверен refresh'ем
+                                                    # (в т.ч. выводы через derived_from — check предупредит)
 pfs source fetch <url> --title "…"                  # недоступный URL (403/SSL/JS/таймаут) одним вызовом:
                                                     # прямой запрос → r.jina.ai → web.archive.org;
                                                     # origin: public при прямом успехе, excerpt при фолбэке

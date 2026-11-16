@@ -14,6 +14,7 @@ import time
 import urllib.request
 import urllib.error
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
@@ -223,9 +224,14 @@ def https_get(url: str, timeout: int = 6) -> str:
 
 def https_probe(urls: tuple[str, ...] = HTTPS_PROBE_URLS, timeout: int = 6, get=None) -> list[tuple[str, str]]:
     """HTTPS-проверка окружения для pfs doctor (PRO-59): 2–3 домена через текущую TLS-цепочку.
+    Домены опрашиваются параллельно (ThreadPoolExecutor, ревью round 2): офлайн-запуск doctor
+    ждёт один timeout, а не 3×timeout последовательно.
     Возвращает [(домен, статус)] — ok | http <код> | ssl | net; ssl = нужен Install Certificates.command."""
     get = get or https_get
-    return [((urlparse(u).hostname or u), get(u, timeout)) for u in urls]
+    pairs = [(urlparse(u).hostname or u, u) for u in urls]
+    with ThreadPoolExecutor(max_workers=max(1, len(pairs))) as pool:
+        futures = [(host, pool.submit(get, url, timeout)) for host, url in pairs]
+        return [(host, future.result()) for host, future in futures]
 
 
 def pdf_to_text(path: Path) -> str:

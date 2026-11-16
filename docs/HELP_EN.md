@@ -132,6 +132,7 @@ pfs source add sources/raw/report.md                 # relative path: project di
 pfs source add --text-file doc.md --url <url> --excerpt --published 2025-06-01   # excerpt mode:
                                                     # origin=excerpt, claim strength capped at C
                                                     # until the original is re-verified by refresh
+                                                    # (incl. inferences via derived_from — check warns)
 pfs source fetch <url> --title "…"                   # unreachable URL (403/SSL/JS/timeout) in one call:
                                                      # direct request → r.jina.ai → web.archive.org;
                                                      # origin: public on direct success, excerpt on fallback

@@ -87,15 +87,27 @@ def check_url_allowed(pdir: Path, url: str) -> tuple[bool, str]:
     return _domain_ok(core.read_json(pdir / "project.json", {}), url)
 
 
+def _save_raw(pdir: Path, url: str, data: bytes, ext: str) -> Path:
+    """Сырой ответ канала → sources/raw/<sha1(url)[:10]><ext> (ревью round 2, замечание 3).
+    Как у pdf: доказательство фактически полученного и возможность пере-извлечь текст
+    другим способом; имя по URL — повторная загрузка того же адреса перезаписывает файл."""
+    raw = pdir / "sources" / "raw" / (hashlib.sha1(url.encode()).hexdigest()[:10] + ext)
+    raw.parent.mkdir(parents=True, exist_ok=True)
+    raw.write_bytes(data)
+    return raw
+
+
 def _fetch_text(pdir: Path, url: str) -> tuple[str, str, str, Path | None]:
-    """Загрузить URL: (kind, body, заголовок_страницы, путь_к_raw_pdf). HTML→text и pdf-ветка — общие для add и refresh."""
+    """Загрузить URL: (kind, body, заголовок_страницы, путь_к_raw). Сырой HTML, как и pdf,
+    сохраняется в sources/raw/ — общий для add и refresh; короткий ответ (страница под
+    JavaScript) raw не оставляет — add() даст ошибку-подсказку без файла-мусора."""
     data, ctype = extract.fetch_url(url)
     if "pdf" in ctype or url.lower().endswith(".pdf"):
-        raw_path = pdir / "sources" / "raw" / (hashlib.sha1(url.encode()).hexdigest()[:10] + ".pdf")
-        raw_path.write_bytes(data)
+        raw_path = _save_raw(pdir, url, data, ".pdf")
         return "pdf", extract.pdf_to_text(raw_path), "", raw_path
     page_title, body = extract.html_to_text(data.decode("utf-8", errors="replace"))
-    return "web", body, page_title, None
+    raw_path = _save_raw(pdir, url, data, ".html") if len(body.strip()) >= 200 else None
+    return "web", body, page_title, raw_path
 
 
 def _source_md(rec: dict, body: str, flags: list[str]) -> str:
@@ -304,6 +316,8 @@ def _fetch_via_chain(pdir: Path, url: str, *, prefer: str | None = None) -> tupl
                     page_title = _t
             if kind in ("web", "pdf") and len(body.strip()) < 200:
                 raise PfsError(f"извлечено {len(body.strip())} знаков — страница рендерится JavaScript или пуста")
+            if channel != "direct":  # сырое сохраняем только после проверки — короткий ответ не оставляет файл
+                raw_path = _save_raw(pdir, url, data, ".txt" if channel == "reader" else ".html")
             if channel == "reader":
                 page_title = page_title or _reader_title(body)
             return kind, body, page_title, raw_path, channel
@@ -321,7 +335,8 @@ def fetch(pdir: Path, url: str, *, title: str | None = None, origin: str | None 
     via_browser (PRO-59) — вместо цепочки страница рендерится Playwright напрямую с сайта (--via-browser).
 
     Возвращает (запись, создан_ли_новый, канал). URL с 403/SSL/таймаутом/JS-пустышкой регистрируется
-    одним вызовом через фолбэк-канал. origin: None — origin=public при прямом успехе (в т.ч. браузерном),
+    одним вызовом через фолбэк-канал; сырой ответ каждого канала (HTML / reader-текст / DOM браузера)
+    сохраняется в sources/raw/. origin: None — origin=public при прямом успехе (в т.ч. браузерном),
     excerpt при reader/archive (текст получен не напрямую с сайта); явный --origin перекрывает. Полный фейл —
     ошибка с предложением сохранить выписку вручную (pfs source add --text-file … --url … --excerpt).
     """
@@ -343,6 +358,7 @@ def fetch(pdir: Path, url: str, *, title: str | None = None, origin: str | None 
             kind, channel = "web", "browser"
             if len(body.strip()) < 200:
                 raise PfsError(f"браузерный рендер дал {len(body.strip())} знаков — страница пуста даже после JS")
+            raw_path = _save_raw(pdir, url, html.encode("utf-8"), ".html")  # сырой DOM — как у других каналов
         else:
             kind, body, page_title, raw_path, channel = _fetch_via_chain(pdir, url)
     except PfsError as exc:
