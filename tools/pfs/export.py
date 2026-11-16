@@ -490,19 +490,14 @@ _EN: dict[str, str] = {
         "tracks: community/partnerships — off the main line.",
     "## FAQ-6. Метрики успеха. KPI в двух плоскостях":
         "## FAQ-6. Success metrics. KPIs in two dimensions",
-    "> Добавьте метрики успеха в 04/06 документы — таблица KPI соберётся "
-    "автоматически из сводных таблиц 06_validation_plan.md.":
-        "> Add success metrics to the 04/06 documents — the KPI table is assembled "
-        "automatically from the summary tables of 06_validation_plan.md.",
-    "KPI в двух направлениях: **1) Бизнес** — деньги и база (выручка/MRR, платящие, "
-    "конверсия в оплату, доля тарифов, фактический LTV/CAC); **2) Продукт** — активация, "
-    "время до первой ценности, число действий до результата, churn, CSAT/NPS. "
-    "У каждого KPI: база → цель к сроку → порог действия. Контр-метрики — по одной "
-    "на удар red team.":
-        "KPIs in two dimensions: **1) Business** — money and base (revenue/MRR, paying users, "
-        "payment conversion, plan mix, actual LTV/CAC); **2) Product** — activation, "
-        "time to first value, actions to result, churn, CSAT/NPS. Each KPI: baseline → target "
-        "by deadline → action threshold. Counter-metrics — one per red-team hit.",
+    "> Добавьте метрики успеха в 04/06 документы: явная таблица «KPI» "
+    "(Плоскость | Метрика | Формула | База | Цель к сроку | Порог | "
+    "Контр-метрика) в 06_validation_plan.md — две таблицы (Бизнес/Продукт) "
+    "соберутся автоматически.":
+        "> Add success metrics to the 04/06 documents: the explicit KPI table "
+        "(Plane | Metric | Formula | Baseline | Target by deadline | Threshold | "
+        "Counter-metric) in 06_validation_plan.md assembles the two tables "
+        "(Business/Product) automatically.",
     "## Источники (сноски)": "## Sources (footnotes)",
     "## Приложения (Excel)": "## Appendices (Excel)",
     "> Ещё нет: `pfs calc all`.":
@@ -546,11 +541,12 @@ _EN: dict[str, str] = {
     "| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |":
         "| Strategic initiative | Focus | User needs and expectations | Solutions (tactics) |",
     " **Результат:** {gate}": " **Outcome:** {gate}",
-    "| Плоскость | Гипотеза | Метрика | База → цель к сроку | Порог действия (остановить) |":
-        "| Dimension | Hypothesis | Metric | Baseline → target by deadline | Action threshold (stop) |",
+    "| Метрика | Формула | База (дата, источник) | Цель к сроку | "
+    "Порог действия (остановить) | Контр-метрика |":
+        "| Metric | Formula | Baseline (date, source) | Target by deadline | "
+        "Action threshold (stop) | Counter-metric |",
     "Бизнес": "Business",
     "Продукт": "Product",
-    "база — 06_validation_plan.md": "baseline — 06_validation_plan.md",
 }
 
 
@@ -689,65 +685,116 @@ def _table_rows(text: str, headers: tuple[str, ...]) -> list[list[str]]:
     return rows
 
 
-_BUSINESS = ("выручк", "mrr", "платящ", "ltv", "cac", "оплат", "тариф", "arpu", "цен")
+_KPI_COLS = ("Плоскость", "Метрика", "Формула", "База", "Цель к сроку",
+             "Порог действия", "Контр-метрика")
+_KPI_HEAD = ("| Метрика | Формула | База (дата, источник) | Цель к сроку | "
+             "Порог действия (остановить) | Контр-метрика |")
 
 
-def _kpi_table(pdir: Path, lang: str = "ru") -> str | None:
-    """Таблица KPI двух плоскостей (Бизнес/Продукт) из сводных таблиц 06_validation_plan.md:
-    «Ожидаемое изменение» (гипотеза → метрика → цель), «С чем сравниваем» (база) и
-    «Критерии решения» (порог остановки). Сводных таблиц нет — None (заглушка-структура)."""
-    path = pdir / "outputs" / "06_validation_plan.md"
+def _kpi_table(pdir: Path, lang: str = "ru", reg: dict | None = None) -> str | None:
+    """KPI в двух плоскостях (Бизнес/Продукт) из ЯВНОЙ сводной таблицы «KPI»
+    06_validation_plan.md со столбцом «Плоскость»: плоскость задаётся автором,
+    а не угадывается по словам метрики (PRO-48). У каждой метрики — формула, база
+    с датой и источником, цель со сроком, порог действия и контр-метрика; база и
+    цель — раздельные ячейки. Вывод — две таблицы без столбца-источника; битые
+    строки и чужие плоскости пропускаются. Таблицы нет — None: гипотезы H1…H5
+    KPI не подменяют. reg — пометить секцию KPI использованной, чтобы целевая
+    вставка 06 (FAQ-5) не дублировала её в six-pager."""
+    fname = "06_validation_plan.md"
+    path = pdir / "outputs" / fname
     if not path.exists():
         return None
     text = path.read_text(encoding="utf-8")
-    rows = _table_rows(text, ("Гипотеза", "Метрика", "Ожидание к решению"))
-    if not rows:
+    rows = [r for r in _table_rows(text, _KPI_COLS)
+            if len(r) == len(_KPI_COLS) and all(c.strip() for c in r)]
+    planes = {p: [r[1:] for r in rows if _norm_title(r[0]) == _norm_title(p)]
+              for p in ("Бизнес", "Продукт")}
+    planes = {p: rs for p, rs in planes.items() if rs}
+    if not planes:
         return None
-    thresholds = {r[0]: (r[3] if len(r) > 3 else "—")
-                  for r in _table_rows(text, ("Проверка", "Продолжить", "Изменить", "Остановить"))}
-    bases = {m.group(1): m.group(2) for m in re.finditer(r"^-\s*(H\d+)\s*:\s*(.+)$", text, flags=re.M)}
+    if reg is not None:
+        blocks = _split_sections(text)
+        used = reg.setdefault(fname, set())
+        for i, b in enumerate(blocks):
+            if b["level"] >= 2 and _norm_title(b["title"]).startswith("kpi"):
+                used.update(_subtree(blocks, i))
+                break
 
     def cell(s: str) -> str:
         return s.replace("|", "/")
 
-    out = [_t("| Плоскость | Гипотеза | Метрика | База → цель к сроку | Порог действия (остановить) |", lang),
-           "|---|---|---|---|---|"]
-    for r in rows:
-        if len(r) < 4:
-            continue
-        hid, hyp, metric, target = r[0], r[1], r[2], r[3]
-        base = bases.get(hid, _t("база — 06_validation_plan.md", lang)).split(";")[0].strip()
-        if re.fullmatch(r"H\d+", hid.strip()):
-            hyp = f"{hid.strip()} — {hyp}"
-        plane = _t("Бизнес", lang) if any(w in f"{metric} {hyp}".lower() for w in _BUSINESS) else _t("Продукт", lang)
-        out.append(f"| {plane} | {cell(hyp)} | {cell(metric)} | {cell(base)} → {cell(target)} | "
-                   f"{cell(thresholds.get(hid, '—'))} |")
+    sep = "|---|---|---|---|---|---|"
+    out: list[str] = []
+    for plane, rs in planes.items():
+        out += [f"**{_t(plane, lang)}**", "", _t(_KPI_HEAD, lang), sep]
+        out += ["| " + " | ".join(cell(c) for c in r) + " |" for r in rs]
+        out.append("")
+    while out and not out[-1]:
+        out.pop()
     return "\n".join(out)
 
 
 _INITIATIVE = re.compile(r"^-\s*\*\*(.+?):\*\*\s*(.+)$")
+_INITIATIVE_WORDS = ("инициатив", "драйвер")
+_JTBD = re.compile(r"JTBD[:\s]*«([^»]+)»")
+
+
+def _user_needs(pdir: Path) -> str | None:
+    """Барьер пользователя словами пользователя — хвост JTBD после «—»
+    («… резюме, которое пройдёт ATS — без ручной рутины и доверия данным облаку»);
+    02_situation.md, затем 04_product_strategy.md. Нет JTBD или барьера — None."""
+    for fname in ("02_situation.md", "04_product_strategy.md"):
+        path = pdir / "outputs" / fname
+        if not path.exists():
+            continue
+        m = _JTBD.search(path.read_text(encoding="utf-8"))
+        if not m:
+            continue
+        parts = [p.strip(" .") for p in re.split(r"\s*—\s*", m.group(1)) if p.strip(" .")]
+        if len(parts) > 1 and parts[-1]:
+            return parts[-1]
+    return None
 
 
 def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
-    """Матрица тактик из Outcome-роадмапа 04_product_strategy.md: буллеты вида
-    «- **Этап N (…):** тактики … **Результат …:** …» раскладываются в канонические
-    колонки «Инициатива | Фокус | Потребности | Решения (тактики)». Похоже на роадмап
-    меньше двух этапов — None (честная заглушка)."""
+    """Матрица тактик FAQ-4 из Outcome-роадмапа 04_product_strategy.md: буллеты вида
+    «- **Инициатива N — фокус (тайминг):** тактика; тактика. **Результат …:** гейт»
+    раскладываются в канонические колонки «Инициатива | Фокус | Потребности |
+    Решения» (эталон FAQ-4): одна исполняемая тактика в строке, 2–4 строки на
+    инициативу (излишек склеивается в четвёртую строку, гейт-результат — в последнюю).
+    Фокус — направление из заголовка без тайминга; у «Этап N» без «—» — результат-гейт.
+    Потребности — барьер из JTBD (02, затем 04) словами пользователя. Честные
+    заглушки: нет JTBD или меньше двух инициатив с 2+ тактиками — None."""
     path = pdir / "outputs" / "04_product_strategy.md"
     if not path.exists():
         return None
-    rows = []
+    needs = _user_needs(pdir)
+    if not needs:
+        return None
+    groups: list[tuple[str, str, list[str], str]] = []
     for line in path.read_text(encoding="utf-8").splitlines():
         m = _INITIATIVE.match(line.strip())
         if not m:
             continue
         label, body = m.group(1).strip(), m.group(2).strip()
-        if not _norm_title(label).startswith(("этап", "инициатив", "драйвер")):
+        norm = _norm_title(label)
+        if not (norm.startswith("этап") or any(w in norm for w in _INITIATIVE_WORDS)):
             continue
         parts = re.split(r"\*\*Результат[^*]*\*\*:?\s*", body, maxsplit=1)
         gate = parts[1].strip() if len(parts) > 1 else ""
-        rows.append((label, parts[0].strip(), gate))
-    if len(rows) < 2:
+        tactics = [t.strip(" .") for t in parts[0].split(";") if t.strip(" .")]
+        if len(tactics) < 2:
+            continue
+        if "—" in label:
+            name, _, tail = label.partition("—")
+            name, focus = name.strip(), re.sub(r"\([^)]*\)", "", tail).strip(" .")
+        else:
+            name, focus = label, re.sub(r"^Результат[^:]*:\s*", "", gate).strip(" .") \
+                if gate else ""
+        if not focus:
+            focus = tactics[0]
+        groups.append((name, focus, tactics, gate))
+    if len(groups) < 2:
         return None
 
     def cell(s: str) -> str:
@@ -755,10 +802,13 @@ def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
 
     out = [_t("| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |", lang),
            "|---|---|---|---|"]
-    for label, tactics, gate in rows:
-        focus = re.split(r"[.;]", tactics)[0].strip() or "—"
-        solutions = tactics + (_t(" **Результат:** {gate}", lang).format(gate=gate) if gate else "")
-        out.append(f"| {cell(label)} | {cell(focus)} | — | {cell(solutions)} |")
+    for name, focus, tactics, gate in groups:
+        shown = tactics if len(tactics) <= 4 else tactics[:3] + ["; ".join(tactics[3:])]
+        for i, tactic in enumerate(shown):
+            solutions = tactic
+            if gate and i == len(shown) - 1:
+                solutions += _t(" **Результат:** {gate}", lang).format(gate=gate)
+            out.append(f"| {cell(name)} | {cell(focus)} | {cell(needs)} | {cell(solutions)} |")
     return "\n".join(out)
 
 
@@ -867,6 +917,9 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
                   "|---|---|---|---|",
                   _t("| Инициатива 1 | … | … | … |", lang),
                   _t("| Инициатива 2 | … | … | … |", lang), ""]
+    # PRO-48: KPI собирается ДО целевой вставки 06, чтобы пометить секцию «KPI»
+    # использованной — таблица попадает в FAQ-6 один раз, без дубля в FAQ-5.
+    kpi = None if lang == "en" else _kpi_table(pdir, lang, reg=reg)
     doc06 = _en_pending("06_validation_plan.md — expected change, comparison base, deadlines") \
         if lang == "en" else _insert_doc(pdir, "06_validation_plan.md", reg=reg)
     parts += [_t("## FAQ-5. Высокоуровневый план реализации", lang), "",
@@ -889,20 +942,16 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
         if not faq6:
             faq6 = grab("06_validation_plan.md", ("Ожидаемое изменение", "Критерии решения"), 3000)
             faq6_src = "06_validation_plan.md"
-    kpi = None if lang == "en" else _kpi_table(pdir, lang)
     parts += [_t("## FAQ-6. Метрики успеха. KPI в двух плоскостях", lang), ""]
     if faq6:
         parts += [faq6, ""]
     if kpi:
         parts += [kpi, ""]
     elif not faq6 and doc04 is None and doc06 is None:
-        parts += [_t("> Добавьте метрики успеха в 04/06 документы — таблица KPI соберётся "
-                     "автоматически из сводных таблиц 06_validation_plan.md.", lang), ""]
-    parts += [_t("KPI в двух направлениях: **1) Бизнес** — деньги и база (выручка/MRR, платящие, "
-                 "конверсия в оплату, доля тарифов, фактический LTV/CAC); **2) Продукт** — активация, "
-                 "время до первой ценности, число действий до результата, churn, CSAT/NPS. "
-                 "У каждого KPI: база → цель к сроку → порог действия. Контр-метрики — по одной "
-                 "на удар red team.", lang), ""]
+        parts += [_t("> Добавьте метрики успеха в 04/06 документы: явная таблица «KPI» "
+                     "(Плоскость | Метрика | Формула | База | Цель к сроку | Порог | "
+                     "Контр-метрика) в 06_validation_plan.md — две таблицы (Бизнес/Продукт) "
+                     "соберутся автоматически.", lang), ""]
     body = "\n".join(parts)
     foot = None
     if lang != "en":  # PRO-49: в RU six-pager теги → сквозные сноски; EN-версию пишет writer
