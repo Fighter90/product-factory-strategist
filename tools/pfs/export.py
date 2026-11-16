@@ -761,10 +761,13 @@ def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
     «- **Инициатива N — фокус (тайминг):** тактика; тактика. **Результат …:** гейт»
     раскладываются в канонические колонки «Инициатива | Фокус | Потребности |
     Решения» (эталон FAQ-4): одна исполняемая тактика в строке, 2–4 строки на
-    инициативу (излишек склеивается в четвёртую строку, гейт-результат — в последнюю).
-    Фокус — направление из заголовка без тайминга; у «Этап N» без «—» — результат-гейт.
-    Потребности — барьер из JTBD (02, затем 04) словами пользователя. Честные
-    заглушки: нет JTBD или меньше двух инициатив с 2+ тактиками — None."""
+    инициативу (излишек склеивается в четвёртую строку, гейт-результат — в последнюю,
+    если он ещё не показан в Фокусе). Фокус — направление из заголовка без тайминга;
+    у «Этап N» без «—» — результат-гейт. Потребности — барьер из JTBD (02, затем 04)
+    словами пользователя. Честные заглушки (ревью PRO-48): нет JTBD, меньше двух
+    инициатив, у какой-то инициативы нет фокуса (ни «—» в заголовке, ни гейта) или
+    меньше двух тактик — None: дырявую матрицу, где инициатива пропала молча,
+    не собираем."""
     path = pdir / "outputs" / "04_product_strategy.md"
     if not path.exists():
         return None
@@ -783,18 +786,22 @@ def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
         parts = re.split(r"\*\*Результат[^*]*\*\*:?\s*", body, maxsplit=1)
         gate = parts[1].strip() if len(parts) > 1 else ""
         tactics = [t.strip(" .") for t in parts[0].split(";") if t.strip(" .")]
-        if len(tactics) < 2:
-            continue
         if "—" in label:
             name, _, tail = label.partition("—")
             name, focus = name.strip(), re.sub(r"\([^)]*\)", "", tail).strip(" .")
+        elif gate:  # «Этап N» без «—»: фокус — результат-гейт
+            name, focus = label, re.sub(r"^Результат[^:]*:\s*", "", gate).strip(" .")
         else:
-            name, focus = label, re.sub(r"^Результат[^:]*:\s*", "", gate).strip(" .") \
-                if gate else ""
-        if not focus:
-            focus = tactics[0]
+            # Ни «—» в заголовке, ни гейта — фокус взять неоткуда; fallback на
+            # первую тактику давал бы Фокус, идентичный «Решения» (ревью PRO-48).
+            name, focus = label, ""
         groups.append((name, focus, tactics, gate))
     if len(groups) < 2:
+        return None
+    # Ревью PRO-48: дырявую матрицу не собираем. Инициатива без фокуса или с
+    # одной тактикой не выбрасывается молча — «на каждую инициативу FAQ-3
+    # от 2 до 4 строк» либо у всех инициатив, либо честная заглушка.
+    if any(not focus.strip(" .") or len(tactics) < 2 for _, focus, tactics, _ in groups):
         return None
 
     def cell(s: str) -> str:
@@ -804,9 +811,10 @@ def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
            "|---|---|---|---|"]
     for name, focus, tactics, gate in groups:
         shown = tactics if len(tactics) <= 4 else tactics[:3] + ["; ".join(tactics[3:])]
+        tail_gate = bool(gate) and gate.strip(" .") != focus.strip(" .")  # пустой гейт и гейт = фокус — не дублируем
         for i, tactic in enumerate(shown):
             solutions = tactic
-            if gate and i == len(shown) - 1:
+            if tail_gate and i == len(shown) - 1:
                 solutions += _t(" **Результат:** {gate}", lang).format(gate=gate)
             out.append(f"| {cell(name)} | {cell(focus)} | {cell(needs)} | {cell(solutions)} |")
     return "\n".join(out)

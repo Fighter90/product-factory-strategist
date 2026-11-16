@@ -81,6 +81,28 @@ class MatrixUnitTests(unittest.TestCase):
         self.assertIn("**Результат:** звёзды 300+", init2[-1][3], "гейт не у последней тактики")
         self.assertNotIn("**Результат:**", init2[0][3], "гейт не на первой тактике")
 
+    def test_initiative_without_gate_has_no_dangling_result(self):
+        # У инициативы без «Результат …:» гейта нет — « **Результат:** » с пустым
+        # значением в последнюю строку не приписывается; у инициативы с гейтом —
+        # приписывается, как раньше.
+        pdir = project.create("Матрица без гейта у тира", "Что делать?", slug="pro48-dangling")
+        out = pdir / "outputs"
+        (out / "02_situation.md").write_text(
+            "# Ситуация\n## Сегменты (discovery)\n"
+            "JTBD: «Когда я готовлю резюме, хочу сделать его за один вечер — "
+            "без ручной рутины»\n", encoding="utf-8")
+        (out / "04_product_strategy.md").write_text(
+            "# Стратегия\n## Выбранное направление\n"
+            "- **Инициатива 1 — активация (мес 0–2):** шаблон; импорт файла. "
+            "**Результат к дню 60:** активация 40%.\n"
+            "- **Инициатива 2 — канал (мес 2–4):** Show HN; Reddit.\n", encoding="utf-8")
+        rows = table_rows(export._tactics_matrix(pdir))
+        g1 = [r for r in rows if r[0] == "Инициатива 1"]
+        g2 = [r for r in rows if r[0] == "Инициатива 2"]
+        self.assertIn("**Результат:** активация 40%", g1[-1][3], "гейт потерялся")
+        for r in g2:
+            self.assertNotIn("**Результат:**", r[3], f"висячий результат: {r}")
+
     def test_focus_short_direction_without_timing(self):
         for r in table_rows(self.matrix):
             self.assertNotEqual(r[1], r[0], "фокус повторяет имя инициативы")
@@ -122,17 +144,44 @@ class MatrixGuardsTests(unittest.TestCase):
         self.assertIsNone(export._tactics_matrix(pdir))
 
     def test_legacy_stage_labels_still_build_rows(self):
-        # Старый формат «Этап N (мес …)» без «—»: строки строются, фокус не повторяет
-        # имя этапа и тактику (берётся из гейта-результата).
+        # Старый формат «Этап N (мес …)» без «—»: строки строятся, фокус — из
+        # гейта-результата и ни в одной строке не повторяет ни имя этапа,
+        # ни решения (гейт уже показан в Фокусе — в Решения не дублируется).
         pdir = project.create("Матрица этапов", "Что делать?", slug="pro48-stages")
         self._write(pdir,
                     "- **Этап 1 (мес 0–3), волна DE:** семейный пакет; уведомления. "
                     "**Результат к дню 90:** удержание +5 п.п.\n"
-                    "- **Этап 2 (мес 3–6):** гейт лояльности; пересмотр цен.\n", jtbd=True)
+                    "- **Этап 2 (мес 3–6):** гейт лояльности; пересмотр цен. "
+                    "**Результат к дню 180:** ARPU +10%.\n", jtbd=True)
         rows = table_rows(export._tactics_matrix(pdir))
+        self.assertTrue(rows)
         self.assertEqual(rows[0][0], "Этап 1 (мес 0–3), волна DE")
-        self.assertNotEqual(rows[0][1], rows[0][0], "фокус повторяет имя этапа")
-        self.assertNotIn(rows[0][1], rows[0][3], "фокус повторяет решения")
+        for r in rows:
+            self.assertTrue(r[1], f"пустой фокус: {r}")
+            self.assertNotEqual(r[1], r[0], f"фокус повторяет имя этапа: {r}")
+            self.assertNotIn(r[1], r[3], f"фокус повторяет решения: {r}")
+
+    def test_legacy_stage_without_dash_or_gate_returns_none(self):
+        # «Этап N» без «—» и без гейта: фокус взять неоткуда — fallback на первую
+        # тактику давал бы Фокус, идентичный «Решения» (повтор ячеек). Честная
+        # заглушка вместо кривой матрицы (ревью PRO-48).
+        pdir = project.create("Матрица без гейта", "Что делать?", slug="pro48-nogate")
+        self._write(pdir,
+                    "- **Этап 1 (мес 0–3), волна DE:** семейный пакет; уведомления. "
+                    "**Результат к дню 90:** удержание +5 п.п.\n"
+                    "- **Этап 2 (мес 3–6):** гейт лояльности; пересмотр цен.\n", jtbd=True)
+        self.assertIsNone(export._tactics_matrix(pdir))
+
+    def test_initiative_with_single_tactic_not_silently_dropped(self):
+        # Инициатива с одной тактикой не выбрасывается из матрицы молча:
+        # «на каждую инициативу FAQ-3 от 2 до 4 строк» — либо у всех, либо
+        # честная заглушка (ревью PRO-48).
+        pdir = project.create("Матрица с дыркой", "Что делать?", slug="pro48-hole")
+        self._write(pdir,
+                    "- **Инициатива 1 — активация (мес 0–2):** шаблон; импорт файла.\n"
+                    "- **Инициатива 2 — канал (мес 2–4):** Show HN; Reddit.\n"
+                    "- **Инициатива 3 — прайсинг (мес 4–6):** годовой тариф.\n", jtbd=True)
+        self.assertIsNone(export._tactics_matrix(pdir))
 
 
 class KpiUnitTests(unittest.TestCase):
