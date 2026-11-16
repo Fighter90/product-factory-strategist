@@ -4,8 +4,9 @@
 1. одним вызовом CLI собирается SIX_PAGER_EN.md — каркас на английском;
 2. секции из документов 00–07 НЕ вставляются (RU-текст — вход писателя): каркас
    содержит pending-строки «> EN draft — pending: …» и остаётся чистым по линтеру;
-3. check предупреждает, если дописанный EN-документ отстал от RU по тегам
-   (драйверы/теги добавлены в RU, EN не переписан); каркас-черновик — не «отстал».
+3. check предупреждает, если дописанный EN-документ отстал от RU по источникам
+   сносок S### и маркерам [^n] (PRO-49; сырые теги C### в EN не ждутся —
+   реестр тегов в REPORT.md); каркас-черновик — не «отстал».
 
 Запуск: python3 -m unittest tests.test_sixpager_en -v
 """
@@ -83,7 +84,7 @@ class SixPagerEnTests(unittest.TestCase):
         self.assertNotIn(MARK, entext, "маркер перевода не вставляется")
         self.assertIn("02_situation.md", entext, "указан вход writer'а")
         self.assertIn("SIX_PAGER_PROMPT_EN.md", entext)
-        self.assertIn("Рынок 40 млрд [C001]", rutext, "RU-версия не пострадала")
+        self.assertIn("Рынок 40 млрд [^1]", rutext, "RU-версия не пострадала")
         self.assertEqual(rutext.count(MARK), 0, "RU-версия без маркеров перевода")
 
     def test_en_skeleton_is_linter_clean_with_docs(self):
@@ -121,13 +122,20 @@ class CheckEnSyncTests(unittest.TestCase):
         # каркас-черновик (pending-строки) — не «отставшая» версия: его допишет writer
         self.assertEqual(self._warnings(), [])
 
-    def test_written_en_lags_ru_after_driver_added(self):
-        # writer дописал EN (маркера каркаса нет, есть тег C001) — сверка активна
+    def test_written_en_lags_ru_after_new_source_added(self):
+        # writer дописал EN в формате PRO-49: сноски [^n] с источниками S###, сырых
+        # тегов C### нет (реестр — REPORT.md) — сверка активна, «отставания» нет
         en_path = self.pdir / "outputs" / "SIX_PAGER_EN.md"
-        en_path.write_text("# Six-pager (EN)\n\nThe market is large [C001].\n", encoding="utf-8")
+        en_path.write_text("# Six-pager (EN)\n\nThe market is large[^1].\n\n"
+                           "## Sources (footnotes)\n\n"
+                           "[^1]: S001 — Example — Market report — https://example.org/r — grade B\n",
+                           encoding="utf-8")
         self.assertEqual(self._warnings(), [])
-        # драйвер добавлен в RU после того, как EN дописан — check предупреждает
-        claims.add(self.pdir, "Драйвер: семейный пакет даёт +5 п.п. удержания", "hypothesis", ["S001"], grade="C")
+        # в RU добавили источник (драйвер C002 на S002), EN не переписан — check предупреждает
+        sources.add(self.pdir, text="Публичный отчёт: удержание 92% при семейном пакете",
+                    title="Удержание", url="https://example.org/churn")
+        claims.add(self.pdir, "Драйвер: семейный пакет даёт +5 п.п. удержания",
+                   "hypothesis", ["S002"], grade="C")
         out = self.pdir / "outputs" / "03_options.md"
         out.write_text(out.read_text(encoding="utf-8")
                        + "\n## Драйверы выбранного направления\n\n"
@@ -135,7 +143,8 @@ class CheckEnSyncTests(unittest.TestCase):
         export.build_six_pager(self.pdir, with_calcs=False)  # пересобрали только RU
         warns = self._warnings()
         self.assertTrue(warns, "check предупреждает, что дописанный EN отстал от RU")
-        self.assertIn("C002", warns[0])
+        self.assertIn("S002", warns[0], "сигнал свёрки — источник S###")
+        self.assertNotIn("C002", warns[0], "теги C### — не сигнал свёрки: реестр в REPORT.md")
         self.assertIn("SIX_PAGER_PROMPT_EN.md", warns[0], "подсказка — EN-спецификация")
         # пересборка EN даёт каркас-черновик — предупреждение снято (EN переделывают)
         export.build_six_pager(self.pdir, with_calcs=False, lang="en")

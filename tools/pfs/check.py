@@ -46,23 +46,29 @@ def _section_body(text: str, name: str) -> str:
 
 
 def en_sync_warnings(pdir: Path) -> list[str]:
-    """Сверка тегов RU↔EN: обе версии six-pager собраны, но в RU появились теги
-    (C###/S###/D###), которых в EN ещё нет — дописанный EN-документ отстал от RU и
-    подлежит переписыванию (EN пишется агентом из того же пакета данных, PRO-53).
-    EN нет, теги совпадают или EN — каркас-черновик (EN_DRAFT_MARK, его допишет
-    writer) — предупреждений нет."""
+    """Сверка RU↔EN six-pager (PRO-53; сигнал обновлён в PRO-49): RU six-pager несёт
+    сквозные сноски [^N] с источниками S### в определениях, сырые теги C###/S### в нём
+    больше не пишутся — реестр тегов живёт в REPORT.md. EN отстал, если в RU появились
+    источники, которых в EN нет, или RU уже со сносками [^N], а EN написан в старом
+    теговом формате без них. EN нет, сигналы совпали или EN — каркас-черновик
+    (EN_DRAFT_MARK, его допишет writer) — предупреждений нет."""
     ru, en = pdir / "outputs" / "SIX_PAGER.md", pdir / "outputs" / "SIX_PAGER_EN.md"
     if not (ru.exists() and en.exists()):
         return []
     en_text = en.read_text(encoding="utf-8")
     if core.EN_DRAFT_MARK in en_text:
         return []
-    missing = sorted(set(TAG.findall(ru.read_text(encoding="utf-8")))
-                     - set(TAG.findall(en_text)),
-                     key=lambda t: (t[0], int(t[1:])))
-    if not missing:
+    ru_text = ru.read_text(encoding="utf-8")
+    bits: list[str] = []
+    missing = sorted(set(re.findall(r"\bS\d{3,}\b", ru_text))
+                     - set(re.findall(r"\bS\d{3,}\b", en_text)))
+    if missing:
+        bits.append(", ".join(missing))
+    if re.search(r"\[\^\d+\](?!:)", ru_text) and not re.search(r"\[\^\d+\](?!:)", en_text):
+        bits.append("[^n]")
+    if not bits:
         return []
-    return [i18n.t(i18n.lang_of(pdir), "warn_en_sync", tags=", ".join(missing))]
+    return [i18n.t(i18n.lang_of(pdir), "warn_en_sync", tags="; ".join(bits))]
 
 
 # PRO-53: EN-линтер. Кириллица — любой русский символ; русская десятичная запятая —
@@ -341,7 +347,8 @@ def run(pdir: Path, strict: bool = False) -> dict:
     # 3. Гэп-трекинг: пробел закрыт в 02, но строка 01 всё ещё «открыт»
     for w in gaps.sync_warnings(pdir):
         warnings.append(w)
-    # 4. Сверка тегов RU↔EN: дописанный EN six-pager отстал от RU после правок документов
+    # 4. Сверка RU↔EN six-pager: источники сносок S### и маркеры [^N]; дописанный
+    #    EN six-pager отстал от RU после правок документов (PRO-53/PRO-49)
     warnings.extend(en_sync_warnings(pdir))
     # 4a. PRO-53: линтер EN-вывода — кириллица, русские десятичные запятые, маркер перевода
     warnings.extend(en_style_warnings(pdir))

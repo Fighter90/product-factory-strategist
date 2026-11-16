@@ -35,16 +35,34 @@ _STYLES = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:style w:type="paragraph" w:styleId="Heading4"><w:name w:val="heading 4"/><w:basedOn w:val="Normal"/><w:pPr><w:keepNext/><w:outlineLvl w:val="3"/></w:pPr><w:rPr><w:b/><w:i/></w:rPr></w:style>
 <w:style w:type="paragraph" w:styleId="CodeBlock"><w:name w:val="Code Block"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="0"/><w:shd w:val="clear" w:fill="F2F2F2"/></w:pPr><w:rPr><w:rFonts w:ascii="Consolas" w:hAnsi="Consolas"/><w:sz w:val="18"/></w:rPr></w:style>
 <w:style w:type="paragraph" w:styleId="Quote"><w:name w:val="Quote"/><w:basedOn w:val="Normal"/><w:pPr><w:ind w:left="400"/><w:shd w:val="clear" w:fill="EEF3FA"/></w:pPr><w:rPr><w:i/><w:color w:val="404040"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="FootnoteText"><w:name w:val="footnote text"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="40"/></w:pPr><w:rPr><w:sz w:val="18"/></w:rPr></w:style>
+<w:style w:type="character" w:styleId="FootnoteReference"><w:name w:val="footnote reference"/><w:rPr><w:vertAlign w:val="superscript"/></w:rPr></w:style>
 </w:styles>""" % _W
 
 
-def _runs(text: str) -> str:
-    """Абзацный текст с **жирным** и `кодом` → набор w:r."""
+_FN_REF_RE = re.compile(r"\[\^(\d+)\]")           # ссылка на сноску в тексте: [^1]
+_FN_DEF_RE = re.compile(r"\[\^(\d+)\]:\s*(.*)$")  # определение сноски: [^1]: текст
+
+
+def _fn_ref_run(fid: str) -> str:
+    return (f'<w:r><w:rPr><w:rStyle w:val="FootnoteReference"/></w:rPr>'
+            f'<w:footnoteReference w:id="{fid}"/></w:r>')
+
+
+def _runs(text: str, fn_ids: set[int] | None = None) -> str:
+    """Абзацный текст с **жирным**, `кодом` и сносками [^N] → набор w:r.
+    fn_ids — номера определённых в документе сносок: только они становятся
+    w:footnoteReference (PRO-49); без набора или для неизвестного номера маркер
+    остаётся литеральным текстом — ссылка на несуществующую сноску делает DOCX
+    невалидным (Word предлагает «восстановить»)."""
     out = []
-    for part in re.split(r"(\*\*.+?\*\*|`[^`]+`)", text):
+    for part in re.split(r"(\*\*.+?\*\*|`[^`]+`|\[\^\d+\])", text):
         if not part:
             continue
-        if part.startswith("**") and part.endswith("**") and len(part) > 4:
+        m_fn = _FN_REF_RE.fullmatch(part)
+        if m_fn and fn_ids is not None and int(m_fn.group(1)) in fn_ids:
+            out.append(_fn_ref_run(m_fn.group(1)))
+        elif part.startswith("**") and part.endswith("**") and len(part) > 4:
             out.append(f'<w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">{escape(part[2:-2])}</w:t></w:r>')
         elif part.startswith("`") and part.endswith("`") and len(part) > 2:
             out.append(f'<w:r><w:rPr><w:rFonts w:ascii="Consolas" w:hAnsi="Consolas"/>'
@@ -55,9 +73,9 @@ def _runs(text: str) -> str:
     return "".join(out)
 
 
-def _p(text: str, style: str | None = None) -> str:
+def _p(text: str, style: str | None = None, fn_ids: set[int] | None = None) -> str:
     ppr = f'<w:pPr><w:pStyle w:val="{style}"/></w:pPr>' if style else ""
-    return f"<w:p>{ppr}{_runs(text)}</w:p>"
+    return f"<w:p>{ppr}{_runs(text, fn_ids)}</w:p>"
 
 
 def _dims(data: bytes, ext: str) -> tuple[int, int]:
@@ -105,7 +123,7 @@ def _drawing(rid: str, doc_id: int, cx: int, cy: int) -> str:
             f"</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>")
 
 
-def _tbl(rows: list[list[str]]) -> str:
+def _tbl(rows: list[list[str]], fn_ids: set[int] | None = None) -> str:
     cols = max(len(r) for r in rows)
     grid = "<w:gridCol/>" * cols
     trs = []
@@ -116,7 +134,7 @@ def _tbl(rows: list[list[str]]) -> str:
                 run = f'<w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">{escape(cell)}</w:t></w:r>'
                 tcs.append(f"<w:tc><w:tcPr/><w:p>{run}</w:p></w:tc>")
             else:
-                tcs.append(f"<w:tc><w:tcPr/><w:p>{_runs(cell)}</w:p></w:tc>")
+                tcs.append(f"<w:tc><w:tcPr/><w:p>{_runs(cell, fn_ids)}</w:p></w:tc>")
         trs.append(f"<w:tr>{''.join(tcs)}</w:tr>")
     borders = "<w:tblBorders>" + "".join(
         f'<w:{side} w:val="single" w:sz="4" w:color="BFBFBF"/>'
@@ -125,16 +143,48 @@ def _tbl(rows: list[list[str]]) -> str:
             f"<w:tblGrid>{grid}</w:tblGrid>{''.join(trs)}</w:tbl>")
 
 
+def _footnotes_xml(footnotes: list[tuple[int, str]]) -> str:
+    """word/footnotes.xml: разделители + сноски как настоящие footnotes Word (PRO-49).
+    id сноски = номер из markdown-определения [^N]: текст."""
+    items = ['<w:footnote w:type="separator" w:id="-1"><w:p><w:r><w:separator/></w:r></w:p></w:footnote>',
+             '<w:footnote w:type="continuationSeparator" w:id="0">'
+             "<w:p><w:r><w:continuationSeparator/></w:r></w:p></w:footnote>"]
+    for fid, text in footnotes:
+        items.append(f'<w:footnote w:id="{fid}">'
+                     f'<w:p><w:pPr><w:pStyle w:val="FootnoteText"/></w:pPr>'
+                     f'<w:r><w:rPr><w:rStyle w:val="FootnoteReference"/></w:rPr><w:footnoteRef/></w:r>'
+                     # текст сноски — через инлайн-форматтер тела: «**S001**» из
+                     # _footnote_line становится жирным w:b-run, а не литеральными «**»
+                     f'<w:r><w:t xml:space="preserve"> </w:t></w:r>'
+                     f"{_runs(text)}</w:p></w:footnote>")
+    return ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+            f"<w:footnotes {_W}>{''.join(items)}</w:footnotes>")
+
+
 def md_to_docx_xml(md_text: str, base_dir: Path | None = None,
-                   media: list[tuple[str, bytes]] | None = None) -> str:
+                   media: list[tuple[str, bytes]] | None = None,
+                   footnotes: list[tuple[int, str]] | None = None) -> str:
     """Markdown → XML тела документа (word/document.xml).
 
     media — список, куда складываются (имя_файла, байты) найденных изображений;
     save() вшивает их в word/media и прописывает связи.
+    footnotes — список, куда складываются (id, текст) сносок из определений [^N]:
+    текст; save() собирает из них word/footnotes.xml (PRO-49), строки определений
+    в тело документа не попадают. Сбор двухпроходный: сначала все определения
+    (дедуп — первое определение побеждает), затем ссылки [^N] становятся
+    w:footnoteReference только для определённых номеров; ссылка без определения
+    остаётся литеральным текстом (иначе невалидный DOCX). Без footnotes-коллектора
+    ссылки не эмиттятся вовсе — footnotes.xml никто не соберёт.
     """
     body: list[str] = []
     media = media if media is not None else []
     lines = md_text.splitlines()
+    defs: dict[int, str] = {}
+    for ln in lines:  # проход 1: все определения, до любой ссылки в тексте
+        m_fn = _FN_DEF_RE.match(ln.strip())
+        if m_fn:
+            defs.setdefault(int(m_fn.group(1)), m_fn.group(2).strip())
+    fn_ids: set[int] | None = set(defs) if footnotes is not None else None
     i, n = 0, len(lines)
     while i < n:
         s = lines[i].strip()
@@ -144,6 +194,9 @@ def md_to_docx_xml(md_text: str, base_dir: Path | None = None,
                 body.append(f'<w:p><w:pPr><w:pStyle w:val="CodeBlock"/></w:pPr>'
                             f'<w:r><w:t xml:space="preserve">{escape(lines[i])}</w:t></w:r></w:p>')
                 i += 1
+            i += 1
+            continue
+        if _FN_DEF_RE.match(s):  # определение [^N]: собрано проходом 1 → word/footnotes.xml, из тела прочь
             i += 1
             continue
         m_img = _IMG_RE.match(s)
@@ -162,12 +215,12 @@ def md_to_docx_xml(md_text: str, base_dir: Path | None = None,
                 cx, cy = int(w_px * scale * 9525), int(h_px * scale * 9525)
                 body.append(_drawing(f"rId{len(media) + 10}", len(media), cx, cy))
             else:
-                body.append(_p(m_img.group(1) or m_img.group(2)))
+                body.append(_p(m_img.group(1) or m_img.group(2), fn_ids=fn_ids))
             i += 1
             continue
         m = re.match(r"^(#{1,4})\s+(.*)", s)
         if m:
-            body.append(_p(m.group(2), f"Heading{len(m.group(1))}"))
+            body.append(_p(m.group(2), f"Heading{len(m.group(1))}", fn_ids=fn_ids))
             i += 1
             continue
         if s.startswith("|") and i + 1 < n and re.match(r"^\s*\|[\s:|-]+\|?\s*$", lines[i + 1]):
@@ -176,21 +229,23 @@ def md_to_docx_xml(md_text: str, base_dir: Path | None = None,
             while i < n and lines[i].strip().startswith("|"):
                 rows.append([c.strip() for c in lines[i].strip().strip("|").split("|")])
                 i += 1
-            body.append(_tbl(rows))
+            body.append(_tbl(rows, fn_ids))
             continue
         if s.startswith(">"):
-            body.append(f'<w:p><w:pPr><w:pStyle w:val="Quote"/></w:pPr>{_runs(s.lstrip("> "))}</w:p>')
+            body.append(f'<w:p><w:pPr><w:pStyle w:val="Quote"/></w:pPr>{_runs(s.lstrip("> "), fn_ids)}</w:p>')
             i += 1
             continue
         if re.match(r"^[-*•]\s+", s):
-            body.append(_p("• " + re.sub(r"^[-*•]\s+", "", s)))
+            body.append(_p("• " + re.sub(r"^[-*•]\s+", "", s), fn_ids=fn_ids))
             i += 1
             continue
         if not s or s in ("---", "***", "___"):
             i += 1
             continue
-        body.append(_p(s))
+        body.append(_p(s, fn_ids=fn_ids))
         i += 1
+    if footnotes is not None:
+        footnotes.extend(defs.items())  # порядок первого определения; дубли уже отброшены
     return ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             f'<w:document {_W}><w:body>{"".join(body)}'
             '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>'
@@ -202,10 +257,15 @@ def save(path: Path, md_text: str, base_dir: Path | None = None) -> Path:
     """Собрать .docx из markdown-текста (атомарно, без зависимостей).
 
     base_dir — каталог для разрешения относительных путей изображений.
+    Сноски [^N] в тексте и определения [^N]: текст собираются в word/footnotes.xml
+    (настоящие footnotes Word, PRO-49); без сносок часть не создаётся. Ссылка [^N]
+    без определения остаётся литеральным текстом — невалидных ссылок на
+    несуществующие сноски не возникает; повторные определения дедуплицируются.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     media: list[tuple[str, bytes]] = []
-    doc_xml = md_to_docx_xml(md_text, base_dir=base_dir, media=media)
+    footnotes: list[tuple[int, str]] = []
+    doc_xml = md_to_docx_xml(md_text, base_dir=base_dir, media=media, footnotes=footnotes)
     exts = sorted({n.rsplit(".", 1)[1] for n, _ in media})
     parts = {
         "[Content_Types].xml":
@@ -217,6 +277,8 @@ def save(path: Path, md_text: str, base_dir: Path | None = None) -> Path:
             'wordprocessingml.document.main+xml"/>'
             '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.'
             'wordprocessingml.styles+xml"/>'
+            + (f'<Override PartName="/word/footnotes.xml" ContentType="application/vnd.openxmlformats-officedocument.'
+               f'wordprocessingml.footnotes+xml"/>' if footnotes else "")
             + "".join(f'<Default Extension="{e}" ContentType="{_IMG_CT[e]}"/>' for e in exts) + "</Types>",
         "_rels/.rels":
             '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -228,10 +290,13 @@ def save(path: Path, md_text: str, base_dir: Path | None = None) -> Path:
         "word/_rels/document.xml.rels":
             '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            + (f'<Relationship Id="rId9" Type="{_R}/footnotes" Target="footnotes.xml"/>' if footnotes else "")
             + "".join(f'<Relationship Id="rId{idx + 10}" Type="{_R}/image" Target="media/{name}"/>'
                       for idx, (name, _) in enumerate(media, 1))
             + "</Relationships>",
     }
+    if footnotes:
+        parts["word/footnotes.xml"] = _footnotes_xml(footnotes)
     for name, data in media:
         parts[f"word/media/{name}"] = data
     fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".tmp-", suffix=".docx")

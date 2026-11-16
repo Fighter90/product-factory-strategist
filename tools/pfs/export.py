@@ -5,6 +5,7 @@ import hashlib
 import html as html_mod
 import re
 from pathlib import Path
+from urllib.parse import urlparse
 
 from . import calc, check, claims as claims_mod, core, cost, decisions, i18n, sources as src_mod
 from .xlsx import sheet_names
@@ -275,23 +276,89 @@ def _flat(v) -> str:
     return str(v)
 
 
-def _sources_footnotes(pdir: Path) -> str | None:
-    """ПОЛНЫЙ нумерованный список источников: ID — название — URL/файл — дата публикации.
-    Без ограничений и отсылок «ещё N — sources.jsonl»."""
-    rows = core.read_jsonl(pdir / "sources.jsonl")
-    if not rows:
-        return None
-    lines = []
-    for i, r in enumerate(rows, 1):
-        link = _flat(r.get("url")) or _flat(r.get("path"))
-        pub = _flat(r.get("published"))[:10]
-        line = f"{i}. **{r.get('id', f'S{i:03d}')}** — {_flat(r.get('title'))}"
-        if link:
-            line += f" — {link}"
-        if pub:
-            line += f" — {pub}"
-        lines.append(line)
-    return "\n".join(lines)
+_FN_TAG = re.compile(r"\[([CS]\d{3,})\]")
+_GRADE_RANK = {"A": 1, "B": 2, "C": 3, "D": 4}
+_SYNTH_NOTE = "**Синтетические материалы** (гипотезы, не доказательство):"
+
+
+def _publisher(s: dict) -> str:
+    """Издатель для сноски: домен из URL; у файла издателя нет — пусто."""
+    url = _flat(s.get("url"))
+    return (urlparse(url).hostname or "") if url else ""
+
+
+def _footnote_line(n: int, s: dict, grade: str | None) -> str:
+    """[^N]: S### — издатель — название — дата (published, иначе retrieved) — URL/файл — сила X.
+    Поля без значения пропускаются; в сноске всегда есть S### и название."""
+    parts = [f"**{s.get('id', 'S###')}**"]
+    pub = _publisher(s)
+    if pub:
+        parts.append(pub)
+    parts.append(_flat(s.get("title")))
+    date = (_flat(s.get("published")) or _flat(s.get("retrieved")))[:10]
+    if date:
+        parts.append(date)
+    link = _flat(s.get("url")) or _flat(s.get("path"))
+    if link:
+        parts.append(link)
+    line = f"[^{n}]: " + " — ".join(parts)
+    if grade:
+        line += f" — сила {grade}"
+    return line
+
+
+def _footnote_plan(pdir: Path, body: str) -> tuple[str, str | None]:
+    """PRO-49: теги [C###]/[S###] в собранном six-pager → сквозные сноски [^N] в порядке
+    первого упоминания. Связка C → S — реестр утверждений (поле sources); прямые теги
+    [S###] цитируются напрямую. В сносках — только процитированные источники; синтетика
+    (origin=synthetic) — отдельным блоком с пометкой «гипотезы, не доказательство».
+    Сила A–D — худший grade утверждений, цитирующих источник (вывод не сильнее слабейшего
+    входа). Тег без источника (неизвестный C###/S###, утверждение без sources) исчезает:
+    полный реестр тегов — REPORT.md, приложение «Реестр утверждений».
+    Возвращает (текст со сносками, блок сносок | None — не процитировано ничего)."""
+    claims = {c["id"]: c for c in claims_mod.load(pdir)}
+    srcs = {s["id"]: s for s in src_mod.load(pdir)}
+    cited: list[str] = []               # источники в порядке первого упоминания
+    claim_srcs: dict[str, list[str]] = {}
+    for m in _FN_TAG.finditer(body):
+        tid = m.group(1)
+        if tid.startswith("C"):
+            c = claims.get(tid)
+            sids = [s for s in c.get("sources", []) if s in srcs] if c else []
+            claim_srcs[tid] = sids
+        elif tid in srcs:
+            sids = [tid]
+        else:
+            sids = []
+        for sid in sids:
+            if sid not in cited:
+                cited.append(sid)
+    if not cited:
+        return body, None
+    num = {sid: i for i, sid in enumerate(cited, 1)}
+    grades: dict[str, list[str]] = {}
+    for cid, sids in claim_srcs.items():
+        g = claims[cid].get("grade") if cid in claims else None
+        if g in _GRADE_RANK:
+            for sid in sids:
+                grades.setdefault(sid, []).append(g)
+    worst = {sid: max(gs, key=_GRADE_RANK.get) for sid, gs in grades.items()}
+    syn = [sid for sid in cited if srcs[sid].get("origin") == "synthetic"]
+
+    def sub(m: re.Match) -> str:
+        tid = m.group(1)
+        sids = claim_srcs.get(tid) or ([tid] if tid in srcs else [])
+        markers = "".join(f"[^{num[sid]}]" for sid in sids if sid in num)
+        return f" {markers}" if markers else ""  # пробел до тега возвращаем при маркерах
+
+    body = re.sub(r" ?\[([CS]\d{3,})\]", sub, body)
+    lines = [_footnote_line(num[sid], srcs[sid], worst.get(sid))
+             for sid in cited if sid not in syn]
+    out = "\n".join(lines)
+    if syn:
+        out += ("\n\n" + _SYNTH_NOTE + "\n\n"
+                + "\n".join(_footnote_line(num[sid], srcs[sid], worst.get(sid)) for sid in syn))
+    return body, out
 
 
 # ---------- i18n скелета six-pager (RU по умолчанию; EN — черновик, PRO-31) ----------
@@ -313,15 +380,18 @@ _EN: dict[str, str] = {
     "> Собрано {ts} командой `pfs export --six-pager` по спецификации "
     "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
     "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
-    "Теги [C###]/[S###] — происхождение чисел; сноски-источники — в конце документа.":
+    "Числа снабжены сквозными сносками (издатель, название, дата, URL, сила A–D); "
+    "теги C###/S### и полный реестр доказательств — REPORT.md.":
         core.EN_DRAFT_MARK + " the EN six-pager is written in plain English by the "
         "six-pager-writer from the SAME data package (claims, sources, calculations; "
         "documents 00–07 are RU inputs — never pasted verbatim), per the spec "
         "`knowledge/templates/SIX_PAGER_PROMPT_EN.md`, style guide "
         "`knowledge/templates/STYLE_EN.md` (plain English, numbers 1,234.5, no calque). "
         "Restate the project title and question in English (project.json: title, question). "
-        "Assembled {ts} by `pfs export --six-pager`. Tags [C###]/[S###] mark number "
-        "provenance; source footnotes at the end.",
+        "Assembled {ts} by `pfs export --six-pager`. Numbers carry sequential footnotes "
+        "in the same order and numbering as RU SIX_PAGER.md; each footnote names its "
+        "source ID: S### — publisher — title — date — URL — grade A–D. Raw C###/S### "
+        "tags stay out of the six-pager; the full evidence registry lives in REPORT.md.",
     "**Запрос:** {q}": "**Request:** — write in English; RU source: project.json → question.",
     "## FAQ-1. Анализ текущего состояния": "## FAQ-1. Current state analysis",
     "### 1.1 Обзор рынка: тренды, вызовы и возможности":
@@ -684,7 +754,9 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
     юнит-экономикой с чувствительностью, матрицей тактик и KPI в двух плоскостях
     (бизнес/продукт). Документы 03/04/06 вставляются целиком с понижением заголовков
     на 2 уровня; секции, уже попавшие в вывод через _grab, повторно не вставляются;
-    резка — только по границам секций. Сноски-источники — полный список sources.jsonl.
+    резка — только по границам секций. Сноски-источники — только процитированные (PRO-49):
+    теги [C###]/[S###] заменяются маркерами [^N] в порядке первого упоминания, синтетика —
+    отдельным блоком с пометкой «гипотезы, не доказательства»; полный реестр тегов — REPORT.md.
     lang="en" (PRO-53) — EN-версия пишется, а не переводится: каркас инструмента на
     английском с pending-строками (_en_pending); секции составляет six-pager-writer
     на английском из того же пакета данных (спецификация SIX_PAGER_PROMPT_EN.md,
@@ -698,7 +770,8 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
              _t("> Собрано {ts} командой `pfs export --six-pager` по спецификации "
                 "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
                 "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
-                "Теги [C###]/[S###] — происхождение чисел; сноски-источники — в конце документа.",
+                "Числа снабжены сквозными сносками (издатель, название, дата, URL, сила A–D); "
+                "теги C###/S### и полный реестр доказательств — REPORT.md.",
                 lang).format(ts=core.now()[:16]), "",
              _t("**Запрос:** {q}", lang).format(q=meta.get("question", "")), ""]
     reg: dict[str, set[int]] = {}  # вставленные секции (fname → номера блоков) — против дублей
@@ -816,13 +889,18 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
                  "время до первой ценности, число действий до результата, churn, CSAT/NPS. "
                  "У каждого KPI: база → цель к сроку → порог действия. Контр-метрики — по одной "
                  "на удар red team.", lang), ""]
-    src = _sources_footnotes(pdir)
+    body = "\n".join(parts)
+    foot = None
+    if lang != "en":  # PRO-49: в RU six-pager теги → сквозные сноски; EN-версию пишет writer
+        body, foot = _footnote_plan(pdir, body)
+    parts = [body, "", _t("## Источники (сноски)", lang), ""]
     if lang == "en":
-        parts += [_t("## Источники (сноски)", lang), "",
-                  _en_pending("source footnotes — numbered S### + title + URL from "
-                              "sources.jsonl; titles in English"), ""]
-    elif src:
-        parts += [_t("## Источники (сноски)", lang), "", src, ""]
+        parts += [_en_pending("source footnotes by first mention: publisher, title, "
+                              "date, URL, grade A–D; cited sources only; synthetic listed "
+                              "separately (hypotheses, not evidence)"), ""]
+    else:
+        parts += [foot or _t("> Нет процитированных источников: проставьте теги [C###] в документах "
+                             "00–07 и пересоберите six-pager.", lang), ""]
     appendix = attachments_table(pdir) if lang != "en" else None
     parts += [_t("## Приложения (Excel)", lang), "",
               appendix or _t("> Ещё нет: `pfs calc all`.", lang), "",
@@ -914,6 +992,9 @@ def _points(body: str) -> list[str]:
             line = [c.strip() for c in line.strip("|").split("|")][0]
         line = re.sub(r"^[-*+]\s+", "", line)
         line = re.sub(r"^>\s?", "", line)
+        if line.startswith("[^"):  # PRO-49: определения сносок — не тезисы
+            continue
+        line = re.sub(r"\[\^\d+\]", "", line)  # PRO-49: маркеры сносок — не тезисы
         sentence = re.split(r"(?<=[.!?…])\s+", line)[0]
         if len(sentence) > _POINT_CAP:
             sentence = sentence[:_POINT_CAP - 1].rstrip() + "…"
