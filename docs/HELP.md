@@ -115,11 +115,11 @@ pfs next                                 # «что решать сейчас»:
                                          # пересмотры (наступившие и в ближайшие 14 дней), открытые вопросы;
                                          # после review без SIX_PAGER.md — первым пунктом сборка
                                          # комитета-пакета (calc scaffold → calc all → export --six-pager)
-pfs step <шаг> in_progress|done --note "…" --next "…"
+pfs step strategy in_progress --note "…" --next "…"    # статусы: in_progress, done
 pfs ask "Вопрос?" --options "A,B,C"      # пауза: агент ждёт вашего ответа
 pfs answer "Вариант B"                   # ответить
 pfs question "Открытый вопрос" [--close]
-pfs questions <шаг|блок>                 # вопросные блоки шага для настраиваемости стратегии
+pfs questions strategy                   # вопросные блоки шага (шаг | блок) для настраиваемости стратегии
                                          # (config/question_blocks.json); `pfs ask` — задать руководителю
 ```
 
@@ -130,7 +130,7 @@ pfs source add ~/Downloads/report.pdf               # PDF/DOCX/XLSX/CSV/изоб
 pfs source add sources/raw/report.md                # относительный путь: сначала каталог проекта
                                                     # (projects/<slug>/…), затем cwd; резолв-путь — в выводе
 pfs source add --text-file doc.md --url <url> --title "…"   # если сайт блокирует автоматическую загрузку
-pfs source add --text-file doc.md --url <url> --excerpt --published 2025-06-01   # режим выписки:
+pfs source add --text-file doc.md --url https://example.com/report --origin excerpt --published 2025-06-01   # режим выписки:
                                                     # origin=excerpt, сила утверждений не выше C,
                                                     # пока первоисточник не перепроверен refresh'ем
                                                     # (в т.ч. выводы через derived_from — check предупредит)
@@ -138,10 +138,11 @@ pfs source fetch <url> --title "…"                  # недоступный U
                                                     # прямой запрос → r.jina.ai → web.archive.org;
                                                     # origin: public при прямом успехе, excerpt при фолбэке
 pfs source fetch <url> --via-browser                # JS-страница: рендер через Playwright (если установлен);
-                                                    # нет Playwright — команда установки и фолбэк --excerpt
+                                                    # нет Playwright — команда установки; полный фейл — выписка: add --origin excerpt
 pfs source add interview.md --origin interview      # ваше интервью (без персональных данных)
 pfs source add transcript.md --origin synthetic     # ИИ-респондент: только гипотезы
-pfs source list | pfs source show S003
+pfs source list                    # реестр источников
+pfs source show S003                # карточка источника
 pfs source refresh S003                  # обновить web-источник: дельта sha256 → бэкап старой версии
                                          # в raw/<S###>_old_<sha8>.txt → impact по утверждениям на нём;
                                          # прямой ответ первоисточника снимает пометку выписки (PRO-59)
@@ -177,7 +178,7 @@ pfs claim retag --from C003 --to C059   # перенумерация тегов 
 
 ### Проверки и влияние
 ```bash
-pfs check [--strict] [--json]   # quality gate: числа без тегов, мёртвые ссылки, структура документов
+pfs check --strict   # quality gate: числа без тегов, мёртвые ссылки, структура (--json — машинный вывод)
                                 # числовой кросс-чек (PRO-26): числа активных утверждений против чисел
                                 # заголовков их источников и числа цитат против текста sources/S###.md —
                                 # расхождение («в утверждении 19, в заголовке 17») даёт warning с парой C###/S###
@@ -200,7 +201,8 @@ pfs decision add --title "…" --decision "…" --owner "CPO" --grounds C001,C00
 pfs decision due          # что решать сейчас: просроченные обязательства, устаревшие основания,
                           # источники без проверки дольше 180 дн. — с командой pfs source refresh S###
 pfs decision done --id D001 --commitment K1
-pfs decision list | status | rebase
+pfs decision list                  # реестр решений
+pfs decision status --id D001      # статус решения (альтернативы: list, rebase)
 ```
 
 ### Данные

@@ -1,7 +1,7 @@
 # Стратег Фабрики продуктов — описание работы
 
 > Документ для жюри. Конвертируется в PDF: `pandoc docs/SUBMISSION.md -o submission.pdf` (или «Печать → PDF» из GitHub).
-> Скриншоты для PDF: вывод команд из раздела 7 и файлы `projects/демо/outputs/*` (six-pager PDF: SIX_PAGER_RU.pdf,
+> Скриншоты для PDF: вывод команд из раздела 7 и файлы `projects/демо/outputs/*` (six-pager PDF: SIX_PAGER.pdf,
 > SIX_PAGER_EN.pdf; скриншоты продукта: `projects/демо/outputs/img/`, `site/assets/`).
 
 ## 1. Что это и как запустить
@@ -42,7 +42,7 @@
 | WebSearch / WebFetch среды | поиск и чтение открытых источников | — |
 | pfs CLI + MCP-сервер (Python stdlib) | гарантии проверяемости, состояние, стоимость | tools/pfs |
 | pdftotext / pypdf (необязательно) | извлечение текста из PDF | — |
-| unittest | 735 тестов инструментов | tests/ |
+| unittest | 740 тестов инструментов | tests/ |
 
 ## 4. Ключевые промпты и инструкции
 
@@ -83,7 +83,7 @@ PDF/DOCX, cover letters, трекер, карта вакансий; 100% лок�
 автотеста; монетизации нет. Ось сравнения — платящие подписчики и ARR; ограничения: MIT-core остаётся бесплатным,
 соло-разработчик, сохранить доверие локального режима.
 Результат: [REPORT.md](../projects/демо/outputs/REPORT.md), six-pager на двух языках —
-[SIX_PAGER_RU](../projects/демо/outputs/SIX_PAGER_RU.md) и [SIX_PAGER_EN](../projects/демо/outputs/SIX_PAGER_EN.md),
+[SIX_PAGER (RU)](../projects/демо/outputs/SIX_PAGER.md) и [SIX_PAGER_EN](../projects/демо/outputs/SIX_PAGER_EN.md),
 каждый в трёх форматах (MD/PDF/DOCX — детальный текст комитета: выводы, обоснования, расчёты; без скриншотов), Excel-модель — 4 книги в `outputs/attachments/`.
 
 **Как шла работа (12 шагов, по журналу `log.jsonl`):** route → сценарий вывода на рынок → intake (≤3 вопроса

@@ -53,7 +53,9 @@ uv есть → `uv tool install -e .`; uv нет → venv `~/.pfs-venv` + symli
 
 ```bash
 pfs new "<название>" "<запрос дословно>"   # новый проект
-pfs list / status / next                  # проекты, где остановились, что решать
+pfs status                                 # where we stopped and what is next
+pfs list                                   # list projects
+pfs next                                   # "what to decide now": step, commitments, questions
 pfs --project <slug> check --strict       # контроль качества документов
 pfs finish                                # финальный пакет одной цепочкой
 pfs                                       # без аргументов — шпаргалка (rc=0)

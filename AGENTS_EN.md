@@ -157,36 +157,60 @@ Take methods from the maps: `pfs kb search "<what you need>"` → open 1–3 of 
 ## 6. Command cheat sheet
 
 ```
-pfs new "<title>" "<request verbatim>" [--lang ru|en]   pfs status | pfs list | pfs use <slug>
-pfs lang [ru|en]                              # project language: CLI messages, templates and check headings (PRO-57)
-pfs route ["request"] [--override X]         pfs models [pick|escalate|use|sync] <task>
-pfs step <step> in_progress|done --next "…"  pfs ask "question" --options "A,B,C" | pfs answer "…"
-pfs next                                     # "what to decide now": step, commitments, reviews, open questions
-pfs questions <step|block>                   # the step's question block (to skip — pfs log --kind questions-skip)
-pfs source add <url|file> [--origin own|interview|synthetic] [--published YYYY-MM-DD]
-pfs source add --text-file f.md --url <url> --title "…"     pfs source list | show S001
-pfs source refresh S###                      # reload a web source; if sha256 changed — run impact on claims
+pfs new "<title>" "<request verbatim>"        # new project (--lang en for the English workflow)
+pfs status                                    # where we stopped
+pfs list                                      # list projects
+pfs use demo                                  # make a project active
+pfs lang en                                   # project language: CLI messages, templates, check headings (PRO-57); no argument — show
+pfs route "request"                           # scenario, maps and model plan; --override X for an explicit scenario
+pfs models                                    # model-per-task table; pfs models pick check — the model for a task
+pfs step strategy in_progress --next "…"      # mark a step; statuses: in_progress, done
+pfs ask "question" --options "A,B,C"          # question for the product lead (pause)
+pfs answer "Option B"                         # the lead's answer
+pfs next                                      # "what to decide now": step, commitments, reviews, open questions
+pfs questions strategy                        # the step's question block (to skip — pfs log --kind questions-skip)
+pfs source add https://example.com/report     # URL source: fetched, cleaned, deduped by URL/SHA-256; --published YYYY-MM-DD
+pfs source add interview.md --origin interview   # your interview (no personal data)
+pfs source add transcript.md --origin synthetic  # AI respondent: hypotheses only
+pfs source add --text-file f.md --url https://example.com/report --title "…"   # excerpt mode when the site blocks fetching
+pfs source list                               # the source registry
+pfs source show S002                          # a source card
+pfs source refresh S002                       # reload a web source; if sha256 changed — run impact on claims
 pfs claim add "text" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "inference" --kind inference --from C001,C004
-pfs claim supersede --id C003 "new text" --reason "…" [--from C…] | retract --id C003 --reason "…"
-pfs claim retag --from C003 --to C059        # renumber [C###] tags across all outputs in one command
-pfs claim rebase [--id C010]                 # point conclusions from superseded grounds at the replacements
-pfs impact C003 | S002                       pfs check [--strict]
-pfs review lock                              # after the evidence-auditor review; registry edits after lock → "review verdict stale" — re-run review and lock
-pfs gap list                                 pfs gap close 3 --claim C069 [--note "how it was closed"]  # gap closed synchronously in 01 and 02; check catches desync
-pfs kb search "cohort retention analysis"    pfs kb show M-jtbd | pfs kb index
-pfs data profile file.csv --save profile     pfs data cohort file.csv --user id --date dt --save cohorts
-pfs data funnel file.csv --steps visit,signup,pay --user id   pfs data stats file.csv --col revenue [--group seg]
-pfs interview guide --persona "Parent, kids 7–12" [--topic] | pfs interview save transcript.md --persona …
-pfs media add screenshot.png --desc "what is visible" --title "…"       pfs ux scaffold S003 --focus "onboarding"
-pfs docx <file.md> [--out]                   # Markdown → Word
-pfs decision add --title … --decision … --owner … --grounds C001,C007 --metric "NSM: 10 -> 12 @2027-01-01" \
-                 --review 2027-01-01 --trigger "…" --commit "what|who|when"
-pfs decision due [--on YYYY-MM-DD] | list | done --id D001 --commitment K1 | rebase --id D001 --note "…"
-pfs cost [--transcript <jsonl>] [--since|--until <ISO>] [--window]
-pfs calc scaffold                              # calcs.json skeleton from 02/04/06/07 (fill the nulls); then pfs calc all
-pfs calc [all|unit-econ|growth|cohort|market]   # Excel appendices (unit economics, growth, cohorts, market) → outputs/attachments/
-pfs export [--six-pager] [--no-calcs]           # REPORT.md; six-pager in the strategy reference format (spec: knowledge/templates/SIX_PAGER_PROMPT.md) with Excel appendices
-pfs export --deck                            # 16:9 HTML deck built from SIX_PAGER.md
+pfs claim supersede --id C003 "new text" --reason "new report"   # supersede a claim
+pfs claim retract --id C005 --reason "methodology error"         # retract a claim
+pfs claim fix-source --id C008 --source S012  # re-bind a claim with quote re-verification (PRO-50)
+pfs claim retag --from C003 --to C059         # renumber [C###] tags across all outputs in one command
+pfs claim rebase                              # point conclusions from superseded grounds at the replacements; --id C010 — targeted
+pfs impact C003                               # what a claim change affects: conclusions → documents → decisions
+pfs impact S002                               # the same for a source
+pfs check --strict                            # document quality gate (errors → rc≠0); --json for machine output
+pfs review lock                               # after the evidence-auditor review; registry edits after lock → "review verdict stale" — re-run review and lock
+pfs gap list                                  # research gaps from 02 "What we don't know"
+pfs gap close 3 --claim C069                  # gap closed synchronously in 01 and 02; check catches desync; --note "how it was closed"
+pfs kb search "cohort retention analysis"     # search the knowledge base
+pfs kb show M-jtbd                            # open a map
+pfs kb index                                  # map index
+pfs data profile file.csv --save profile      # table profile: types, gaps, dupes, periods
+pfs data cohort file.csv --user id --date dt --save cohorts       # cohort retention
+pfs data funnel file.csv --steps visit,signup,pay --user id       # funnel over an event log
+pfs data stats file.csv --col revenue         # descriptive stats for a column; --group seg — by group
+pfs interview guide --persona "Parent, kids 7–12"   # interview question outline in interviews/; --topic — the topic
+pfs interview save transcript.md --persona "…" --title "…"     # AI-respondent transcript/summary
+pfs media add screenshot.png --desc "what is visible" --title "…"   # media within declared limits: file copied to raw
+pfs ux scaffold S002 --focus "onboarding"     # UX scaffold of 10 heuristics in analysis/
+pfs docx outputs/REPORT.md                    # Markdown → Word; --out — result path
+pfs decision add --title "…" --decision "…" --owner "CPO" --grounds C001,C007 --metric "NSM: 10 -> 12 @2027-01-01" --review 2027-01-01 --trigger "…" --commit "what|who|when"
+pfs decision due                              # what to decide now: overdue commitments, revisions; --on YYYY-MM-DD
+pfs decision list                             # the decision registry
+pfs decision done --id D001 --commitment K1   # close a commitment
+pfs decision rebase --id D001 --note "…"      # revisit a decision on new evidence
+pfs cost                                      # cost of work; --transcript <jsonl>, --since/--until <ISO>, --window
+pfs calc scaffold                             # calcs.json skeleton from 02/04/06/07 (fill the nulls); then pfs calc all
+pfs calc all                                  # Excel appendices: unit-econ, growth, cohort, market → outputs/attachments/
+pfs export                                    # REPORT.md; --no-calcs — without Excel appendices
+pfs export --six-pager                        # six-pager in the strategy reference format (spec: knowledge/templates/SIX_PAGER_PROMPT.md); --en — EN skeleton in one call
+pfs export --deck                             # 16:9 HTML deck built from SIX_PAGER.md
 pfs doctor
 ```
