@@ -34,6 +34,19 @@ DEFAULTS: dict[str, dict] = {
         "retention": [1.0, 0.55, 0.42, 0.35, 0.30, 0.27, 0.24, 0.22, 0.21, 0.20, 0.19, 0.18],
     },
     "market": {"pam": 120_000_000_000, "tam_share": 0.6, "sam_share": 0.3, "som_share": 0.05},
+    "options": {
+        "note": "ПРИМЕР — замените веса и баллы на критерии цели брифа; pfs calc options строит таблицу и лист Excel",
+        "criteria": [
+            {"name": "реализуемость", "weight": 3, "filter": 3},
+            {"name": "эффект на метрику цели", "weight": 2},
+            {"name": "риски и затраты", "weight": 2},
+        ],
+        "variants": [
+            {"name": "A — оставить как есть", "scores": [3, 2, 3]},
+            {"name": "B — ставка на сегмент", "scores": [4, 3, 2]},
+            {"name": "C — закрыть направление", "scores": [5, 1, 5]},
+        ],
+    },
 }
 
 MONTHS = 12
@@ -41,30 +54,89 @@ MONTHS = 12
 
 # ---------- юнит-экономика ----------
 
-def unit_econ(p: dict) -> Workbook:
-    arpu, vc, cac, churn = p["arpu"], p["vc_share"], p["cac"], p["churn_month"]
-    cm = arpu * (1 - vc)
+def weighted_arpu(p: dict) -> float | None:
+    """PRO-51: ARPU средневзвешенный по миксу тарифов Σ(цена × доля) — карта
+    M-unit-economics: «ARPU при разных тарифах — средневзвешенный по долям базы,
+    не цена топ-тарифа и не среднее арифметическое тарифов»."""
+    tiers = [t for t in (p.get("tiers") or []) if isinstance(t, dict)]
+    if not tiers:
+        return None
+    return round(sum((t.get("price") or 0) * (t.get("share") or 0) for t in tiers), 6)
+
+
+def unit_metrics(p: dict) -> dict:
+    """Единая математика юнит-экономики для Excel (unit_econ), six-pager (export)
+    и кросс-чека (check). ARPU — из tiers (взвешенный) или из arpu; freemium
+    (cr_free_paid задан): CAC платящего = CAC / CR, и LTV/CAC с окупаемостью
+    считаются от CAC платящего, а не от «маркетингового» CAC привлечения."""
+    arpu = weighted_arpu(p) or (p.get("arpu") or 0)
+    vc, churn = p.get("vc_share"), (p.get("churn_month") or 0)
+    cac, cr = (p.get("cac") or 0), p.get("cr_free_paid")
+    cm = arpu * (1 - vc) if isinstance(vc, (int, float)) else None
     life = 1 / churn if churn else 0.0
-    ltv = cm * life
+    ltv = cm * life if cm is not None else None
+    cac_paying = cac / cr if cr else None
+    cac_eff = cac_paying if cr else cac
+    return {"arpu": arpu, "cm": cm, "life": life, "ltv": ltv, "cac": cac,
+            "cr_free_paid": cr, "cac_paying": cac_paying, "cac_eff": cac_eff,
+            "ltv_cac": (ltv / cac_eff if ltv and cac_eff else None),
+            "payback": (cac_eff / cm if cm and cac_eff else None)}
+
+
+def unit_econ(p: dict) -> Workbook:
+    m = unit_metrics(p)
+    tiers = [t for t in (p.get("tiers") or []) if isinstance(t, dict)]
+    cr = p.get("cr_free_paid")
     wb = Workbook()
     v = wb.sheet("Ввод", widths={1: 36, 2: 13, 3: 52})
     v.row("Параметр", "Значение", "Комментарий")
-    v.row("ARPU — выручка с юнита, ₽/мес", arpu, "выручка на одного активного платящего")
-    v.row("Доля переменных затрат (VC)", {"v": vc, "pct": True}, "себестоимость обслуживания, платежные комиссии")
-    v.row("CAC — привлечение юнита, ₽", cac, "маркетинг и промо на одного нового юнита")
-    v.row("Отток в месяц (churn)", {"v": churn, "pct": True}, "доля ушедших за месяц")
+    r = {"arpu": 2}  # номера строк «Ввод» для формул — зависят от секций
+    if tiers:  # PRO-51: микс тарифов вместо цены топ-тарифа
+        for i, t in enumerate(tiers):
+            v.row(f"Тариф {t.get('name') or i + 1} — цена, ₽/мес", t.get("price") or 0,
+                  "цена тарифа из стратегии монетизации [C###]")
+            v.row(f"доля тарифа {t.get('name') or i + 1}",
+                  {"v": t.get("share") or 0, "pct": True}, "доля в базе платящих")
+        v.row("ARPU средневзвешенный, ₽/мес",
+              {"f": "+".join(f"B{2 + 2 * i}*B{3 + 2 * i}" for i in range(len(tiers))),
+               "cached": round(m["arpu"], 2), "bold": True},
+              "Σ(цена × доля) — не цена топ-тарифа (M-unit-economics)")
+        r["arpu"] = 2 + 2 * len(tiers)
+    else:
+        v.row("ARPU — выручка с юнита, ₽/мес", m["arpu"], "выручка на одного активного платящего")
+    r["vc"] = r["arpu"] + 1
+    v.row("Доля переменных затрат (VC)", {"v": p["vc_share"], "pct": True},
+          "себестоимость обслуживания, платежные комиссии")
+    r["cac"] = r["vc"] + 1
+    v.row("CAC — привлечение юнита, ₽", p["cac"], "маркетинг и промо на одного нового юнита")
+    if cr is not None:  # PRO-51: freemium — конверсия free→paid реально применяется
+        r["cr"] = r["cac"] + 1
+        v.row("Конверсия free → paid", {"v": cr, "pct": True},
+              "доля платящих среди привлечённых (freemium)")
+        r["cac_eff"] = r["cr"] + 1
+        v.row("CAC платящего (freemium), ₽",
+              {"f": f"'Ввод'!B{r['cac']}/'Ввод'!B{r['cr']}", "cached": round(m["cac_paying"], 2)},
+              "CAC / конверсия free→paid — деление LTV на «маркетинговый» CAC завышает LTV/CAC")
+    else:
+        r["cac_eff"] = r["cac"]
+    r["churn"] = r["cac_eff"] + 1
+    v.row("Отток в месяц (churn)", {"v": p["churn_month"], "pct": True}, "доля ушедших за месяц")
     v.row("Примечание", p.get("note", ""))
     u = wb.sheet("Юнит-экономика", widths={1: 34, 2: 13, 3: 44})
     u.row("Показатель", "Значение", "Как считается")
-    u.row("Валовая маржа юнита (CM), ₽/мес", {"f": "'Ввод'!B2*(1-'Ввод'!B3)", "cached": round(cm, 2)},
-          "ARPU × (1 − доля VC)")
-    u.row("Средний срок жизни юнита, мес", {"f": "1/'Ввод'!B5", "cached": round(life, 2)}, "1 / отток")
-    u.row("LTV, ₽", {"f": "B2*B3", "cached": round(ltv, 2)}, "CM × срок жизни")
-    u.row("LTV / CAC", {"f": "B4/'Ввод'!B4", "cached": round(ltv / cac, 2) if cac else 0, "bold": True},
-          "орентир: ≥ 3")
-    u.row("Пейбек CAC, мес", {"f": "'Ввод'!B4/B2", "cached": round(cac / cm, 2) if cm else 0},
+    arpu_c, vc_c = f"'Ввод'!B{r['arpu']}", f"'Ввод'!B{r['vc']}"
+    cac_c, churn_c = f"'Ввод'!B{r['cac_eff']}", f"'Ввод'!B{r['churn']}"
+    u.row("Валовая маржа юнита (CM), ₽/мес",
+          {"f": f"{arpu_c}*(1-{vc_c})", "cached": round(m["cm"], 2)}, "ARPU × (1 − доля VC)")
+    u.row("Средний срок жизни юнита, мес", {"f": f"1/{churn_c}", "cached": round(m["life"], 2)}, "1 / отток")
+    u.row("LTV, ₽", {"f": "B2*B3", "cached": round(m["ltv"], 2)}, "CM × срок жизни")
+    u.row("LTV / CAC платящего" if cr is not None else "LTV / CAC",
+          {"f": f"B4/{cac_c}", "cached": round(m["ltv_cac"], 2) if m["ltv_cac"] else 0, "bold": True},
+          "орентир: ≥ 3; freemium — от CAC платящего" if cr is not None else "орентир: ≥ 3")
+    u.row("Пейбек CAC, мес", {"f": f"{cac_c}/B2", "cached": round(m["payback"], 2) if m["payback"] else 0},
           "CAC / CM; ориентир ≤ 12 мес")
-    u.row("Доля CAC в LTV", {"f": "'Ввод'!B4/B4", "cached": round(cac / ltv, 3) if ltv else 0, "pct": True},
+    u.row("Доля CAC в LTV",
+          {"f": f"{cac_c}/B4", "cached": round(m["cac_eff"] / m["ltv"], 3) if m["ltv"] else 0, "pct": True},
           "расход на привлечение в lifetime-выручке юнита")
     s = wb.sheet("Чувствительность LTV/CAC", widths={1: 18})
     vcs = [0.1, 0.2, 0.3, 0.4, 0.5]
@@ -76,9 +148,31 @@ def unit_econ(p: dict) -> Workbook:
         row = [{"v": ch, "pct": True, "bold": True}]
         for i in range(len(vcs)):
             col = col_ref(i + 2)  # B..F — доли VC в заголовке
-            row.append({"f": f"'Ввод'!$B$2*(1-{col}$2)/($A{row_no}*'Ввод'!$B$4)",
-                        "cached": round(arpu * (1 - vcs[i]) / (ch * cac), 2) if cac else 0})
+            row.append({"f": f"'Ввод'!$B${r['arpu']}*(1-{col}$2)/($A{row_no}*'Ввод'!$B${r['cac_eff']})",
+                        "cached": round(m["arpu"] * (1 - vcs[i]) / (ch * m["cac_eff"]), 2) if m["cac_eff"] else 0})
         s.row(*row)
+    scen = p.get("scenarios")
+    if isinstance(scen, dict) and scen:  # PRO-51: сценарии в одном листе, а не смешение допущений
+        s2 = wb.sheet("Сценарии", widths={1: 30, 2: 15, 3: 13, 4: 15})
+        names = (("pessimistic", "Пессимистичный"), ("base", "База"), ("optimistic", "Оптимистичный"))
+        s2.row("Показатель", *[lbl for _, lbl in names])
+        ms = [unit_metrics({**p, **(scen.get(key) or {})}) for key, _ in names]
+
+        def srow(label, key):
+            cells = [label]
+            for mm in ms:
+                val = mm.get(key)
+                cells.append({"v": round(val, 4)} if val is not None else "—")
+            s2.row(*cells)
+
+        srow("ARPU, ₽/мес", "arpu")
+        srow("Валовая маржа (CM), ₽/мес", "cm")
+        srow("LTV, ₽", "ltv")
+        srow("CAC платящего, ₽", "cac_paying" if cr is not None else "cac")
+        srow("LTV / CAC платящего" if cr is not None else "LTV / CAC", "ltv_cac")
+        srow("Пейбек CAC, мес", "payback")
+        s2.row("Примечание", "у каждого сценария свой набор допущений: не смешивайте CAC органики "
+               "и платного канала в одной колонке — разделяйте их по сценариям")
     return wb
 
 
@@ -129,7 +223,29 @@ def growth(p: dict) -> Workbook:
     month_row("GMV, ₽", 4, lambda i: order_vals[i] * aov, sum(order_vals) * aov)
     month_row("Выручка платформы, ₽", 5, lambda i: order_vals[i] * aov * take, sum(order_vals) * aov * take)
     month_row("Валовая маржа, ₽", 6, lambda i: order_vals[i] * aov * take * marg, sum(order_vals) * aov * take * marg)
+    _funnel_sheet(wb, p.get("funnel"))
     return wb
+
+
+def _funnel_sheet(wb: Workbook, funnel: dict | None) -> None:
+    """PRO-51: воронка с явными единицами шагов — визиты, установки, регистрации
+    и экспорты разные шаги; конверсия считается только между соседними шагами.
+    Секция funnel в calcs.json: {"steps": [{"name": ..., "value": ...}]}."""
+    steps = [st for st in ((funnel or {}).get("steps") or []) if isinstance(st, dict)]
+    if not steps:
+        return
+    f = wb.sheet("Воронка", widths={1: 26, 2: 14, 3: 20, 4: 38})
+    f.row("Шаг воронки (единица у каждого шага своя)", "Значение/мес", "Конверсия к предыдущему шагу", "Примечание")
+    for i, st in enumerate(steps):
+        name = st.get("name") or f"Шаг {i + 1}"
+        val = st.get("value")
+        prev = steps[i - 1].get("value") if i else None
+        conv = (val / prev if (isinstance(val, (int, float)) and prev) else None)
+        f.row(name, val if val is not None else "—",
+              "—" if conv is None else {"f": f"B{i + 2}/B{i + 1}", "cached": conv, "pct": True},
+              st.get("note", ""))
+    f.row("Примечание", "визиты, установки, регистрации и экспорты — разные шаги: не применяйте "
+           "одну конверсию через несколько шагов и не смешивайте единицы")
 
 
 # ---------- когортное удержание ----------
@@ -194,6 +310,79 @@ def market(p: dict) -> Workbook:
     p_.row("Фактор", "Что происходит", "Тренд ↑/↓/→", "Влияние −3…+3", "Вероятность", "Возможность / угроза", "Действие")
     for dom in ("Политико-правовые", "Экономические", "Социальные", "Технологические", "Экологические", "Рыночные и конкуренция"):
         p_.row(dom, "", "", "", "", "", "")
+    return wb
+
+
+# ---------- взвешенный скоринг вариантов (03) ----------
+
+def options_totals(p: dict) -> list[tuple[str, float, str | None]]:
+    """PRO-51: взвешенный скоринг вариантов — Σ(вес × балл), не сумма равных баллов;
+    критерий с filter (порог) отсекает вариант с баллом ниже порога ещё до сравнения сумм."""
+    criteria = p.get("criteria") or []
+    out = []
+    for v in p.get("variants") or []:
+        scores = list(v.get("scores") or [])
+        total, reason = 0.0, None
+        for i, c in enumerate(criteria):
+            s = scores[i] if i < len(scores) else 0
+            w = c.get("weight") if isinstance(c.get("weight"), (int, float)) else 1
+            total += w * s
+            flt = c.get("filter")
+            if reason is None and flt is not None and s < flt:
+                reason = f"отсеян фильтром: {c.get('name') or i + 1} = {s} < {flt}"
+        out.append((v.get("name") or f"Вариант {len(out) + 1}", round(total, 2), reason))
+    return out
+
+
+def options_table(p: dict) -> str:
+    """Markdown-таблица сравнения с числовыми весами и взвешенной суммой —
+    вставляется в «Сравнение» 03_options.md; веса видны."""
+    criteria = p.get("criteria") or []
+    variants = p.get("variants") or []
+    rows = ["| " + " | ".join(["Критерий (из цели брифа)", "Вес"] +
+                              [v.get("name") or f"Вариант {i + 1}" for i, v in enumerate(variants)]) + " |",
+            "|---|" + "---|" * len(variants)]
+    for i, c in enumerate(criteria):
+        w = c.get("weight") if isinstance(c.get("weight"), (int, float)) else 1
+        cells = [c.get("name") or f"Критерий {i + 1}",
+                 str(w) + (f" (порог ≥ {c['filter']})" if c.get("filter") is not None else "")]
+        for v in variants:
+            scores = list(v.get("scores") or [])
+            cells.append(str(scores[i]) if i < len(scores) else "0")
+        rows.append("| " + " | ".join(cells) + " |")
+    totals = options_totals(p)
+    rows.append("| **Сумма (взвешенная: Σ вес × балл)** | | " + " | ".join(
+        (f"**{t:g}**" if r is None else f"~~{t:g}~~") for _, t, r in totals) + " |")
+    best = max((t for _, t, r in totals if r is None), default=None)
+    rows.append("| Статус | | " + " | ".join(
+        ("лидер" if r is None and t == best else (r or "")) for _, t, r in totals) + " |")
+    return "\n".join(rows)
+
+
+def options(p: dict) -> Workbook:
+    """Лист «Сравнение» options_scoring.xlsx: веса и пороги-фильтры видны,
+    сумма взвешенная, отсеянные варианты помечены."""
+    wb = Workbook()
+    criteria = p.get("criteria") or []
+    variants = p.get("variants") or []
+    s = wb.sheet("Сравнение", widths={1: 34, 2: 12})
+    s.row("Критерий (из цели брифа)", "Вес",
+          *[v.get("name") or f"Вариант {i + 1}" for i, v in enumerate(variants)])
+    for i, c in enumerate(criteria):
+        cells = [c.get("name") or f"Критерий {i + 1}",
+                 {"v": c.get("weight") if isinstance(c.get("weight"), (int, float)) else 1, "bold": True}]
+        for v in variants:
+            scores = list(v.get("scores") or [])
+            cells.append(scores[i] if i < len(scores) else 0)
+        s.row(*cells)
+    totals = options_totals(p)
+    best = max((t for _, t, r in totals if r is None), default=None)
+    s.row("Сумма (взвешенная: Σ вес × балл)", None,
+          *[{"v": t, "bold": r is None} for _, t, r in totals])
+    s.row("Статус", None,
+          *[("лидер" if r is None and t == best else (r or "")) for _, t, r in totals])
+    s.row("Примечание", p.get("note",
+          "вариант с баллом ниже порога фильтра исключается до сравнения сумм"))
     return wb
 
 
@@ -532,17 +721,30 @@ KEYS_BY_SECTION = {"unit-econ": "unit_econ", "growth": "growth", "cohort": "coho
 
 
 def run(pdir: Path, which: str = "all") -> list[Path]:
-    """Собрать Excel-приложения в outputs/attachments/ и записать в журнал."""
-    if which != "all" and which not in BUILDERS:
-        raise core.PfsError(f"какой расчёт: all, {', '.join(BUILDERS)}")
+    """Собрать Excel-приложения в outputs/attachments/ и записать в журнал.
+    options — отдельный расчёт: взвешенный скоринг вариантов (03) + таблица .md."""
+    allowed = ("all", "options", *BUILDERS)
+    if which not in allowed:
+        raise core.PfsError(f"какой расчёт: {', '.join(allowed)}")
     cfg = core.read_json(pdir / "calcs.json", {})
     out = pdir / "outputs" / "attachments"
     out.mkdir(parents=True, exist_ok=True)
+    if which == "options":  # PRO-51: вне «all» — осмыслен, когда сравнение вариантов уже есть
+        params = _merge(DEFAULTS["options"], cfg.get("options"))
+        paths = [options(params).save(out / "options_scoring.xlsx")]
+        md = out / "options_scoring.md"
+        md.write_text(options_table(params) + "\n", encoding="utf-8")
+        paths.append(md)
+        core.log(pdir, "action", "Скоринг вариантов: outputs/attachments/options_scoring.xlsx, "
+                 "options_scoring.md", tool="pfs calc options")
+        return paths
     keys = list(BUILDERS) if which == "all" else [which]
     paths = []
     for key in keys:
         fn, fname = BUILDERS[key]
         params = _merge(DEFAULTS[KEYS_BY_SECTION[key]], cfg.get(KEYS_BY_SECTION[key]))
+        if key == "growth":  # PRO-51: воронка с явными единицами шагов — секция funnel
+            params["funnel"] = cfg.get("funnel") or {}
         path = fn(params).save(out / fname)
         core.log(pdir, "action", f"Excel-приложение: outputs/attachments/{fname}", tool="pfs calc")
         paths.append(path)

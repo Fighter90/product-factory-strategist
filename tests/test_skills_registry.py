@@ -239,7 +239,10 @@ class SkillCountersTests(unittest.TestCase):
         self.assertEqual(plural(3, "интеграция", "интеграции", "интеграций"), "интеграции")
 
     def test_generated_site_pages_match_actual_count(self):
-        site_ru = (REPO / "site" / "index.html").read_text(encoding="utf-8")
+        site = REPO / "site" / "index.html"
+        if not site.exists():  # сайт выделен в отдельный репозиторий: на чистом клоне -agent его нет
+            self.skipTest("site/ отсутствует (переехал в product-factory-strategist-site)")
+        site_ru = site.read_text(encoding="utf-8")
         site_en = (REPO / "site" / "en" / "index.html").read_text(encoding="utf-8")
         n = len(loaded_skills())
         self.assertIn(f"навыков: {n}", site_ru)

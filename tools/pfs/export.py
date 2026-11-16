@@ -300,6 +300,15 @@ def _sources_footnotes(pdir: Path) -> str | None:
 # по спецификации SIX_PAGER_PROMPT.md делает агент, не CLI (вне возможностей stdlib).
 
 _EN: dict[str, str] = {
+    "CAC платящего = CAC / конверсия free → paid":
+        "Paying-user CAC = CAC / free → paid conversion",
+    "ARPU средневзвешенный по тарифам": "Tier-weighted ARPU",
+    "**Вывод (умозаключение):** критерий LTV/CAC ≥ 3 не выполняется: фактический "
+    "{ratio} при CAC платящего {cac} — для ≥ 3 нужен CAC платящего ≤ {cap} при этом LTV "
+    "(сценарии и сетка — листы «Сценарии» и «Чувствительность» unit_economics.xlsx).":
+        "**Conclusion (inference):** the LTV/CAC ≥ 3 bar is not met: actual {ratio} at a "
+        "paying-user CAC of {cac} — to reach ≥ 3, paying-user CAC must be ≤ {cap} at this LTV "
+        "(scenarios and grid — the Scenarios and Sensitivity sheets of unit_economics.xlsx).",
     "# {title}: six-pager": "# Six-pager (EN)",
     "> Собрано {ts} командой `pfs export --six-pager` по спецификации "
     "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
@@ -480,31 +489,40 @@ def _en_pending(what: str) -> str:
 
 
 def _unit_econ_block(pdir: Path, lang: str = "ru") -> str | None:
-    """Пошаговая юнит-экономика из calcs.json (unit_econ): CM, LTV, LTV/CAC, окупаемость."""
+    """Пошаговая юнит-экономика из calcs.json (unit_econ): CM, LTV, LTV/CAC, окупаемость.
+    PRO-51: расчёт из того же unit_metrics, что и Excel, — ARPU средневзвешенный по tiers,
+    freemium учитывает CAC платящего; числа six-pager обязаны совпадать с приложением."""
     cfg = core.read_json(pdir / "calcs.json", {}).get("unit_econ") or {}
-    arpu, vc = cfg.get("arpu"), cfg.get("vc_share")
-    cac, churn = cfg.get("cac"), cfg.get("churn_month")
-    vals = (arpu, vc, cac, churn)
-    if not all(isinstance(v, (int, float)) for v in vals) or not arpu or not churn or not cac:
+    ue = {k: v for k, v in cfg.items() if not k.startswith("_") and v is not None}
+    m = calc.unit_metrics(ue)
+    arpu, vc = m.get("arpu"), ue.get("vc_share")
+    cac, churn = m.get("cac"), ue.get("churn_month")
+    if not all(isinstance(v, (int, float)) for v in (arpu, vc, cac, churn)) \
+            or not arpu or not churn or not cac:
         return None
 
     def n(x: float) -> str:
         # RU: десятичная запятая; EN (PRO-53): 1,234.5 — точка-разделитель, запятая — тысячи
         return f"{x:,.2f}" if lang == "en" else f"{x:.2f}".replace(".", ",")
 
-    cm = arpu * (1 - vc)
-    ltv = cm / churn
-    ratio = ltv / cac
-    payback = cac / cm
-    life = 1 / churn
+    cr = m.get("cr_free_paid")
+    cac_eff = m["cac_paying"] if cr else cac
+    cm, ltv = m["cm"], m["ltv"]
+    ratio, payback, life = m["ltv_cac"], m["payback"], m["life"]
     rows = [
         (_t("CM = ARPU × (1 − доля переменных)", lang),
          f"{n(arpu)} × (1 − {n(vc)}) = {n(arpu)} × {n(1 - vc)}", f"**CM = {n(cm)}**"),
         (_t("Средняя жизнь платящего = 1 / churn", lang), f"1 / {n(churn)}",
          _t("**{x} мес**", lang).format(x=n(life))),
+    ]
+    if cr is not None:  # PRO-51: freemium — конверсия free→paid реально применяется
+        rows.append((_t("CAC платящего = CAC / конверсия free → paid", lang),
+                     f"{n(cac)} / {n(cr)}", f"**{n(cac_eff)}**"))
+    rows += [
         (_t("LTV = CM / churn", lang), f"{n(cm)} / {n(churn)}", f"**LTV = {n(ltv)}**"),
-        (_t("LTV/CAC", lang), f"{n(ltv)} / {n(cac)}", _t("**{x}** (критерий ≥ 3)", lang).format(x=n(ratio))),
-        (_t("Окупаемость CAC = CAC / CM", lang), f"{n(cac)} / {n(cm)}",
+        (_t("LTV/CAC", lang), f"{n(ltv)} / {n(cac_eff)}",
+         _t("**{x}** (критерий ≥ 3)", lang).format(x=n(ratio))),
+        (_t("Окупаемость CAC = CAC / CM", lang), f"{n(cac_eff)} / {n(cm)}",
          _t("**{x} мес**", lang).format(x=n(payback))),
     ]
     table = _t("| Формула | Расчёт | Результат |", lang) + "\n|---|---|---|\n" + \
@@ -512,13 +530,23 @@ def _unit_econ_block(pdir: Path, lang: str = "ru") -> str | None:
     note = _flat(cfg.get("note"))
     head = (_t("Допущения: {note}", lang).format(note=note) if note else
             _t("Допущения [укажите теги]: ARPU, переменные, CAC, churn — лист «Ввод» unit_economics.xlsx.", lang))
+    tiers = [t for t in (ue.get("tiers") or []) if isinstance(t, dict)]
+    if tiers:  # PRO-51: объяснённый микс тарифов вместо цены топ-тарифа
+        mix = " + ".join(f"{t.get('name')} {n(t.get('price') or 0)} × {n((t.get('share') or 0) * 100)}%"
+                         for t in tiers)
+        head += "\n" + _t("ARPU средневзвешенный по тарифам", lang) + f": {mix} = **{n(arpu)}**."
     # Чувствительность к критерию LTV/CAC ≥ 3: порог по каждому допущению при прочих равных.
-    if cm > 0 and ltv > 0:
+    if cm > 0 and ltv > 0 and ratio is not None and ratio >= 3:
         sens = _t("**Вывод (умозаключение):** LTV/CAC ≥ 3 держится до churn ≈ {churn} %/мес, "
                   "до CAC ≈ €{cac}, до доли переменных расходов ≈ {vc} % "
                   "(каждый порог — при прочих равных; сетка — лист «Чувствительность»).",
-                  lang).format(churn=n(cm / (3 * cac) * 100), cac=n(ltv / 3),
-                               vc=n((1 - 3 * cac / ltv) * 100))
+                  lang).format(churn=n(cm / (3 * cac_eff) * 100), cac=n(ltv / 3),
+                               vc=n((1 - 3 * cac_eff / ltv) * 100))
+    elif ratio is not None:  # PRO-51: честный вывод, когда критерий не выполняется
+        sens = _t("**Вывод (умозаключение):** критерий LTV/CAC ≥ 3 не выполняется: фактический "
+                  "{ratio} при CAC платящего {cac} — для ≥ 3 нужен CAC платящего ≤ {cap} при этом LTV "
+                  "(сценарии и сетка — листы «Сценарии» и «Чувствительность» unit_economics.xlsx).",
+                  lang).format(ratio=n(ratio), cac=n(cac_eff), cap=n(ltv / 3))
     else:
         sens = _t("**Вывод (умозаключение):** запас прочности модели — какой допуск выдерживает "
                   "каждое допущение (см. лист «Чувствительность»).", lang)

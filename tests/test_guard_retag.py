@@ -20,6 +20,9 @@ import unittest
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+# «путь внутри репозитория» для Bash-кейса: абсолютный путь к README текущего чекаута —
+# тест не должен зависеть от того, где физически лежит клон (~/Projects/… или worktree в /tmp)
+REPO_HINT = str(REPO / "README.md")
 TMP = tempfile.mkdtemp(prefix="pfs-test-guard-")
 os.environ["PFS_PROJECTS_DIR"] = TMP
 
@@ -296,7 +299,7 @@ class HookReadScopeTests(unittest.TestCase):
                     "cp a.md b.md && mv b.md c.md",
                     "git log --oneline -3",
                     "/usr/bin/python3 --version",
-                    "ls ~/Projects/product-factory-strategist/README.md"):
+                    f"ls {REPO_HINT}/README.md"):
             r = run_hook("pre_guard.py", {"tool_name": "Bash", "tool_input": {"command": cmd}})
             self.assertEqual(r.stdout, "", cmd)
 
