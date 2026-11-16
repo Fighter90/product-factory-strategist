@@ -195,7 +195,7 @@ pfs source show S002                          # a source card
 pfs source refresh S002                       # reload a web source; if sha256 changed — run impact on claims
 pfs claim add "text" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "inference" --kind inference --from C001,C004
-pfs claim supersede --id C003 "new text" --reason "new report"   # supersede a claim
+pfs claim supersede "new text" --id C003 --reason "new report"   # supersede a claim
 pfs claim retract --id C005 --reason "methodology error"         # retract a claim
 pfs claim fix-source --id C008 --source S012  # re-bind a claim with quote re-verification (PRO-50)
 pfs claim retag --from C003 --to C059         # renumber [C###] tags across all outputs in one command

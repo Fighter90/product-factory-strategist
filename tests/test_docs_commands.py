@@ -10,6 +10,8 @@
 
 Сетевые команды и файлы пользователя (~/Downloads) пропускаются.
 """
+from __future__ import annotations
+
 import csv
 import glob
 import io

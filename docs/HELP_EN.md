@@ -159,7 +159,7 @@ pfs claim add-batch claims.jsonl        # register a batch from JSONL (text/kind
                                         # batch; duplicates by text are skipped
 pfs claim list [--kind fact] [--all]
 pfs claim retract --id C005 --reason "methodology error"
-pfs claim supersede --id C005 "Market is 45 B RUB" --reason "new report" [--source S009]
+pfs claim supersede "Market is 45 B RUB" --id C005 --reason "new report" [--source S009]
 pfs claim rebase [--id C012]            # redirect conclusions to the replacements of their grounds
 pfs claim retag --from C003 --to C059   # renumber [C###] tags across all outputs in one command,
                                         # validated before writing and journalled
@@ -401,7 +401,7 @@ Comparison with plain chat and sample-size caveats: `docs/demo/comparison.md`.
 ## 9. Revising after new data
 
 1. Add the source: `pfs source add <url|file>`.
-2. If it changes a claim: `pfs claim supersede --id C005 "…" --reason "…" --source S012`
+2. If it changes a claim: `pfs claim supersede "…" --id C005 --reason "…" --source S012`
    (the old one is never deleted — history stays visible) or `pfs claim retract --id C005 --reason "…"`.
 3. `pfs impact C005` — which conclusions, document lines, and decisions are affected.
 4. `pfs claim rebase` — redirect conclusions to replacements; retracted grounds require substantive rework.
