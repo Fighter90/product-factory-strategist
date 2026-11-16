@@ -75,6 +75,22 @@ class TemplatesParityTests(unittest.TestCase):
                             f"{lang}/options.md: нет ключей выхода")
 
 
+class ValidationPlanKpiTemplateTests(unittest.TestCase):
+    """PRO-48 (ревью): шаблон 06 несёт явную таблицу «KPI» со столбцом
+    «Плоскость» и готовыми строками бизнес-метрик — six-pager FAQ-6 собирает
+    из неё две таблицы (Бизнес/Продукт), а автор заполняет строки, а не абзац."""
+
+    def test_kpi_plane_table_with_business_rows(self):
+        ru = (TEMPLATES_RU / "validation_plan.md").read_text(encoding="utf-8")
+        en = (TEMPLATES_EN / "validation_plan.md").read_text(encoding="utf-8")
+        self.assertIn("| Плоскость | Метрика | Формула |", ru, "нет KPI-таблицы в RU-шаблоне")
+        self.assertIn("| Plane | Metric | Formula |", en, "нет KPI-таблицы в EN-шаблоне")
+        for metric in ("Выручка/MRR", "Платящие", "Конверсия в оплату", "LTV/CAC"):
+            self.assertIn(f"| Бизнес | {metric}", ru, f"нет бизнес-метрики {metric}")
+        for metric in ("Revenue/MRR", "Payers", "Conversion to payment", "LTV/CAC"):
+            self.assertIn(f"| Business | {metric}", en, f"no business metric {metric}")
+
+
 class AgentsParityTests(unittest.TestCase):
     """AGENTS_EN.md синхронизирован с AGENTS.md: те же разделы, правила и команды,
     разница объёма (в символах, не в байтах — кириллица в UTF-8 двухбайтная) ≤ 15%."""
