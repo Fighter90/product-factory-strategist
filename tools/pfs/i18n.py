@@ -83,6 +83,8 @@ STR: dict[str, dict[str, str]] = {
         "next_stage": "Шаг: {stage} · Далее: {next}",
         "next_finished": "✔ Процесс завершён. Доступно: мониторинг, правки, презентация — "
                          "по запросу, без автозапуска.",
+        "next_finish_hint": "📦 Финальный пакет не собран: pfs finish (check → Excel → REPORT → "
+                            "six-pager RU/EN → DOCX → дека) — одно сообщение со ссылками закрывает прогон.",
         "next_sixpager": "📋 Собрать комитет-пакет: pfs calc scaffold → pfs calc all → pfs export "
                          "--six-pager (spec: {spec})",
         "next_waiting": "⏸ Ждём вашего ответа: {question}{options}",
@@ -223,6 +225,8 @@ STR: dict[str, dict[str, str]] = {
         "next_stage": "Step: {stage} · Next: {next}",
         "next_finished": "✔ Process complete. Available on request: monitoring, edits, presentation — "
                          "nothing starts automatically.",
+        "next_finish_hint": "📦 The final package is not built: pfs finish (check → Excel → REPORT → "
+                            "six-pager RU/EN → DOCX → deck) — one message with links closes the run.",
         "next_sixpager": "📋 Assemble the committee pack: pfs calc scaffold → pfs calc all → pfs export "
                          "--six-pager (spec: {spec})",
         "next_waiting": "⏸ Waiting for your answer: {question}{options}",
