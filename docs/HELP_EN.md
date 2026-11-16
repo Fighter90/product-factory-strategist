@@ -116,11 +116,11 @@ pfs next                                # "what to decide now": current step, hu
                                         # (past and within 14 days), open questions;
                                         # after review without SIX_PAGER.md — committee package
                                         # build first (calc scaffold → calc all → export --six-pager)
-pfs step <step> in_progress|done --note "…" --next "…"
+pfs step strategy in_progress --note "…" --next "…"    # statuses: in_progress, done
 pfs ask "Question?" --options "A,B,C"  # pause: agent waits for your answer
 pfs answer "Option B"
 pfs question "Open question" [--close]
-pfs questions <step|block>             # question blocks per step for strategy tuning (config/question_blocks.json); use `pfs ask` to pose to the director
+pfs questions strategy                   # question blocks per step (step | block) for strategy tuning; use `pfs ask` to pose to the director
 ```
 
 ### Sources (S###)
@@ -129,7 +129,7 @@ pfs source add https://example.com/report            # web page: fetched, cleane
 pfs source add ~/Downloads/report.pdf                # PDF/DOCX/XLSX/CSV/image
 pfs source add sources/raw/report.md                 # relative path: project directory first
                                                      # (projects/<slug>/…), then cwd; resolved path is printed
-pfs source add --text-file doc.md --url <url> --excerpt --published 2025-06-01   # excerpt mode:
+pfs source add --text-file doc.md --url https://example.com/report --origin excerpt --published 2025-06-01   # excerpt mode:
                                                     # origin=excerpt, claim strength capped at C
                                                     # until the original is re-verified by refresh
                                                     # (incl. inferences via derived_from — check warns)
@@ -137,10 +137,11 @@ pfs source fetch <url> --title "…"                   # unreachable URL (403/SS
                                                      # direct request → r.jina.ai → web.archive.org;
                                                      # origin: public on direct success, excerpt on fallback
 pfs source fetch <url> --via-browser                 # JS-rendered page via Playwright (if installed);
-                                                     # without it — install command and --excerpt fallback
+                                                     # without it — install command; on full failure use an excerpt: add --origin excerpt
 pfs source add interview.md --origin interview       # your interview (no personal data)
 pfs source add transcript.md --origin synthetic      # AI respondent: hypotheses only
-pfs source list | pfs source show S003
+pfs source list                    # the source registry
+pfs source show S003                # a source card
 pfs source refresh S003                 # refresh a web source: sha256 delta → old version backed up
                                         # to raw/<S###>_old_<sha8>.txt → impact on claims built on it;
                                         # a direct answer from the original clears the excerpt mark
@@ -176,7 +177,7 @@ Kinds: `fact` (needs a source; synthetic material never counts as one), `hypothe
 
 ### Checks and impact
 ```bash
-pfs check [--strict] [--json]   # quality gate: untagged numbers, dead links, document structure
+pfs check --strict   # quality gate: untagged numbers, dead links, structure (--json for machine output)
                                 # numeric cross-check (PRO-26): numbers of active claims vs numbers in the
                                 # titles of their sources, and quote numbers vs sources/S###.md text —
                                 # a mismatch ("claim says 19, title says 17") adds a warning with the C###/S### pair
@@ -199,7 +200,8 @@ pfs decision add --title "…" --decision "…" --owner "CPO" --grounds C001,C00
 pfs decision due          # what to decide now: overdue commitments, stale grounds, sources
                           # unchecked for 180+ days — with a ready `pfs source refresh S###` command
 pfs decision done --id D001 --commitment K1
-pfs decision list | status | rebase
+pfs decision list                  # the decision registry
+pfs decision status --id D001      # decision status (alternatives: list, rebase)
 ```
 
 ### Data

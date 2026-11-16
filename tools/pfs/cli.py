@@ -402,9 +402,9 @@ def cmd_data(a):
 def cmd_interview(a):
     pdir = _p(a)
     if a.action == "guide":
-        if not (a.topic or "").strip():
-            raise core.PfsError("interview guide: укажите тему --topic")
-        print(f"Гайд: {participate.guide(pdir, a.persona, a.topic)}")
+        # --topic необязателен (как и написано в доках): без темы гайд строится по персоне
+        topic = (a.topic or "").strip() or (a.persona or "").strip()
+        print(f"Гайд: {participate.guide(pdir, a.persona, topic)}")
     else:
         if not a.file:
             raise core.PfsError("interview save: укажите файл транскрипта/выжимки")
@@ -666,7 +666,7 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("source", help="источники (add/fetch/list/show/refresh)")
     s.add_argument("action", choices=["add", "fetch", "list", "show", "refresh"],
                    help="fetch — недоступный URL (403/SSL/JS/таймаут): прямой запрос → r.jina.ai → web.archive.org; "
-                        "JS-страница — fetch --via-browser; полный фейл — выписка: add --text-file --excerpt")
+                        "JS-страница — fetch --via-browser; полный фейл — выписка: add --text-file --origin excerpt")
     s.add_argument("target", nargs="?",
                    help="URL или файл; относительный путь: сначала каталог проекта, затем cwd")
     s.add_argument("--text-file", help="файл с текстом выписки (путь: каталог проекта → cwd)")

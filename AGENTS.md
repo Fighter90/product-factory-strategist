@@ -148,36 +148,60 @@
 ## 6. Шпаргалка команд
 
 ```
-pfs new "<название>" "<запрос дословно>" [--lang ru|en]   pfs status | pfs list | pfs use <slug>
-pfs lang [ru|en]                              # язык проекта: сообщения, шаблоны и заголовки проверок (PRO-57)
-pfs route ["запрос"] [--override X]          pfs models [pick|escalate|use|sync] <задача>
-pfs step <шаг> in_progress|done --next "…"   pfs ask "вопрос" --options "A,B,C" | pfs answer "…"
-pfs next                                     # «что решать сейчас»: шаг, обязательства, пересмотры, вопросы
-pfs questions <шаг|блок>                     # вопросный блок шага (пропуск — pfs log --kind questions-skip)
-pfs source add <url|файл> [--origin own|interview|synthetic] [--published YYYY-MM-DD]
-pfs source add --text-file f.md --url <url> --title "…"     pfs source list | show S001
-pfs source refresh S###                      # перезагрузить web-источник; изменился sha256 — impact по утверждениям
+pfs new "<название>" "<запрос дословно>"      # новый проект (--lang en — англ. воркфлоу)
+pfs status                                    # где остановились
+pfs list                                      # список проектов
+pfs use демо                                  # сделать проект активным
+pfs lang ru                                   # язык проекта: сообщения, шаблоны, заголовки проверок (PRO-57); без аргумента — показать
+pfs route "запрос"                            # сценарий, карты и план моделей; --override X — явный сценарий
+pfs models                                    # таблица моделей по задачам; pfs models pick check — модель под задачу
+pfs step strategy in_progress --next "…"      # отметить шаг; статусы: in_progress, done
+pfs ask "вопрос" --options "A,B,C"            # вопрос руководителю (пауза)
+pfs answer "Вариант B"                        # ответ руководителя
+pfs next                                      # «что решать сейчас»: шаг, обязательства, пересмотры, вопросы
+pfs questions strategy                        # вопросный блок шага (пропуск — pfs log --kind questions-skip)
+pfs source add https://example.com/report     # источник-URL: скачивается, чистится, дедуп по URL/SHA-256; --published YYYY-MM-DD
+pfs source add interview.md --origin interview   # своё интервью (без персональных данных)
+pfs source add transcript.md --origin synthetic  # ИИ-респондент: только гипотезы
+pfs source add --text-file f.md --url https://example.com/report --title "…"   # выписка, если сайт блокирует загрузку
+pfs source list                               # реестр источников
+pfs source show S002                          # карточка источника
+pfs source refresh S002                       # перезагрузить web-источник; изменился sha256 — impact по утверждениям
 pfs claim add "текст" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "вывод" --kind inference --from C001,C004
-pfs claim supersede --id C003 "новый текст" --reason "…" [--from C…] | retract --id C003 --reason "…"
-pfs claim retag --from C003 --to C059        # перенумерация тегов [C###] во всех outputs одной командой
-pfs claim rebase [--id C010]                 # перенаправить выводы с замещённых оснований на замены
-pfs impact C003 | S002                       pfs check [--strict]
-pfs review lock                              # после ревизии evidence-auditor; правки реестра после lock → «вердикт review устарел» — повторите review и lock
-pfs gap list                                 pfs gap close 3 --claim C069 [--note "чем закрыт"]  # пробел закрыт синхронно в 01 и 02; check ловит рассинхрон
-pfs kb search "когортный анализ удержания"   pfs kb show M-jtbd | pfs kb index
-pfs data profile file.csv --save profile     pfs data cohort file.csv --user id --date dt --save cohorts
-pfs data funnel file.csv --steps visit,signup,pay --user id   pfs data stats file.csv --col revenue [--group seg]
-pfs interview guide --persona "Родитель 7–12" [--topic] | pfs interview save transcript.md --persona …
-pfs media add скрин.png --desc "что видно" --title "…"       pfs ux scaffold S003 --focus "онбординг"
-pfs docx <файл.md> [--out]                   # Markdown → Word
-pfs decision add --title … --decision … --owner … --grounds C001,C007 --metric "NSM: 10 -> 12 @2027-01-01" \
-                 --review 2027-01-01 --trigger "…" --commit "что|кто|когда"
-pfs decision due [--on YYYY-MM-DD] | list | done --id D001 --commitment K1 | rebase --id D001 --note "…"
-pfs cost [--transcript <jsonl>] [--since|--until <ISO>] [--window]
-pfs calc scaffold                              # каркас calcs.json из 02/04/06/07 (null-поля — дописать); затем pfs calc all
-pfs calc [all|unit-econ|growth|cohort|market]   # Excel-приложения (юнит-экономика, рост, когорты, рынок) → outputs/attachments/
-pfs export [--six-pager] [--no-calcs]           # REPORT.md; six-pager в формате референса стратегии (спецификация: knowledge/templates/SIX_PAGER_PROMPT.md) с Excel-приложениями
-pfs export --deck                            # HTML-дека 16:9 из SIX_PAGER.md
+pfs claim supersede --id C003 "новый текст" --reason "новый отчёт"   # замещение утверждения
+pfs claim retract --id C005 --reason "ошибка в методике"             # отзыв утверждения
+pfs claim fix-source --id C008 --source S012  # перепривязка утверждения с перепроверкой цитаты (PRO-50)
+pfs claim retag --from C003 --to C059         # перенумерация тегов [C###] во всех outputs одной командой
+pfs claim rebase                              # перенаправить выводы с замещённых оснований на замены; --id C010 — точечно
+pfs impact C003                               # что затронет изменение утверждения: выводы → документы → решения
+pfs impact S002                               # то же для источника
+pfs check --strict                            # quality gate документов (ошибки → rc≠0); --json — машинный вывод
+pfs review lock                               # после ревизии evidence-auditor; правки реестра после lock → «вердикт review устарел» — повторите review и lock
+pfs gap list                                  # пробелы из 02 «Чего мы не знаем»
+pfs gap close 3 --claim C069                  # пробел закрыт синхронно в 01 и 02; check ловит рассинхрон; --note "чем закрыт"
+pfs kb search "когортный анализ удержания"    # поиск по базе знаний
+pfs kb show M-jtbd                            # открыть карту
+pfs kb index                                  # индекс карт
+pfs data profile file.csv --save profile      # профиль таблицы: типы, пропуски, дубли, периоды
+pfs data cohort file.csv --user id --date dt --save cohorts      # когортное удержание
+pfs data funnel file.csv --steps visit,signup,pay --user id      # воронка по журналу событий
+pfs data stats file.csv --col revenue         # базовая статистика столбца; --group seg — по группам
+pfs interview guide --persona "Родитель 7–12"   # каркас вопросов интервью в interviews/; --topic — тема
+pfs interview save transcript.md --persona "…" --title "…"       # транскрипт/выжимка ИИ-респондента
+pfs media add скрин.png --desc "что видно" --title "…"           # медиа в заявленных границах: файл копируется в raw
+pfs ux scaffold S002 --focus "онбординг"      # UX-каркас из 10 эвристик в analysis/
+pfs docx outputs/REPORT.md                    # Markdown → Word; --out — путь результата
+pfs decision add --title "…" --decision "…" --owner "CPO" --grounds C001,C007 --metric "NSM: 10 -> 12 @2027-01-01" --review 2027-01-01 --trigger "…" --commit "что|кто|когда"
+pfs decision due                              # что решать сейчас: просроченные обязательства, пересмотры; --on YYYY-MM-DD
+pfs decision list                             # реестр решений
+pfs decision done --id D001 --commitment K1   # закрыть обязательство
+pfs decision rebase --id D001 --note "…"      # пересмотреть решение при новых данных
+pfs cost                                      # стоимость работы; --transcript <jsonl>, --since/--until <ISO>, --window
+pfs calc scaffold                             # каркас calcs.json из 02/04/06/07 (null-поля — дописать); затем pfs calc all
+pfs calc all                                  # Excel-приложения: unit-econ, growth, cohort, market → outputs/attachments/
+pfs export                                    # REPORT.md; --no-calcs — без Excel-приложений
+pfs export --six-pager                        # six-pager в формате референса стратегии (спецификация: knowledge/templates/SIX_PAGER_PROMPT.md); --en — каркас EN в одном вызове
+pfs export --deck                             # HTML-дека 16:9 из SIX_PAGER.md
 pfs doctor
 ```

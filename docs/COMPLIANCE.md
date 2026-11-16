@@ -7,7 +7,7 @@
 
 | Счётчик | Значение | Проверка |
 |---|---|---|
-| Тесты | 735 (`OK`) | `python3 -m unittest discover -s tests` |
+| Тесты | 740 (`OK`) | `python3 -m unittest discover -s tests` |
 | Карты знаний | 111 RU (`knowledge/methods/`) + 111 EN-зеркал — полная двуязычная база (`knowledge/methods_en/`) + `knowledge/INDEX_EN.md` | `ls knowledge/methods \| wc -l` → 111; `ls knowledge/methods_en \| wc -l` → 111 |
 | Навыки | 101 | `ls .claude/skills \| wc -l` → 101 |
 | Субагенты | 8 | `ls .claude/agents \| wc -l` → 8 |
@@ -50,7 +50,7 @@
 | MCP + CLI | CLI `python3 -m tools.pfs` (25+ подкоманд); MCP `tools/pfs/mcp_server.py` — 18 инструментов (stdio JSON-RPC) | `python3 -m tools.pfs --help`; `.mcp.json` → pfs-strategist |
 | База знаний с поиском | 111 карт RU + 111 EN-зеркал — полная двуязычная база + `INDEX_EN.md`; BM25 с русским стеммингом (`pfs kb search`), связи `related` проверяет `pfs kb index` | `python3 -m tools.pfs doctor` — число карт |
 | Excel-приложения на формулах | `pfs calc all` → 4 книги (лист «Ввод» + формулы, пересчёт при открытии) | `projects/демо/outputs/attachments/` — 4 файла xlsx |
-| Six-pager для комитета | `pfs export --six-pager` (FAQ-1…6) | демо: SIX_PAGER_RU и SIX_PAGER_EN, каждый в трёх форматах (MD/PDF/DOCX) |
+| Six-pager для комитета | `pfs export --six-pager` (FAQ-1…6) | демо: SIX_PAGER (RU) и SIX_PAGER_EN, каждый в трёх форматах (MD/PDF/DOCX) |
 | Отчёты и конвертация | `pfs export` (REPORT.md), `pfs export --deck`, `pfs docx` (Markdown → Word, без зависимостей) | `projects/демо/outputs/REPORT.md`, `docs/docx/` |
 | Устойчивость к сбоям | атомарная запись (`tools/pfs/core.py`), идемпотентные команды, `--text-file` для JS-сайтов | `python3 -m unittest discover -s tests` → OK |
 | Переносимость | состояние — файлы (JSON/JSONL/MD); AGENTS.md + CLAUDE.md + `.cursor/rules/` + `.mcp.json` | `git ls-files .cursor .claude .mcp.json` |
@@ -81,14 +81,14 @@ PDF/DOCX, cover letters, трекер, карта вакансий; 100% лок�
   4 допущения) · 5 вариантов · 20 ударов red team · 4 книги Excel · `check --strict` 100/100 · решение D001.
 - **Синтетика помечена** `origin=synthetic` (S008–S010) — гипотезы и метод, не факты; инструмент не даёт
   записать на неё факт.
-- **Артефакты:** `outputs/00…07_*.md`, `REPORT.md`, `SIX_PAGER_RU.md/.pdf/.docx` + `SIX_PAGER_EN.md/.pdf/.docx`
+- **Артефакты:** `outputs/00…07_*.md`, `REPORT.md`, `SIX_PAGER.md/.pdf/.docx` (RU) + `SIX_PAGER_EN.md/.pdf/.docx`
   (детальный текст комитета: выводы, обоснования, расчёты — без скриншотов), `outputs/attachments/` (4 xlsx), `outputs/img/` (скриншоты RU/EN),
   `interviews/synthetic/` (2 ИИ-интервью), `analysis/` (gen_synthetic.py, synthetic_funnel.csv, md_to_pdf.py).
 
 ## 4. Как проверить
 
 ```bash
-# 1. Тесты инструментов (735, без установки пакетов)
+# 1. Тесты инструментов (740, без установки пакетов)
 python3 -m unittest discover -s tests
 
 # 2. Quality gate демо-проекта (100/100)

@@ -44,7 +44,7 @@ Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INST
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 735 tests
+python3 -m unittest discover -s tests          # 740 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -65,7 +65,7 @@ a tracker, a job map; 100% local; 18 BYOK LLM providers; 19 languages; ~7,602 au
 - Task: "Build the commercial version of cvstart.org and a go-to-market strategy for the whole world."
   Comparison axis: paying subscribers and ARR; constraints: the MIT core stays free and open, a solo developer,
   keep the trust of the local/private mode.
-- How the agent ran: 12 steps — brief → 10 sources (S001–S011) → research plan → discovery with 2 synthetic
+- How the agent ran: 12 steps — brief → 11 sources (S001–S012) → research plan → discovery with 2 synthetic
   personas (honestly labeled, hypotheses only) → situation → 5 options + red team (15 objections + 5 hidden
   assumptions = 20 hits) → the director picked **B: hosted freemium SaaS** (Free BYOK / Pro $12 / Unlimited $29,
   opt-in cloud on top of the local MIT core, honest pricing without auto-renewals, locale waves
@@ -73,13 +73,13 @@ a tracker, a job map; 100% local; 18 BYOK LLM providers; 19 languages; ~7,602 au
   stop <20 at activation <35%; counter-metrics: GitHub stars, GDPR complaints, NPS ≥30, free-tier inference
   ≤$200/mo) → review `check --strict` **100/100** → decision D001 (beta in 3 EN geos by 2026-12-15,
   review 2027-02-10) → monitoring.
-- Evidence: 10 sources, 20 claims with types and grades A–D (12 facts, 4 hypotheses, 4 assumptions); market
+- Evidence: 11 sources, 20 claims with types and grades A–D (12 facts, 4 hypotheses, 4 assumptions); market
   facts: resume builders $1.2–2.4B (aggregators disagree 2×), AI segment CAGR 13.1%, online recruiting $37.97B
   (2025), ATS at 98% of F500, 7 competitors at $8–40/mo with auto-renewals; unit economics [C016]: ARPU $29,
   CM $21.75, LTV ≈ $271.88, LTV/CAC ≈ 4.5, break-even ≈ 69 paying; synthetic funnel [S008] is a method,
   not a forecast. Synthetic material is registered with `origin=synthetic` — the tool refuses to record facts on it.
 
-What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_PAGER_RU and SIX_PAGER_EN — each as
+What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_PAGER (RU) and SIX_PAGER_EN — each as
 .md/.pdf/.docx**, attachments/*.xlsx — 4 workbooks, img/ screenshots), `projects/демо/interviews/synthetic/`. The six-pager follows the growth-strategy reference format: subsections 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs in two planes, source footnotes; the draft is assembled by `pfs export --six-pager` (spec: `knowledge/templates/SIX_PAGER_PROMPT.md`)
 (2 AI personas), `projects/демо/analysis/` (generators + funnel CSV). Product screenshots: `https://strategyproduct.ru/assets/` (public site).
 Full RU breakdown with a task-requirements mapping table — in
@@ -325,5 +325,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/               (735) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/               (740) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```

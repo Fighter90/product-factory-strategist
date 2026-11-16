@@ -24,7 +24,10 @@ def run(pdir: Path, no_deck: bool = False, en: bool = False) -> dict:
     Возвращает {check, artifacts, missing_docs, stale_warnings} — stale_warnings
     это предупреждения о несвежих основаниях ДО пересборки (свежая сборка их снимает).
     """
-    stale = export.freshness_warnings(pdir)  # предупреждение о несвежих основаниях — до сборки
+    # предупреждение о несвежих основаниях — до сборки; свежая сборка его снимает,
+    # поэтому призыв «Пересоберите» в сводке finish неуместен (PRO-63, п.3)
+    stale = [w.split("Пересоберите")[0].rstrip(" .—-") + " (снято этой пересборкой)"
+             for w in export.freshness_warnings(pdir)]
     qc = check.run(pdir, strict=True)  # строгий затвор: ошибки числового кросс-чека тоже останавливают (PRO-50)
     if qc["errors"]:  # строгий затвор: любая ошибка check останавливает сборку (см. докстрингу)
         tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)

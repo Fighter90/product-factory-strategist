@@ -15,6 +15,9 @@ DATE_FORMATS = ("%Y-%m-%d", "%d.%m.%Y", "%Y-%m", "%Y/%m/%d", "%d/%m/%Y", "%Y-%m-
 
 
 def read_table(path: Path, sheet: str | None = None) -> list[dict]:
+    if not path.exists():
+        raise PfsError(f"Файл не найден: {path} — укажите CSV/XLSX с данными "
+                       "(пример: pfs data profile events.csv --save profile)")
     if path.suffix.lower() in (".xlsx", ".xlsm"):
         sheets = extract.xlsx_rows(path)
         rows = sheets.get(sheet) if sheet else next(iter(sheets.values()), [])

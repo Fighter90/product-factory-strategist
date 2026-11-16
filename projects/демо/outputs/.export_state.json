@@ -1,9 +1,9 @@
 {
-  "at": "2026-11-14T08:44:02+03:00",
+  "at": "2026-11-16T17:19:30+03:00",
   "claims": 20,
   "sources": 11,
   "claims_sha": "778a72558276b19bfdc4fa2f1461d6911bb616432a6cddd906aa911a9f85658b",
   "sources_sha": "76e3f2a5d52a3de9d558c2b9d8431e4774fb2e73c683da0abcf664c458b00cfd",
-  "calcs_mtime": 1794635024.7929673,
-  "attachments_mtime": 1794635042.8620913
+  "calcs_mtime": 1794838138.3736153,
+  "attachments_mtime": 1794838770.4257598
 }
