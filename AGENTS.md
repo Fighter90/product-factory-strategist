@@ -185,7 +185,7 @@ pfs source show S002                          # карточка источни�
 pfs source refresh S002                       # перезагрузить web-источник; изменился sha256 — impact по утверждениям
 pfs claim add "текст" --kind fact --source S001 --grade B --quote "…"
 pfs claim add "вывод" --kind inference --from C001,C004
-pfs claim supersede --id C003 "новый текст" --reason "новый отчёт"   # замещение утверждения
+pfs claim supersede "новый текст" --id C003 --reason "новый отчёт"   # замещение утверждения
 pfs claim retract --id C005 --reason "ошибка в методике"             # отзыв утверждения
 pfs claim fix-source --id C008 --source S012  # перепривязка утверждения с перепроверкой цитаты (PRO-50)
 pfs claim retag --from C003 --to C059         # перенумерация тегов [C###] во всех outputs одной командой
