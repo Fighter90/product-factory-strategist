@@ -113,6 +113,17 @@ class SixPagerLintTests(unittest.TestCase):
         self.assertIn("объём", errs, "переполнение объёма ловится")
         self.assertIn(str(limit), errs, "в сообщении назван порог из quality_gate.json")
 
+    def test_point2_volume_excludes_tables_and_appendices(self):
+        # PRO-46: бюджет основного текста — без таблиц и сносок; таблицы (матрица,
+        # KPI, конкуренты) и разделы после «Источники» в объём не считаются
+        limit = GATE["sixpager"]["max_words"]
+        tables = "\n".join("| Ключ " + "слово " * 20 + "|\n" + "|---|\n" + "| значение " + "слово " * 20 + "|\n"
+                           for _ in range(60))
+        self.write(GOOD.replace("## Источники (сноски)",
+                                tables + "\n\n## Источники (сноски)\n\n[^1]: " + "слово " * 500))
+        self.assertEqual([e for e in self.errs() if "объём" in e], [],
+                         "таблицы и сноски не считаются в объёме основного текста")
+
     # ---------- пункт 3: остатки шаблона ----------
 
     def test_point3_template_leftovers_flagged(self):
@@ -255,6 +266,16 @@ class SixPagerLintTests(unittest.TestCase):
         res = self.run_lint()
         self.assertEqual(res["errors"], [], "пункт 9 — предупреждения, не ошибки")
 
+    def test_point9_long_paragraph_and_wide_table_are_warnings(self):
+        self.write(GOOD + "\n" + " ".join(["слово"] * 130) + "\n"
+                   "\n|a|b|c|d|e|f|g|\n|---|---|---|---|---|---|---|\n"
+                   "|1|2|3|4|5|6|7|\n")
+        res = self.run_lint()
+        self.assertEqual(res["errors"], [], "пункт 9 — предупреждения, не ошибки")
+        warns = "\n".join(res["warnings"])
+        self.assertIn("абзац", warns, "длинный абзац — предупреждение")
+        self.assertIn("столбцов", warns, "широкая таблица — предупреждение")
+
     def test_point9_footnote_definitions_are_not_prose(self):
         # PRO-46: подряд идущие определения сносок — не абзац документа: даже
         # длинный список сносок не даёт ложного «абзац больше N слов»
@@ -267,9 +288,6 @@ class SixPagerLintTests(unittest.TestCase):
         res = self.run_lint()
         self.assertEqual([w for w in res["warnings"] if "абзац" in w], [],
                          "определения сносок — не абзац: предупреждения о длине нет")
-        warns = "\n".join(res["warnings"])
-        self.assertIn("абзац", warns, "длинный абзац — предупреждение")
-        self.assertIn("столбцов", warns, "широкая таблица — предупреждение")
 
     # ---------- конфиг ----------
 
@@ -287,10 +305,11 @@ class SixPagerLintTests(unittest.TestCase):
         self.assertTrue(sp["service_id_patterns"], "паттерны служебных ID в конфиге")
 
 
-class BrokenRealSixPagersTests(unittest.TestCase):
-    """Приёмка PRO-47: текущие six-pager демо и cvstart-EU не проходят проверку —
-    не меньше 10 ошибок по пунктам 3–6 (остатки шаблона, таблицы, служебные ID,
-    арифметика). Если проекта нет в репозитории — тест пропускается."""
+class WrittenRealSixPagersTests(unittest.TestCase):
+    """Приёмка PRO-46: six-pager демо и cvstart-EU НАПИСАНЫ six-pager-writer'ом
+    по пакету данных (а не склеены из документов 02/03/04/06) — проходят линтер
+    без ошибок по пунктам 3–6 (остатки шаблона, таблицы, служебные ID, арифметика).
+    Если проекта или документа нет в репозитории — тест пропускается."""
 
     def check_doc(self, pdir_name: str) -> None:
         src = REPO / "projects" / pdir_name / "outputs" / "SIX_PAGER.md"
@@ -306,14 +325,14 @@ class BrokenRealSixPagersTests(unittest.TestCase):
             src.read_text(encoding="utf-8"), encoding="utf-8")
         res = sixpager_lint.run(pdir)
         pts_3_6 = sum(res["points"].get(str(n), 0) for n in (3, 4, 5, 6))
-        self.assertGreaterEqual(pts_3_6, 10,
-                                f"{pdir_name}: ожидали ≥10 ошибок по пунктам 3–6, "
-                                f"получили {pts_3_6}: {res['errors'][:10]}")
+        self.assertEqual(pts_3_6, 0,
+                         f"{pdir_name}: написанный документ не должен иметь ошибок "
+                         f"по пунктам 3–6, получили {pts_3_6}: {res['errors'][:10]}")
 
-    def test_demo_six_pager_fails_points_3_6(self):
+    def test_demo_six_pager_written_passes(self):
         self.check_doc("демо")
 
-    def test_cvstart_eu_six_pager_fails_points_3_6(self):
+    def test_cvstart_eu_six_pager_written_passes(self):
         self.check_doc("вывод-проекта-на-европейский-рынок-cvstart-org")
 
 

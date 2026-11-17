@@ -225,3 +225,6 @@
 {"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
 {"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER_EN.md и пакет данных six_pager_pack (PRO-46: каркас со слотами, документы не вставляются)", "tool": "pfs export --six-pager"}
 {"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Роудмап: outputs/roadmap-вывод-проекта-на-европейский-рынок-cvstart-org.xlsx (проектов: 4, фич: 15; источник: 04_product_strategy.md)", "tool": "pfs roadmap"}
+{"ts": "2026-11-17T08:06:13+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-17T08:06:13+03:00", "kind": "action", "msg": "Роудмап: outputs/roadmap-вывод-проекта-на-европейский-рынок-cvstart-org.xlsx (проектов: 4, фич: 15; источник: 04_product_strategy.md)", "tool": "pfs roadmap"}
+{"ts": "2026-11-17T08:06:15+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}

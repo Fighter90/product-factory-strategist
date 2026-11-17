@@ -101,7 +101,7 @@
 | 7 | `choice` | Показываешь сравнение и рекомендацию, ждёшь выбора | `pfs ask` | ответ в state.json | **Человек** выбирает |
 | 8 | `strategy` | Продуктовая и коммуникационная стратегии, согласованные между собой | skill `strategy`, субагент `comms-strategist` | `04_product_strategy.md`, `05_comms_strategy.md` | Каждое обещание подтверждено в продукте |
 | 9 | `validation` | Ожидаемое изменение, база сравнения, срок, контрметрики, критерии решения | skill `validation-plan` | `06_validation_plan.md` | Все 5 разделов |
-| 10 | `review` | Автопроверка + независимая оценка по рубрике | `pfs check`, субагент `evidence-auditor`; six-pager — сборка, затем вычитка субагентом `editor` (STYLE_RU.md) | `07_quality_review.md`; для комитета — six-pager с Excel (`pfs export --six-pager`, skill `six-pager`) | Оценка ≥ порога или исправлено |
+| 10 | `review` | Автопроверка + независимая оценка по рубрике | `pfs check`, субагент `evidence-auditor`; six-pager — сборка (`pfs export --six-pager`), текст по слотам пишет субагент `six-pager-writer`, затем вычитка субагентом `editor` (STYLE_RU.md) | `07_quality_review.md`; для комитета — six-pager с Excel (`pfs export --six-pager`, skill `six-pager`) | Оценка ≥ порога или исправлено |
 | 11 | `decision` | Фиксируешь решение: основания, ответственные, метрики, пересмотр, обязательства | skill `decision-support` | `decisions.jsonl` | **Человек** утверждает |
 | 12 | `monitoring` | Отдельный режим: сроки, новые данные и пересмотр выводов — только по команде пользователя («проверь обязательства», `pfs next`) или по триггеру `decision due`; обязательства решения (WBS, черновики, посты) без явного запроса не выполняешь | skill `decision-support` | обновления документов | `pfs decision due` пуст |
 
@@ -217,7 +217,7 @@ pfs cost                                      # стоимость работы;
 pfs calc scaffold                             # каркас calcs.json из 02/04/06/07 (null-поля — дописать); затем pfs calc all
 pfs calc all                                  # Excel-приложения: unit-econ, growth, cohort, market → outputs/attachments/
 pfs export                                    # REPORT.md; --no-calcs — без Excel-приложений
-pfs export --six-pager                        # six-pager в формате референса стратегии (спецификация: knowledge/templates/SIX_PAGER_PROMPT.md); --en — каркас EN в одном вызове
+pfs export --six-pager                        # пакет данных (six_pager_pack.json/md) + каркас FAQ-1…6 со слотами; текст по слотам пишет субагент six-pager-writer, цикл «написать → pfs check --six-pager → 0 ошибок»
 pfs export --deck                             # HTML-дека 16:9 из SIX_PAGER.md
 pfs doctor
 ```
