@@ -95,7 +95,7 @@ class ConflictBeforeReview(unittest.TestCase):
         (та ветка конфликтовала на релизном squash и роняла конвейер): ветка
         пересоздаётся на свежем main, исполнитель переприменит работу в этом же раунде."""
         seg = seg_between("rebase на свежий main", "worker('executor'")
-        self.assertIn("git checkout -q -B", seg,
+        self.assertIn("checkout -q -B ${branch} origin/main", seg,
                       "конфликт rebase не пересоздаёт ветку на свежем main")
         self.assertIn("branch-recreated-on-fresh-main", seg,
                       "пересоздание ветки не маркируется в логе")

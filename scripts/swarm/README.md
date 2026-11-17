@@ -8,15 +8,19 @@ product-factory-strategist (Python CLI без зависимостей).
 ```
 Linear PRO (метка `swarm`, state Todo)
   → оркестратор забирает задачу (In Progress + комментарий)
-  → EXECUTOR (opencode run, роль roles/executor.md) — red-first тест + правка + коммит на ветке swarm/pro-xx
-  → TESTER — детерминированные гейты: python3 -m unittest discover -s tests + pfs doctor
-    (фейл → заметки возвращаются исполнителю, до --rounds раз)
+  → EXECUTOR (opencode run, роль roles/executor.md) — изолированный worktree
+    .task-board/wt-<id> от свежего origin/main (PRO-81; ветка попытки
+    переиспользуется): red-first тест + правка + коммит на ветке swarm/pro-xx —
+    общий чекаут остаётся супервизору на detached origin/main
+  → TESTER — детерминированные гейты: python3 -m unittest discover -s tests + pfs doctor,
+    гоняются в worktree исполнителя (фейл → заметки возвращаются исполнителю, до --rounds раз)
   → REVIEWER (opencode run) — VERDICT: ACCEPT / RETURN (возврат на доработку)
   → DOCUMENTER (opencode run) — CHLOG_FIXED / CHLOG_NOTES / STORY
-  → RELEASE MANAGER — ребейз ветки на свежий main (конфликты *.md разрешаются
-    union-merge, обе стороны сохраняются) → push --force-with-lease →
-    существующий PR ветки мержится (gh pr list --head → gh pr merge), нового
-    PR не создаём при живом → squash-merge → версия = max(тегов v*) + patch
+  → RELEASE MANAGER — ребейз ветки на свежий main (в worktree исполнителя;
+    конфликты *.md разрешаются union-merge, обе стороны сохраняются) →
+    push --force-with-lease → существующий PR ветки мержится
+    (gh pr list --head → gh pr merge), нового PR не создаём при живом →
+    squash-merge → версия = max(тегов v*) + patch
     (pyproject синхронизируется, коллизия тега проверяется) →
     запись в CHANGELOG.md (локальная дата) + qa/SWARM-QA-<ID>.md → tag vX.Y.Z →
     push → watch Pages workflow → prod-QA (4 страницы strategyproduct.ru = 200)
@@ -57,6 +61,14 @@ python3 scripts/swarm/prep_linear.py   # метка swarm на PRO-26…PRO-40 +
 - работа на detached `origin/main`, ветки `swarm/<identifier>`; конфликт rebase в цикле
   разработки → ветка пересоздаётся на свежем main, конфликт релизного squash → union-
   разрешение *.md в живом ребейзе (невалидный `-X union` при `--squash` убран, PRO-68)
+- изоляция исполнителя (PRO-81): для каждой задачи `git worktree add` в gitignored
+  `.task-board/wt-<id>` от свежего origin/main (ветка попытки переиспользуется, протухший
+  worktree краша сносится до add, knowledge/ кладётся симлинком на общий клон); executor
+  пишет, гейты гонятся, ребейз/squash релиза исполняются в worktree (`git -C`/`cwd: WT`) —
+  общий чекаут остаётся супервизору (параллельный прогон сюиты больше не гонится с
+  пишущим воркером); по завершении (успех/blocked/cancel/review-fail/краш) worktree
+  сносится — stash-цепочки «blocked leftovers» не нужны; guard живого воркера (PRO-73)
+  признаёт cwd под ROOT, чтобы тик не сорвал ветку живого воркера в его worktree
 - reflog-спасение потерянных коммитов исполнителя (уроки run-5/run-6 career-ops)
 - guard живого воркера (PRO-73): каждый воркер пишет pid в `.task-board/worker.pid`;
   тик при живом `opencode run` этого репо (pid жив + команда + cwd) завершается

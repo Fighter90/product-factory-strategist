@@ -194,7 +194,7 @@ class OutlivesContract(unittest.TestCase):
         """Сироту убиваем только ПОСЛЕ опознания (это opencode этого репо по cwd):
         переиспользованный pid чужого процесса не должен получить SIGKILL."""
         oc = GUARD_SEG.find("/opencode/.test")
-        cwd_ok = GUARD_SEG.find("(dir === ROOT || !dir)")
+        cwd_ok = GUARD_SEG.find("(dir === ROOT || dir.startsWith(ROOT + '/')")
         orphan = GUARD_SEG.find("killTree(pid)")
         self.assertGreater(oc, 0, "guard потерял проверку команды (opencode)")
         self.assertGreater(cwd_ok, 0, "guard потерял сверку cwd с корнем репо")

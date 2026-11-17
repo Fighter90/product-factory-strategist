@@ -26,6 +26,12 @@ const LABEL = 'swarm';
 // дырявой, либо вечной); grace покрывает 3-секундный grace run() и скос часов.
 const WORKER_TIMEOUT_MS = 25 * 60_000;
 const PID_STALE_GRACE_MS = 5 * 60_000;
+// PRO-81: worktree исполнителя — изоляция от общего чекаута (labourer-паттерн).
+// Общий чекаут остаётся супервизору на detached origin/main: executor пишет в своё
+// дерево .task-board/wt-<id>, гейты не гонятся поверх пишущего воркера, зомби-хвосты
+// не попадают в рабочее дерево супервизора (stash-цепочки «blocked leftovers» не
+// нужны). Каталог gitignored — git status супервизора остаётся чистым.
+const wtDir = (id) => resolve(STATE, `wt-${id.toLowerCase()}`);
 
 const KEYFILE = resolve(homedir(), '.swarm_linear_key');
 const LINEAR_KEY = process.env.SWARM_LINEAR_KEY || (existsSync(KEYFILE) ? readFileSync(KEYFILE, 'utf8').trim() : '');
@@ -170,7 +176,7 @@ const killActiveWorkers = () => {
 process.on('exit', killActiveWorkers);
 for (const sig of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.on(sig, () => { killActiveWorkers(); process.exit(1); });
 
-async function worker(role, vars, { timeoutMs = WORKER_TIMEOUT_MS } = {}) {
+async function worker(role, vars, { timeoutMs = WORKER_TIMEOUT_MS, cwd = ROOT } = {}) {
   let prompt = ROLES[role];
   for (const [k, v] of Object.entries(vars)) prompt = prompt.split(`{{${k}}}`).join(v ?? '');
   log(`  [${role}] GLM worker started (timeout ${Math.round(timeoutMs / 60000)}m)`);
@@ -183,7 +189,7 @@ async function worker(role, vars, { timeoutMs = WORKER_TIMEOUT_MS } = {}) {
   // guard следующего тика отличит сироту (владелец мёртв, убить) от воркера
   // живого владельца (PRO-73 skip).
   let pid = 0;
-  const r = await run('opencode', ['run', prompt], { timeoutMs, onSpawn: (p) => { pid = p; activeWorkers.add(p); writeFileSync(WORKER_PID, `${p} ${process.pid}\n`); } });
+  const r = await run('opencode', ['run', prompt], { timeoutMs, cwd, onSpawn: (p) => { pid = p; activeWorkers.add(p); writeFileSync(WORKER_PID, `${p} ${process.pid}\n`); } });
   if (pid) activeWorkers.delete(pid); // PRO-69: живой воркер снят с учёта реапа
   const tail = r.all.slice(-4000);
   log(`  [${role}] finished code=${r.code}`);
@@ -321,7 +327,10 @@ async function tickWorkerAlive() {
   if (!/opencode/.test(ps.out)) return 0; // pid переиспользован посторонним процессом
   const cwd = await run('bash', ['-c', `lsof -a -p ${pid} -d cwd -Fn 2>/dev/null | awk 'match($0,/^ncwd/){print substr($0,5); exit} match($0,/^n/){print substr($0,2); exit}'`], { timeoutMs: 10_000 });
   const dir = cwd.out.trim();
-  if (!(dir === ROOT || !dir)) return 0; // cwd другого репо — не наш воркер, не блокируем
+  // PRO-81: executor живёт в worktree (.task-board/wt-<id>) — его cwd ПОД ROOT, а не
+  // равен ROOT; guard обязан узнавать и его (false-positive skip безвреден — тик
+  // повторится следующим запуском, сорванная ветка живого воркера — нет).
+  if (!(dir === ROOT || dir.startsWith(ROOT + '/') || !dir)) return 0; // cwd другого репо — не наш воркер, не блокируем
   // PRO-69: воркер опознан (opencode этого репо), но владелец мёртв — это СИРОТА:
   // её вывод никто не заберёт, а воюя за дерево она срывает новый тик (инциденты
   // 19:0x/19:2x). Убиваем поддерево (группа могла не достать), хвосты executor'а —
@@ -465,6 +474,15 @@ async function main() {
       if (DRY) { log('dry-run: would claim → develop → gates → review → document → release → prod-QA → Done.'); break; }
 
       const branch = `swarm/${issue.identifier.toLowerCase()}`;
+      // PRO-81: git-операции ветки исполнителя — через его worktree (`-C WT`), общий
+      // чекаут (ROOT) остаётся супервизору: его HEAD всегда на origin/main.
+      const WT = wtDir(issue.identifier);
+      const gwt = (cmd) => `git -C ${JSON.stringify(WT)} ${cmd}`;
+      const dropWorktree = async () => {
+        // remove --force снимает регистрацию и сносит дерево; prune чистит регистрации
+        // деревьев, удалённых вручную; rm -rf добивает каталог-сироту (краш до remove).
+        await sh(`git worktree remove --force ${JSON.stringify(WT)} 2>/dev/null; git worktree prune; rm -rf ${JSON.stringify(WT)}`, { timeoutMs: 120_000 });
+      };
       let accepted = null, devStatus = null, devSummary = '', story = null, mergedDone = false, gatesLine = '?';
 
       try {
@@ -474,23 +492,39 @@ async function main() {
         noteClaim(issue.identifier);
         await claimIssue(issue);
 
+        // ---- worktree исполнителя (PRO-81): отдельное дерево от свежего origin/main,
+        // общий чекаут никогда не переключается на ветку исполнителя. Ветка прошлой
+        // попытки переиспользуется (продолжение работы), протухший worktree
+        // (краш/таймаут) сносится вместе с зомби-хвостами.
+        await dropWorktree();
+        const wa = await sh(
+          `git show-ref --verify -q refs/heads/${branch} && git worktree add --force ${JSON.stringify(WT)} ${branch} ` +
+          `|| git worktree add -B ${branch} ${JSON.stringify(WT)} origin/main`,
+          { timeoutMs: 120_000 },
+        );
+        if (wa.code !== 0) throw new Error(`executor worktree add failed: ${short(wa.all)}`);
+        // База знаний (knowledge/) в git не входит (приватный -base) — в свежем worktree
+        // её нет, а гейты без неё падают (test_kb_lint, test_docs_parity); симлинк на
+        // общий клон супервизора.
+        await sh(`ln -sfn ${JSON.stringify(resolve(ROOT, 'knowledge'))} ${JSON.stringify(resolve(WT, 'knowledge'))}`);
+
         // ---- develop (executor ↔ reviewer loop, детерминированные гейты между раундами)
         let reviewNotes = '';
         let round = 0;
         for (; round < MAX_ROUNDS; round++) {
           log(`-- round ${round + 1}/${MAX_ROUNDS}: develop`);
-          await sh(`git checkout -q ${branch} 2>/dev/null || git checkout -q -B ${branch} origin/main`);
-          // rebase на свежий main: убирает дрейф merge-base — иначе дифф тащит
+          // rebase на свежий main — внутри worktree исполнителя (PRO-81): убирает
+          // дрейф merge-base — иначе дифф тащит
           // уже смерженный объём и ревью вечно требует «разделить скоуп».
           // PRO-68: при конфликте ветка ПЕРЕСОЗДАЁТСЯ на свежем main (прежде было
           // «abort и работаем как раньше» — та ветка конфликтовала на релизном
           // squash-merge и роняла конвейер циклом). Исполнитель переприменит
           // работу по описанию задачи в этом же раунде — уже на чистой базе.
           const devRb = await sh(
-            'git rebase --abort 2>/dev/null; ' +
-            'if ! GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true git rebase origin/main; then ' +
-            'git rebase --abort 2>/dev/null; git checkout -q --detach HEAD 2>/dev/null; ' +
-            `git checkout -q -B ${branch} origin/main; echo branch-recreated-on-fresh-main; fi`,
+            `${gwt('rebase --abort')} 2>/dev/null; ` +
+            `if ! GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true ${gwt('rebase origin/main')}; then ` +
+            `${gwt('rebase --abort')} 2>/dev/null; ` +
+            `${gwt(`checkout -q -B ${branch} origin/main`)}; echo branch-recreated-on-fresh-main; fi`,
             { timeoutMs: 180_000 }
           );
           if (devRb.all.includes('branch-recreated-on-fresh-main')) log(`  branch ${branch} recreated on fresh main (rebase conflict) — executor re-applies on clean base`);
@@ -498,8 +532,8 @@ async function main() {
             IDENTIFIER: issue.identifier, TITLE: issue.title, ROUND: String(round + 1),
             DESCRIPTION: issue.description || '(см. задачу в Linear)',
             REVIEW_NOTES: reviewNotes ? `\nREVIEWER RETURNED THIS CHANGE WITH NOTES — address every point:\n${reviewNotes}` : '',
-          });
-          const commits = parseInt((await sh('git rev-list --count origin/main..HEAD')).out.trim() || '0', 10);
+          }, { cwd: WT });
+          const commits = parseInt((await sh(gwt('rev-list --count origin/main..HEAD'))).out.trim() || '0', 10);
           const dev1 = extractDev(dev.all);
           devStatus = commits > 0 ? 'done' : (dev1.status === 'done' ? 'blocked' : dev1.status);
           devSummary = dev1.summary;
@@ -524,20 +558,22 @@ async function main() {
             }
             if (sha) {
               log(`  reflog rescue: found lost work ${sha.slice(0, 9)} for ${issue.identifier} — cherry-picking`);
-              const cp = await sh(`git cherry-pick ${sha}`);
-              const after2 = parseInt((await sh('git rev-list --count origin/main..HEAD')).out.trim() || '0', 10);
+              const cp = await sh(gwt(`cherry-pick ${sha}`));
+              const after2 = parseInt((await sh(gwt('rev-list --count origin/main..HEAD'))).out.trim() || '0', 10);
               if (cp.code === 0 && after2 > 0) {
                 devStatus = 'done'; devSummary = `(rescued from lost branch commit ${sha.slice(0, 9)}) ${devSummary}`;
                 log(`  rescued: ${after2} commit(s) on the branch — proceeding to gates`);
               } else {
-                await sh('git cherry-pick --abort');
+                await sh(gwt('cherry-pick --abort'));
               }
             }
           }
           if (devStatus !== 'done') break;
 
           log('-- tester: deterministic gates (unittest + pfs doctor + smoke)');
-          const gates = await sh(`python3 -m unittest discover -s tests && python3 -m tools.pfs doctor >/dev/null`, { timeoutMs: 30 * 60_000 });
+          // PRO-81: гейты — в worktree исполнителя (cwd: WT): на его коде и без гонки
+          // с пишущим воркером; общий чекаут остаётся стабильным деревом супервизора.
+          const gates = await sh(`python3 -m unittest discover -s tests && python3 -m tools.pfs doctor >/dev/null`, { timeoutMs: 30 * 60_000, cwd: WT });
           const passLine = (gates.all.match(/Ran (\d+) tests?/) || [])[1];
           if (gates.code !== 0 || !/^\s*OK\s*$/m.test(gates.all)) {
             if (round + 1 < MAX_ROUNDS) {
@@ -556,7 +592,9 @@ async function main() {
           log(`  gates green (${passLine || "?"} tests OK)`);
 
           log(`-- round ${round + 1}: review`);
-          const diff = await sh(`git diff origin/main...HEAD`);
+          // PRO-81: дифф — из worktree исполнителя (HEAD ROOT'а всегда origin/main,
+          // в общем чекауте дифф был бы пуст).
+          const diff = await sh(gwt('diff origin/main...HEAD'));
           log(`  diff captured: ${diff.all.length} bytes`);
           writeFileSync('/tmp/swarm-review-prompt.md', (() => { let pr = ROLES.reviewer;
             for (const [k, v] of Object.entries({ IDENTIFIER: issue.identifier, TITLE: issue.title, DESCRIPTION: issue.description || '(judge the diff against the issue title)', DIFF: `<DIFF>\n(дифф может быть обрезан по лимиту символов — это ожидаемо, не дефект; судьте по видимой части)\n${diff.all.slice(0, 100_000)}\n</DIFF>` })) pr = pr.split(`{{${k}}}`).join(v ?? '');
@@ -573,18 +611,22 @@ async function main() {
           reviewNotes = v.notes;
           log(`  verdict: RETURN — ${short(v.notes, 160)}`);
         }
-        if (mergedDone) { log('finished: work already merged — issue closed as Done'); continue; }
+        if (mergedDone) { await dropWorktree(); log('finished: work already merged — issue closed as Done'); continue; }
         if (devStatus !== 'done') {
           if (devStatus === 'blocked') {
             await failIssue(issue, 'executor', 'reported blocked — the branch and the board are left for human review');
-            const stash = await sh('git stash push --include-untracked -q -m ' + JSON.stringify(`blocked executor leftovers ${issue.identifier}`), { timeoutMs: 60_000 });
-            log(`  tree cleaned: stash ${stash.code === 0 ? 'ok' : 'nothing to stash'}`);
+            // PRO-81: хвосты исполнителя остались в его worktree — общий чекаут чист;
+            // сносим worktree (stash-цепочки «blocked leftovers» больше не нужны),
+            // ветка с коммитами остаётся для человека.
+            await dropWorktree();
+            log('  tree cleaned: executor worktree removed');
             log(`finished: ${issue.identifier} — executor blocked; moving on`);
             try { await setState(issue.id, 'Todo'); forgetClaim(issue.identifier); } catch {}
             continue;
           }
           await cancelIssue(issue, `executor reported "${devStatus}"`);
           forgetClaim(issue.identifier);
+          await dropWorktree();
           log(`finished: ${devStatus} — issue canceled`); continue;
         }
         if (!accepted) {
@@ -592,12 +634,13 @@ async function main() {
           const tr = bumpAttempts(issue.identifier);
           log(`finished: ${issue.identifier} — review failed (attempt ${tr}/2); moving on`);
           if (tr < 2) { try { await setState(issue.id, 'Todo'); forgetClaim(issue.identifier); } catch {} }
+          await dropWorktree(); // PRO-81: попытка 2 начнёт с чистого worktree той же ветки
           continue;
         }
 
         // ---- document
         log('-- documenter');
-        const stat = await sh(`git diff --stat origin/main...HEAD`);
+        const stat = await sh(gwt('diff --stat origin/main...HEAD'));
         const doc = await worker('documenter', {
           IDENTIFIER: issue.identifier, TITLE: issue.title,
           DEV_SUMMARY: devSummary || '(no summary)', DIFF_STAT: short(stat.out, 1200),
@@ -608,7 +651,7 @@ async function main() {
         if (!fixed || !notes || !story) throw new Error('documenter output incomplete');
         log(`  story: ${short(story, 120)}`);
 
-        if (NO_RELEASE) { log('--no-release: stopping after ACCEPT + document.'); break; }
+        if (NO_RELEASE) { await dropWorktree(); log('--no-release: stopping after ACCEPT + document.'); break; }
 
         // ---- release manager: PR → merge → версия → CHANGELOG → Pages → prod-QA
         log('-- release manager: PR');
@@ -635,13 +678,15 @@ async function main() {
           'GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true git rebase --continue || exit 1; fi';
         const localSquash = async (why) => {
           log(`  ${why} — локальный squash-merge`);
-          const sm = await sh(rebaseOntoMain() + ` && git checkout -q --detach origin/main && git merge --squash ${branch} && git commit -q -m ${JSON.stringify(`${issue.identifier}: ${issue.title} (squash)`)}`, { timeoutMs: 180_000 });
+          // PRO-81: squash — в worktree исполнителя (cwd: WT): checkout/merge/push
+          // «оттуда», общий чекаут не участвует.
+          const sm = await sh(rebaseOntoMain() + ` && git checkout -q --detach origin/main && git merge --squash ${branch} && git commit -q -m ${JSON.stringify(`${issue.identifier}: ${issue.title} (squash)`)}`, { timeoutMs: 180_000, cwd: WT });
           if (sm.code !== 0) throw new Error(`fallback squash failed (ребейз не снял конфликт): ${short(sm.all)}`);
-          const pp = await sh('git push -q origin HEAD:main', { timeoutMs: 300_000 });
+          const pp = await sh('git push -q origin HEAD:main', { timeoutMs: 300_000, cwd: WT });
           if (pp.code !== 0) throw new Error(`fallback push failed: ${short(pp.all)}`);
           log('  merged via direct squash push (без PR)');
         };
-        const rb = await sh(rebaseOntoMain(), { timeoutMs: 180_000 });
+        const rb = await sh(rebaseOntoMain(), { timeoutMs: 180_000, cwd: WT });
         if (rb.code !== 0 || /non-doc conflict/.test(rb.all)) throw new Error(`release rebase failed: ${short(rb.all)}`);
         log(`  branch rebased on fresh main: ${short(rb.all, 120)}`);
         const push = await sh(`git push -q --force-with-lease origin ${branch} 2>&1`, { timeoutMs: 120_000 });
@@ -737,6 +782,9 @@ async function main() {
         await doneIssue(issue, evidence);
         attempts.delete(issue.identifier); saveAttempts();
         forgetClaim(issue.identifier);
+        // PRO-81: worktree исполнителя сносится ДО удаления ветки — git branch -D
+        // ветки, держимой worktree, падает «used by worktree».
+        await dropWorktree();
         await sh(`git branch -D ${branch}`);
         log(`=== DONE: ${issue.identifier} shipped as v${ver} ===`);
       } catch (e) {
@@ -754,6 +802,10 @@ async function main() {
             await comment(issue.id, '🏁 Swarm: 2 attempts failed (pipeline crash; counter persists across runs, decays after 7 days) — parked in Backlog for human review. Branch kept.');
           } catch {}
         }
+        // PRO-81: worktree исполнителя — аборт застрявших merge/rebase внутри него и
+        // снос самого worktree: следующий тик не наследует зомби-дерево.
+        await sh(`${gwt('merge --abort')} 2>/dev/null; ${gwt('rebase --abort')} 2>/dev/null; true`, { timeoutMs: 120_000 });
+        await dropWorktree();
         await sh('git merge --abort 2>/dev/null; git rebase --abort 2>/dev/null; ' +
           'git stash push --include-untracked -q -m ' + JSON.stringify(`crash leftovers ${issue.identifier}`) + ' 2>/dev/null; ' +
           'git checkout -q --detach HEAD 2>/dev/null; true', { timeoutMs: 120_000 });
