@@ -327,10 +327,14 @@ async function tickWorkerAlive() {
   if (!/opencode/.test(ps.out)) return 0; // pid переиспользован посторонним процессом
   const cwd = await run('bash', ['-c', `lsof -a -p ${pid} -d cwd -Fn 2>/dev/null | awk 'match($0,/^ncwd/){print substr($0,5); exit} match($0,/^n/){print substr($0,2); exit}'`], { timeoutMs: 10_000 });
   const dir = cwd.out.trim();
-  // PRO-81: executor живёт в worktree (.task-board/wt-<id>) — его cwd ПОД ROOT, а не
-  // равен ROOT; guard обязан узнавать и его (false-positive skip безвреден — тик
-  // повторится следующим запуском, сорванная ветка живого воркера — нет).
-  if (!(dir === ROOT || dir.startsWith(ROOT + '/') || !dir)) return 0; // cwd другого репо — не наш воркер, не блокируем
+  // PRO-81 (раунд 2): область guard'а сужена до фактических мест воркеров роя —
+  // ROOT (reviewer/documenter, дефолт cwd) и .task-board/ (worktree исполнителя
+  // .task-board/wt-<id>). Бывший широкий префикс ROOT+'/' узнавал ЛЮБУЮ сессию
+  // opencode в подкаталоге репо — например интерактивную сессию человека в
+  // ROOT/projects/<slug>: при мёртвом владельце оркестратора она убивалась как
+  // «сирота» (killTree). Сессии вне ROOT/.task-board — не наши (return 0);
+  // ложный skip безвреден — тик повторится следующим запуском.
+  if (!(dir === ROOT || dir.startsWith(STATE + '/') || !dir)) return 0; // cwd вне ROOT/.task-board — не наш воркер, не блокируем
   // PRO-69: воркер опознан (opencode этого репо), но владелец мёртв — это СИРОТА:
   // её вывод никто не заберёт, а воюя за дерево она срывает новый тик (инциденты
   // 19:0x/19:2x). Убиваем поддерево (группа могла не достать), хвосты executor'а —

@@ -197,13 +197,49 @@ class KnowledgeSymlinkContract(unittest.TestCase):
 
 
 class GuardContract(unittest.TestCase):
-    """Interplay с PRO-73: worktree исполнителя — cwd ПОД ROOT, а не равный ROOT."""
+    """Interplay с PRO-73 (ревью раунд 2): guard узнаёт воркеров роя по их
+    ФАКТИЧЕСКИМ местам — ROOT (reviewer/documenter, дефолт cwd) и .task-board/
+    (worktree исполнителя .task-board/wt-<id>), а не по любому подкаталогу ROOT."""
 
-    def test_guard_accepts_worktree_cwd_under_root(self):
+    def test_guard_accepts_executor_worktree_cwd(self):
+        """Worktree исполнителя — .task-board/wt-<id>: guard узнаёт его по префиксу
+        STATE (.task-board), иначе тик срывает ветку живого воркера."""
         guard = seg_between("async function tickWorkerAlive", "async function main()")
-        self.assertIn("startsWith(ROOT + '/')", guard,
-                      "guard не признаёт worktree исполнителя — тик срывает ветку живого воркера")
+        self.assertIn("dir === ROOT", guard,
+                      "guard не признаёт reviewer/documenter в общем чекауте (cwd = ROOT)")
+        self.assertIn("startsWith(STATE + '/')", guard,
+                      "guard не признаёт worktree исполнителя (.task-board/wt-<id>) — "
+                      "тик срывает ветку живого воркера")
         self.assertIn("!dir", guard, "консервативный fallback PRO-73 (пустой cwd) должен остаться")
+
+    def test_guard_does_not_claim_every_subdir_of_root(self):
+        """Широкий префикс ROOT+'/' убран: интерактивная сессия opencode человека
+        в ROOT/projects/<slug> — не воркер роя; прежний guard при мёртвом владельце
+        оркестратора убивал её как «сироту» (killTree)."""
+        guard = seg_between("async function tickWorkerAlive", "async function main()")
+        self.assertNotIn("startsWith(ROOT + '/')", guard,
+                         "широкий префикс ROOT+'/' остался — сессии opencode в "
+                         "ROOT/projects/<slug> осиротевают и убиваются")
+
+
+class CwdForwardingContract(unittest.TestCase):
+    """Ревью раунд 2: cwd реально доходит до spawn(). Call-site тесты («cwd: WT»)
+    молчащий no-op не ловят: если run() строит spawn-параметры без cwd, вся
+    изоляция исполнителя — фикция на бумаге. Контракт замыкается по исходнику."""
+
+    def test_run_accepts_and_forwards_cwd_to_spawn(self):
+        """run() принимает cwd (дефолт ROOT) и пересылает его в spawn()."""
+        run_body = seg_between("function run(cmd, args_", "const sh = ")
+        self.assertIn("cwd = ROOT", run_body, "run() не принимает cwd-опцию с дефолтом ROOT")
+        self.assertIn("spawn(cmd, args_, { cwd,", run_body,
+                      "run() не пересылает cwd в spawn() — опция теряется молча")
+
+    def test_sh_forwards_opts_with_cwd_into_run(self):
+        """sh() пересылает opts (включая cwd) в run() — иначе `sh(..., { cwd: WT })`
+        гейтов и релиза исполнялись бы в общем чекауте."""
+        sh_body = seg_between("const sh = async", "const activeWorkers")
+        self.assertIn("await run('bash', ['-lc', cmd], opts)", sh_body,
+                      "sh() не пересылает opts с cwd в run()")
 
 
 class OrchestratorParses(unittest.TestCase):
