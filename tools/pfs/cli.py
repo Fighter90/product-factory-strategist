@@ -497,8 +497,15 @@ def cmd_export(a):
         print(f"Дека: {export.build_deck(_p(a))}")
         return
     if a.six_pager:
-        print(f"Six-pager: {export.build_six_pager(pdir, with_calcs=not a.no_calcs)}")
-        if a.en:  # EN-версия в одном вызове: каркас на английском, секции пишет writer (PRO-53)
+        lang = i18n.lang_of(pdir)  # PRO-79: язык six-pager = язык проекта
+        sp_out = export.build_six_pager(pdir, with_calcs=not a.no_calcs, lang=lang)
+        if lang == "en":  # основной документ EN-проекта живёт в SIX_PAGER.md (его читает линтер и комитет)
+            target = pdir / "outputs" / "SIX_PAGER.md"
+            if sp_out != target and sp_out.exists():
+                sp_out.rename(target)
+            sp_out = target
+        print(f"Six-pager: {sp_out}")
+        if a.en and lang != "en":  # EN-версия в одном вызове: каркас на английском, секции пишет writer (PRO-53)
             print(f"Six-pager EN: {export.build_six_pager(pdir, with_calcs=not a.no_calcs, lang='en')}")
     else:
         print(f"Отчёт: {export.build(pdir)}")

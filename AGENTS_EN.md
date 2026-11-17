@@ -180,7 +180,7 @@ pfs list                                      # list projects
 pfs use demo                                  # make a project active
 pfs lang en                                   # project language: CLI messages, templates, check headings (PRO-57); no argument — show
 pfs route "request"                           # scenario, maps and model plan; --override X for an explicit scenario
-pfs models                                    # model-per-task table; pfs models pick check — the model for a task
+pfs models                                    # model-per-task table; pfs models pick judge — the model for a task
 pfs step strategy in_progress --next "…"      # mark a step; statuses: in_progress, done
 pfs ask "question" --options "A,B,C"          # question for the product lead (pause)
 pfs answer "Option B"                         # the lead's answer

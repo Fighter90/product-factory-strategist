@@ -170,7 +170,7 @@ pfs list                                      # список проектов
 pfs use демо                                  # сделать проект активным
 pfs lang ru                                   # язык проекта: сообщения, шаблоны, заголовки проверок (PRO-57); без аргумента — показать
 pfs route "запрос"                            # сценарий, карты и план моделей; --override X — явный сценарий
-pfs models                                    # таблица моделей по задачам; pfs models pick check — модель под задачу
+pfs models                                    # таблица моделей по задачам; pfs models pick judge — модель под задачу
 pfs step strategy in_progress --next "…"      # отметить шаг; статусы: in_progress, done
 pfs ask "вопрос" --options "A,B,C"            # вопрос руководителю (пауза)
 pfs answer "Вариант B"                        # ответ руководителя
