@@ -10,7 +10,7 @@
 | Тесты | 836 (`OK`) | `python3 -m unittest discover -s tests` |
 | Карты знаний | 111 RU (`knowledge/methods/`) + 111 EN-зеркал — полная двуязычная база (`knowledge/methods_en/`) + `knowledge/INDEX_EN.md` | `ls knowledge/methods \| wc -l` → 111; `ls knowledge/methods_en \| wc -l` → 111 |
 | Навыки | 101 | `ls .claude/skills \| wc -l` → 101 |
-| Субагенты | 8 | `ls .claude/agents \| wc -l` → 8 |
+| Субагенты | 10 | `ls .claude/agents \| wc -l` → 10 (PRO-46: +six-pager-writer) |
 | Хуки | 6 (`session_start`, `pre_web`, `pre_guard`, `post_tool`, `stop`, `_common`) | `ls .claude/hooks \| wc -l` → 6 |
 | MCP-инструменты | 18 | `tools/pfs/mcp_server.py` |
 | Внешние зависимости | 0 (Python stdlib) | `pyproject.toml`, `pip` не нужен |
