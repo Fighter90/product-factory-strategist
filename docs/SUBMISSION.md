@@ -50,7 +50,7 @@
 - Навыки шагов: [.claude/skills/](../.claude/skills) — `strategist` (точка входа), `intake`, `research`, `situation`,
   `options`, `strategy`, `validation-plan`, `interviews`, `ux-review`, `data-analysis`, `decision-support`.
 - Субагенты: [.claude/agents/](../.claude/agents) — `researcher`, `red-team`, `evidence-auditor`, `synthetic-respondent`,
-  `data-analyst`, `ux-analyst`, `comms-strategist`, `router`.
+  `data-analyst`, `ux-analyst`, `comms-strategist`, `router`, `six-pager-writer` (PRO-46), `editor`.
 - Рубрика качества: [knowledge/rubrics/strategy_quality.md](../knowledge/rubrics/strategy_quality.md); шаблоны выходов: [knowledge/templates/](../knowledge/templates).
 - Методическая база: 111 карт (RU) + 111 EN-зеркал — полная двуязычная база (methods_en/) и EN-индекс (INDEX_EN.md) в [knowledge/](../knowledge) — наборы знаний по категориям (стратегия, экономика, продукт, UX, данные, платформы, Gen AI) + набор «PM approaches» (Continuous Discovery, PMF Survey, Lean Startup, North Star Playbook, Crossing the Chasm, Dual-Track Agile, Wardley Mapping, жизненный цикл продукта):
   стратегия и рост · юнит-экономика и монетизация · продуктовый менеджмент · UX и клиентские метрики · анализ данных ·
