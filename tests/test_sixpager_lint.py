@@ -115,10 +115,13 @@ class SixPagerLintTests(unittest.TestCase):
 
     def test_point2_volume_excludes_tables_and_appendices(self):
         # PRO-46: бюджет основного текста — без таблиц и сносок; таблицы (матрица,
-        # KPI, конкуренты) и разделы после «Источники» в объём не считаются
+        # KPI, конкуренты) и разделы после «Источники» в объём не считаются.
+        # Дозировка подобрана так, чтобы тест различал поведение: эталон ~795 слов,
+        # каждый блок таблицы ~42 слова; 90 блоков ≈ 3 780 слов — со старым счётчиком
+        # (таблицы в объёме) это ~4 575 > лимита, с новым (~795) — проходит.
         limit = GATE["sixpager"]["max_words"]
         tables = "\n".join("| Ключ " + "слово " * 20 + "|\n" + "|---|\n" + "| значение " + "слово " * 20 + "|\n"
-                           for _ in range(60))
+                           for _ in range(90))
         self.write(GOOD.replace("## Источники (сноски)",
                                 tables + "\n\n## Источники (сноски)\n\n[^1]: " + "слово " * 500))
         self.assertEqual([e for e in self.errs() if "объём" in e], [],
@@ -259,13 +262,9 @@ class SixPagerLintTests(unittest.TestCase):
 
     # ---------- пункт 9: предупреждения ----------
 
-    def test_point9_long_paragraph_and_wide_table_are_warnings(self):
-        self.write(GOOD + "\n" + " ".join(["слово"] * 130) + "\n"
-                   "\n|a|b|c|d|e|f|g|\n|---|---|---|---|---|---|---|\n"
-                   "|1|2|3|4|5|6|7|\n")
-        res = self.run_lint()
-        self.assertEqual(res["errors"], [], "пункт 9 — предупреждения, не ошибки")
-
+    # PRO-46, раунд 3: здесь была слабая копия этого теста (только assertEqual
+    # на ошибки) — второй def с тем же именем затирал её, а статический счётчик
+    # считал оба; оставлена сильная версия, дубль-имена ловит ShadowedTestsGuard.
     def test_point9_long_paragraph_and_wide_table_are_warnings(self):
         self.write(GOOD + "\n" + " ".join(["слово"] * 130) + "\n"
                    "\n|a|b|c|d|e|f|g|\n|---|---|---|---|---|---|---|\n"
