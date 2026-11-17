@@ -33,7 +33,7 @@ pfs --help
 > | Repository | Access | Pulled | Into |
 > |---|---|---|---|
 > | [product-factory-strategist-agent](https://github.com/Fighter90/product-factory-strategist-agent) | public | this code | current dir |
-> | [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base) | **private** (invite required) | RU/EN knowledge maps, templates, rubrics | `knowledge/` |
+> | [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base) | **pubvate** (invite required) | RU/EN knowledge maps, templates, rubrics | `knowledge/` |
 > | [product-factory-strategist-site](https://github.com/Fighter90/product-factory-strategist-site) | public | strategyproduct.ru | `site/` |
 >
 

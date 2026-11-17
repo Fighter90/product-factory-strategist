@@ -24,7 +24,7 @@ result — pfs, the knowledge base and the site:
 | Repository | Access | Pulled | Into |
 |---|---|---|---|
 | `product-factory-strategist-agent` | public | this code | current dir |
-| `product-factory-strategist-base` | **private** | RU/EN knowledge maps, templates, rubrics | `knowledge/` |
+| `product-factory-strategist-base` | **public** | RU/EN knowledge maps, templates, rubrics | `knowledge/` |
 | `product-factory-strategist-site` | public | strategyproduct.ru | `site/` |
 
 - The base is private: access is required (the owner sends invitations, GitHub → Settings → Collaborators).
