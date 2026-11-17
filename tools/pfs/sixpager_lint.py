@@ -153,12 +153,15 @@ def run(pdir: Path) -> dict:
             err(1, tr("err_sp_working_heading", i=i, head=m.group(1)[:60]))
 
     # ---------- 2. Объём ----------
+    # PRO-46: бюджет основного текста — БЕЗ таблиц и сносок (критерий приёмки):
+    # таблицы (матрица тактик, KPI, конкуренты) — данные, не проза документа
     cut = len(lines)
     for i, l in enumerate(lines, 1):
         if l.startswith("#") and any(w in l for w in (sec.get("exclude_from_words") or [])):
             cut = i - 1
             break
-    body_words = re.findall(r"[0-9A-Za-zА-Яа-яЁё][0-9A-Za-zА-Яа-яЁё'’-]*", "\n".join(lines[:cut]))
+    prose = [l for l in lines[:cut] if not l.lstrip().startswith("|")]
+    body_words = re.findall(r"[0-9A-Za-zА-Яа-яЁё][0-9A-Za-zА-Яа-яЁё'’-]*", "\n".join(prose))
     max_words = cfg.get("max_words", 3500)
     if len(body_words) > max_words:
         err(2, tr("err_sp_words", n=len(body_words), m=max_words))

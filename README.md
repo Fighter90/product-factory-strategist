@@ -43,7 +43,7 @@ pfs --help
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
 python3 -m tools.pfs doctor                    # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 832 теста
+python3 -m unittest discover -s tests          # 835 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -401,5 +401,5 @@ projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl �
                      Excel · 100/100)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
-tests/               (832)
+tests/               (835)
 ```

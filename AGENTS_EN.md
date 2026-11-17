@@ -110,7 +110,7 @@ with `--override`.
 | 7 | `choice` | Present the comparison and recommendation, wait for the choice | `pfs ask` | answer in state.json | **The human** chooses |
 | 8 | `strategy` | Product and communication strategies, aligned with each other | skill `strategy`, subagent `comms-strategist` | `04_product_strategy.md`, `05_comms_strategy.md` | Every promise is backed by the product |
 | 9 | `validation` | Expected change, comparison baseline, observation window, counter-metrics, decision criteria | skill `validation-plan` | `06_validation_plan.md` | All 5 sections |
-| 10 | `review` | Auto-check + independent scoring against the rubric | `pfs check`, subagent `evidence-auditor`; six-pager — assemble, then proofread via the `editor` subagent (STYLE_RU.md) | `07_quality_review.md`; for the committee — a six-pager with Excel (`pfs export --six-pager`, skill `six-pager`) | Score ≥ threshold, or fixed |
+| 10 | `review` | Auto-check + independent scoring against the rubric | `pfs check`, subagent `evidence-auditor`; six-pager — assemble (`pfs export --six-pager`), the prose is written per-slot by the `six-pager-writer` subagent, then proofread via the `editor` subagent (STYLE_RU.md) | `07_quality_review.md`; for the committee — a six-pager with Excel (`pfs export --six-pager`, skill `six-pager`) | Score ≥ threshold, or fixed |
 | 11 | `decision` | Record the decision: grounds, owners, metrics, review date, commitments | skill `decision-support` | `decisions.jsonl` | **The human** approves |
 | 12 | `monitoring` | A separate mode: deadlines, new data and revisiting conclusions — only on the user's command ("check the commitments", `pfs next`) or on the `decision due` trigger; decision commitments (WBS, drafts, posts) are not executed without an explicit request | skill `decision-support` | document updates | `pfs decision due` is empty |
 
@@ -227,7 +227,7 @@ pfs cost                                      # cost of work; --transcript <json
 pfs calc scaffold                             # calcs.json skeleton from 02/04/06/07 (fill the nulls); then pfs calc all
 pfs calc all                                  # Excel appendices: unit-econ, growth, cohort, market → outputs/attachments/
 pfs export                                    # REPORT.md; --no-calcs — without Excel appendices
-pfs export --six-pager                        # six-pager in the strategy reference format (spec: knowledge/templates/SIX_PAGER_PROMPT.md); --en — EN skeleton in one call
+pfs export --six-pager                        # the data package (six_pager_pack.json/md) + the FAQ-1…6 slot skeleton; the prose is written by the six-pager-writer subagent, loop: write → pfs check --six-pager → 0 errors
 pfs export --deck                             # 16:9 HTML deck built from SIX_PAGER.md
 pfs doctor
 ```
