@@ -1,250 +1,122 @@
-# CVStart: Six-pager (EN)
+# Six-pager (EN)
 
-> **Commercial version & global go-to-market strategy for cvstart.org** — a complete 12-step run of
-> the "Product Factory Strategist" agent (Nov 6–7, 2026). Every section follows the chain
-> "data → reasoning → calculation → conclusion"; screenshots are deliberately excluded. Evidence
-> base: claims C001–C020, sources S001–S011 (footnotes at the bottom), decision D001. Assembly
-> method: knowledge/templates/SIX_PAGER_PROMPT.md. Full registry — REPORT.md.
+> EN draft — pending the EN six-pager is written in plain English by the six-pager-writer from the SAME data package outputs/six_pager_pack.md (claims, sources, calculations; documents 00–07 are RU inputs — never pasted verbatim), per the spec `knowledge/templates/SIX_PAGER_PROMPT_EN.md`, style guide `knowledge/templates/STYLE_EN.md` (plain English, numbers 1,234.5, no calque). Restate the project title and question in English (project.json: title, question). Mandatory loop: write → `pfs check --six-pager` → fix until 0 errors. Assembled 2026-11-17T07:38 by `pfs export --six-pager`. Numbers carry sequential footnotes in the same order and numbering as RU SIX_PAGER.md; each footnote names its source ID: S### — publisher — title — date — URL — grade A–D. Raw C###/S### tags stay out of the six-pager; the full evidence registry lives in REPORT.md.
 
-## FAQ-1: Current state analysis
+**Request:** — write in English; RU source: project.json → question.
 
-### 1.1 Market overview: resume & job-search tools — trends, challenges and opportunities
+## FAQ-1. Current state analysis
 
-The resume-tools market, per aggregator estimates, stood at $1.2–2.4B in 2024–2025; the AI
-sub-segment grew from $1.3B to $1.47B (13.1% CAGR)¹ [C005]. Online recruitment overall: $37.97B
-in 2025, 7.1% CAGR to 2033² [C011]. The AI sub-segment is expected to keep growing at double digits:
+### 1.1 Market overview: trends, challenges and opportunities
 
-- AI sub-segment volume: +13%/yr through 2026–2030;
-- share of job seekers using AI: 31–74% across 2025–2026 surveys, +7 p.p. year over year³ [C009];
-  1.2M+ job seekers used Kickresume's AI features in 2025 [C010].
+> EN draft — pending: write this section in English from the data package outputs/six_pager_pack.md (pack sections: situation (market, known facts, contradictions, unknowns) plus the claims and sources lists); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, style: knowledge/templates/STYLE_EN.md.
 
-Key trends in the job-search tools market:
+### 1.2 Key competitors: growth and promo mechanics
 
-- **The ATS gate has become the hiring standard.** 98% of Fortune 500 companies use an ATS⁴ [C008] — a
-  resume that fails machine screening devalues the candidate before a human ever sees it. "Check my
-  resume against ATS" has moved from feature to hygiene minimum, and transparent scoring criteria
-  became a trust argument.
-- **Subscription fatigue and auto-renewals.** Every mass-market competitor (Zety, resume.io,
-  Novoresume, Kickresume, Enhancv, Teal, Rezi) runs freemium with paid tiers at $8–40/mo and
-  aggressive auto-renewals⁵ [C006]. The "trial $2–3 → auto-renewal $24–40" pattern generates a steady stream
-  of complaints and opens a verifiable window for honest pricing.
-- **Generative AI drove the cost of text generation to zero.** Bare "AI writes text" is no longer a
-  differentiator — value shifted to data (scanning real vacancies), context (resume against a
-  specific JD) and process (scoring → tuning → application → tracking in one pipeline).
-- **The multilingual gap.** Direct competitors' language coverage is EN+5 (Kickresume — 6
-  languages)⁵, while the global labor market is multilingual; local resume conventions (EU, JA, ZH)
-  are ignored by mass tools.
-- **Privacy and data sovereignty.** A resume is a concentrated PII package; part of the audience
-  refuses to upload it to someone else's cloud. A local mode with BYOK is a growing niche
-  (including GDPR-sensitive Europe).
-- **Inference economics.** Generation cost forces competitors to strangle their free tiers; the BYOK
-  model (users bring their own LLM key) dissolves that conflict — a unique advantage of an open
-  product.
+> EN draft — pending: write this section in English from the data package outputs/six_pager_pack.md (pack situation — competitor groups; risks rated High/Medium/Low); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, style: knowledge/templates/STYLE_EN.md.
 
-### 1.2 Key competitors and analysis of their growth strategies and promo mechanics
+Comparative table of competitor groups (fill in after competitive analysis):
 
-| | **Mass-market SaaS** — Zety, resume.io, Novoresume | **ATS/AI-specialists** — Jobscan, Teal, Rezi, Enhancv, Kickresume | **Open-source / local** — CVStart (core), self-built pipelines |
+| | Group 1 | Group 2 | Group 3 |
 |---|---|---|---|
-| **Key advantages** | Big marketing budgets and SEO dominance; instant "pick a template → download PDF"; brand awareness. Strategy is scaling, not optimization | Depth in the niche: ATS comparison, keyword optimization, AI tuning; strong content SEO ("ATS checker", "resume vs CV") | Full data control (local); zero price for the core; open code = trust and auditability; 129 vacancy sources in one pipeline |
-| **Growth strategy & promo mechanics** | Landing funnels and "trial $2–3 → auto-renewal $24–40"; template A/B landing pages per search query; package upsells | Freemium with hard limits (Teal: free unlimited resumes, paid AI at $29); Rezi: $149 lifetime tier as one-time cash capture; credit-based generation model | Organic GitHub/word-of-mouth; "curl install" distribution; no monetization — "$0 forever" |
-| **Risks for CVStart** | SEO and budget war in EN — **Medium** (we do not compete on budget, we compete on niche) | They capture "hosted + easy" before us — **High** (the window: 2–3 quarters) | A fork monetizing on top of MIT — **Medium** (mitigation: hosted speed from the same vendor) |
+| **Key advantages** | … | … | … |
+| **Growth and promo mechanics** | … | … | … |
+| **Risks for the company** | … — High/Medium/Low | … | … |
 
-Growth mechanics are initiatives aimed at growing conversion, the paying base and retention.
-Competitors have already shipped: free generation limits (credit models), lifetime tiers (Rezi
-$149) as one-time cash capture, discounted annual plans, content SEO around "ATS checker" queries,
-AI features as a paid upsell. What nobody has: 19+ locale coverage, a local mode with BYOK,
-pricing without auto-renewals, an open scoring methodology.
+> **Conclusion (inference):** the opportunity window and its horizon — fill from 1.1–1.2.
 
-**Conclusion (inference).** The market grows at double digits precisely in the AI sub-segment;
-competitors occupy the EN mass market and the ATS niche, leaving three angles open —
-multilingualism, privacy, honest pricing. Therefore CVStart's window is "a hosted version of an
-open product with a BYOK-free tier and honest pricing", and it is time-boxed (2–3 quarters before
-the specialists react).
+## FAQ-2. User Persona. Who is the target audience?
 
-## FAQ-2: User Persona. Who is the target audience of CVStart?
+### 2.1 Segments
 
-### 2.1 Job seekers
+> EN draft — pending: write this section in English from the data package outputs/six_pager_pack.md (pack situation — segments/personas and the JTBD user barrier); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, style: knowledge/templates/STYLE_EN.md.
 
-| Job-seeker types | **Active tech job seeker** (core) | **Mass non-tech job seeker** | **Non-EN job seeker** (wave 2) |
+Persona table (fill in):
+
+| | Segment 1 | Segment 2 | Segment 3 |
 |---|---|---|---|
-| **Who are they?** | 25–40, US/EU, engineers/analysts/PMs; searching 1–6 months; technically literate, value open source | Any profession, wants "a resume fast"; does not understand ATS; will pay for "do it for me" | DE, ES, PT-BR, JA, ZH; thinks about the resume in their native language; GDPR-sensitive; local format conventions |
-| **What do they use today, and why?** | ChatGPT manually (free, but no vacancies or tracking); Jobscan/Teal (but "AI slop" and subscriptions); self-built scripts | Zety/resume.io via SEO ads — template + PDF for a trial with auto-renewal | Nothing specialized: local Word templates + manual translation; EN tools ignore conventions |
-| **What difficulties do they face?** | "AI slop" with no vacancy context; manual switching across 5 tools; subscription traps; resume fails ATS | Hidden trial pricing; templates fail ATS; no idea why they get rejected | No tools with a native interface and local conventions; fear of uploading PII to a cloud |
-| **Common difficulties** | The resume must be tailored to every vacancy manually; application tracking lives in a spreadsheet; no feedback on why the resume was rejected | — | — |
+| **Who are they?** | … | … | … |
+| **What do they use today and why?** | … | … | … |
+| **What difficulties do they face?** | … | … | … |
+| **Common difficulties** | … | … |
 
-**Segment reasoning.** The tech core chooses tools deliberately and pays for search automation, not
-for text (synthetic: Sarah accepts $10–15, and $29 only "if it actually finds jobs"⁷ — the
-willingness-to-pay hypothesis [C017] under test in the beta); it is also
-the source of the first organic reviews (GitHub/HN). Wave 2 is a multiplier on ready-made locales:
-the interface is already translated [C004], competitors are absent [C007], and the payment model is
-annual plans without auto-renewals (Markus: €100–120/yr, categorically against monthly traps⁸).
+### 2.2 Barriers at each journey stage
 
-### 2.2 Barriers at every stage of the job-seeker journey
+> EN draft — pending: write this section in English from the data package outputs/six_pager_pack.md (pack situation — barriers per journey stage, hold-backs per segment); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, style: knowledge/templates/STYLE_EN.md.
 
-| Journey stage | Barrier today | What CVStart does |
+| Journey stage | Barrier today | What the product does |
 |---|---|---|
-| **Job search** | 30+ job-board tabs, duplicates, no unified search; relevance unclear | Scan of ~129 boards into one feed + AI scoring 0.0–5.0 against the user's resume |
-| **Selection** | Unclear where to spend applications | Scoring with open criteria + deduplication + prioritization |
-| **Resume/application** | 1–2 hours of manual tailoring per JD; generic text fails ATS | CV Studio: JD-specific tuning, humanize, ATS bullets, PDF/DOCX in minutes |
-| **Post-payment experience** | No application tracking; renewal = auto-charge | Tracker with follow-up cadence; honest renewal, one-click cancel |
+| Acquisition | … | … |
+| Choice / usage | … | … |
+| Payment | … | … |
+| Post-payment experience | … | … |
 
-**What blocks them from starting/renewing a subscription?**
+What holds back signup or renewal? (fill in per segment):
 
-| Segment | Blocking factor | Removed by |
+| Segment | Blocking factor | How it is removed |
 |---|---|---|
-| Tech core | "Yet another subscription trap"; installation via a repo | BYOK-free tier: try without a card and without cost to us; hosted version in one click |
-| Mass market | Distrust of "AI magic"; fear of auto-charges | Open scoring methodology; pricing without auto-renewals, one-click cancel |
-| Wave 2 | Competitors' EN-only interfaces; GDPR | 19 locales already in the product [C004]; local mode and data minimization |
+| Segment 1 | … | … |
 
-**Conclusion (inference).** The audience segments not by profession but by entry barrier: the tech
-core pays immediately for search automation, the mass market pays for "done for you", wave 2 pays
-for language and privacy. Therefore the tier model (Free BYOK → Pro → Unlimited) serves all three
-barriers with one ladder, and the sequence is EN-first with locale waves.
+> **Conclusion (inference):** segment by the entry barrier; the tier ladder serves all barriers; prioritize by capacity/CAC/competition (calculation above).
 
-## FAQ-3: Strategic initiatives. Briefly justify each.
+## FAQ-3. Strategic initiatives. Justify each one briefly.
 
-Mass-market competitors control the EN segment with budget and SEO; competing as "yet another text
-generator" is a losing strategy. Of the five options considered (status quo, hosted SaaS, B2B
-white-label, dual-license, shutting down commerce — analysis with red team in 03_options.md),
-**option B — hosted freemium SaaS, global** was selected (decision D001): the only option that
-grows the "paying users and ARR" axis with a solo developer's resources while respecting the
-constraints (MIT core, trust of the local mode). The strategy rests on three initiative-drivers:
+> EN draft — pending: write this section in English from the data package outputs/six_pager_pack.md (pack sections options, leader's choice and initiatives: chosen direction, red-team objections, 3–4 driver initiatives); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, style: knowledge/templates/STYLE_EN.md.
 
-### 3.1 Honest monetization and a zero-friction entry
+### Initiatives of the chosen direction (drivers)
 
-**The first driver** — capture the dissatisfaction with subscription traps: none of the competitors
-lets you "try without a card". **The second driver** — BYOK turns the free tier from a cost center
-into a zero: the user brings their own LLM key, free-tier inference costs nothing, and the upper
-tiers monetize convenience (hosted scan + pipeline) instead of text generation.
+Formulate 3–4 initiatives as: «**First driver** — …», «**Second driver** — …», then «Key directions» (bullets) and a step-by-step effect calculation. Data — the pack sections options, leader's choice and initiatives. Close with an inference-conclusion.
 
-Key directions:
+Unit economics — step-by-step:
 
-- Three tiers: Free (BYOK, 3 resumes/mo) / Pro $12 / Unlimited $29 — a ladder answering the three barriers of FAQ-2.
-- Pricing without auto-renewals, one-click cancel, discounted annual plan (the Markus segment) —
-  the honest-pricing-as-differentiator hypothesis [C014] under test in the beta.
-- A public Methodology page: ATS-scoring criteria are open (transparency as trust against the
-  98%-ATS reality [C008]).
+Assumptions: ПРИМЕР (демо): ARPU средневзвешенный — Pro $12 × 60% + Unlimited $29 × 40% = $18,80 (доли платящих — допущение микса, не цена топ-тарифа); freemium: CR free→paid 5,5% (как conv_order в growth) → CAC платящего = 60/0,055 ≈ $1 090,91; LTV/CAC платящего ≈ 0,16 — иллюстрация метода PRO-51: платный канал при такой конверсии не окупается
+Tier-weighted ARPU: Pro 12.00 × 60.00% + Unlimited 29.00 × 40.00% = **18.80**.
 
-Unit economics calculation (assumptions [C016]): tiers Pro $12 / Unlimited $29 → weighted ARPU
-$18.80 (60/40 mix of paying users); CM = $18.80 × 0.75 = **$14.10**; LTV = $14.10 / 0.08 = **$176.25**;
-freemium: free→paid CR 5.5% → paying-user CAC = $60 / 0.055 = **$1,090.91**; LTV/CAC (paying) = **0.16** —
-a paid channel does not pay back at that CR (inference — see the Scenarios sheet of unit_economics.xlsx).
-
-**Beta funnel calculation — step by step** (model [S008], seed=7; starting base 3,000 visitors, 22%/wk growth):
-
-| Step | Calculation | Week-12 result |
+| Formula | Calculation | Result |
 |---|---|---|
-| Visitors | 3,000 × 1.22¹² | **32,603** |
-| Signups | 32,603 × 5.5% | **1,793** |
-| Activation (first resume) | 1,793 × 62% | **1,111** |
-| Payment | 1,111 × 4.8% (2.8% × 1.72 uplift) | **53 paying** |
-| MRR | 53 × $29 | **$1,537** |
-| Run-rate | $1,537 × 12 | **$18,444 ARR/yr** |
+| CM = ARPU × (1 − variable share) | 18.80 × (1 − 0.25) = 18.80 × 0.75 | **CM = 14.10** |
+| Average paying lifetime = 1 / churn | 1 / 0.08 | **12.50 mo** |
+| Paying-user CAC = CAC / free → paid conversion | 60.00 / 0.06 | **1,090.91** |
+| LTV = CM / churn | 14.10 / 0.08 | **LTV = 176.25** |
+| LTV/CAC | 176.25 / 1,090.91 | **0.16** (target ≥ 3) |
+| CAC payback = CAC / CM | 1,090.91 / 14.10 | **77.37 mo** |
 
-### 3.2 Accelerating the "vacancy → ATS-ready resume" path
+**Conclusion (inference):** the LTV/CAC ≥ 3 bar is not met: actual 0.16 at a paying-user CAC of 1,090.91 — to reach ≥ 3, paying-user CAC must be ≤ 58.75 at this LTV (scenarios and grid — the Scenarios and Sensitivity sheets of unit_economics.xlsx).
 
-**The first driver** — compress the path from "found a vacancy" to "sent a tailored resume" from
-hours of manual work to minutes of one pipeline: this directly grows Unlimited conversion.
-**The second driver** — trust in the result: open scoring criteria and ATS bullets remove the
-"AI slop" fear.
+## FAQ-4. Tactics. Detail each initiative into concrete tactics.
 
-Key directions:
+> EN draft — pending: write this section in English from the data package outputs/six_pager_pack.md (pack initiatives (focus, tactics, gates) — the tactics matrix); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, style: knowledge/templates/STYLE_EN.md.
 
-- Scan of ~129 boards + AI scoring 0.0–5.0 in one feed with deduplication.
-- CV Studio: JD-specific tuning, humanize, ATS bullets, PDF/DOCX in one click.
-- Application tracker with follow-up cadence — retention inside the product, not in the user's spreadsheet.
+Tactics matrix (fill in):
 
-### 3.3 Global coverage on ready-made locales and OSS-driven distribution
-
-**The first driver** — 19 locales already exist in the product [C004]: enabling a locale is an
-operational decision, not development; competitors cover EN+5 [C007]. **The second driver** — the
-OSS core as a distribution channel: the GitHub audience is a free funnel top for the hosted version
-(conversion "local user → cloud payer").
-
-Key directions:
-
-- Locale waves: EN (US/EU) → DE/ES/PT-BR → JA/ZH; the next wave opens only after the previous one's conversion is confirmed.
-- Local payment models: annual plans (the €100–120 segment [C018]) without auto-renewals.
-- OSS track: the MIT version keeps evolving in parallel; hosted is opt-in — "the cloud is a choice,
-  not a requirement": the local-mode promise stays intact [C001][C019].
-
-**Conclusion (inference).** The three initiatives close the three barriers of FAQ-2 (price trust,
-result trust, language/privacy) and rely only on existing product assets — therefore the plan is
-feasible by a solo developer within a 12-month horizon.
-
-## FAQ-4: Tactics. Detail each initiative into specific tactics
-
-| Strategic initiative | Focus | User's needs & desires | Solutions (tactics) |
+| Strategic initiative | Focus | User needs and expectations | Solutions (tactics) |
 |---|---|---|---|
-| **Honest monetization** | BYOK-free launch | Try without a card or auto-charge; understand what they pay for | Free tier with a BYOK key (zero cost to us); 3 resumes/mo limit with an honest "what unlocks" upgrade screen |
-| | Pricing page | Price without fine print; fear of auto-charges [C006] | A tariff table with explicit price and term; one-click cancel; annual −20% |
-| | Launch positioning | "Why are you better than Jobscan at $49.95?" [C002] | The message "Open source. Local-first. Honest pricing."; a competitor price comparison table on the landing |
-| **"Vacancy → resume" path** | Scan + scoring | Not wasting applications on irrelevant roles | A 129-board feed with 0.0–5.0 scoring and filters; deduplication |
-| | CV Studio | A JD-specific resume in minutes that passes ATS | JD tuning + humanize + ATS bullets; PDF/DOCX; open scoring methodology |
-| | Tracker | Not losing applications and follow-ups | Kanban + follow-up cadence + reminders; funnel statistics |
-| **Global coverage** | Locale waves | Native-language interface and resume conventions | DE/ES/PT-BR after the EN conversion threshold; JA/ZH as wave three |
-| | Local payments | Annual plan without auto-charges | Discounted annual plans; local payment methods per wave |
-| | OSS distribution | "I can check the code myself" | README funnel into hosted; stars/forks as social proof; HN/PH launch |
+| Initiative 1 | … | … | … |
+| Initiative 2 | … | … | … |
 
-## FAQ-5: High-level implementation plan
+## FAQ-5. High-level implementation plan
 
-To hit the targets (FAQ-6), each initiative gets a dedicated focus block from the solo developer
-with a weekly funnel review; the community track (MIT version) runs in parallel without pause.
+> EN draft — pending: write this section in English from the data package outputs/six_pager_pack.md (pack sections decisions, leader's choice and initiatives — order, season timing, parallel tracks); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, style: knowledge/templates/STYLE_EN.md.
 
-Expected contribution split by week 12:
+Expected contribution of initiatives to the outcome (must sum to 100%):
 
-- 50% — "Vacancy → resume" path (Unlimited conversion: the primary monetized value);
-- 30% — Honest monetization (BYOK-free + the pricing page: the funnel entrance);
-- 20% — Global coverage (preparing the DE/ES/PT-BR wave; enabling it after the threshold).
+- __% — Initiative 1;
+- __% — Initiative 2;
+- __% — Initiative 3.
 
-Within each initiative, high-priority tactics ship first (tiers, BYOK-free, scan+scoring), then
-medium (tracker, methodology), then basic (local payments, JA/ZH). **Timing is tied to the hiring
-season**: the beta launches into the December lull so the January hiring peak is met with
-accumulated statistics; locale waves — into the next peak.
+Tactic order: high → medium → base priority. Timing follows market seasons. Parallel tracks: community/partnerships — off the main line.
 
-Decision D001 [C019]: beta in 3 EN geos by 2026-12-15 · 90 days of observation · review 2027-02-10 ·
-continue branch: paid ≥ 40 by week 12 with activation ≥ 50% → scale channels, open the DE/ES/PT-BR
-wave · change branch: paid 20–40 → rebuild the tier/price ($19?), strengthen activation onboarding ·
-stop trigger: paid < 20 with activation < 35% → close the commercial branch, the project stays OSS.
+## FAQ-6. Success metrics. KPIs in two dimensions
 
-## FAQ-6: Success metrics. KPIs for evaluating the strategy
+> EN draft — pending: write this section in English from the data package outputs/six_pager_pack.md (pack sections KPI and calculations — business and product planes, counter-metrics per red-team hit); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, style: knowledge/templates/STYLE_EN.md.
 
-KPIs are set in two directions:
 
-**1) Business**
+## Sources (footnotes)
 
-- MRR by week 12: **≥ $1,500** (funnel model: 53 paying × $29 [S008]; continue threshold — ≥ 40 paying);
-- Signup → paid conversion: **≥ 4%** (freemium benchmark 2–5% [C020]);
-- Annual-plan share among payers: **≥ 30%** (testing the Markus hypothesis [C018]);
-- Non-EN wave share of new payers after locales open: **≥ 20%**;
-- Actual paying-user LTV/CAC: **paid-channel gate** (model: 0.16 at 5.5% CR — paid channels stay closed until the gate; grow organically first).
+> EN draft — pending: write this section in English from the data package outputs/six_pager_pack.md (source footnotes by first mention: publisher, title, date, URL, grade A–D; cited sources only; synthetic listed separately (hypotheses, not evidence)); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, style: knowledge/templates/STYLE_EN.md.
 
-**2) Product**
+## Appendices (Excel)
 
-- Activation (first resume): **≥ 50%** of signups;
-- Time to first resume: **≤ 15 minutes** from signup (event-measured);
-- Clicks from "vacancy" to "sent resume": **−50%** vs the manual path;
-- Paying churn: **≤ 10%/mo** (the dominant LTV parameter — step 3 of the FAQ-3 calculation);
-- Trust counter-metrics: GitHub stars (drop < 30%), GDPR complaints (≤ 5), beta NPS ≥ 30.
+> Appendices are built by `pfs calc all` into outputs/attachments/: unit_economics.xlsx, growth_model.xlsx, cohort_retention.xlsx, market_sizing.xlsx. Formulas recalculate on open (Excel / Numbers / LibreOffice); the input sheet inside each workbook carries RU labels — edit the values there.
 
-Counter-metrics are early signals of the "local and honest" promise breaking: each maps to a
-specific red-team hit and has a pre-written action (06_validation_plan.md).
 
----
-
-**Sources**
-
-(The registry holds 10 sources S001–S011 — S003 was merged into S006 during deduplication.)
-
-1. WiseGuy Reports — Resume Builder Market; MarketSizeAndTrends — Resume Builder Market ($1.2–2.4B range) — [S006]
-2. SkyQuest — Online Recruitment Market $37.97B (2025) — [S007]
-3. Employ Inc. / Resume Now / Novoresume / Greenhouse — AI-usage surveys 31–74%; Kickresume — 1.2M AI users in 2025 — [S005]
-4. Jobscan — 98% of Fortune 500 use ATS — [S007]
-5. Rezi/Kickresume/Teal/Enhancv/Zety/resume.io pricing pages; Kickresume — 6 UI languages — [S004]
-6. Product site and README, cvstart.org / career-ops-ui — [S001][S002]
-7. Synthetic interview, Sarah (US) — hypothesis [S009]
-8. Synthetic interview, Markus (Berlin) — hypothesis [S010]
-
-> Synthetic interviews are flagged origin=synthetic and serve as hypotheses to validate, not proof
-> of demand. The full evidence-backed version — REPORT.md; the document assembly method —
-> knowledge/templates/SIX_PAGER_PROMPT.md.
+> Formulas recalculate on open (Excel / Numbers / LibreOffice). Detailing per the spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md. Full evidence version — REPORT.md.

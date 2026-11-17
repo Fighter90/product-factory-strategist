@@ -210,6 +210,26 @@ class SixPagerLintTests(unittest.TestCase):
         self.assertIn("S001", errs, "цитируемая сноска без записи в списке ловится")
         self.assertIn("нет в списке", errs)
 
+    def test_point7_pro49_footnote_definitions_are_citations(self):
+        # PRO-46: текст пишет writer по спецификации (PRO-49) — маркеры [^N] в тексте,
+        # определения `[^N]: **S###** …` внизу. Сырых тегов [S###] в теле нет, но
+        # источники определений — цитированные: такой документ проходит пункт 7.
+        body = ("Рынок тайм-трекеров оценивается в 3–5 млрд $ при росте 11–14% в год[^1].\n\n"
+                "## Источники (сноски)\n\n"
+                "[^1]: **S001** — example.com — Обзор рынка тайм-трекеров — 2026-05-01 — "
+                "https://example.com/timetracking-market — сила B\n")
+        self.write(body)
+        self.assertEqual([e for e in self.errs() if "S001" in e], [],
+                         "определение [^N]: **S###** — цитирование: лишних сносок нет")
+        # определение САМО является записью списка: «нет в списке» не ловится
+        self.write(body + "\n## Приложения\n\n| Файл |\n|---|\n")
+        self.assertNotIn("нет в списке", "\n".join(self.errs()))
+
+    def test_point7_pro49_markers_without_sources_are_not_footnote_errors(self):
+        # маркер [^9] без S### и без определения — не сноска-источник: пункт 7 молчит
+        self.write(GOOD + "\nВывод следует из расчёта[^9].\n")
+        self.assertEqual([e for e in self.errs() if "сноск" in e.lower()], [])
+
     # ---------- пункт 8: язык ----------
 
     def test_point8_cyrillic_in_en_version(self):
@@ -234,6 +254,19 @@ class SixPagerLintTests(unittest.TestCase):
                    "|1|2|3|4|5|6|7|\n")
         res = self.run_lint()
         self.assertEqual(res["errors"], [], "пункт 9 — предупреждения, не ошибки")
+
+    def test_point9_footnote_definitions_are_not_prose(self):
+        # PRO-46: подряд идущие определения сносок — не абзац документа: даже
+        # длинный список сносок не даёт ложного «абзац больше N слов»
+        defs = "\n".join(f"[^{k}]: **S{k:03d}** — example.com — " + "описание источника " * 8
+                         for k in range(1, 6))
+        self.write(GOOD.replace("1. **S001** — Обзор рынка тайм-трекеров: объём и динамика "
+                                "— https://example.com/timetracking-market",
+                                "[^1]: **S001** — example.com — " + "описание источника " * 8)
+                   + "\n" + defs.split("\n", 1)[1] + "\n")
+        res = self.run_lint()
+        self.assertEqual([w for w in res["warnings"] if "абзац" in w], [],
+                         "определения сносок — не абзац: предупреждения о длине нет")
         warns = "\n".join(res["warnings"])
         self.assertIn("абзац", warns, "длинный абзац — предупреждение")
         self.assertIn("столбцов", warns, "широкая таблица — предупреждение")

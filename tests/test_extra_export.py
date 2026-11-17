@@ -65,56 +65,37 @@ class ReportBuildTests(unittest.TestCase):
 
 
 class GrabAndDeckHelpersTests(unittest.TestCase):
+    """PRO-46: документы — данные пакета (_section_bodies), не вставка в six-pager;
+    тезисы слайда и экранирование без изменений."""
+
     @classmethod
     def setUpClass(cls):
         cls.pdir = fresh("xgrab")
         (cls.pdir / "outputs" / "02_situation.md").write_text(
             "# Ситуация\n## Короткий ответ\nОтток растёт третий месяц подряд.\n"
-            "## Что известно\n- рынок 40 млрд\n", encoding="utf-8")
+            "## Что известно\n### Q1 — размер рынка\n- рынок 40 млрд\n", encoding="utf-8")
 
-    def test_grab_extracts_named_sections_only(self):
-        body = export._grab(self.pdir, "02_situation.md", ("Короткий ответ",))
-        self.assertTrue(body.startswith("### Короткий ответ"))
-        self.assertIn("Отток растёт третий месяц подряд", body)
-        self.assertNotIn("рынок 40 млрд", body)  # соседняя секция не затянута
+    def test_section_bodies_extracts_level2_sections_as_data(self):
+        bodies = export._section_bodies(self.pdir / "outputs" / "02_situation.md")
+        self.assertEqual([b["title"] for b in bodies], ["Короткий ответ", "Что известно"])
+        self.assertEqual(bodies[0]["text"], "Отток растёт третий месяц подряд.")
+        self.assertIn("Отток растёт третий месяц подряд", bodies[0]["text"])
+        self.assertNotIn("рынок 40 млрд", bodies[0]["text"])  # соседняя секция не склеена
 
-    def test_grab_without_match_returns_none(self):
-        # целые документы собирает _insert_doc; _grab без совпадений — None
-        self.assertIsNone(export._grab(self.pdir, "02_situation.md", ("Нет такого раздела",)))
-        self.assertIsNone(export._grab(self.pdir, "нет_файла.md", ()))
+    def test_section_bodies_nested_headings_stay_in_text(self):
+        bodies = export._section_bodies(self.pdir / "outputs" / "02_situation.md")
+        self.assertIn("### Q1 — размер рынка", bodies[1]["text"])  # вложенность — данные пакета
+        self.assertIn("рынок 40 млрд", bodies[1]["text"])
 
-    def test_grab_never_matches_document_h1(self):
-        # дефект «### Рынок» + копия всего документа: имя секции не должно матчать H1
+    def test_section_bodies_ignores_document_h1(self):
+        # H1 документа — не секция данных (прошлый дефект «### Рынок» + копия документа)
         (self.pdir / "outputs" / "02b.md").write_text(
-            "# Ситуация по рынку удержания\n## Короткий ответ\nтут короткий ответ\n",
-            encoding="utf-8")
-        self.assertIsNone(export._grab(self.pdir, "02b.md", ("Рынок",)))
+            "# Ситуация по рынку удержания\n## Короткий ответ\nтут короткий ответ\n", encoding="utf-8")
+        bodies = export._section_bodies(self.pdir / "outputs" / "02b.md")
+        self.assertEqual([b["title"] for b in bodies], ["Короткий ответ"])
 
-    def test_grab_cuts_only_on_section_boundaries(self):
-        body1 = "очень длинный текст первой секции " * 30
-        body2 = "текст второй секции " * 40
-        (self.pdir / "outputs" / "08_long.md").write_text(
-            "# Длинный\n## Первая\n" + body1 + "\n## Вторая\n" + body2, encoding="utf-8")
-        body = export._grab(self.pdir, "08_long.md", ("Первая", "Вторая"), cap=100)
-        self.assertNotIn("обрезано", body)  # маркеров обрезки нет
-        self.assertIn("очень длинный текст первой секции", body)  # секция атомарна
-        self.assertNotIn("Вторая", body)  # не влезла в cap — не вставляется вовсе
-
-    def test_insert_doc_demotes_headings_and_dedups_after_grab(self):
-        (self.pdir / "outputs" / "09_doc.md").write_text(
-            "# Варианты: тест\n## Вариант A: первый\n### Возражения\n- возражение\n"
-            "## Рекомендация\nвыбор B\n", encoding="utf-8")
-        reg: dict = {}
-        grabbed = export._grab(self.pdir, "09_doc.md", ("Рекомендация",), reg=reg)
-        self.assertIn("### Рекомендация", grabbed)
-        doc = export._insert_doc(self.pdir, "09_doc.md", reg=reg)
-        self.assertIn("### Варианты: тест", doc)      # H1 → ###
-        self.assertIn("#### Вариант A: первый", doc)  # H2 → ####
-        self.assertIn("##### Возражения", doc)        # H3 → #####
-        self.assertNotIn("Рекомендация", doc)         # уже вставлена через _grab
-        self.assertIsNone(export._insert_doc(self.pdir, "09_doc.md", reg=reg))  # всё вставлено
-        self.assertIsNone(export._insert_doc(self.pdir, "нет_файла.md"))
-        self.assertIn("# Варианты: тест", export._insert_doc(self.pdir, "09_doc.md"))  # без reg — целиком
+    def test_section_bodies_missing_file_is_empty(self):
+        self.assertEqual(export._section_bodies(self.pdir / "outputs" / "нет_файла.md"), [])
 
     def test_points_rules_and_slide_escaping(self):
         pts = export._points("- один\n> два\n| три | четыре |\n\nПервое предложение. Второе предложение.")
@@ -132,9 +113,9 @@ class GrabAndDeckHelpersTests(unittest.TestCase):
 
 
 class SixPagerAssemblyTests(unittest.TestCase):
-    """Сборка six-pager: без дублей секций, без маркеров обрезки, понижение чужих H1,
-    полные сноски, матрица тактик из Outcome-роадмапа, KPI-таблица из 06,
-    note и чувствительность из calcs.json."""
+    """PRO-46: сборка six-pager — пакет данных и каркас со слотами вместо вставки
+    документов; расчётные артефакты (юнит-экономика с note и чувствительностью,
+    матрица тактик, KPI-таблица из 06, сноски из тегов артефактов) на месте."""
 
     @classmethod
     def setUpClass(cls):
@@ -169,7 +150,15 @@ class SixPagerAssemblyTests(unittest.TestCase):
             "## Критерии решения (сводно)\n\n"
             "| Проверка | Продолжить | Изменить | Остановить |\n|---|---|---|---|\n"
             "| H1 | ≥ 45% к дню 90 | 40–45% → гейт +30 дней | < 40% → откат |\n"
-            "| H2 | выручка ≥ +20% | +5–20% → цена между | разницы нет → откат |\n",
+            "| H2 | выручка ≥ +20% | +5–20% → цена между | разницы нет → откат |\n"
+            "## KPI\n\n"
+            "| Плоскость | Метрика | Формула | База (дата, источник) | Цель к сроку | "
+            "Порог действия (остановить) | Контр-метрика |\n"
+            "|---|---|---|---|---|---|---|\n"
+            "| Бизнес | Удержание M1 | доля активных на 30-й день | 38% (2026-11-01, [C001]) "
+            "| 45% к дню 90 | ниже 40% → откат | активация |\n"
+            "| Бизнес | Выручка на пользователя | выручка / пользователи | база до запуска "
+            "(2026-11-01, [C002]) | ≥ +20% к дню 120 | разницы нет → откат | доля скидочных |\n",
             encoding="utf-8")
         (pdir / "calcs.json").write_text(
             '{"unit_econ": {"arpu": 29, "vc_share": 0.25, "cac": 60, "churn_month": 0.08, '
@@ -186,34 +175,31 @@ class SixPagerAssemblyTests(unittest.TestCase):
         claims.add(pdir, "региональные цены поднимают выручку", "hypothesis", ["S002"], grade="C")
         cls.text = export.build_six_pager(pdir, with_calcs=False).read_text(encoding="utf-8")
 
-    def test_no_duplicated_sections(self):
-        self.assertEqual(self.text.count("рынок 40 млрд, отток [^1]"), 1)
-        self.assertEqual(self.text.count("### Короткий ответ"), 1)
-        self.assertNotIn("## Короткий ответ", self.text.splitlines())  # чужих H2 нет
-        self.assertNotIn("### Рынок\n", self.text)         # пустых секций-призраков нет
-        self.assertEqual(self.text.count("### Аудитория"), 1)  # из 04 в FAQ-2, без повтора в FAQ-4
+    def test_documents_not_pasted_slots_instead(self):
+        # PRO-46: ни текста 02, ни структуры 03 целиком — вместо них слоты writer'у
+        self.assertNotIn("рынок 40 млрд", self.text)
+        self.assertNotIn("### Варианты: удержание", self.text)
+        self.assertNotIn("#### Вариант A: оставить как есть", self.text)
+        self.assertNotIn("- отток продолжится", self.text)
+        self.assertNotIn("### Аудитория", self.text)
+        self.assertIn(export.SLOT_MARK, self.text)
+        self.assertIn("six_pager_pack.md", self.text)
+        # данные не потеряны: они в пакете
+        pack_md = (self.pdir / "outputs" / "six_pager_pack.md").read_text(encoding="utf-8")
+        self.assertIn("рынок 40 млрд", pack_md)
+        self.assertIn("- отток продолжится", pack_md)
+        self.assertIn("абоненты 55+ и семьи", pack_md)
 
-    def test_no_truncation_markers_and_full_options(self):
+    def test_no_truncation_markers(self):
         self.assertNotIn("обрезано", self.text)
-        self.assertIn("- отток продолжится", self.text)    # возражения варианта A целиком
-        self.assertIn("- дороже разработка", self.text)    # возражения варианта B целиком
+        self.assertNotIn("### Возражения", self.text)     # структура 03 не вставляется
+        self.assertNotIn("# План проверки", self.text.splitlines())  # чужих H1 нет
 
-    def test_foreign_h1_and_h2_demoted(self):
-        lines = self.text.splitlines()
-        self.assertNotIn("# Варианты: удержание", lines)
-        self.assertNotIn("# Продуктовая стратегия: удержание", lines)
-        self.assertNotIn("# План проверки", lines)
-        self.assertIn("### Варианты: удержание", self.text)            # H1 → ###
-        self.assertIn("#### Вариант A: оставить как есть", self.text)  # H2 → ####
-        self.assertIn("##### Возражения", self.text)                   # H3 → #####
-
-    def test_dedup_between_grab_and_whole_insert(self):
-        # «Аудитория» из 04 забрана в FAQ-2 (короткий faq2) → в целевой вставке 04 её нет
-        self.assertEqual(self.text.count("#### Аудитория"), 0)
-        self.assertEqual(self.text.count("абоненты 55+ и семьи"), 1)
-
-    def test_full_footnotes(self):
-        # PRO-49: только процитированные источники (S001←C001, S002←C002) — сквозные сноски
+    def test_full_footnotes_from_artifact_tags(self):
+        # PRO-49/PRO-46: теги живут в явной KPI-таблице 06 (артефакте каркаса) —
+        # сквозные сноски только из процитированных источников
+        self.assertIn("38% (2026-11-01, [^1])", self.text)
+        self.assertIn("база до запуска (2026-11-01, [^2])", self.text)
         self.assertIn("[^1]: **S001** — example.com — Источник 1 — 2026-10-01 — "
                       "https://example.com/1 — сила B", self.text)
         self.assertIn("[^2]: **S002** — example.com — Источник 2 — 2026-11-09 — "
@@ -233,20 +219,22 @@ class SixPagerAssemblyTests(unittest.TestCase):
         self.assertNotIn("укажите теги", self.text)  # note есть — плейсхолдер не нужен
 
     def test_tactics_matrix_from_roadmap(self):
-        self.assertIn("Матрица тактик (из Outcome-роадмапа 04_product_strategy.md):", self.text)
+        self.assertIn("Матрица тактик (раздел «Инициативы» пакета данных):", self.text)
         # PRO-48: одна исполняемая тактика в строке, фокус — направление (не повтор
         # решений), потребности — барьер из JTBD, гейт — у последней тактики
         self.assertIn("| Инициатива 1 | пакет лояльности | без ручной слежки | семейный пакет |", self.text)
         self.assertIn("| Инициатива 1 | пакет лояльности | без ручной слежки | "
                       "уведомления о звонках **Результат:** удержание +5 п.п. |", self.text)
         self.assertIn("| Инициатива 2 | удержание ценностью | без ручной слежки | гейт для лояльности |", self.text)
-        self.assertNotIn("| … |", self.text.split("Матрица тактик (из")[1].split("## FAQ-5")[0])
+        self.assertNotIn("| … |", self.text.split("Матрица тактик (раздел")[1].split("## FAQ-5")[0])
 
     def test_kpi_explicit_table_only(self):
         # PRO-48: KPI не собирается из гипотез H1…H5 — только явная таблица 06
         # со столбцом «Плоскость»; склеенная ячейка «база → цель» и абзац-инструкция
         # шаблона удалены из вывода.
-        self.assertIsNone(export._kpi_table(self.pdir))
+        kpi = export._kpi_table(self.pdir)
+        self.assertIsNotNone(kpi)
+        self.assertEqual(kpi.count("| Метрика | Формула |"), 1)  # в фикстуре одна плоскость — Бизнес
         self.assertNotIn("| Плоскость | Гипотеза |", self.text)
         self.assertNotIn("База → цель к сроку", self.text)
         self.assertNotIn("KPI в двух направлениях", self.text)

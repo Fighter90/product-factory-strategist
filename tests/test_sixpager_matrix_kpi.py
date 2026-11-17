@@ -369,7 +369,7 @@ class DemoSixPagerAssemblyTests(unittest.TestCase):
 
     def test_matrix_present_in_faq4(self):
         self.assertIn(MATRIX_HEAD, self.text)
-        self.assertIn("Матрица тактик (из Outcome-роадмапа 04_product_strategy.md):", self.text)
+        self.assertIn("Матрица тактик (раздел «Инициативы» пакета данных):", self.text)
         self.assertNotIn("Матрица тактик (заполните)", self.text)
 
 

@@ -20,11 +20,13 @@ def run(pdir: Path, no_deck: bool = False, en: bool = True) -> dict:
     Затвор строгий: перед сборкой выполняется pfs check (--strict: «серьёзное
     расхождение» чисел с источником и выдуманные цитаты — тоже ошибки, PRO-50),
     и ЛЮБАЯ его ошибка останавливает сборку; линтер содержания six-pager включён
-    всегда (PRO-47); предупреждения сборке не мешают.
+    для существующего документа (PRO-47); предупреждения сборке не мешают.
     Пакет из невалидного реестра не собираем.
-    PRO-54: six-pager собирается в finish всегда в двух версиях — RU и EN
-    (en=True по умолчанию; en=False / CLI --no-en отключает EN) — без вопроса
-    пользователя. Это конец прогона: после finish «продолжи» не нужен.
+    PRO-54: EN-версия six-pager собирается всегда (en=True по умолчанию;
+    en=False / CLI --no-en отключает). PRO-46: текст six-pager пишет субагент
+    six-pager-writer, поэтому finish НЕ пересобирает существующий SIX_PAGER.md
+    (и написанный SIX_PAGER_EN.md) — только собирает каркас, если документа ещё
+    нет / EN — черновик. Это конец прогона: после finish «продолжи» не нужен.
     Возвращает {check, artifacts, missing_docs, stale_warnings} — stale_warnings
     это предупреждения о несвежих основаниях ДО пересборки (свежая сборка их снимает).
     """
@@ -32,19 +34,29 @@ def run(pdir: Path, no_deck: bool = False, en: bool = True) -> dict:
     # поэтому призыв «Пересоберите» в сводке finish неуместен (PRO-63, п.3)
     stale = [w.split("Пересоберите")[0].rstrip(" .—-") + " (снято этой пересборкой)"
              for w in export.freshness_warnings(pdir)]
-    qc = check.run(pdir, strict=True, sixpager=True)  # строгий затвор + линтер содержания six-pager (PRO-47, PRO-50)
+    # PRO-46: линтер содержания six-pager — для СУЩЕСТВУЮЩЕГО документа (каркас со
+    # слотами и написанный writer'ом проверяются одинаково честно); документа нет —
+    # finish соберёт каркас сам, и его цикл «написать → 0 ошибок» ещё впереди.
+    qc = check.run(pdir, strict=True,
+                   sixpager=(pdir / "outputs" / "SIX_PAGER.md").exists())
     if qc["errors"]:  # строгий затвор: любая ошибка check останавливает сборку (см. докстрингу)
         tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
         raise core.PfsError(tr("finish_gate_error",
                                errs="\n- ".join(qc["errors"])))
     artifacts: list[Path] = list(calc.run(pdir, "all"))            # 1. Excel — до REPORT
     artifacts.append(export.build(pdir))                           # 2. REPORT: Приложение E уже полно
-    artifacts.append(export.build_six_pager(pdir, with_calcs=False))  # 3. SIX_PAGER
+    sp = pdir / "outputs" / "SIX_PAGER.md"
+    if sp.exists():  # 3. PRO-46: написанный writer'ом документ (или каркас, ждущий записи)
+        artifacts.append(sp)  # не затираем: текст пишет six-pager-writer, не finish
+    else:
+        artifacts.append(export.build_six_pager(pdir, with_calcs=False))
     export.save_state(pdir)  # 4. снимок реестра ПОСЛЕ сборки — свежесть считается от неё
     for name in ("REPORT.md", "SIX_PAGER.md"):
         artifacts.append(docx.convert(pdir / "outputs" / name))
-    if en:  # 5. EN-версия six-pager — по умолчанию (PRO-54): скелет на английском,
-        en_path = export.build_six_pager(pdir, with_calcs=False, lang="en")  # содержимое — как написано
+    if en:  # 5. EN-версия six-pager — по умолчанию (PRO-54); PRO-46: написанный EN
+        en_path = pdir / "outputs" / "SIX_PAGER_EN.md"  # не пересобираем, каркас-черновик — да
+        if not en_path.exists() or core.EN_DRAFT_MARK in en_path.read_text(encoding="utf-8"):
+            en_path = export.build_six_pager(pdir, with_calcs=False, lang="en")
         artifacts += [en_path, docx.convert(en_path)]
     if not no_deck:  # 6. дека из готового SIX_PAGER
         artifacts.append(export.build_deck(pdir))

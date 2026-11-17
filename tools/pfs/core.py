@@ -57,6 +57,11 @@ STAGE_IDS = tuple(s["id"] for s in STAGES)
 # его в SIX_PAGER_EN.md как дефект.
 EN_DRAFT_MARK = "> EN draft — pending"
 RU_SOURCE_MARK = "[RU source — translate]"
+# PRO-46: слот каркаса six-pager — место, которое дописывает six-pager-writer
+# из пакета данных (экспортирует `pfs export --six-pager`). `pfs check --six-pager`
+# держит каркас со слотами в ошибках — цикл «написать → исправить до 0 ошибок»
+# нельзя пропустить; `pfs finish` по нему распознаёт незаполненный каркас.
+SIX_PAGER_SLOT_MARK = "> **Слот (заполните):**"
 
 
 class PfsError(Exception):

@@ -124,15 +124,13 @@ class FinishTests(unittest.TestCase):
         self.assertIn("| Формула | Расчёт | Результат |", ru)  # RU не пострадала
 
     def test_six_pager_faq1_fallback_ru_text_unchanged(self):
-        # Ревью PRO-31 (п.2): RU-заглушка FAQ-1 — исходный текст («…буллетами с жирными заголовками»),
-        # ключ в _EN совпадает с ним дословно. PRO-53: EN вместо RU-вставок/заглушек —
-        # pending-строки «> EN draft — pending: …» (секции пишет writer на английском).
-        key = ("> Раздел появится после шага «situation» (02_situation.md): объём и динамика рынка "
-               "диапазонами, ключевые тренды буллетами с жирными заголовками.")
-        self.assertIn(key, export._EN)
-        (self.pdir / "outputs" / "02_situation.md").unlink()  # нет секций → срабатывает заглушка
+        # Ревью PRO-31 (п.2) после PRO-46: FAQ-1 без документов — не заглушка, а слот
+        # writer'у; канонический текст «…буллетами с жирными заголовками» живёт в слоте.
+        # PRO-53: EN вместо RU-вставок/заглушек — pending-строки «> EN draft — pending: …».
+        (self.pdir / "outputs" / "02_situation.md").unlink()  # нет секций → слот вместо вставки
         ru = export.build_six_pager(self.pdir, with_calcs=False).read_text(encoding="utf-8")
         en = export.build_six_pager(self.pdir, with_calcs=False, lang="en").read_text(encoding="utf-8")
+        self.assertIn(export.SLOT_MARK, ru)
         self.assertIn("буллетами с жирными заголовками", ru)
         self.assertIn(core.EN_DRAFT_MARK, en, "EN без секций — pending-строка writer'у")
         self.assertNotIn("[RU source", en)
@@ -198,6 +196,53 @@ class FinishTests(unittest.TestCase):
         self.assertIn("+1 claims", out)  # предупреждение присутствует в выводе
         self.assertEqual(out.count("+1 claims"), 1)  # ровно один раз на вызов
         self.assertEqual(out.count("Реестр изменился после последнего экспорта"), 1)
+
+
+class FinishKeepsWrittenSixPagerTests(unittest.TestCase):
+    """PRO-46: двухшаговый воркфлоу — каркас собирается один раз, текст пишет
+    six-pager-writer. `pfs finish` НЕ затирает написанный документ: он артефакт
+    пакета; EN-черновик пересобирается, написанный EN — нет."""
+
+    WRITTEN_EN = ("# Demo: Six-pager (EN)\n\nThe market is large[^1].\n\n"
+                  "## Sources (footnotes)\n\n"
+                  "[^1]: S001 — Example — Market report — https://example.org/r — grade B\n\n"
+                  "## Appendices (Excel)\n\n> Not yet: `pfs calc all`.\n")
+
+    @classmethod
+    def setUpClass(cls):
+        cls.good = (Path(__file__).resolve().parents[1] / "tests" / "fixtures"
+                    / "six_pager_good.md").read_text(encoding="utf-8")
+
+    def setUp(self):
+        slug = "spkeep-" + self.id().rsplit(".", 1)[-1][:40]
+        self.pdir = project.create("Финиш и writer", "Почему падает удержание?", slug=slug)
+        sources.add(self.pdir, text="Публичный отчёт: рынок 40 млрд", title="Рынок")
+        claims.add(self.pdir, "Рынок 40 млрд", "fact", ["S001"], grade="B")
+        make_docs(self.pdir)
+        # writer дописал RU (эталонный документ — 0 ошибок линтера) и EN
+        (self.pdir / "outputs" / "SIX_PAGER.md").write_text(self.good, encoding="utf-8")
+        (self.pdir / "outputs" / "SIX_PAGER_EN.md").write_text(self.WRITTEN_EN, encoding="utf-8")
+
+    def test_written_ru_survives_finish(self):
+        finish.run(self.pdir)
+        self.assertEqual((self.pdir / "outputs" / "SIX_PAGER.md").read_text(encoding="utf-8"),
+                         self.good, "pfs finish не затирает написанный writer'ом документ")
+
+    def test_written_en_survives_draft_is_rebuilt(self):
+        finish.run(self.pdir)
+        self.assertEqual((self.pdir / "outputs" / "SIX_PAGER_EN.md").read_text(encoding="utf-8"),
+                         self.WRITTEN_EN, "написанный EN не пересобирается")
+        # EN-черновик (pending-маркер на месте) — пересобирается свежим каркасом
+        (self.pdir / "outputs" / "SIX_PAGER_EN.md").unlink()
+        finish.run(self.pdir)
+        en = (self.pdir / "outputs" / "SIX_PAGER_EN.md").read_text(encoding="utf-8")
+        self.assertIn(core.EN_DRAFT_MARK, en, "отсутствующий EN собирается заново")
+
+    def test_written_docs_counted_as_artifacts(self):
+        res = finish.run(self.pdir, no_deck=True)
+        names = {p.name for p in res["artifacts"]}
+        self.assertIn("SIX_PAGER.md", names)
+        self.assertIn("SIX_PAGER_EN.md", names)
 
 
 if __name__ == "__main__":
