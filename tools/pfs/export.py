@@ -1099,31 +1099,6 @@ def _slide(title: str, points: list[str], cls: str = "") -> str:
     return f'<section class="slide"{k}>\n<h2>{html_mod.escape(title)}</h2>\n{body}\n</section>'
 
 
-_DECK_CSS = """
-  :root { --bg: #070b13; --fg: #e8eef8; --a1: #4fd1c5; --a2: #8b7bff; --dim: #9aa7bd; }
-  * { box-sizing: border-box; }
-  html { scroll-snap-type: y mandatory; }
-  body { margin: 0; background: var(--bg); color: var(--fg);
-         font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  section.slide { width: 100vw; height: auto; aspect-ratio: 16/9; min-height: 100vh;
-                  max-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
-                  display: flex; flex-direction: column; justify-content: center; gap: .6em;
-                  padding: clamp(24px, 6vw, 80px); overflow: hidden;
-                  border-bottom: 1px solid rgba(139, 123, 255, .18); }
-  h1, h2 { margin: 0; line-height: 1.15; font-weight: 700;
-           background: linear-gradient(90deg, var(--a1), var(--a2));
-           -webkit-background-clip: text; background-clip: text; color: transparent; }
-  h1 { font-size: clamp(28px, 5vw, 56px); }
-  h2 { font-size: clamp(22px, 3.6vw, 40px); }
-  ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: .45em;
-       font-size: clamp(15px, 2vw, 24px); }
-  li::marker { color: var(--a1); }
-  p { margin: 0; font-size: clamp(15px, 2vw, 24px); color: var(--fg); }
-  .query { color: var(--dim); font-size: clamp(16px, 2.2vw, 26px); }
-  .query b { color: var(--a1); }
-"""
-
-
 def _points(body: str) -> list[str]:
     """Тезисы слайда: маркеры списков и первые предложения абзацев (≤6, ≤160 символов)."""
     pts: list[str] = []

@@ -2,6 +2,7 @@
 
 Запуск: python3 -m unittest tests.test_skills_registry -v
 """
+import ast
 import importlib.util
 import re
 import unittest
@@ -514,6 +515,35 @@ class TestCountersTests(unittest.TestCase):
                 else:
                     self.assertTrue(findings,
                                     f"неверная форма слова не замечена: {ok_sample!r}")
+
+
+class ShadowedTestsGuard(unittest.TestCase):
+    """Дубли имён тестовых методов в одном классе (PRO-46, раунд 3).
+
+    Второй метод с тем же именем в классе молча затирает первый: unittest
+    исполняет один тест, а статический счётчик (scripts/update_skill_counts.py)
+    считает оба — счётчики расходятся с реальным прогоном, а слабая копия
+    маскирует сильную. Лексему «def test…» в докстринге не пишем: счётчик
+    матчит по тексту файла и задокументировал бы сам себя.
+    """
+
+    def test_no_shadowed_test_methods_in_classes(self):
+        findings = []
+        for path in sorted((REPO / "tests").glob("test_*.py")):
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                if not isinstance(node, ast.ClassDef):
+                    continue
+                seen = {}
+                for item in node.body:
+                    if not (isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef))
+                            and item.name.startswith("test")):
+                        continue
+                    if item.name in seen:
+                        findings.append(f"tests/{path.name}::{node.name}.{item.name} "
+                                        f"(строки {seen[item.name]} и {item.lineno})")
+                    seen.setdefault(item.name, item.lineno)
+        self.assertEqual(findings, [], "затёртые (дублирующиеся) тестовые методы: " + "; ".join(findings))
 
 
 class KeptSkillPointerTests(unittest.TestCase):

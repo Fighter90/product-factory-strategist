@@ -97,6 +97,13 @@ class GrabAndDeckHelpersTests(unittest.TestCase):
     def test_section_bodies_missing_file_is_empty(self):
         self.assertEqual(export._section_bodies(self.pdir / "outputs" / "нет_файла.md"), [])
 
+    def test_deck_css_declared_once(self):
+        # PRO-46: константа _DECK_CSS объявлялась дважды — вторая копия молча
+        # затирала первую (мёртвый код); объявление должно быть ровно одно
+        src = Path(export.__file__).read_text(encoding="utf-8")
+        self.assertEqual(src.count("_DECK_CSS = "), 1,
+                         "_DECK_CSS объявляется один раз, дубли затирают друг друга")
+
     def test_points_rules_and_slide_escaping(self):
         pts = export._points("- один\n> два\n| три | четыре |\n\nПервое предложение. Второе предложение.")
         self.assertEqual(pts, ["один", "два", "три", "Первое предложение."])  # списки, цитаты, 1-й столбец таблицы
