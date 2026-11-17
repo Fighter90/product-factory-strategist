@@ -273,6 +273,7 @@ pfs export --six-pager --en    # + EN skeleton: SIX_PAGER_EN.md — same structu
 pfs export --six-pager --no-calcs   # rebuild text without regenerating workbooks
 pfs export --deck                   # 16:9 HTML deck from SIX_PAGER.md
 pfs docx <file.md> [--out]          # Markdown → Word, dependency-free (path: project directory → cwd; docx versions of HELP/README live in docs/docx/)
+pfs ab --hypothesis "…" --metric "…"       # A/B test design: proxy, guardrail, MDE, traffic (PRO-71)
 ```
 Six-pager structure: FAQ-1 market & competitors · FAQ-2 segments & personas · FAQ-3 initiatives & objections ·
 FAQ-4 tactics · FAQ-5 plan & validation · FAQ-6 success metrics · Excel attachments table.

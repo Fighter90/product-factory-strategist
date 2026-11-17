@@ -274,6 +274,7 @@ pfs export --six-pager --en    # + EN-каркас: SIX_PAGER_EN.md — те ж�
 pfs export --six-pager --no-calcs   # пересобрать текст без перегенерации книг
 pfs export --deck                   # HTML-дека 16:9 из SIX_PAGER.md
 pfs docx <файл.md> [--out]     # Markdown → Word без зависимостей (путь: каталог проекта → cwd)
+pfs ab --hypothesis "…" --metric "…"  # дизайн A/B-теста: прокси, гардрейл, MDE, трафик (PRO-71)
                                # (docx-версии HELP/README лежат в docs/docx/)
 ```
 Структура six-pager: FAQ-1 состояние рынка и конкуренты · FAQ-2 сегменты и персоны ·
