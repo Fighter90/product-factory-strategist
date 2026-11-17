@@ -1,16 +1,16 @@
 {
-  "at": "2026-11-16T18:59:05+03:00",
+  "at": "2026-11-17T07:38:27+03:00",
   "claims": 20,
   "sources": 11,
   "claims_sha": "778a72558276b19bfdc4fa2f1461d6911bb616432a6cddd906aa911a9f85658b",
   "sources_sha": "76e3f2a5d52a3de9d558c2b9d8431e4774fb2e73c683da0abcf664c458b00cfd",
   "calcs_sha": "6f93fb47abbdf6d44c1e6e728aeb8d6e1461f14eebee22e31d47840d3c049f7d",
   "att_shas": {
-    "cohort_retention.xlsx": "79112c69a131f42f6b6144c8bcd67e8762be19eb7db06b00135b10984d70caad",
-    "growth_model.xlsx": "b560ae1bc439e3c35ed4b82ac2ee4eab61ac5133b9a25d63d4471e74df137b5e",
-    "market_sizing.xlsx": "4d9f6ab32a7c9ff7d3055e2fe07738a5767c7a80f8db9bbb2158ef214b610d9d",
-    "unit_economics.xlsx": "8e316c319ccad11ceb0570d8ae3781775ea673bd26df9b67fb3b89d71a89d812"
+    "cohort_retention.xlsx": "b85a1c1ba0b0f312dd84608bd2c13b3fb0d7c04a4840b303e29bb2bf578c4730",
+    "growth_model.xlsx": "879bb5d70acb46758edc509b2c148ed08003fef69ffa7c045f383ad3cdb86c83",
+    "market_sizing.xlsx": "6f3e4fd6293cb177f506bb8882876bd13ddcc12fb889dac4b220ed94cd9dcfcf",
+    "unit_economics.xlsx": "b6e07809391f0ebce2ac084972484beee5a1800deb9bcd41c5e8c590c8e562f0"
   },
   "calcs_mtime": 1794834845.8052511,
-  "attachments_mtime": 1794844345.6507485
+  "attachments_mtime": 1794890307.629034
 }

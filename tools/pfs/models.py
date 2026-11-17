@@ -66,7 +66,7 @@ AGENT_TASKS = {
     "researcher": "desk_research", "evidence-auditor": "judge", "red-team": "red_team",
     "synthetic-respondent": "synthetic_respondent", "data-analyst": "data_analysis",
     "ux-analyst": "ux_analysis", "comms-strategist": "comms_copy", "router": "route",
-    "editor": "editor",
+    "editor": "editor", "six-pager-writer": "six_pager_writer",
 }
 
 

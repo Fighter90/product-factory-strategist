@@ -505,6 +505,7 @@ def cmd_export(a):
                 sp_out.rename(target)
             sp_out = target
         print(f"Six-pager: {sp_out}")
+        print(f"Пакет данных: {(pdir / 'outputs' / 'six_pager_pack.md').resolve()}")  # PRO-46: вход писателя
         if a.en and lang != "en":  # EN-версия в одном вызове: каркас на английском, секции пишет writer (PRO-53)
             print(f"Six-pager EN: {export.build_six_pager(pdir, with_calcs=not a.no_calcs, lang='en')}")
     else:

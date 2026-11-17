@@ -305,7 +305,13 @@ def run(pdir: Path) -> dict:
         if cited:
             err(7, tr("err_sp_no_footnotes", ids=", ".join(sorted(cited))))
     else:
-        cited = set(re.findall(r"\[(S\d{3})\]", "\n".join(lines[:fn_idx])))
+        # PRO-46: текст six-pager пишет writer по спецификации (PRO-49) — маркеры [^N]
+        # в тексте и определения `[^N]: **S###** …` внизу. Источники определений —
+        # цитированные наравне с прямыми тегами [S###]: документ комитета проходит
+        # пункт 7, когда список источников совпадает с процитированным.
+        body_text = "\n".join(lines[:fn_idx])
+        cited = set(re.findall(r"\[(S\d{3})\]", body_text)) \
+            | set(re.findall(r"\[\^\d+\]:\s*\*{0,2}(S\d{3})\*{0,2}", text))
         listed = set(re.findall(r"\bS\d{3}\b", "\n".join(lines[fn_idx:])))
         if cited - listed:
             err(7, tr("err_sp_footnote_not_listed", ids=", ".join(sorted(cited - listed))))
@@ -336,6 +342,8 @@ def run(pdir: Path) -> dict:
     # ---------- 9. Предупреждения: длинные абзацы ----------
     limit = cfg.get("warn_paragraph_words", 120)
     for i, chunk in _paragraphs(lines):
+        if chunk.startswith("[^"):  # определения сносок — не проза документа
+            continue
         n = len(re.findall(r"\S+", chunk))
         if n > limit:
             warns.append(tr("warn_sp_long_para", i=i, n=n, m=limit))

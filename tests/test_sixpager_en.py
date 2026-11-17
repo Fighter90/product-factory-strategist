@@ -76,15 +76,16 @@ class SixPagerEnTests(unittest.TestCase):
         self.assertIn("## Appendices (Excel)", entext)
 
     def test_en_skeleton_carries_package_pointers(self):
-        """EN-каркас не вставляет RU-контент, но показывает writer'у те же входы:
-        имена документов-источников и pending-инструкцию; RU-версия не тронута."""
+        """EN-каркас не вставляет RU-контент, но показывает writer'у вход — пакет данных;
+        RU-каркас — слоты для six-pager-writer, тоже без вставки документов (PRO-46)."""
         ru, en = build_pair(self.pdir)
         rutext, entext = ru.read_text(encoding="utf-8"), en.read_text(encoding="utf-8")
         self.assertNotIn("Рынок 40 млрд", entext, "RU-контент не вставляется в EN")
         self.assertNotIn(MARK, entext, "маркер перевода не вставляется")
-        self.assertIn("02_situation.md", entext, "указан вход writer'а")
+        self.assertIn("six_pager_pack.md", entext, "вход writer'а — пакет данных")
         self.assertIn("SIX_PAGER_PROMPT_EN.md", entext)
-        self.assertIn("Рынок 40 млрд [^1]", rutext, "RU-версия не пострадала")
+        self.assertNotIn("Рынок 40 млрд", rutext, "PRO-46: RU-каркас не вставляет документы")
+        self.assertIn(export.SLOT_MARK, rutext, "RU-каркас — слоты для six-pager-writer")
         self.assertEqual(rutext.count(MARK), 0, "RU-версия без маркеров перевода")
 
     def test_en_skeleton_is_linter_clean_with_docs(self):
@@ -131,15 +132,20 @@ class CheckEnSyncTests(unittest.TestCase):
                            "[^1]: S001 — Example — Market report — https://example.org/r — grade B\n",
                            encoding="utf-8")
         self.assertEqual(self._warnings(), [])
-        # в RU добавили источник (драйвер C002 на S002), EN не переписан — check предупреждает
+        # в RU добавили источник (драйвер C002 на S002), EN не переписан — check предупреждает.
+        # PRO-46: тег в каркас попадает через расчётный артефакт — явную KPI-таблицу 06.
         sources.add(self.pdir, text="Публичный отчёт: удержание 92% при семейном пакете",
                     title="Удержание", url="https://example.org/churn")
         claims.add(self.pdir, "Драйвер: семейный пакет даёт +5 п.п. удержания",
                    "hypothesis", ["S002"], grade="C")
-        out = self.pdir / "outputs" / "03_options.md"
+        out = self.pdir / "outputs" / "06_validation_plan.md"
         out.write_text(out.read_text(encoding="utf-8")
-                       + "\n## Драйверы выбранного направления\n\n"
-                         "- **Первый драйвер:** семейный пакет [C002]\n", encoding="utf-8")
+                       + "\n## KPI\n\n"
+                         "| Плоскость | Метрика | Формула | База (дата, источник) | Цель к сроку | "
+                         "Порог действия (остановить) | Контр-метрика |\n"
+                         "|---|---|---|---|---|---|---|\n"
+                         "| Продукт | Удержание M1 | доля активных на 30-й день | 38% (2026-11-01, [C002]) "
+                         "| 45% к 90 дн | ниже 41% → гейт 30 дней | активация |\n", encoding="utf-8")
         export.build_six_pager(self.pdir, with_calcs=False)  # пересобрали только RU
         warns = self._warnings()
         self.assertTrue(warns, "check предупреждает, что дописанный EN отстал от RU")

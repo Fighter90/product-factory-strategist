@@ -105,11 +105,14 @@ class CalcAndSixPagerTests(unittest.TestCase):
                      "### 1.1 Обзор рынка", "### 1.2 Ключевые конкуренты",
                      "### 2.1 Сегменты", "### 2.2 Барьеры на каждом этапе пути",
                      "Первый драйвер", "Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики)",
-                     "KPI в двух плоскостях", "## Источники (сноски)",
-                     "[^1]: **S001** — example.com — Рынок (агрегатор) — 2026-11-07 — "
-                     "https://example.com/market — сила B",
-                     "[^2]: **S002** — Внутренний файл — 2026-11-07 — notes.md — сила C"):
+                     "KPI в двух плоскостях", "## Источники (сноски)"):
             self.assertIn(head, text)
+        # PRO-46: пакет данных собран рядом, каркас указывает на него и на цикл проверки
+        self.assertTrue((self.pdir / "outputs" / "six_pager_pack.json").exists())
+        self.assertTrue((self.pdir / "outputs" / "six_pager_pack.md").exists())
+        self.assertIn(export.SLOT_MARK, text)
+        self.assertIn("six_pager_pack.md", text)
+        self.assertIn("pfs check --six-pager", text)
         # юнит-экономика посчитана из calcs.json: CM = 29 * 0.75 = 21.75
         self.assertIn("21,75", text)
         self.assertIn("271,88", text)
@@ -122,13 +125,13 @@ class CalcAndSixPagerTests(unittest.TestCase):
         self.assertIn("Допущения [укажите теги]", text)
         # без дублей секций и маркеров обрезки
         self.assertNotIn("обрезано", text)
-        self.assertEqual(text.count("Отток растёт, рынок 40 млрд [^1]"), 1)
-        self.assertNotIn("## Короткий ответ", text.splitlines())  # чужих H2 нет
-        # 03 вставлен целиком с понижением заголовков: варианты и возражения полные
-        self.assertIn("### Варианты", text)
-        self.assertIn("#### Вариант A: оставить как есть", text)
-        self.assertIn("##### Возражения", text)
-        self.assertIn("- отток продолжится", text)
+        # PRO-46: документы не вставляются — ни текста 02, ни структуры 03 целиком
+        self.assertNotIn("Отток растёт, рынок 40 млрд", text)
+        self.assertNotIn("### Варианты", text)
+        self.assertNotIn("#### Вариант A: оставить как есть", text)
+        self.assertNotIn("- отток продолжится", text)
+        # теги документов в каркас не попадают (сноски — после записи текста writer'ом)
+        self.assertNotIn("[C001]", text)
         # без пересчёта Excel — текст собирается повторно
         path2 = export.build_six_pager(self.pdir, with_calcs=False)
         self.assertEqual(path.read_text(encoding="utf-8"), path2.read_text(encoding="utf-8"))
@@ -142,7 +145,9 @@ class CalcAndSixPagerTests(unittest.TestCase):
         path = export.build_six_pager(pdir2, with_calcs=False)
         text = path.read_text(encoding="utf-8")
         self.assertIn("FAQ-1", text)
-        self.assertIn("Раздел появится", text)  # заглушки вместо падения
+        # PRO-46: без документов каркас со слотами — заполнит writer из пакета
+        self.assertIn(export.SLOT_MARK, text)
+        self.assertIn("six_pager_pack.md", text)
 
 
 if __name__ == "__main__":

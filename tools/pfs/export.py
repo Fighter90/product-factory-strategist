@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import html as html_mod
+import json
 import re
 from pathlib import Path
 from urllib.parse import urlparse
@@ -109,7 +110,9 @@ def build(pdir: Path) -> Path:
     parts = [tr("report_title", title=meta.get("title")), "",
              tr("report_built", ts=core.now()[:16]), ""]
     outs = pdir / "outputs"
-    for name in ORDER + sorted(p.name for p in outs.glob("*.md") if p.name not in ORDER and p.name != "REPORT.md"):
+    for name in ORDER + sorted(p.name for p in outs.glob("*.md")
+                               if p.name not in ORDER and p.name != "REPORT.md"
+                               and not p.name.startswith("six_pager_pack")):  # PRO-46: пакет — рабочий вход писателя
         p = outs / name
         if p.exists():
             body = p.read_text(encoding="utf-8")
@@ -186,95 +189,134 @@ def _subtree(blocks: list[dict], i: int) -> list[int]:
     return out
 
 
-def _shift(level: int, delta: int) -> str:
-    """Маркер заголовка уровня level, сдвинутого на delta (в пределах #…######)."""
-    return "#" * max(1, min(level + delta, 6))
-
-
-def _render_subtree(blocks: list[dict], i: int, delta: int) -> str:
-    """Секция i вместе с вложенными; все заголовки поддерева сдвинуты на delta."""
-    chunks = []
-    for j in _subtree(blocks, i):
-        b = blocks[j]
-        body = "\n".join(b["lines"]).strip()
-        head = f"{_shift(b['level'], delta)} {b['title']}" if b["level"] else ""
-        chunks.append(f"{head}\n\n{body}" if head and body else (head or body))
-    return "\n\n".join(chunks)
-
-
 def _norm_title(s: str) -> str:
     """Нормализация заголовка/колонки: без «(…)», регистра и знаков — только слова/числа."""
     s = re.sub(r"\([^)]*\)", " ", s.lower())
     return re.sub(r"[^a-zа-яё0-9+]+", " ", s).strip()
 
 
-def _title_matches(title: str, name: str) -> bool:
-    """Заголовок соответствует имени секции: точное совпадение нормализованных названий
-    или токены имени — подпоследовательность токенов заголовка («Сегменты» ⊂
-    «Сегменты (discovery)», «Чего не знаем» ⊂ «Чего мы не знаем»)."""
-    t, n = _norm_title(title).split(), _norm_title(name).split()
-    if not t or not n or len(n) > len(t):
-        return False
-    if t == n:
-        return True
-    it = iter(t)
-    return all(tok in it for tok in n)
+def _json(data) -> str:
+    """Компактный JSON для читаемой версии пакета данных (контекст писателя)."""
+    return json.dumps(data, ensure_ascii=False, separators=(", ", ": "))
 
 
-def _grab(pdir: Path, fname: str, sections: tuple[str, ...], cap: int = 6000,
-          require_section: bool = False, reg: dict | None = None) -> str | None:
-    """Именованные секции документа: заголовки уровня ≥ 2 (H1 документа не матчится),
-    каждая секция атомарна и рендерится с «###» (вложенность сдвигается вместе с ней).
-    cap уменьшает ЧИСЛО секций, но не режет текст внутри — маркеров «обрезано» нет.
-    reg — реестр вставленного (fname → номера блоков) против дублей с _insert_doc.
-    Совпадений нет — None; целые документы собирает _insert_doc."""
-    path = pdir / "outputs" / fname
+def _section_bodies(path: Path) -> list[dict]:
+    """Секции ВЕРХНЕГО уровня документа (ровно ##) как ДАННЫЕ пакета: [{title, text}] —
+    заголовок и текст секции с вложенными (вложенные заголовки сохраняются в тексте).
+    Рабочие документы читаются только сюда; в six-pager их текст не вставляется (PRO-46)."""
     if not path.exists():
-        return None
+        return []
     blocks = _split_sections(path.read_text(encoding="utf-8"))
-    used = reg.setdefault(fname, set()) if reg is not None else set()
-    chunks: list[str] = []
-    for nm in sections:
-        for i, b in enumerate(blocks):
-            if i in used or b["level"] < 2 or not _title_matches(b["title"], nm):
-                continue
-            used.update(_subtree(blocks, i))
-            chunks.append(_render_subtree(blocks, i, 3 - b["level"]))
-            break
-    if require_section and not chunks:
-        return None
-    out: list[str] = []
-    total = 0
-    for k, ch in enumerate(chunks):
-        if k and cap and total + len(ch) + 2 > cap:
-            break  # резать только по границам секций
-        out.append(ch)
-        total += len(ch) + 2
-    return "\n\n".join(out) if out else None
-
-
-def _insert_doc(pdir: Path, fname: str, demote: int = 2, reg: dict | None = None) -> str | None:
-    """Целый документ для вставки в six-pager: заголовки понижены на demote уровней
-    (# → ###, ## → ####, ### → #####), секции, уже попавшие в вывод через _grab или
-    предыдущие вставки, не дублируются — вставляются только не вошедшие.
-    Нет файла или нечего вставлять — None."""
-    path = pdir / "outputs" / fname
-    if not path.exists():
-        return None
-    blocks = _split_sections(path.read_text(encoding="utf-8"))
-    used = reg.setdefault(fname, set()) if reg is not None else set()
-    chunks: list[str] = []
+    out: list[dict] = []
     for i, b in enumerate(blocks):
-        if i in used:
+        if b["level"] != 2:  # вложенные ### — часть текста родителя, не отдельная секция
             continue
-        used.add(i)
-        body = "\n".join(b["lines"]).strip()
-        if b["level"] == 0:
-            if body:
-                chunks.append(body)
-        else:
-            chunks.append(f"{_shift(b['level'], demote)} {b['title']}" + (f"\n\n{body}" if body else ""))
-    return "\n\n".join(chunks) or None
+        lines: list[str] = []
+        for j in _subtree(blocks, i):
+            bb = blocks[j]
+            if j != i:
+                lines.append(f"{'#' * bb['level']} {bb['title']}")
+            lines.extend(bb["lines"])
+        out.append({"title": b["title"], "text": "\n".join(lines).strip()})
+    return out
+
+
+def build_six_pager_pack(pdir: Path) -> dict:
+    """PRO-46: пакет данных six-pager — единственный вход текста для six-pager-writer.
+    Пишется в `outputs/six_pager_pack.json` и читаемую версию `six_pager_pack.md`:
+    утверждения с типом и силой A–D, источники, расчёты из calcs (с производными той же
+    математикой, что Excel и кросс-чек), варианты из 03, выбор руководителя (ответы
+    из state.json), инициативы Outcome-роадмапа 04, KPI из явной таблицы 06, решения.
+    Рабочие документы целиком не включаются — их секции входят как данные «Ситуации»
+    и «Вариантов»; полная версия с доказательствами — REPORT.md."""
+    meta = core.read_json(pdir / "project.json", {})
+    state = core.read_json(pdir / "state.json", {})
+    ue = core.read_json(pdir / "calcs.json", {})
+    unit = {k: v for k, v in (ue.get("unit_econ") or {}).items()
+            if not k.startswith("_") and v is not None}
+    pack: dict = {
+        "meta": {"title": meta.get("title"), "question": meta.get("question"),
+                 "spec": "knowledge/templates/SIX_PAGER_PROMPT.md", "generated": core.now()},
+        "situation": {"sections": _section_bodies(pdir / "outputs" / "02_situation.md"),
+                      "user_barrier": _user_needs(pdir)},
+        "claims": [{"id": c["id"], "kind": c["kind"], "grade": c.get("grade"),
+                    "text": c["text"], "sources": c["sources"]}
+                   for c in claims_mod.load(pdir) if c["status"] == "active"],
+        "sources": [{"id": s["id"], "title": s["title"], "origin": s.get("origin"),
+                     "link": s.get("url") or s.get("path") or "",
+                     "date": (s.get("published") or s.get("retrieved") or "")[:10]}
+                    for s in src_mod.load(pdir)],
+        "calcs": {"sections": ue, "derived": calc.unit_metrics(unit) if unit else {}},
+        "options": _section_bodies(pdir / "outputs" / "03_options.md"),
+        "strategy": _section_bodies(pdir / "outputs" / "04_product_strategy.md"),
+        "choice": {"answers": [a.get("answer") for a in state.get("answers", [])],
+                   "choice_ts": (state.get("steps", {}).get("choice") or {}).get("ts")},
+        "initiatives": {"groups": _initiative_groups(pdir), "user_barrier": _user_needs(pdir)},
+        "kpi": _kpi_rows(pdir),
+        "decisions": decisions.load(pdir),
+    }
+    core.atomic_write(pdir / "outputs" / "six_pager_pack.json", _json(pack))
+    core.atomic_write(pdir / "outputs" / "six_pager_pack.md", _pack_md(pack))
+    return pack
+
+
+def _pack_md(pack: dict) -> str:
+    """Читаемая версия пакета данных: те же разделы, таблицы утверждений/источников/KPI.
+    Это рабочий вход писателя, не документ комитета — в REPORT.md не попадает."""
+    p = [f"# Пакет данных six-pager — {pack['meta'].get('title')}", "",
+         f"> Собран {pack['meta']['generated'][:16]}. Единственный вход текста six-pager-writer: "
+         "пишите по слотам `outputs/SIX_PAGER.md` из этого пакета по спецификации "
+         "`knowledge/templates/SIX_PAGER_PROMPT.md`. Рабочие документы 02–07 не вставляются: "
+         "полная версия с доказательствами — REPORT.md. Чего в пакете нет — честный пробел.", ""]
+    p += ["## Запрос", "", str(pack["meta"].get("question") or ""), ""]
+    p += ["## Ситуация", ""]
+    for s in pack["situation"]["sections"]:
+        p += [f"### {s['title']}", "", s["text"], ""]
+    if pack["situation"].get("user_barrier"):
+        p += [f"Барьер пользователя (JTBD): {pack['situation']['user_barrier']}", ""]
+    p += ["## Утверждения (сила A–D)", "",
+          "| ID | Тип | Сила | Утверждение | Источники |", "|---|---|---|---|---|"]
+    p += [f"| {c['id']} | {c['kind']} | {c.get('grade') or '—'} | {c['text'].replace('|', '/')} "
+          f"| {', '.join(c['sources']) or '—'} |" for c in pack["claims"]] or ["—"]
+    p += ["", "## Источники", "",
+          "| ID | Название | Где | Происхождение | Дата |", "|---|---|---|---|---|"]
+    p += [f"| {s['id']} | {s['title'].replace('|', '/')} | {s['link'] or '—'} "
+          f"| {s['origin']} | {s['date'] or '—'} |" for s in pack["sources"]] or ["—"]
+    p += ["", "## Расчёты (calcs)", ""]
+    for name, sec in (pack["calcs"]["sections"] or {}).items():
+        p.append(f"- **{name}:** {_json({k: v for k, v in sec.items() if not k.startswith('_')})}")
+    if pack["calcs"]["derived"]:
+        p.append("- **производные:** " + _json(pack["calcs"]["derived"]))
+    p += ["", "## Варианты", ""]
+    for o in pack["options"]:
+        p += [f"### {o['title']}", "", o["text"], ""]
+    if pack.get("strategy"):
+        p += ["## Продуктовая стратегия (выписка)", ""]
+        for s in pack["strategy"]:
+            p += [f"### {s['title']}", "", s["text"], ""]
+    p += ["## Выбор руководителя", ""]
+    for a in pack["choice"]["answers"]:
+        p.append(f"- {a}")
+    p += ["", "## Инициативы (Outcome-роадмап)", ""]
+    if pack["initiatives"].get("user_barrier"):
+        p += [f"Потребности пользователя: {pack['initiatives']['user_barrier']}", ""]
+    for g in pack["initiatives"]["groups"]:
+        tactics = "; ".join(g["tactics"])
+        gate = f" Гейт: {g['gate']}." if g["gate"] else ""
+        p.append(f"- **{g['name']}** — фокус: {g['focus']}. Тактики: {tactics}.{gate}")
+    p += ["", "## KPI", ""]
+    for plane, rows in pack["kpi"].items():
+        p += [f"**{plane}**", "", _KPI_HEAD, "|---|---|---|---|---|---|"]
+        p += ["| " + " | ".join(c.replace("|", "/") for c in r) + " |" for r in rows]
+        p.append("")
+    p += ["## Решения", ""]
+    for d in pack["decisions"]:
+        line = f"- **{d['id']}** — {d.get('title')}: {d.get('decision')} (отв. {d.get('owner')})"
+        grounds = ", ".join(d.get("grounds") or [])
+        if grounds:
+            line += f"; основания: {grounds}"
+        p.append(line)
+    return "\n".join(p) + "\n"
 
 
 def _flat(v) -> str:
@@ -391,29 +433,30 @@ _EN: dict[str, str] = {
         "paying-user CAC of {cac} — to reach ≥ 3, paying-user CAC must be ≤ {cap} at this LTV "
         "(scenarios and grid — the Scenarios and Sensitivity sheets of unit_economics.xlsx).",
     "# {title}: six-pager": "# Six-pager (EN)",
-    "> Собрано {ts} командой `pfs export --six-pager` по спецификации "
-    "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
-    "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
-    "Числа снабжены сквозными сносками (издатель, название, дата, URL, сила A–D); "
-    "теги C###/S### и полный реестр доказательств — REPORT.md.":
+    "> Каркас и пакет данных собраны {ts} командой `pfs export --six-pager`. "
+    "Текст по слотам пишет субагент `six-pager-writer` из пакета данных "
+    "(`outputs/six_pager_pack.json`, читаемая версия — `six_pager_pack.md`) "
+    "по спецификации `knowledge/templates/SIX_PAGER_PROMPT.md`; рабочие "
+    "документы 02–07 не вставляются — полная версия с доказательствами "
+    "в REPORT.md. Обязательный цикл: написать → `pfs check --six-pager` → "
+    "исправить до 0 ошибок. Числа — со сносками; теги C###/S### и полный "
+    "реестр доказательств — REPORT.md.":
         core.EN_DRAFT_MARK + " the EN six-pager is written in plain English by the "
-        "six-pager-writer from the SAME data package (claims, sources, calculations; "
-        "documents 00–07 are RU inputs — never pasted verbatim), per the spec "
-        "`knowledge/templates/SIX_PAGER_PROMPT_EN.md`, style guide "
-        "`knowledge/templates/STYLE_EN.md` (plain English, numbers 1,234.5, no calque). "
-        "Restate the project title and question in English (project.json: title, question). "
-        "Assembled {ts} by `pfs export --six-pager`. Numbers carry sequential footnotes "
-        "in the same order and numbering as RU SIX_PAGER.md; each footnote names its "
-        "source ID: S### — publisher — title — date — URL — grade A–D. Raw C###/S### "
-        "tags stay out of the six-pager; the full evidence registry lives in REPORT.md.",
+        "six-pager-writer from the SAME data package outputs/six_pager_pack.md "
+        "(claims, sources, calculations; documents 00–07 are RU inputs — never pasted "
+        "verbatim), per the spec `knowledge/templates/SIX_PAGER_PROMPT_EN.md`, style "
+        "guide `knowledge/templates/STYLE_EN.md` (plain English, numbers 1,234.5, no "
+        "calque). Restate the project title and question in English (project.json: "
+        "title, question). Mandatory loop: write → `pfs check --six-pager` → fix until "
+        "0 errors. Assembled {ts} by `pfs export --six-pager`. Numbers carry sequential "
+        "footnotes in the same order and numbering as RU SIX_PAGER.md; each footnote "
+        "names its source ID: S### — publisher — title — date — URL — grade A–D. Raw "
+        "C###/S### tags stay out of the six-pager; the full evidence registry lives "
+        "in REPORT.md.",
     "**Запрос:** {q}": "**Request:** — write in English; RU source: project.json → question.",
     "## FAQ-1. Анализ текущего состояния": "## FAQ-1. Current state analysis",
     "### 1.1 Обзор рынка: тренды, вызовы и возможности":
         "### 1.1 Market overview: trends, challenges and opportunities",
-    "> Раздел появится после шага «situation» (02_situation.md): объём и динамика "
-    "рынка диапазонами, ключевые тренды буллетами с жирными заголовками.":
-        "> This section appears after the «situation» step (02_situation.md): market size "
-        "and dynamics as ranges, key trends as bold bullets.",
     "### 1.2 Ключевые конкуренты и анализ их стратегий роста и промо-механик":
         "### 1.2 Key competitors: growth and promo mechanics",
     "Сравнительная таблица групп конкурентов (заполните после конкурентного анализа):":
@@ -429,7 +472,6 @@ _EN: dict[str, str] = {
     "## FAQ-2. User Persona. Кто является целевой аудиторией?":
         "## FAQ-2. User Persona. Who is the target audience?",
     "### 2.1 Сегменты": "### 2.1 Segments",
-    "> Добавьте сегменты/персоны в 02_situation.md.": "> Add segments/personas to 02_situation.md.",
     "Таблица персон (заполните):": "Persona table (fill in):",
     "| | Сегмент 1 | Сегмент 2 | Сегмент 3 |": "| | Segment 1 | Segment 2 | Segment 3 |",
     "| **Кто они?** | … | … | … |": "| **Who are they?** | … | … | … |",
@@ -456,29 +498,24 @@ _EN: dict[str, str] = {
         "all barriers; prioritize by capacity/CAC/competition (calculation above).",
     "## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.":
         "## FAQ-3. Strategic initiatives. Justify each one briefly.",
-    "> Раздел появится после шага «options» (03_options.md).":
-        "> This section appears after the «options» step (03_options.md).",
     "### Инициативы выбранного направления (драйверы)":
         "### Initiatives of the chosen direction (drivers)",
     "Сформулируйте 3–4 инициативы по схеме: «**Первый драйвер** — …», «**Второй драйвер** — …», "
-    "далее «Ключевые направления» (буллеты) и пошаговый расчёт эффекта. Закройте "
+    "далее «Ключевые направления» (буллеты) и пошаговый расчёт эффекта. Данные — разделы "
+    "«Варианты», «Выбор руководителя» и «Инициативы» пакета. Закройте "
     "выводом-умозаключением.":
         "Formulate 3–4 initiatives as: «**First driver** — …», «**Second driver** — …», then "
-        "«Key directions» (bullets) and a step-by-step effect calculation. Close with an "
-        "inference-conclusion.",
+        "«Key directions» (bullets) and a step-by-step effect calculation. Data — the pack "
+        "sections options, leader's choice and initiatives. Close with an inference-conclusion.",
     "Юнит-экономика — расчёт пошагово:": "Unit economics — step-by-step:",
     "## FAQ-4. Тактики. Детализируйте каждую инициативу до конкретных тактик.":
         "## FAQ-4. Tactics. Detail each initiative into concrete tactics.",
-    "> Добавьте тактики по каждой инициативе в 04_product_strategy.md.":
-        "> Add tactics for each initiative to 04_product_strategy.md.",
-    "Матрица тактик (из Outcome-роадмапа 04_product_strategy.md):":
-        "Tactics matrix (from the outcome roadmap 04_product_strategy.md):",
+    "Матрица тактик (раздел «Инициативы» пакета данных):":
+        "Tactics matrix (the pack's initiatives section):",
     "Матрица тактик (заполните):": "Tactics matrix (fill in):",
     "| Инициатива 1 | … | … | … |": "| Initiative 1 | … | … | … |",
     "| Инициатива 2 | … | … | … |": "| Initiative 2 | … | … | … |",
     "## FAQ-5. Высокоуровневый план реализации": "## FAQ-5. High-level implementation plan",
-    "> Раздел появится после шага «validation» (06_validation_plan.md).":
-        "> This section appears after the «validation» step (06_validation_plan.md).",
     "Ожидаемое распределение вклада инициатив в общий результат (сумма 100%):":
         "Expected contribution of initiatives to the outcome (must sum to 100%):",
     "- __% — Инициатива 1;": "- __% — Initiative 1;",
@@ -560,11 +597,12 @@ RU_SOURCE = core.RU_SOURCE_MARK
 
 def _en_pending(what: str) -> str:
     """PRO-53: pending-строка EN-каркаса. EN-версия six-pager пишется, а не переводится:
-    секцию составляет six-pager-writer на английском из того же пакета данных
-    (утверждения, источники, расчёты); документы 00–07 — RU-вход, в EN не вставляется.
-    Префикс EN_DRAFT_MARK распознаёт черновик в линтере и сверке тегов RU↔EN."""
-    return (f"{core.EN_DRAFT_MARK}: write this section in English from the same data "
-            f"package ({what}); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, "
+    секцию составляет six-pager-writer на английском из пакета данных
+    (outputs/six_pager_pack.md: утверждения, источники, расчёты); документы 00–07 —
+    RU-вход пакета, в EN не вставляется. Префикс EN_DRAFT_MARK распознаёт черновик
+    в линтере и сверке тегов RU↔EN."""
+    return (f"{core.EN_DRAFT_MARK}: write this section in English from the data package "
+            f"outputs/six_pager_pack.md ({what}); spec: knowledge/templates/SIX_PAGER_PROMPT_EN.md, "
             f"style: knowledge/templates/STYLE_EN.md.")
 
 
@@ -691,34 +729,32 @@ _KPI_HEAD = ("| Метрика | Формула | База (дата, источ
              "Порог действия (остановить) | Контр-метрика |")
 
 
-def _kpi_table(pdir: Path, lang: str = "ru", reg: dict | None = None) -> str | None:
+def _kpi_rows(pdir: Path) -> dict[str, list[list[str]]]:
+    """Строки ЯВНОЙ сводной таблицы «KPI» 06_validation_plan.md без столбца-источника
+    «Плоскость»: {плоскость: строки}. Плоскость задаётся автором таблицы, а не
+    угадывается по словам метрики (PRO-48). Таблицы нет — {}."""
+    fname = "06_validation_plan.md"
+    path = pdir / "outputs" / fname
+    if not path.exists():
+        return {}
+    rows = [r for r in _table_rows(path.read_text(encoding="utf-8"), _KPI_COLS)
+            if len(r) == len(_KPI_COLS) and all(c.strip() for c in r)]
+    planes = {p: [r[1:] for r in rows if _norm_title(r[0]) == _norm_title(p)]
+              for p in ("Бизнес", "Продукт")}
+    return {p: rs for p, rs in planes.items() if rs}
+
+
+def _kpi_table(pdir: Path, lang: str = "ru") -> str | None:
     """KPI в двух плоскостях (Бизнес/Продукт) из ЯВНОЙ сводной таблицы «KPI»
-    06_validation_plan.md со столбцом «Плоскость»: плоскость задаётся автором,
+    06_validation_plan.md (строки — _kpi_rows): плоскость задаётся автором,
     а не угадывается по словам метрики (PRO-48). У каждой метрики — формула, база
     с датой и источником, цель со сроком, порог действия и контр-метрика; база и
     цель — раздельные ячейки. Вывод — две таблицы без столбца-источника; битые
     строки и чужие плоскости пропускаются. Таблицы нет — None: гипотезы H1…H5
-    KPI не подменяют. reg — пометить секцию KPI использованной, чтобы целевая
-    вставка 06 (FAQ-5) не дублировала её в six-pager."""
-    fname = "06_validation_plan.md"
-    path = pdir / "outputs" / fname
-    if not path.exists():
-        return None
-    text = path.read_text(encoding="utf-8")
-    rows = [r for r in _table_rows(text, _KPI_COLS)
-            if len(r) == len(_KPI_COLS) and all(c.strip() for c in r)]
-    planes = {p: [r[1:] for r in rows if _norm_title(r[0]) == _norm_title(p)]
-              for p in ("Бизнес", "Продукт")}
-    planes = {p: rs for p, rs in planes.items() if rs}
+    KPI не подменяют."""
+    planes = _kpi_rows(pdir)
     if not planes:
         return None
-    if reg is not None:
-        blocks = _split_sections(text)
-        used = reg.setdefault(fname, set())
-        for i, b in enumerate(blocks):
-            if b["level"] >= 2 and _norm_title(b["title"]).startswith("kpi"):
-                used.update(_subtree(blocks, i))
-                break
 
     def cell(s: str) -> str:
         return s.replace("|", "/")
@@ -756,25 +792,15 @@ def _user_needs(pdir: Path) -> str | None:
     return None
 
 
-def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
-    """Матрица тактик FAQ-4 из Outcome-роадмапа 04_product_strategy.md: буллеты вида
+def _initiative_groups(pdir: Path) -> list[dict]:
+    """Инициативы Outcome-роадмапа 04_product_strategy.md как ДАННЫЕ пакета: буллеты вида
     «- **Инициатива N — фокус (тайминг):** тактика; тактика. **Результат …:** гейт»
-    раскладываются в канонические колонки «Инициатива | Фокус | Потребности |
-    Решения» (эталон FAQ-4): одна исполняемая тактика в строке, 2–4 строки на
-    инициативу (излишек склеивается в четвёртую строку, гейт-результат — в последнюю,
-    если он ещё не показан в Фокусе). Фокус — направление из заголовка без тайминга;
-    у «Этап N» без «—» — результат-гейт. Потребности — барьер из JTBD (02, затем 04)
-    словами пользователя. Честные заглушки (ревью PRO-48): нет JTBD, меньше двух
-    инициатив, у какой-то инициативы нет фокуса (ни «—» в заголовке, ни гейта) или
-    меньше двух тактик — None: дырявую матрицу, где инициатива пропала молча,
-    не собираем."""
+    → [{name, focus, tactics, gate}]. Сырые данные без валидации полноты — её делает
+    _tactics_matrix; пакет несёт всё, что удалось разобрать (PRO-46)."""
     path = pdir / "outputs" / "04_product_strategy.md"
     if not path.exists():
-        return None
-    needs = _user_needs(pdir)
-    if not needs:
-        return None
-    groups: list[tuple[str, str, list[str], str]] = []
+        return []
+    groups: list[dict] = []
     for line in path.read_text(encoding="utf-8").splitlines():
         m = _INITIATIVE.match(line.strip())
         if not m:
@@ -795,13 +821,31 @@ def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
             # Ни «—» в заголовке, ни гейта — фокус взять неоткуда; fallback на
             # первую тактику давал бы Фокус, идентичный «Решения» (ревью PRO-48).
             name, focus = label, ""
-        groups.append((name, focus, tactics, gate))
+        groups.append({"name": name, "focus": focus, "tactics": tactics, "gate": gate})
+    return groups
+
+
+def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
+    """Матрица тактик FAQ-4 из групп _initiative_groups (Outcome-роадмапа
+    04_product_strategy.md): канонические колонки «Инициатива | Фокус | Потребности |
+    Решения» (эталон FAQ-4): одна исполняемая тактика в строке, 2–4 строки на
+    инициативу (излишек склеивается в четвёртую строку, гейт-результат — в последнюю,
+    если он ещё не показан в Фокусе). Фокус — направление из заголовка без тайминга;
+    у «Этап N» без «—» — результат-гейт. Потребности — барьер из JTBD (02, затем 04)
+    словами пользователя. Честные заглушки (ревью PRO-48): нет JTBD, меньше двух
+    инициатив, у какой-то инициативы нет фокуса (ни «—» в заголовке, ни гейта) или
+    меньше двух тактик — None: дырявую матрицу, где инициатива пропала молча,
+    не собираем."""
+    needs = _user_needs(pdir)
+    if not needs:
+        return None
+    groups = _initiative_groups(pdir)
     if len(groups) < 2:
         return None
     # Ревью PRO-48: дырявую матрицу не собираем. Инициатива без фокуса или с
     # одной тактикой не выбрасывается молча — «на каждую инициативу FAQ-3
     # от 2 до 4 строк» либо у всех инициатив, либо честная заглушка.
-    if any(not focus.strip(" .") or len(tactics) < 2 for _, focus, tactics, _ in groups):
+    if any(not g["focus"].strip(" .") or len(g["tactics"]) < 2 for g in groups):
         return None
 
     def cell(s: str) -> str:
@@ -809,7 +853,8 @@ def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
 
     out = [_t("| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |", lang),
            "|---|---|---|---|"]
-    for name, focus, tactics, gate in groups:
+    for g in groups:
+        name, focus, tactics, gate = g["name"], g["focus"], g["tactics"], g["gate"]
         shown = tactics if len(tactics) <= 4 else tactics[:3] + ["; ".join(tactics[3:])]
         tail_gate = bool(gate) and gate.strip(" .") != focus.strip(" .")  # пустой гейт и гейт = фокус — не дублируем
         for i, tactic in enumerate(shown):
@@ -820,67 +865,84 @@ def _tactics_matrix(pdir: Path, lang: str = "ru") -> str | None:
     return "\n".join(out)
 
 
+# PRO-46: слот каркаса — один маркер на репозиторий (core.SIX_PAGER_SLOT_MARK):
+# его же ищет сверка RU↔EN в check.py — пока RU не написан, «отставание» EN бессмысленно.
+SLOT_MARK = core.SIX_PAGER_SLOT_MARK
+
+
+def _slot(what: str) -> str:
+    """Слот каркаса RU six-pager (PRO-46): раздел дописывает субагент six-pager-writer
+    из пакета данных. «заполните» — не небрежность, а маркер: линтер (`pfs check
+    --six-pager`) держит каркас со слотами в ошибках, поэтому цикл «написать →
+    исправить до 0 ошибок» нельзя пропустить. Рабочие документы в six-pager
+    не вставляются — их данные уже в пакете."""
+    return (f"{SLOT_MARK} {what} Данные — разделы пакета `outputs/six_pager_pack.md`; "
+            "спецификация — `knowledge/templates/SIX_PAGER_PROMPT.md`; рабочие документы "
+            "не вставляются.")
+
+
 def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Path:
-    """Six-pager в структуре референса стратегии роста: FAQ-1…FAQ-6 с нумерованными
-    подпунктами (1.1/1.2 обзор рынка и конкуренты; 2.1/2.2 персоны и барьеры по этапам),
-    юнит-экономикой с чувствительностью, матрицей тактик и KPI в двух плоскостях
-    (бизнес/продукт). Документы 03/04/06 вставляются целиком с понижением заголовков
-    на 2 уровня; секции, уже попавшие в вывод через _grab, повторно не вставляются;
-    резка — только по границам секций. Сноски-источники — только процитированные (PRO-49):
-    теги [C###]/[S###] заменяются маркерами [^N] в порядке первого упоминания, синтетика —
-    отдельным блоком с пометкой «гипотезы, не доказательства»; полный реестр тегов — REPORT.md.
-    lang="en" (PRO-53) — EN-версия пишется, а не переводится: каркас инструмента на
-    английском с pending-строками (_en_pending); секции составляет six-pager-writer
+    """PRO-46: six-pager собирается в два шага. Шаг инструмента — пакет данных и каркас:
+    `outputs/six_pager_pack.json` (читаемая версия `six_pager_pack.md`,
+    build_six_pager_pack) — утверждения с силой A–D, источники, расчёты из calcs,
+    варианты, выбор руководителя, инициативы, KPI, решения; `outputs/SIX_PAGER.md` —
+    каркас FAQ-1…6 со слотами (_slot) и расчётными артефактами: юнит-экономика из
+    calcs, матрица тактик из Outcome-роадмапа, KPI-таблицы из явной таблицы 06,
+    решение D### с обязательством. Рабочие документы 02/03/04/06 НЕ вставляются —
+    полная версия с доказательствами в REPORT.md. Текст по слотам пишет субагент
+    six-pager-writer (модель уровня deep) по спецификации
+    knowledge/templates/SIX_PAGER_PROMPT.md, затем обязательный цикл:
+    `pfs check --six-pager` → правки → 0 ошибок. Сноски-источники (PRO-49) —
+    теги [C###]/[S###] расчётных артефактов заменяются сквозными [^N]; полный
+    реестр тегов — REPORT.md.
+    lang="en" (PRO-53) — EN-версия пишется, а не переводится: каркас на английском
+    с pending-строками (_en_pending); секции составляет six-pager-writer
     на английском из того же пакета данных (спецификация SIX_PAGER_PROMPT_EN.md,
-    стиль STYLE_EN.md), RU-контент документов и сноски с RU-названиями не вставляются,
-    числа — EN-формат (1,234.5) → outputs/SIX_PAGER_EN.md.
-    Спецификация детализации: knowledge/templates/SIX_PAGER_PROMPT.md."""
+    стиль STYLE_EN.md), RU-контент не вставляется,
+    числа — EN-формат (1,234.5) → outputs/SIX_PAGER_EN.md."""
     if with_calcs:
         calc.run(pdir, "all")
     meta = core.read_json(pdir / "project.json", {})
+    build_six_pager_pack(pdir)  # пакет данных — вход писателя (RU и EN — один пакет)
     parts = [_t("# {title}: six-pager", lang).format(title=meta.get("title")), "",
-             _t("> Собрано {ts} командой `pfs export --six-pager` по спецификации "
-                "`knowledge/templates/SIX_PAGER_PROMPT.md` (формат референса стратегии роста: "
-                "FAQ-1…6 с нумерованными подпунктами, матрицей тактик и KPI в двух плоскостях). "
-                "Числа снабжены сквозными сносками (издатель, название, дата, URL, сила A–D); "
-                "теги C###/S### и полный реестр доказательств — REPORT.md.",
+             _t("> Каркас и пакет данных собраны {ts} командой `pfs export --six-pager`. "
+                "Текст по слотам пишет субагент `six-pager-writer` из пакета данных "
+                "(`outputs/six_pager_pack.json`, читаемая версия — `six_pager_pack.md`) "
+                "по спецификации `knowledge/templates/SIX_PAGER_PROMPT.md`; рабочие "
+                "документы 02–07 не вставляются — полная версия с доказательствами "
+                "в REPORT.md. Обязательный цикл: написать → `pfs check --six-pager` → "
+                "исправить до 0 ошибок. Числа — со сносками; теги C###/S### и полный "
+                "реестр доказательств — REPORT.md.",
                 lang).format(ts=core.now()[:16]), "",
              _t("**Запрос:** {q}", lang).format(q=meta.get("question", "")), ""]
-    reg: dict[str, set[int]] = {}  # вставленные секции (fname → номера блоков) — против дублей
-
-    def grab(fname: str, sections: tuple[str, ...], cap: int = 6000, require_section: bool = False):
-        return _grab(pdir, fname, sections, cap, require_section, reg)
-
-    faq1 = _en_pending("02_situation.md — short answer, what we know, market, trends, "
-                       "contradictions, unknowns") if lang == "en" else \
-        grab("02_situation.md", ("Короткий ответ", "Что известно", "Рынок", "Тренды",
-                                 "Противоречия", "Чего не знаем"), 8000)
+    faq1 = _en_pending("pack sections: situation (market, known facts, contradictions, "
+                       "unknowns) plus the claims and sources lists") if lang == "en" else \
+        _slot("Обзор рынка: объём и динамика — диапазонами со сноской, прогноз буллетами "
+              "по годам, 5–7 ключевых трендов буллетами с жирными заголовками и следствием "
+              "для продукта.")
     parts += [_t("## FAQ-1. Анализ текущего состояния", lang), "",
               _t("### 1.1 Обзор рынка: тренды, вызовы и возможности", lang), "",
-              faq1 or _t("> Раздел появится после шага «situation» (02_situation.md): объём и динамика "
-                         "рынка диапазонами, ключевые тренды буллетами с жирными заголовками.", lang), "",
+              faq1, "",
               _t("### 1.2 Ключевые конкуренты и анализ их стратегий роста и промо-механик", lang), "",
-              (_en_pending("02_situation.md — competitor groups table") if lang == "en" else
-               grab("02_situation.md", ("Конкуренты", "Конкурентный анализ"), 3000, True))
-              or _t("Сравнительная таблица групп конкурентов (заполните после конкурентного анализа):", lang), "",
+              (_en_pending("pack situation — competitor groups; risks rated High/Medium/Low")
+               if lang == "en" else
+               _slot("Таблица групп конкурентов: ключевые преимущества, стратегии роста "
+                     "и промо-механики, риски с оценкой Высокий/Средний/Низкий; ниже — "
+                     "абзац «чего не хватает никому» (пробел = окно стратегии).")), "",
+              _t("Сравнительная таблица групп конкурентов (заполните после конкурентного анализа):", lang), "",
               _t("| | Группа 1 | Группа 2 | Группа 3 |", lang),
               "|---|---|---|---|",
               _t("| **Ключевые преимущества** | … | … | … |", lang),
               _t("| **Стратегия роста и промо-механики** | … | … | … |", lang),
               _t("| **Риски для компании** | … — Высокий/Средний/Низкий | … | … |", lang), "",
               _t("> **Вывод (умозаключение):** окно возможностей и его срок — заполните по данным 1.1–1.2.", lang), ""]
-    if lang == "en":
-        faq2, faq2_src = _en_pending("02_situation.md — segments/personas "
-                                     "(fallback: 04_product_strategy.md — audience)"), "02_situation.md"
-    else:
-        faq2 = grab("02_situation.md", ("Сегменты", "Персоны", "Аудитория"), 3000)
-        faq2_src = "02_situation.md"
-        if not faq2 or len(faq2) < 120:
-            faq2 = grab("04_product_strategy.md", ("Аудитория",), 3000)
-            faq2_src = "04_product_strategy.md"
+    faq2 = _en_pending("pack situation — segments/personas and the JTBD user barrier") \
+        if lang == "en" else \
+        _slot("Таблица персон по барьеру входа (не по профессии) и обоснование "
+              "приоритизации сегментов с расчётом (ёмкость/CAC/конкуренция).")
     parts += [_t("## FAQ-2. User Persona. Кто является целевой аудиторией?", lang), "",
               _t("### 2.1 Сегменты", lang), "",
-              faq2 or _t("> Добавьте сегменты/персоны в 02_situation.md.", lang), "",
+              faq2, "",
               _t("Таблица персон (заполните):", lang), "",
               _t("| | Сегмент 1 | Сегмент 2 | Сегмент 3 |", lang),
               "|---|---|---|---|",
@@ -889,6 +951,11 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
               _t("| **С какими трудностями сталкиваются?** | … | … | … |", lang),
               _t("| **Общие трудности** | … | … |", lang), "",
               _t("### 2.2 Барьеры на каждом этапе пути", lang), "",
+              (_en_pending("pack situation — barriers per journey stage, hold-backs per segment")
+               if lang == "en" else
+               _slot("Барьеры на каждом этапе пути (привлечение → выбор → оплата → "
+                     "постоплатный опыт) и «что сдерживает от старта или продления» "
+                     "по каждому сегменту: фактор → чем снимается.")), "",
               _t("| Этап пути | Барьер сегодня | Что делает продукт |", lang),
               "|---|---|---|",
               _t("| Привлечение | … | … |", lang),
@@ -901,37 +968,48 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
               _t("| Сегмент 1 | … | … |", lang), "",
               _t("> **Вывод (умозаключение):** сегментация по барьеру входа; лестница тиров "
                  "обслуживает все барьеры; приоритизация — по ёмкости/CAC/конкуренции (расчёт — выше).", lang), ""]
-    doc03 = _en_pending("03_options.md — chosen direction, initiatives (drivers)") \
-        if lang == "en" else _insert_doc(pdir, "03_options.md", reg=reg)
+    faq3 = _en_pending("pack sections options, leader's choice and initiatives: chosen "
+                       "direction, red-team objections, 3–4 driver initiatives") \
+        if lang == "en" else \
+        _slot("Вводная: из каких вариантов выбрано направление и почему (с разбором "
+              "сильных возражений red team); затем 3–4 инициативы-драйвера — подпункт "
+              "3.N на каждую: «**Первый драйвер** — …», ключевые направления, расчёт "
+              "эффекта, ответ на самое сильное возражение.")
     parts += [_t("## FAQ-3. Стратегические инициативы. Кратко обоснуйте каждую.", lang), "",
-              doc03 or _t("> Раздел появится после шага «options» (03_options.md).", lang), "",
+              faq3, "",
               _t("### Инициативы выбранного направления (драйверы)", lang), "",
               _t("Сформулируйте 3–4 инициативы по схеме: «**Первый драйвер** — …», «**Второй драйвер** — …», "
-                 "далее «Ключевые направления» (буллеты) и пошаговый расчёт эффекта. Закройте "
+                 "далее «Ключевые направления» (буллеты) и пошаговый расчёт эффекта. Данные — разделы "
+                 "«Варианты», «Выбор руководителя» и «Инициативы» пакета. Закройте "
                  "выводом-умозаключением.", lang), ""]
     ue = _unit_econ_block(pdir, lang)
     if ue:
         parts += [_t("Юнит-экономика — расчёт пошагово:", lang), "", ue, ""]
-    doc04 = _en_pending("04_product_strategy.md — tactics per initiative") \
-        if lang == "en" else _insert_doc(pdir, "04_product_strategy.md", reg=reg)
+    faq4 = _en_pending("pack initiatives (focus, tactics, gates) — the tactics matrix") \
+        if lang == "en" else \
+        _slot("Матрица тактик: на каждую инициативу 2–4 строки — фокус → потребности "
+              "пользователя → исполняемые тактики (что именно строится/меняется, "
+              "не лозунги).")
     matrix = None if lang == "en" else _tactics_matrix(pdir, lang)
     parts += [_t("## FAQ-4. Тактики. Детализируйте каждую инициативу до конкретных тактик.", lang), "",
-              doc04 or _t("> Добавьте тактики по каждой инициативе в 04_product_strategy.md.", lang), ""]
+              faq4, ""]
     if matrix:
-        parts += [_t("Матрица тактик (из Outcome-роадмапа 04_product_strategy.md):", lang), "", matrix, ""]
+        parts += [_t("Матрица тактик (раздел «Инициативы» пакета данных):", lang), "", matrix, ""]
     else:
         parts += [_t("Матрица тактик (заполните):", lang), "",
                   _t("| Стратегическая инициатива | Фокус | Потребности и ожидания пользователя | Решения (тактики) |", lang),
                   "|---|---|---|---|",
                   _t("| Инициатива 1 | … | … | … |", lang),
                   _t("| Инициатива 2 | … | … | … |", lang), ""]
-    # PRO-48: KPI собирается ДО целевой вставки 06, чтобы пометить секцию «KPI»
-    # использованной — таблица попадает в FAQ-6 один раз, без дубля в FAQ-5.
-    kpi = None if lang == "en" else _kpi_table(pdir, lang, reg=reg)
-    doc06 = _en_pending("06_validation_plan.md — expected change, comparison base, deadlines") \
-        if lang == "en" else _insert_doc(pdir, "06_validation_plan.md", reg=reg)
+    kpi = None if lang == "en" else _kpi_table(pdir, lang)
+    faq5 = _en_pending("pack sections decisions, leader's choice and initiatives — "
+                       "order, season timing, parallel tracks") \
+        if lang == "en" else \
+        _slot("Порядок реализации тактик (высокий → средний → базовый приоритет), "
+              "тайминг к сезонам рынка (запуск встречает сезон с накопленной "
+              "статистикой), параллельные треки — вне основной линии.")
     parts += [_t("## FAQ-5. Высокоуровневый план реализации", lang), "",
-              doc06 or _t("> Раздел появится после шага «validation» (06_validation_plan.md).", lang), "",
+              faq5, "",
               _t("Ожидаемое распределение вклада инициатив в общий результат (сумма 100%):", lang), "",
               _t("- __% — Инициатива 1;", lang),
               _t("- __% — Инициатива 2;", lang),
@@ -941,21 +1019,18 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
     dec = None if lang == "en" else _decision_block(pdir, lang)
     if dec:
         parts += [dec, ""]
-    if lang == "en":
-        faq6, faq6_src = _en_pending("04/06 — success metrics tables (baseline → target → "
-                                     "action threshold, counter-metrics)"), "04_product_strategy.md"
-    else:
-        faq6 = grab("04_product_strategy.md", ("Метрики", "Показатели"), 3000)
-        faq6_src = "04_product_strategy.md"
-        if not faq6:
-            faq6 = grab("06_validation_plan.md", ("Ожидаемое изменение", "Критерии решения"), 3000)
-            faq6_src = "06_validation_plan.md"
-    parts += [_t("## FAQ-6. Метрики успеха. KPI в двух плоскостях", lang), ""]
-    if faq6:
-        parts += [faq6, ""]
+    faq6 = _en_pending("pack sections KPI and calculations — business and product planes, "
+                       "counter-metrics per red-team hit") \
+        if lang == "en" else \
+        _slot("KPI в двух плоскостях (бизнес — деньги и база; продукт — активация, "
+              "время до ценности, churn, CSAT/NPS): у каждой метрики база → цель "
+              "к сроку → порог действия; контр-метрики по ударам red team с порогами "
+              "тревоги и записанным действием.")
+    parts += [_t("## FAQ-6. Метрики успеха. KPI в двух плоскостях", lang), "",
+              faq6, ""]
     if kpi:
         parts += [kpi, ""]
-    elif not faq6 and doc04 is None and doc06 is None:
+    elif lang != "en":
         parts += [_t("> Добавьте метрики успеха в 04/06 документы: явная таблица «KPI» "
                      "(Плоскость | Метрика | Формула | База | Цель к сроку | Порог | "
                      "Контр-метрика) в 06_validation_plan.md — две таблицы (Бизнес/Продукт) "
@@ -980,14 +1055,14 @@ def build_six_pager(pdir: Path, with_calcs: bool = True, lang: str = "ru") -> Pa
                      "Полная версия с доказательствами — REPORT.md.", lang)]
     path = pdir / "outputs" / ("SIX_PAGER_EN.md" if lang == "en" else "SIX_PAGER.md")
     core.atomic_write(path, "\n".join(parts) + "\n")
-    core.log(pdir, "action", f"Собран outputs/{path.name} (формат референса)", tool="pfs export --six-pager")
+    core.log(pdir, "action", f"Собран outputs/{path.name} и пакет данных six_pager_pack "
+                             "(PRO-46: каркас со слотами, документы не вставляются)",
+             tool="pfs export --six-pager")
     return path
 
 
 _MAX_POINTS = 6   # тезисов на слайд
 _POINT_CAP = 160  # символов на тезис
-
-
 
 _DECK_CSS = """
   :root { --bg: #070b13; --fg: #e8eef8; --a1: #4fd1c5; --a2: #8b7bff; --dim: #9aa7bd; }
@@ -1012,9 +1087,6 @@ _DECK_CSS = """
   .query { color: var(--dim); font-size: clamp(16px, 2.2vw, 26px); }
   .query b { color: var(--a1); }
 """
-
-
-
 
 
 def _slide(title: str, points: list[str], cls: str = "") -> str:

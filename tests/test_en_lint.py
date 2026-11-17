@@ -86,7 +86,9 @@ class EnLintTests(unittest.TestCase):
         self.assertNotIn("Рынок 40 млрд", en, "RU-контент документов 00–07 не вставляется")
         self.assertIn("> EN draft", en, "pending-строки показывают writer'у, что писать")
         ru = export.build_six_pager(self.pdir, with_calcs=False).read_text(encoding="utf-8")
-        self.assertIn("Рынок 40 млрд [^1]", ru, "RU-версия не пострадала")
+        # PRO-46: RU-версия — каркас со слотами (текст пишет writer из пакета данных)
+        self.assertIn(export.SLOT_MARK, ru, "RU-версия — каркас со слотами writer'у")
+        self.assertNotIn(core.RU_SOURCE_MARK, ru)
 
     def test_en_unit_econ_numbers_use_en_format(self):
         core.write_json(self.pdir / "calcs.json",
@@ -105,18 +107,28 @@ class EnLintTests(unittest.TestCase):
                          "каркас-черновик EN — не «отставшая» версия: его допишет writer")
 
     def test_completed_en_with_footnotes_not_flagged_and_old_format_lags(self):
+        # PRO-46: RU-каркас несёт сноски из расчётного артефакта — явной KPI-таблицы 06
+        out = self.pdir / "outputs" / "06_validation_plan.md"
+        out.write_text("# 06 · План проверки\n\n## KPI\n\n"
+                       "| Плоскость | Метрика | Формула | База (дата, источник) | Цель к сроку | "
+                       "Порог действия (остановить) | Контр-метрика |\n"
+                       "|---|---|---|---|---|---|---|\n"
+                       "| Бизнес | Выручка | MAU × ARPU | рынок 40 млрд (2026-11-01, [C001]) "
+                       "| +20% к 120 дн | ниже 5% → стоп | активация |\n", encoding="utf-8")
         export.build_six_pager(self.pdir, with_calcs=False)
+        ru = (self.pdir / "outputs" / "SIX_PAGER.md").read_text(encoding="utf-8")
+        self.assertIn("[^1]", ru, "RU-каркас со сносками из KPI-артефакта")
         en_path = self.pdir / "outputs" / "SIX_PAGER_EN.md"
         # завершённый writer'ом EN: сноски [^n] с источниками S###, сырых тегов C### нет —
         # PRO-49 переносит теги в REPORT.md, поэтому их отсутствие в EN не «отставание»
-        en_path.write_text("# Demo: Six-pager (EN)\n\nMarket is large[^1].\n\n"
+        en_path.write_text("# Demo: Six-pager (EN)\n\nThe market is large[^1].\n\n"
                            "## Sources (footnotes)\n\n"
                            "[^1]: S001 — Example — Market report — https://example.org/r — grade B\n",
                            encoding="utf-8")
         self.assertEqual(check.en_sync_warnings(self.pdir), [],
                          "готовый EN со сносками и S### не отстал: теги C### живут в REPORT.md")
         # EN в старом теговом формате: RU уже со сносками [^n], в EN их нет — предупреждение
-        en_path.write_text("# Demo: Six-pager (EN)\n\nMarket is large [C001].\n", encoding="utf-8")
+        en_path.write_text("# Demo: Six-pager (EN)\n\nThe market is large [C001].\n", encoding="utf-8")
         warns = check.en_sync_warnings(self.pdir)
         self.assertTrue(warns, "EN без сносок [^n] при RU со сносками — отстал (старый формат)")
         self.assertIn("S001", warns[0], "сигнал свёрки — источники S###, не теги C###")
@@ -125,12 +137,9 @@ class EnLintTests(unittest.TestCase):
                     title="Удержание", url="https://example.org/churn")                # S002
         claims.add(self.pdir, "Драйвер: семейный пакет даёт +5 п.п. удержания",
                    "hypothesis", ["S002"], grade="C")                                  # C002
-        out = self.pdir / "outputs" / "03_options.md"
-        out.write_text("# 03 · Варианты\n\n## Вариант A: оставить как есть\n\n### Возражения\n\n"
-                       "- отток продолжится\n\n## Вариант B: семейный пакет\n\n### Возражения\n\n"
-                       "- риск каннибализации\n\n## Вариант C: закрыть направление\n\n"
-                       "## Драйверы выбранного направления\n\n"
-                       "- **Первый драйвер:** семейный пакет [C002]\n", encoding="utf-8")
+        out.write_text(out.read_text(encoding="utf-8")
+                       + "| Продукт | Удержание M1 | доля активных | 38% (2026-11-01, [C002]) "
+                         "| 45% к 90 дн | ниже 41% → гейт | активация |\n", encoding="utf-8")
         export.build_six_pager(self.pdir, with_calcs=False)
         warns = check.en_sync_warnings(self.pdir)
         self.assertTrue(warns, "дописанный EN без нового источника — предупреждение")

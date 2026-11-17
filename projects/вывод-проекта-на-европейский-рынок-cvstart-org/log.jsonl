@@ -214,3 +214,14 @@
 {"ts": "2026-11-10T00:19:37+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
 {"ts": "2026-11-10T00:19:44+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
 {"ts": "2026-11-10T01:09:14+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md и пакет данных six_pager_pack (PRO-46: каркас со слотами, документы не вставляются)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER_EN.md и пакет данных six_pager_pack (PRO-46: каркас со слотами, документы не вставляются)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-17T07:38:28+03:00", "kind": "action", "msg": "Роудмап: outputs/roadmap-вывод-проекта-на-европейский-рынок-cvstart-org.xlsx (проектов: 4, фич: 15; источник: 04_product_strategy.md)", "tool": "pfs roadmap"}
