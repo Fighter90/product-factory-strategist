@@ -27,7 +27,7 @@ result — pfs, the knowledge base and the site:
 | `product-factory-strategist-base` | **public** | RU/EN knowledge maps, templates, rubrics | `knowledge/` |
 | `product-factory-strategist-site` | public | strategyproduct.ru | `site/` |
 
-- The base is private: access is required (the owner sends invitations, GitHub → Settings → Collaborators).
+- The base is a public repository: it clones without tokens or invitations.
 - Update materials after install: `cd knowledge && git pull`.
 - `pfs doctor` checks for `knowledge/INDEX.md`; install.sh fails with a clear error when
   base access is not granted.
