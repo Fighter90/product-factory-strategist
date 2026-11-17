@@ -28,10 +28,10 @@ Editable-режим: обновления `main` (`git pull`) подхватыв
 | Репозиторий | Доступ | Что подтягивается | Куда |
 |---|---|---|---|
 | `product-factory-strategist-agent` | public | этот код | текущий каталог |
-| `product-factory-strategist-base` | **private** | карты знаний RU/EN, шаблоны, рубрики | `knowledge/` |
+| `product-factory-strategist-base` | **public** | карты знаний RU/EN, шаблоны, рубрики | `knowledge/` |
 | `product-factory-strategist-site` | public | сайт strategyproduct.ru | `site/` |
 
-- База — приватная: нужен доступ (приглашение выдаёт владелец, GitHub → Settings → Collaborators).
+- База — публичный репозиторий: клонируется без токенов и приглашений.
 - Обновление материалов после установки: `cd knowledge && git pull`.
 - `pfs doctor` проверяет наличие `knowledge/INDEX.md`; install.sh сам падает с понятной
   ошибкой, если доступ к базе не выдан.
