@@ -46,6 +46,7 @@ STR: dict[str, dict[str, str]] = {
         "warn_source_404": "Источники-страницы 404/403 («битая» ссылка, тело — страница ошибки, а не контент): "
                            "{ids} — замените живым источником или выпиской "
                            "(pfs source add --text-file <файл> --url <ссылка> --excerpt)",
+        "warn_weak_content": "Источники с пометкой «мало содержательного текста» (навигационная оболочка или текст без предложений): {ids} — проверьте sources/<S###> и при необходимости замените выпиской (pfs source add --text-file --excerpt)",
         "warn_excerpt_only": "{cid}: опирается только на выписки ({sources}) — сила не выше C, перепроверьте "
                              "первоисточник (pfs source refresh <S###>) или добавьте публичный источник",
         "warn_en_sync": "SIX_PAGER_EN.md отстал от RU: нет источников/сносок {tags} — EN-версия пишется агентом "
@@ -250,6 +251,7 @@ STR: dict[str, dict[str, str]] = {
         "warn_source_404": "Sources that returned a 404/403 page (broken link — the body is an error page, not "
                            "content): {ids} — replace with a live source or an excerpt "
                            "(pfs source add --text-file <file> --url <link> --excerpt)",
+        "warn_weak_content": "Sources flagged low-content (nav shell or text without sentences): {ids} — check sources/<S###> and replace with an excerpt if needed (pfs source add --text-file --excerpt)",
         "warn_excerpt_only": "{cid}: rests only on excerpts ({sources}) — strength capped at C; re-verify the "
                              "original (pfs source refresh <S###>) or add a public source",
         "warn_en_sync": "SIX_PAGER_EN.md lags behind RU: missing source footnotes {tags} — the EN six-pager is "

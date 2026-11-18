@@ -236,9 +236,12 @@ def cmd_source(a):
             print(f"⚠ {sources.BROKEN_MARK}: канал вернул тело страницы 404/403 с HTTP 200 — ссылка "
                   "недействительна, текст не является целевым материалом; замените источник живой "
                   "страницей или выпиской (pfs source add --text-file <файл> --url <ссылка>)")
-    elif a.action == "update":  # BUG B-04: метаданные без ручного редактирования jsonl
-        rec = sources.update(pdir, a.target, title=a.title, origin=a.origin, note=a.note)
+    elif a.action == "update":  # BUG B-04: метаданные и текст без ручного редактирования jsonl
+        tf = core.resolve_input(a.text_file, pdir) if getattr(a, "text_file", None) else None
+        rec = sources.update(pdir, a.target, title=a.title, origin=a.origin, note=a.note, text_file=tf)
         print(f"{rec['id']} обновлено: title={rec['title']!r} origin={rec['origin']}")
+        if getattr(a, "text_file", None):
+            print(f"Текст: sources/{rec['id']}.md ({rec.get('chars')} зн.), предыдущий — в sources/raw/")
     elif a.action == "list":
         for s in sources.load(pdir):
             print(f"{s['id']} [{s['origin']}/{s['kind']}] {s['title'][:70]} — {s.get('url') or s.get('path') or ''}")
@@ -722,7 +725,7 @@ def build_parser() -> argparse.ArgumentParser:
                    help='медиа-источники (аудио/видео/скриншоты) — не fetch: pfs media add <файл> --desc "что видно/слышно"')
     s.add_argument("--interview", action="store_true",
                    help='интервью-источники — не fetch: pfs interview save <транскрипт> --persona "…"')
-    s.add_argument("--text-file", help="файл с текстом выписки (путь: каталог проекта → cwd)")
+    s.add_argument("--text-file", help="файл с текстом выписки (путь: каталог проекта → cwd); с update — заменяет содержимое источника")
     s.add_argument("--url"); s.add_argument("--title")
     s.add_argument("--origin", help="public | excerpt (выписка, первоисточник недоступен) | own | interview | synthetic | agent; "
                                     "для fetch по умолчанию: public при прямом успехе, excerpt при фолбэке (reader/архив)")

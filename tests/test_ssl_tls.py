@@ -86,12 +86,17 @@ class SSLContextTests(unittest.TestCase):
 
 class CertHintTests(unittest.TestCase):
     def test_hint_names_pip_certifi_and_macos_command(self):
-        """venv/system-ветка: pip-команда, исполняемый файл; на macOS — команда Диска."""
+        """Подсказка соответствует способу установки (QA C-02): uv tool → uv-команда,
+        venv/system → pip (+ mac-подсказка «Install Certificates.command» на macOS)."""
         hint = extract.cert_fix_hint()
-        self.assertIn("pip install certifi", hint)
-        self.assertIn(sys.executable, hint)
-        if sys.platform == "darwin":
-            self.assertIn("Install Certificates.command", hint)
+        if "/uv/tools/" in sys.executable:
+            self.assertIn("uv tool install --force --with certifi product-factory-strategist", hint)
+            self.assertNotIn("pip install", hint)
+        else:
+            self.assertIn("pip install certifi", hint)
+            self.assertIn(sys.executable, hint)
+            if sys.platform == "darwin":
+                self.assertIn("Install Certificates.command", hint)
 
     def test_hint_uv_tool_branch_names_uv_command(self):
         """uv tool-ветка (QA D3/PRO-82): в окружении без pip — команда uv tool install."""

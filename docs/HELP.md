@@ -147,6 +147,7 @@ pfs source add transcript.md --origin synthetic     # ИИ-респондент:
 pfs source list                    # реестр источников
 pfs source show S003                # карточка источника
 pfs source refresh S003                  # обновить web-источник: дельта sha256 → бэкап старой версии
+Правка источника без редактирования jsonl: `pfs source update S### --title "…" --origin … --note "…" --text-file <новый файл>` — текст заменяется с бэкапом в sources/raw/.
                                          # в raw/<S###>_old_<sha8>.txt → impact по утверждениям на нём;
                                          # прямой ответ первоисточника снимает пометку выписки (PRO-59)
 ```

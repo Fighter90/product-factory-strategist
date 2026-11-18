@@ -146,6 +146,7 @@ pfs source add transcript.md --origin synthetic      # AI respondent: hypotheses
 pfs source list                    # the source registry
 pfs source show S003                # a source card
 pfs source refresh S003                 # refresh a web source: sha256 delta → old version backed up
+Edit a source without touching jsonl: `pfs source update S### --title "…" --origin … --note "…" --text-file <new file>` — text is replaced with a backup in sources/raw/.
                                         # to raw/<S###>_old_<sha8>.txt → impact on claims built on it;
                                         # a direct answer from the original clears the excerpt mark
 ```

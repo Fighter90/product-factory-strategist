@@ -324,6 +324,9 @@ def run(pdir: Path, strict: bool = False, sixpager: bool = False) -> dict:
     broken = [s["id"] for s in srcs.values() if s.get("broken_404") or src_mod.is_404_title(s.get("title"))]
     if broken:
         warnings.append(tr("warn_source_404", ids=", ".join(broken)))
+    weak = [s["id"] for s in srcs.values() if s.get("weak_content")]
+    if weak:  # BUG B-01: навигационная оболочка / мало содержательного текста
+        warnings.append(tr("warn_weak_content", ids=", ".join(weak)))
 
     # 2. Документы
     for name, rules in block.get("documents", {}).items():

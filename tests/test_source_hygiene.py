@@ -114,5 +114,46 @@ class RegistrySanityTests(unittest.TestCase):
                          str(problems))
 
 
+class WeakContentV2Tests(unittest.TestCase):
+    """Вечерний аудит B-01/B-04: меню без предложений, «мало текста», update --text-file."""
+
+    def test_menu_without_sentences_is_weak(self):
+        menu = "\n".join(["Электронный документооборот", "Учет и отчетность", "Проверка контрагентов",
+                          "Тарифы и услуги", "Контакты", "О компании", "Новости", "Поддержка"]
+                         + ["Раздел %d" % i for i in range(8)])
+        self.assertTrue(sources.weak_content(menu))
+
+    def test_low_sentence_text_is_weak(self):
+        body = " - пункт " + "\n - пункт ".join(str(i) for i in range(20))
+        self.assertTrue(sources.weak_content(body))
+
+    def test_real_article_not_weak(self):
+        article = ("Обзор рынка труда. Зарплаты выросли на 12%. ATS-фильтры отсекают большинство откликов. "
+                   "Компании внедряют автоматический скрининг. Кандидаты ищут обходные пути. ") * 10
+        self.assertFalse(sources.weak_content(article))
+
+    def test_check_warns_weak_content(self):
+        pdir = project.create("Weak check", "q", slug="sh-wcheck2")
+        sources.add(pdir, text="короткий пункт без предложений " * 30, title="thin")
+        rows = sources.load(pdir)
+        rows[0]["weak_content"] = True
+        core.write_jsonl(pdir / "sources.jsonl", rows)
+        from tools.pfs import check as _c
+        res = _c.run(pdir)
+        self.assertTrue(any("мало содержательного" in w for w in res["warnings"]), res["warnings"][:3])
+
+    def test_update_replaces_text(self):
+        pdir = project.create("Upd text v2", "q", slug="sh-uptext2")
+        core.set_active(pdir.name)
+        f1 = Path(TMP) / "u1.md"; f1.write_text("первая версия текста источника\n" * 3, encoding="utf-8")
+        run_cli(["source", "add", str(f1)])
+        f2 = Path(TMP) / "u2.md"; f2.write_text("вторая версия: рынок 13,195 млн и конверсия 3,5%\n" * 3, encoding="utf-8")
+        out = run_cli(["source", "update", "S001", "--text-file", str(f2)])
+        self.assertIn("обновлено", out)
+        body = (pdir / "sources" / "S001.md").read_text(encoding="utf-8")
+        self.assertIn("13,195 млн", body)
+        self.assertTrue(list((pdir / "sources" / "raw").glob("S001_old_*.txt")), "нет бэкапа")
+
+
 if __name__ == "__main__":
     unittest.main()

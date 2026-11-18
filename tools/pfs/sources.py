@@ -306,11 +306,18 @@ def weak_content(body: str) -> bool:
     нагрузки нет — сплошные короткие строки-пункты меню. Источник при этом
     регистрируется (решение за агентом), но с пометкой weak_content и предупреждением."""
     lines = [ln.strip() for ln in body.splitlines() if ln.strip()]
-    if len(lines) < 8:
-        return False
-    short = sum(1 for ln in lines if len(ln) < 40)
-    hits = sum(1 for ln in lines if any(m in ln.lower() for m in _NAV_MARKERS))
-    return (short / len(lines) > 0.7 and hits >= 3) or hits >= 12
+    if len(lines) >= 8:
+        short = sum(1 for ln in lines if len(ln) < 40)
+        hits = sum(1 for ln in lines if any(m in ln.lower() for m in _NAV_MARKERS))
+        tiny = sum(1 for ln in lines if len(ln.split()) <= 4)
+        # меню: много коротких строк, половина — пункты из ≤4 слов, есть навигационные маркеры
+        if (short / len(lines) > 0.6 and tiny / len(lines) > 0.5) or hits >= 12:
+            return True
+    # мало содержательного текста: объём заметный, а законченных предложений почти нет
+    stripped = (body or "").strip()
+    if len(stripped) >= 400 and stripped.count(".") + stripped.count("!") + stripped.count("?") < 4:
+        return True
+    return False
 
 
 def _register_web(pdir: Path, *, url: str | None, kind: str, body: str, title: str | None, origin: str,
@@ -574,9 +581,10 @@ def _refresh_text_file(pdir: Path, rec: dict, max_chars: int = 4000) -> dict:
 
 
 def update(pdir: Path, sid: str, *, title: str | None = None, origin: str | None = None,
-           note: str | None = None) -> dict:
-    """BUG B-04: правка метаданных источника без ручного редактирования sources.jsonl.
-    Текст и sha256 не трогаются — обновляются заголовок файла и поля реестра."""
+           note: str | None = None, text_file: Path | None = None) -> dict:
+    """BUG B-04: правка источника без ручного редактирования sources.jsonl.
+    Метаданные — --title/--origin/--note; --text-file заменяет содержимое
+    (старый текст уходит в sources/raw/<sid>_old_<sha8>.txt, sha256/chars пересчитываются)."""
     rec = get(pdir, sid)
     if origin is not None and origin not in ORIGINS:
         raise PfsError(f"origin: {', '.join(ORIGINS)}")
@@ -590,8 +598,24 @@ def update(pdir: Path, sid: str, *, title: str | None = None, origin: str | None
     if note is not None:
         rec["note"] = note
         changed.append("note")
+    if text_file is not None:
+        if not Path(text_file).exists():
+            raise PfsError(f"--text-file: файл не найден: {text_file}")
+        body = Path(text_file).read_text(encoding="utf-8")
+        new_digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
+        path = pdir / "sources" / f"{sid}.md"
+        old_text = path.read_text(encoding="utf-8") if path.exists() else ""
+        if new_digest != rec.get("sha256"):
+            core.atomic_write(pdir / "sources" / "raw" / f"{sid}_old_{rec['sha256'][:8]}.txt", old_text)
+            flags = scan_injection(body)
+            rec.update({"sha256": new_digest, "chars": len(body), "retrieved": core.now(),
+                        "injection_flags": flags})
+            core.atomic_write(path, _source_md(rec, body, flags))
+            changed.append("text")
+        else:
+            changed.append("text (без изменений)")
     if not changed:
-        raise PfsError("нечего обновлять: укажите --title / --origin / --note")
+        raise PfsError("нечего обновлять: укажите --title / --origin / --note / --text-file")
     path = pdir / "sources" / f"{sid}.md"
     if path.exists():
         old = path.read_text(encoding="utf-8")
