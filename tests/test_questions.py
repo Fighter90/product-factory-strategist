@@ -26,7 +26,7 @@ class QuestionsTests(unittest.TestCase):
     def test_step_prints_blocks_and_hint(self):
         out = run(["questions", "options"])
         self.assertIn("options-criteria", out)
-        self.assertIn("Задать руководителю", out)
+        self.assertTrue("Задать руководителю" in out or "Ask the lead" in out)  # подсказка на языке активного проекта (D6)
 
     def test_no_block_prints_overview(self):
         out = run(["questions"])

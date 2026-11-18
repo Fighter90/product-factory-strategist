@@ -32,7 +32,7 @@ class QuestionsCliTests(unittest.TestCase):
         self.assertIn("Зачем:", out)
         for block_id in ("intake-success", "intake-constraints"):
             self.assertIn(block_id, out)
-        self.assertIn("Задать руководителю: pfs ask", out)
+        self.assertTrue("Задать руководителю: pfs ask" in out or "Ask the lead: pfs ask" in out)  # D6: язык проекта
 
     def test_block_found_by_id_from_any_stage(self):
         out = run(["questions", "strategy-promise"])
