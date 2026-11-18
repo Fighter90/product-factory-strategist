@@ -36,7 +36,7 @@ pfs --help
 > | Репозиторий | Доступ | Что подтягивается | Куда |
 > |---|---|---|---|
 > | [product-factory-strategist-agent](https://github.com/Fighter90/product-factory-strategist-agent) | public | этот код | текущий каталог |
-> | [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base) | **pubvate** (нужен доступ) | карты знаний RU/EN, шаблоны, рубрики | `knowledge/` |
+> | [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base) | **public** | карты знаний RU/EN, шаблоны, рубрики | `knowledge/` |
 > | [product-factory-strategist-site](https://github.com/Fighter90/product-factory-strategist-site) | public | сайт strategyproduct.ru | `site/` |
 >
 > Детали, PEP 668, обновление, удаление, тестирование и troubleshooting — [docs/INSTALL.md](docs/INSTALL.md).

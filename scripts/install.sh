@@ -2,7 +2,7 @@
 # Установка Strategist CLI (pfs): подтягивает все три репозитория проекта
 # и ставит pfs как глобальную команду. Всё автоматически, с проверкой.
 #
-#   1. materials (приватный) → knowledge/   карты знаний, шаблоны, рубрики
+#   1. база знаний (публичная) → knowledge/   карты знаний, шаблоны, рубрики
 #   2. site (публичный)      → site/        стратегproduct.ru — локальная копия
 #   3. этот репозиторий (код) → pfs (uv tool install -e . или venv + symlink)
 #   4. проверка: pfs doctor + наличие INDEX.md/index.html
@@ -19,16 +19,16 @@ step() { printf "\n→ %s\n" "$*"; }
 ok()   { printf "✓ %s\n" "$*"; }
 fail() { printf "✗ ОШИБКА: %s\n" "$*" >&2; exit 1; }
 
-# ---------- 1. Материалы агента (приватный репозиторий) ----------
-step "1/4 Материалы агента: product-factory-strategist-base (приватный)"
+# ---------- 1. База знаний (публичный репозиторий) ----------
+step "1/4 База знаний: product-factory-strategist-base (публичная)"
 if [ -f knowledge/INDEX.md ]; then
   ok "knowledge/ уже на месте (обновить: cd knowledge && git pull)"
 else
   git clone --depth 1 "$BASE_REPO" knowledge 2>&1 | grep -v "^Cloning" || true
-  [ -f knowledge/INDEX.md ] || fail "база не подтянулась. Нужен доступ к приватному
-репозиторию product-factory-strategist-base — приглашение выдаёт владелец
-(GitHub → репозиторий → Settings → Collaborators)."
-  ok "knowledge/ подтянута (100 карт RU + 100 EN, шаблоны, рубрики)"
+  [ -f knowledge/INDEX.md ] || fail "база не подтянулась. Проверьте сеть и доступ к github.com:
+репозиторий product-factory-strategist-base публичный
+(git clone https://github.com/Fighter90/product-factory-strategist-base.git)."
+  ok "knowledge/ подтянута (111 карт RU + 111 EN, шаблоны, рубрики)"
 fi
 
 # ---------- 2. Сайт (публичный репозиторий) ----------
@@ -46,6 +46,7 @@ step "3/4 Установка pfs"
 if command -v uv >/dev/null 2>&1; then
   echo "→ uv tool install -e . (editable: обновления main подхватываются сами)"
   uv tool install -e . --force
+  case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) echo "⚠ добавьте в PATH: export PATH=\"\$HOME/.local/bin:\$PATH\"";; esac
 elif command -v python3 >/dev/null 2>&1; then
   echo "→ uv не найден: venv ~/.pfs-venv + symlink в ~/.local/bin"
   python3 -m venv ~/.pfs-venv
@@ -59,6 +60,8 @@ else
 fi
 
 # ---------- 4. Проверка установки ----------
+# bin-каталог (~/.local/bin) свежей установки — в PATH текущего сеанса
+export PATH="$HOME/.local/bin:$PATH"
 step "4/4 Проверка"
 FAILS=0
 command -v pfs >/dev/null 2>&1 && ok "pfs — глобальная команда" || { echo "✗ pfs не в PATH"; FAILS=1; }
