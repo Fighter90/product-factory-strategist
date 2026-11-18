@@ -394,7 +394,7 @@ AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject
 .claude/settings.json
 .cursor/rules/       .github/ (CI: тесты + doctor + kb lint) · .gitlab-ci.yml · .mcp.json (pfs · linear · lovable · rea · producthunt)
 config/              models.json · pricing.json · quality_gate.json · question_blocks.json
-.github/              Pages workflow удалён вместе с site/; CI подтягивает материалы из приватного репозитория
+.github/              Pages workflow удалён вместе с site/; CI подтягивает материалы из публичного репозитория (проверяется kb lint)
 tools/pfs/           core · project · route · sources · claims · check · impact · decisions ·
                      data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl · log.jsonl · costs.json ·
