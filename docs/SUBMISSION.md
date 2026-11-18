@@ -124,6 +124,8 @@ MRR $1 537; воспроизводится скриптом `analysis/gen_synthe
 
 - **RU:** [video/product-factory-strategist-RU.mp4](../video/product-factory-strategist-RU.mp4) — 10 сцен сценария VIDEO_SCRIPT.md: запрос → работа агента (12 шагов) → варианты и red team → стратегии и гейт → six-pager → продолжение после перерыва → финишный пакет. Озвучка и субтитры.
 - **EN:** [video/product-factory-strategist-EN.mp4](../video/product-factory-strategist-EN.mp4) — то же на английском.
+- **Демо-проект CVStart (RU):** [video/product-factory-strategist-DEMO-RU.mp4](../video/product-factory-strategist-DEMO-RU.mp4) — функционал демо: источники, реестр 20 утверждений, варианты A–E и red team, экономика (ARPU $29 → LTV ≈ $271,88), план проверки, решение D001, финишный пакет.
+- **Demo project (EN):** [video/product-factory-strategist-DEMO-EN.mp4](../video/product-factory-strategist-DEMO-EN.mp4) — the same walkthrough in English.
 
 ## 8. Время и расходы
 

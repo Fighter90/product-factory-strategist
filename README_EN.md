@@ -18,6 +18,7 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 ---
 
 > 🎬 Agent demo (10 scenario steps, voice-over and subtitles): [video/product-factory-strategist-EN.mp4](video/product-factory-strategist-EN.mp4)
+> 📺 Демо-проект CVStart (коммерциализация, реестр доказательств, решение): [DEMO-RU.mp4](video/product-factory-strategist-DEMO-RU.mp4) · [DEMO-EN.mp4](video/product-factory-strategist-DEMO-EN.mp4)
 
 ## Quick start (5 minutes)
 
