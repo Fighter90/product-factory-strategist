@@ -46,7 +46,7 @@ Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INST
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 874 tests
+python3 -m unittest discover -s tests          # 886 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -327,7 +327,7 @@ consent and no personal data · the validator refuses a fact based on synthetic/
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
   skills/ (101: base 13 · product-skills 27 · personal library · integrations)
-  agents/ (8) · hooks/ (6: + pre_guard) · settings.json · opencode.json (permissions)
+  agents/ (10) · hooks/ (6: + pre_guard) · settings.json · opencode.json (permissions)
 .cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea · producthunt)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions
@@ -337,5 +337,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/               (874) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/               (886) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```

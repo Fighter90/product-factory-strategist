@@ -65,7 +65,7 @@ pfs check --six-pager           # step 2: the committee-document linter; loop "f
 
 ```bash
 pfs finish    # REPORT, six-pager RU/EN (md/docx), 4 Excel workbooks, deck
-ls projects/*/outputs/   # target: 12+ artifacts
+ls projects/*/outputs/   # target: 11 finish artifacts (+ data pack and JSON registries — 18 files)
 ```
 
 ✅ criterion: REPORT.md, SIX_PAGER.md/.docx, SIX_PAGER_EN.md/.docx, 4 Excel workbooks, deck.html — all present.
@@ -84,7 +84,7 @@ Run each command from the cheat sheet (README, HELP) — one line at a time:
 
 ```bash
 pfs models && pfs kb search "test"
-pfs data profile events.csv 2>/dev/null || true
+pfs data profile events.csv 2>/dev/null || true   # CSV/XLSX; a non-tabular file gives a clear error, not a Traceback
 pfs interview guide --persona "Student"
 pfs media add shot.png --desc "test" 2>/dev/null || true
 pfs ab --hypothesis "Hypothesis [C001]" --metric "conversion"

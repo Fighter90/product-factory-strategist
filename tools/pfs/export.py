@@ -119,13 +119,13 @@ def build(pdir: Path) -> Path:
             note = tr("report_sixpager_note", spec=i18n.SIX_PAGER_SPEC[lang]) if p.name == "SIX_PAGER.md" else ""
             parts += [note + body.replace("\n# ", "\n## ") if not body.startswith("# ") else "#" + body, "", "---", ""]
     active = [c for c in claims_mod.load(pdir)]
-    parts += [tr("appx_a_claims"), "", claims_mod.table(active), ""]
+    parts += [tr("appx_a_claims"), "", claims_mod.table(active, lang), ""]
     parts += [tr("appx_b_sources"), "", tr("appx_sources_header"), "|---|---|---|---|---|"]
     for s in src_mod.load(pdir):
         parts.append(f"| {s['id']} | {s['title'].replace('|', '/')} | {s.get('url') or s.get('path') or '—'} | {s['origin']} | {s['retrieved'][:10]} |")
     decs = decisions.load(pdir)
     if decs:
-        parts += ["", tr("appx_c_decisions"), "", decisions.table(decs)]
+        parts += ["", tr("appx_c_decisions"), "", decisions.table(decs, lang)]
     qc = check.run(pdir)
     parts += ["", tr("appx_d_transparency"), "", "```", cost.summary_text(pdir, lang),
               check.report_text(qc, lang), "```"]
@@ -256,13 +256,14 @@ def build_six_pager_pack(pdir: Path) -> dict:
         "decisions": decisions.load(pdir),
     }
     core.atomic_write(pdir / "outputs" / "six_pager_pack.json", _json(pack))
-    core.atomic_write(pdir / "outputs" / "six_pager_pack.md", _pack_md(pack))
+    core.atomic_write(pdir / "outputs" / "six_pager_pack.md", _pack_md(pack, i18n.lang_of(pdir)))
     return pack
 
 
-def _pack_md(pack: dict) -> str:
+def _pack_md(pack: dict, lang: str = "ru") -> str:
     """Читаемая версия пакета данных: те же разделы, таблицы утверждений/источников/KPI.
     Это рабочий вход писателя, не документ комитета — в REPORT.md не попадает."""
+    tr = lambda key, **kw: i18n.t(lang, key, **kw)
     p = [f"# Пакет данных six-pager — {pack['meta'].get('title')}", "",
          f"> Собран {pack['meta']['generated'][:16]}. Единственный вход текста six-pager-writer: "
          "пишите по слотам `outputs/SIX_PAGER.md` из этого пакета по спецификации "
@@ -274,12 +275,12 @@ def _pack_md(pack: dict) -> str:
         p += [f"### {s['title']}", "", s["text"], ""]
     if pack["situation"].get("user_barrier"):
         p += [f"Барьер пользователя (JTBD): {pack['situation']['user_barrier']}", ""]
-    p += ["## Утверждения (сила A–D)", "",
-          "| ID | Тип | Сила | Утверждение | Источники |", "|---|---|---|---|---|"]
+    p += [tr("pack_claims_title"), "",
+          tr("pack_claims_header"), "|---|---|---|---|---|"]
     p += [f"| {c['id']} | {c['kind']} | {c.get('grade') or '—'} | {c['text'].replace('|', '/')} "
           f"| {', '.join(c['sources']) or '—'} |" for c in pack["claims"]] or ["—"]
-    p += ["", "## Источники", "",
-          "| ID | Название | Где | Происхождение | Дата |", "|---|---|---|---|---|"]
+    p += ["", tr("pack_sources_title"), "",
+          tr("pack_sources_header"), "|---|---|---|---|---|"]
     p += [f"| {s['id']} | {s['title'].replace('|', '/')} | {s['link'] or '—'} "
           f"| {s['origin']} | {s['date'] or '—'} |" for s in pack["sources"]] or ["—"]
     p += ["", "## Расчёты (calcs)", ""]

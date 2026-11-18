@@ -70,8 +70,20 @@ def counts():
     integr = len([s for s in INTEGRATIONS if s in loaded])
     total = len(loaded)
     personal = total - base - product - integr
+    agents = len(list((ROOT / ".claude" / "agents").glob("*.md")))
+    hooks = len([p for p in (ROOT / ".claude" / "hooks").iterdir()
+                 if p.is_file() and p.suffix == ".py"])
+    maps_ru = maps_en = None
+    m_ru, m_en = ROOT / "knowledge" / "methods", ROOT / "knowledge" / "methods_en"
+    if m_ru.is_dir():
+        maps_ru = len([p for p in m_ru.glob("*.md") if not p.name.startswith("INDEX")])
+    if m_en.is_dir():
+        maps_en = len([p for p in m_en.glob("*.md") if not p.name.startswith("INDEX")])
+    demo_sources = len([p for p in (ROOT / "projects" / "демо" / "sources").glob("S*.md")])
     return {"total": total, "base": base, "product": product,
-            "personal": personal, "integrations": integr, "tests": count_tests()}
+            "personal": personal, "integrations": integr, "tests": count_tests(),
+            "agents": agents, "hooks": hooks,
+            "maps_ru": maps_ru, "maps_en": maps_en, "demo_sources": demo_sources}
 
 
 def ru_plural(n, one, few, many):
@@ -151,6 +163,35 @@ def build_rules(c):
     add(r"(discover -s tests\s+# )(\d+)( тест(?:а|ов)?)",
         lambda m: f"{m.group(1)}{T} {ru_plural(T, 'тест', 'теста', 'тестов')}")
     add(r"(discover -s tests\s+# )(\d+)( tests)", lambda m: f"{m.group(1)}{T}{m.group(3)}")
+
+    # --- субагенты и хуки (QA D7): README, COMPLIANCE, SUBMISSION ---
+    A, H = c["agents"], c["hooks"]
+    add(r"(?<![\w.])(\d+)( субагент(?:а|ов)?)",
+        lambda m: f"{A}{m.group(2)}")
+    add(r"(`\.claude/agents/` \()(\d+)(\))", lambda m: f"{m.group(1)}{A}{m.group(3)}")
+    add(r"(\.claude/agents/ +\()(\d+)(\))", lambda m: f"{m.group(1)}{A}{m.group(3)}")
+    add(r"(agents/ \()(\d+)(\))", lambda m: f"{m.group(1)}{A}{m.group(3)}")
+    add(r"(, )(\d+)( хуков)", lambda m: f"{m.group(1)}{H}{m.group(3)}")
+    add(r"( / )(\d+)( хуков)", lambda m: f"{m.group(1)}{H}{m.group(3)}")
+    add(r"(`\.claude/hooks/` \()(\d+)(\))", lambda m: f"{m.group(1)}{H}{m.group(3)}")
+    add(r"(hooks/ \()(\d+)(:)", lambda m: f"{m.group(1)}{H}{m.group(3)}")
+
+    # --- карты базы знаний (QA D12-семейство): только когда knowledge/ на месте ---
+    MR, ME = c.get("maps_ru"), c.get("maps_en")
+    if MR and ME:
+        add(r"(\d+ карт \(RU\) \+ )(\d+)( EN-зеркал)",
+            lambda m: f"{MR} карт (RU) + {ME}{m.group(3)}")
+        add(r"(\d+ карт RU \+ )(\d+)( EN)", lambda m: f"{MR} карт RU + {ME}{m.group(3)}")
+
+    # --- источники демо-прогона (QA D8): COMPLIANCE/SUBMISSION ---
+    DS = c["demo_sources"]
+    if DS:
+        add(r"(\d+ шагов · )(\d+)( источников S001)",
+            lambda m: f"{m.group(1)}{DS}{m.group(3)}")
+        add(r"(\| Источники / утверждения \| )(\d+)( источников \(S001)",
+            lambda m: f"{m.group(1)}{DS}{m.group(3)}")
+        add(r"^(\d+)( источников \(S001–S01\d)(, из них|\):)",
+            lambda m: f"{DS}{m.group(2)}{m.group(3)}")
     return rules
 
 

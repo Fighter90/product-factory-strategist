@@ -145,5 +145,32 @@ class FetchRetryTests(unittest.TestCase):
         self.assertEqual(len(calls), 1)  # 403 не повторяем
 
 
+class ReadTableGuardTests(unittest.TestCase):
+    """QA D13: нетабулярный вход — понятная ошибка, а не Traceback _csv.Error."""
+
+    def test_non_tabular_ru_clear_error(self):
+        f = Path(TMP) / "notes.md"
+        f.write_text("# Заголовок\n\n- пункт один\n- пункт два\n", encoding="utf-8")
+        with self.assertRaises(PfsError) as cm:
+            data.read_table(f)
+        self.assertIn("не табличный", str(cm.exception))
+        self.assertIn("CSV/XLSX", str(cm.exception))
+        self.assertIn("notes.md", str(cm.exception))
+
+    def test_non_tabular_en_message(self):
+        f = Path(TMP) / "notes.md"
+        f.write_text("# Header\n\n- item one\n- item two\n", encoding="utf-8")
+        with self.assertRaises(PfsError) as cm:
+            data.read_table(f, lang="en")
+        self.assertIn("Not a tabular file", str(cm.exception))
+        self.assertIn("CSV/XLSX", str(cm.exception))
+
+    def test_csv_still_reads(self):
+        f = Path(TMP) / "ok.csv"
+        f.write_text("a,b\n1,2\n", encoding="utf-8")
+        rows = data.read_table(f)
+        self.assertEqual(rows, [{"a": "1", "b": "2"}])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -14,52 +14,76 @@ from . import core, models
 SCENARIOS = {
     "retention": {
         "title": "Падает удержание / растёт отток",
+        "title_en": "Retention drops / churn grows",
         "keywords": ["удержан", "отток", "churn", "retention", "уходят", "отписыва", "возвращаемост", "когорт", "продлен", "подписчик", "не продлева", "cancel", "retain", "churned", "loyalty"],
         "cards": ["M-product-metrics", "M-success-metrics", "M-problem-design", "M-jtbd", "M-cjm", "M-in-depth-interviews",
                   "M-quant-methods", "M-unit-economics", "M-goals-drivers-bets"],
         "decision_questions": ["Где в пути пользователя теряется ценность (когорты, шаги воронки)?",
                                "Это продукт, цена, конкуренты или внешний фактор?",
                                "Какие сегменты уходят, а какие остаются, и чем они отличаются?"],
+        "decision_questions_en": ["Where in the user journey is value lost (cohorts, funnel steps)?",
+                               "Is it the product, the price, competitors, or an external factor?",
+                               "Which segments leave, which stay, and how do they differ?"],
     },
     "go_to_market": {
         "title": "Кому и как продавать новый сервис",
+        "title_en": "Who to sell the new service to, and how",
         "keywords": ["кому продавать", "запуск", "вывод на рынок", "go-to-market", "gtm", "сегмент", "целев", "новый сервис",
                      "аудитори", "канал продаж", "пилот", "продавать", "launch", "to market", "introduce", "вывод на рынок", "вывод продукта", "запуск продукта"],
         "cards": ["M-customers", "M-audience-research", "M-market-sizing", "M-competitors", "M-jtbd", "M-business-models",
                   "M-mvp-pilots", "M-monetization", "M-growth-frameworks"],
         "decision_questions": ["Какой сегмент имеет самую острую задачу и доступен через наши каналы?",
                                "Каков реалистичный SOM, а не TAM?", "Чем нас заменяют сейчас (альтернативы по JTBD)?"],
+        "decision_questions_en": ["Which segment has the sharpest job and is reachable through our channels?",
+                               "What is the realistic SOM, rather than TAM?",
+                               "What replaces us today (JTBD alternatives)?"],
     },
     "messaging": {
         "title": "Что сказать аудитории, чтобы она поняла ценность",
+        "title_en": "What to tell the audience so it understands the value",
         "keywords": ["сообщени", "коммуникац", "позиционир", "ценност", "понял", "донести", "месседж", "usp", "утп", "бренд", "реклам", "что сказать", "объяснить", "не понимают", "messaging", "positioning", "communication", "say to"],
         "cards": ["M-usp", "M-product-communication", "M-jtbd", "M-audience-research", "M-marketing-research",
                   "M-competitors", "M-cjm", "M-loyalty-metrics"],
         "decision_questions": ["Какой барьер мешает: непонимание, недоверие, цена, привычка?",
                                "Какое обещание продукт реально выполняет (подтверждения)?",
                                "В какой ситуации человек принимает решение и через какой канал?"],
+        "decision_questions_en": ["Which barrier is at work: confusion, distrust, price, habit?",
+                               "Which promise does the product actually keep (with proof)?",
+                               "In which situation does the person decide, and through which channel?"],
     },
     "monetization": {
         "title": "Цена, тарифы, модель монетизации",
+        "title_en": "Price, plans, monetization model",
         "keywords": ["цена", "тариф", "монетиз", "подписк", "платн", "бесплатн", "arpu", "ltv", "выручк", "pricing", "monetization", "monetize", "price", "revenue model"],
         "cards": ["M-monetization", "M-unit-economics", "M-traction-model", "M-benchmarking", "M-competitors", "M-quant-methods"],
         "decision_questions": ["Какая value metric связана с ценностью для клиента?", "Сойдётся ли юнит-экономика (LTV/CAC)?",
                                "Что произойдёт с каннибализацией и оттоком?"],
+        "decision_questions_en": ["Which value metric is tied to customer value?",
+                               "Will the unit economics hold (LTV/CAC)?",
+                               "What happens to cannibalization and churn?"],
     },
     "growth": {
         "title": "Продукт не растёт / стратегия роста",
+        "title_en": "Product is not growing / growth strategy",
         "keywords": ["не растёт", "не растет", "рост", "стратеги", "драйвер", "north star", "nsm", "масштаб", "okr", "роадмап", "growth", "scale"],
         "cards": ["M-strategy-growth", "M-success-metrics", "M-goals-drivers-bets", "M-growth-frameworks", "M-external-environment",
                   "M-competitors", "M-outcome-roadmap", "M-risks", "M-pmf-scaling"],
         "decision_questions": ["Какой драйвер роста даёт наибольший вклад в NSM?", "Есть ли PMF в ключевом сегменте?",
                                "Какие внешние факторы меняют потолок рынка?"],
+        "decision_questions_en": ["Which growth driver contributes most to the NSM?",
+                               "Is there PMF in the key segment?",
+                               "Which external factors move the market ceiling?"],
     },
     "keep_or_kill": {
         "title": "Развивать, оставить или закрыть направление",
+        "title_en": "Grow, keep, or shut the direction down",
         "keywords": ["закрыть", "свернуть", "оставить", "продолжать ли", "окупает", "убыточ", "kill", "сократить", "keep or kill", "shut down", "sunset", "kill the"],
         "cards": ["M-unit-economics", "M-traction-model", "M-pmf-scaling", "M-risks", "M-strategy-growth", "M-decision-daci"],
         "decision_questions": ["Какой вклад направления в выручку/удержание ядра (включая косвенный)?",
                                "Что потеряем при закрытии и как это измерить?", "Какие условия сделали бы продолжение оправданным?"],
+        "decision_questions_en": ["What is the direction's contribution to core revenue/retention (including indirect)?",
+                               "What do we lose by shutting it down, and how do we measure that?",
+                               "What conditions would justify continuing?"],
     },
 }
 
@@ -105,21 +129,28 @@ def route(request: str, override: str | None = None, economy: bool = False, pdir
         plan.append({"step": step, "task": task, "model": m["model"], "effort": m["effort"]})
     res = {"scenario": primary, "title": SCENARIOS[primary]["title"], "confidence": confidence,
            "secondary": secondary, "cards": cards, "decision_questions": SCENARIOS[primary]["decision_questions"],
+           "title_en": SCENARIOS[primary]["title_en"],
+           "decision_questions_en": SCENARIOS[primary]["decision_questions_en"],
            "model_plan": plan}
     if pdir:
         core.log(pdir, "route", f"Сценарий: {primary} ({confidence}); доп.: {', '.join(secondary) or '—'}")
     return res
 
 
-def route_text(res: dict) -> str:
-    out = [f"Сценарий: {res['scenario']} — {res['title']} (уверенность: {res['confidence']})"]
+def route_text(res: dict, lang: str = "ru") -> str:
+    from . import i18n  # локальный импорт: i18n не зависит от route
+
+    en = lang == "en"
+    title = res.get("title_en") if en else res["title"]
+    questions = res.get("decision_questions_en") if en else res["decision_questions"]
+    out = [i18n.t(lang, "route_scenario", scenario=res["scenario"], title=title, confidence=res["confidence"])]
     if res["secondary"]:
-        out.append(f"Смежные сценарии: {', '.join(res['secondary'])}")
+        out.append(i18n.t(lang, "route_secondary", secondary=", ".join(res["secondary"])))
     if res["confidence"] == "low":
-        out.append("⚠ Низкая уверенность: задайте руководителю уточняющий вопрос о цели или исправьте: --override <сценарий>")
-    out.append("Методические карты (читать в этом порядке): " + ", ".join(res["cards"]))
-    out.append("Вопросы, которые могут изменить решение:")
-    out += [f"  - {q}" for q in res["decision_questions"]]
-    out.append("План моделей по шагам:")
+        out.append(i18n.t(lang, "route_low_conf"))
+    out.append(i18n.t(lang, "route_cards", cards=", ".join(res["cards"])))
+    out.append(i18n.t(lang, "route_questions"))
+    out += [f"  - {q}" for q in questions]
+    out.append(i18n.t(lang, "route_models"))
     out += [f"  {p['step']:<20} {p['model']:<20} effort={p['effort']}" for p in res["model_plan"]]
     return "\n".join(out)

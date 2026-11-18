@@ -14,7 +14,7 @@ from .core import PfsError
 DATE_FORMATS = ("%Y-%m-%d", "%d.%m.%Y", "%Y-%m", "%Y/%m/%d", "%d/%m/%Y", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S")
 
 
-def read_table(path: Path, sheet: str | None = None) -> list[dict]:
+def read_table(path: Path, sheet: str | None = None, lang: str | None = None) -> list[dict]:
     if not path.exists():
         raise PfsError(f"Файл не найден: {path} — укажите CSV/XLSX с данными "
                        "(пример: pfs data profile events.csv --save profile)")
@@ -26,7 +26,11 @@ def read_table(path: Path, sheet: str | None = None) -> list[dict]:
         head = [h or f"col{i}" for i, h in enumerate(rows[0])]
         return [dict(zip(head, r + [""] * (len(head) - len(r)))) for r in rows[1:]]
     raw = path.read_text(encoding="utf-8-sig", errors="replace")
-    dialect = csv.Sniffer().sniff(raw[:4096], delimiters=",;\t")
+    try:
+        dialect = csv.Sniffer().sniff(raw[:4096], delimiters=",;\t")
+    except csv.Error as exc:  # QA D13: нетабулярный вход (например .md) — понятная ошибка вместо Traceback
+        from . import i18n
+        raise PfsError(i18n.t(lang or "ru", "err_not_tabular", path=path, exc=exc))
     return list(csv.DictReader(io.StringIO(raw), dialect=dialect))
 
 

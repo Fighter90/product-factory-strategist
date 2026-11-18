@@ -189,5 +189,64 @@ class I18nModuleTests(unittest.TestCase):
         self.assertEqual(i18n.active_lang(), "en")
 
 
+class EnCliMessagesTests(unittest.TestCase):
+    """QA D6: route/source/claim/ask/answer/decision/roadmap в EN-проекте — по-английски."""
+
+    def test_en_route_texts(self):
+        project.create("EN route msg", "NSM flat, growth stalled. Which driver?", slug="il-rt", lang="en")
+        core.set_active("il-rt")
+        out = run_cli(["route", "growth"])
+        self.assertIn("Scenario: growth", out)
+        self.assertIn("confidence:", out)
+        self.assertIn("Method maps (read in this order):", out)
+        self.assertIn("Questions that could change the decision:", out)
+        self.assertIn("Model plan by step:", out)
+        self.assertNotIn("уверенность", out)
+        self.assertNotIn("Методические карты", out)
+
+    def test_ru_route_unchanged(self):
+        project.create("RU route msg", "рост", slug="il-rt-ru")
+        core.set_active("il-rt-ru")
+        out = run_cli(["route", "рост"])
+        self.assertIn("Сценарий: growth", out)
+        self.assertIn("(уверенность:", out)
+        self.assertIn("Методические карты (читать в этом порядке):", out)
+
+    def test_en_claim_ask_answer_decision(self):
+        project.create("EN claim msg", "q", slug="il-cl", lang="en")
+        core.set_active("il-cl")
+        out = run_cli(["claim", "add", "Keyword match improves pass rate", "--kind", "hypothesis"])
+        self.assertIn("recorded", out)
+        self.assertIn("hypothesis", out)
+        out = run_cli(["ask", "Which option?", "--options", "A,B"])
+        self.assertIn("Question saved", out)
+        out = run_cli(["answer", "B"])
+        self.assertIn("Answer saved", out)
+        out = run_cli(["decision", "add", "--title", "T", "--decision", "D", "--owner", "PM"])
+        self.assertIn("saved", out)
+        self.assertNotIn("записано", out)
+
+    def test_en_source_add_message(self):
+        project.create("EN source msg", "q", slug="il-src", lang="en")
+        core.set_active("il-src")
+        src = Path(TMP) / "en-src.md"
+        src.write_text("# data\n\n- 75% of resumes are filtered out\n", encoding="utf-8")
+        out = run_cli(["source", "add", str(src)])
+        self.assertIn("Added: S001", out)
+        out = run_cli(["source", "add", str(src)])
+        self.assertIn("Already registered (duplicate skipped)", out)
+
+    def test_ru_claim_ask_unchanged(self):
+        project.create("RU claim msg", "q", slug="il-cl-ru")
+        core.set_active("il-cl-ru")
+        out = run_cli(["claim", "add", "проверка", "--kind", "hypothesis"])
+        self.assertIn("[гипотеза] записано", out)
+        out = run_cli(["ask", "Вопрос?", "--options", "A,B"])
+        self.assertIn("Вопрос записан", out)
+        run_cli(["answer", "A"])
+        out = run_cli(["decision", "add", "--title", "Т", "--decision", "Р", "--owner", "PM"])
+        self.assertIn("записано", out)
+
+
 if __name__ == "__main__":
     unittest.main()

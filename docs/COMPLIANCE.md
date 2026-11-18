@@ -7,7 +7,7 @@
 
 | Счётчик | Значение | Проверка |
 |---|---|---|
-| Тесты | 874 (`OK`) | `python3 -m unittest discover -s tests` |
+| Тесты | 886 (`OK`) | `python3 -m unittest discover -s tests` |
 | Карты знаний | 111 RU (`knowledge/methods/`) + 111 EN-зеркал — полная двуязычная база (`knowledge/methods_en/`) + `knowledge/INDEX_EN.md` | `ls knowledge/methods \| wc -l` → 111; `ls knowledge/methods_en \| wc -l` → 111 |
 | Навыки | 101 | `ls .claude/skills \| wc -l` → 101 |
 | Субагенты | 10 | `ls .claude/agents \| wc -l` → 10 (PRO-46: +six-pager-writer) |
@@ -46,7 +46,7 @@
 | Поддержка решений | `pfs decision add/due/done/status/rebase`: основания C###, ответственный, метрика «X→Y @дата», обязательства | демо: D001 — `projects/демо/decisions.jsonl` (1 запись), `pfs decision due` |
 | Пересмотр при новых данных | `pfs claim supersede/retract/rebase` + `pfs impact` (источник → утверждение → вывод → строка → решение); `check` ловит ссылки на отозванное | `python3 -m tools.pfs --project демо impact C016` |
 | Маршрутизация сценариев и моделей | `pfs route` (сценарий → карты → план моделей), `config/models.json` (fast/balanced/deep, эскалация, `--economy`) | `python3 -m tools.pfs route "запрос"` |
-| Навыки / хуки / субагенты | `.claude/skills/` (101), `.claude/hooks/` (4 события + `_common.py`), `.claude/agents/` (8) | `ls`-команды из шапки файла |
+| Навыки / хуки / субагенты | `.claude/skills/` (101), `.claude/hooks/` (6), `.claude/agents/` (10) | `ls`-команды из шапки файла |
 | MCP + CLI | CLI `python3 -m tools.pfs` (25+ подкоманд); MCP `tools/pfs/mcp_server.py` — 18 инструментов (stdio JSON-RPC) | `python3 -m tools.pfs --help`; `.mcp.json` → pfs-strategist |
 | База знаний с поиском | 111 карт RU + 111 EN-зеркал — полная двуязычная база + `INDEX_EN.md`; BM25 с русским стеммингом (`pfs kb search`), связи `related` проверяет `pfs kb index` | `python3 -m tools.pfs doctor` — число карт |
 | Excel-приложения на формулах | `pfs calc all` → 4 книги (лист «Ввод» + формулы, пересчёт при открытии) | `projects/демо/outputs/attachments/` — 4 файла xlsx |
@@ -77,7 +77,7 @@ PDF/DOCX, cover letters, трекер, карта вакансий; 100% лок�
   при activation < 35%; контр-метрики: звёзды GitHub, GDPR-жалобы, NPS ≥ 30, инференс free ≤ $200/мес.
 - **Решение D001** (`decisions.jsonl`): бета в 3 EN-гео к 2026-12-15; пересмотр 2027-02-10; основания
   C019/C013/C014/C016/C005/C006.
-- **Счётчики прогона:** 12 шагов · 10 источников S001–S011 · 20 утверждений C001–C020 (12 фактов, 4 гипотезы,
+- **Счётчики прогона:** 12 шагов · 11 источников S001–S012 (S003 замещена) · 20 утверждений C001–C020 (12 фактов, 4 гипотезы,
   4 допущения) · 5 вариантов · 20 ударов red team · 4 книги Excel · `check --strict` 100/100 · решение D001.
 - **Синтетика помечена** `origin=synthetic` (S008–S010) — гипотезы и метод, не факты; инструмент не даёт
   записать на неё факт.
@@ -88,7 +88,7 @@ PDF/DOCX, cover letters, трекер, карта вакансий; 100% лок�
 ## 4. Как проверить
 
 ```bash
-# 1. Тесты инструментов (874, без установки пакетов)
+# 1. Тесты инструментов (886, без установки пакетов)
 python3 -m unittest discover -s tests
 
 # 2. Quality gate демо-проекта (100/100)

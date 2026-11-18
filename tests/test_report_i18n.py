@@ -141,5 +141,39 @@ class ProjectExistsLangTests(unittest.TestCase):
         self.assertIn("уже существует", str(cm.exception))
 
 
+class RegistryTablesLangTests(unittest.TestCase):
+    """QA D6-расширение: таблицы утверждений/решений в REPORT — заголовки и типы на языке проекта."""
+
+    def test_claims_table_en(self):
+        from tools.pfs import claims
+        rows = [{"id": "C001", "kind": "fact", "text": "Metric grew", "sources": ["S001"],
+                 "derived_from": [], "grade": "B", "status": "active"}]
+        en = claims.table(rows, "en")
+        self.assertIn("| ID | Type | Claim | Sources / grounds | Grade | Status |", en)
+        self.assertIn("| C001 | fact |", en)
+        ru = claims.table(rows, "ru")
+        self.assertIn("| ID | Тип | Утверждение | Источники / основания | Сила | Статус |", ru)
+        self.assertIn("| C001 | факт |", ru)
+
+    def test_decisions_table_en(self):
+        from tools.pfs import claims as _c, decisions
+        pdir = project.create("EN decisions table", "q", slug=f"ri-dt-{id(self)}", lang="en")
+        c = _c.add(pdir, "Metric grew", "hypothesis")
+        d = decisions.add(pdir, "Title", "Statement", "PM", [c["id"]], None, None, None, None, None, None)
+        en = decisions.table([d], "en")
+        self.assertIn("| ID | Decision | Owner | Grounds | Metrics | Review | Status |", en)
+        ru = decisions.table([d], "ru")
+        self.assertIn("| ID | Решение | Ответственный | Основания | Показатели | Пересмотр | Статус |", ru)
+
+    def test_en_report_contains_en_tables(self):
+        from tools.pfs import claims as _c, sources as _s
+        pdir = project.create("EN report tables", "q", slug=f"ri-rt-{id(self)}", lang="en")
+        _s.add(pdir, text="Retention grew 40% in the pilot cohort", title="Metrics")
+        _c.add(pdir, "Retention grew [C001]", "fact", ["S001"], quote="40%", grade="B")
+        text = export.build(pdir).read_text(encoding="utf-8")
+        self.assertIn("| ID | Type | Claim |", text)
+        self.assertNotIn("| ID | Тип | Утверждение |", text)
+
+
 if __name__ == "__main__":
     unittest.main()

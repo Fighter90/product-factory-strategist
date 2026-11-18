@@ -8,7 +8,7 @@
 за обязательствами и пересматривает выводы при новых данных.
 
 Это папка-репозиторий: инструкции, наборы знаний по категориям (стратегия · экономика · продукт · UX ·
-данные · платформы · Gen AI), 101 навык, 8 субагентов, 6 хуков
+данные · платформы · Gen AI), 101 навык, 10 субагентов, 6 хуков
 и CLI/MCP-инструменты на чистом Python (ноль зависимостей). Работает в Claude Code, Cursor, Codex, OpenCode,
 Windsurf, Copilot.
 
@@ -45,7 +45,7 @@ pfs --help
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
 python3 -m tools.pfs doctor                    # установка и окружение: Python, pdftotext, база знаний
-python3 -m unittest discover -s tests          # 874 теста
+python3 -m unittest discover -s tests          # 886 тестов
 # в Claude Code (команда claude в папке) напишите задачу:
 # «Платная защита от спама теряет подписчиков. Что делать и что говорить абонентам?»
 ```
@@ -386,7 +386,7 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 ```
 AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject.toml
 .claude/skills/      (101)  базовые 13 · product-skills 27 · личная 57 · интеграции 4
-.claude/agents/      (8)    researcher · red-team · evidence-auditor · synthetic-respondent ·
+.claude/agents/      (10)    researcher · red-team · evidence-auditor · synthetic-respondent ·
                             data-analyst · ux-analyst · comms-strategist · router
 .claude/hooks/       (6)    session_start (SessionStart-контекст) · pre_web (домены до запроса) ·
                             pre_guard (реестры только через pfs; чтение вне репо — ask) ·
@@ -403,5 +403,5 @@ projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl �
                      Excel · 100/100)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
-tests/               (874)
+tests/               (886)
 ```

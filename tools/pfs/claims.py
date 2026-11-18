@@ -356,10 +356,13 @@ def fix_source(pdir: Path, cid: str, sources_list: list[str], quote: str | None 
     return rec
 
 
-def table(rows: list[dict]) -> str:
-    out = ["| ID | Тип | Утверждение | Источники / основания | Сила | Статус |", "|---|---|---|---|---|---|"]
+def table(rows: list[dict], lang: str = "ru") -> str:
+    """Реестр утверждений таблицей; lang — язык заголовков и подписей типов (QA D6: REPORT в EN-проекте)."""
+    from . import i18n
+    out = [i18n.t(lang, "claims_table_header"), "|---|---|---|---|---|---|"]
     for c in rows:
         basis = ", ".join(c["sources"] + [f"←{d}" for d in c["derived_from"]]) or "—"
         status = c["status"] + (f" → {c['superseded_by']}" if c.get("superseded_by") else "")
-        out.append(f"| {c['id']} | {KIND_RU[c['kind']]} | {c['text'].replace('|', '/')} | {basis} | {c.get('grade') or c['confidence']} | {status} |")
+        kind = i18n.t(lang, f"kind_{c['kind']}") if lang != "ru" else KIND_RU[c['kind']]
+        out.append(f"| {c['id']} | {kind} | {c['text'].replace('|', '/')} | {basis} | {c.get('grade') or c['confidence']} | {status} |")
     return "\n".join(out)

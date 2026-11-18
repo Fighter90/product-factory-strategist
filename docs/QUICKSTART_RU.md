@@ -64,7 +64,7 @@ pfs check --six-pager           # шаг 2: линтер документа ко
 
 ```bash
 pfs finish    # REPORT, six-pager RU/EN (md/docx), 4 Excel, дека
-ls projects/*/outputs/   # цель: 12+ артефактов
+ls projects/*/outputs/   # цель: 11 артефактов финиша (+ пакет данных и JSON-реестры — 18 файлов)
 ```
 
 ✅ критерий: REPORT.md, SIX_PAGER.md/.docx, SIX_PAGER_EN.md/.docx, 4 Excel, deck.html — все на месте.
@@ -83,7 +83,7 @@ grep -c "[а-яА-Я]" projects/*/outputs/SIX_PAGER_EN.md   # цель: 0 кир
 
 ```bash
 pfs models && pfs "kb search тест" 2>/dev/null; pfs kb search "тест"
-pfs data profile events.csv 2>/dev/null || true
+pfs data profile events.csv 2>/dev/null || true   # CSV/XLSX; нетабулярный файл — понятная ошибка, не Traceback
 pfs interview guide --persona "Студент"
 pfs media add скрин.png --desc "тест" 2>/dev/null || true
 pfs ab --hypothesis "Гипотеза [C001]" --metric "конверсия"

@@ -177,8 +177,10 @@ def due_text(res: dict) -> str:
     return "\n".join(out) or "Нет просроченных обязательств, пересмотров и устаревших оснований."
 
 
-def table(rows: list[dict]) -> str:
-    out = ["| ID | Решение | Ответственный | Основания | Показатели | Пересмотр | Статус |", "|---|---|---|---|---|---|---|"]
+def table(rows: list[dict], lang: str = "ru") -> str:
+    """Реестр решений таблицей; lang — язык заголовков (QA D6: REPORT в EN-проекте)."""
+    from . import i18n
+    out = [i18n.t(lang, "decisions_table_header"), "|---|---|---|---|---|---|---|"]
     for d in rows:
         mets = "; ".join(
             (f"{m['name']}: {m['baseline']}" + (f" → {m['target']}" if m.get("target") else ""))

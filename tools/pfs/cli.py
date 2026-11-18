@@ -97,9 +97,9 @@ def cmd_step(a):
         print(i18n.t(lang, "step_cards", cards=", ".join(cards)))
     if a.step == "strategy" and a.status == "done":  # PRO-70: роудмап — вместе со стратегией
         try:
-            print(f"Роудмап: {roadmap.run(pdir)} (обе раскладки: «Проекты» и «Фичи по проектам»)")
+            print(i18n.t(lang, "roadmap_built", roadmap=roadmap.run(pdir)))
         except core.PfsError as exc:
-            print(f"Роудмап не собран: {exc}")
+            print(i18n.t(lang, "roadmap_not_built", exc=exc))
 
 
 def cmd_next(a):
@@ -121,6 +121,8 @@ def cmd_questions(a):
             print(f"  {stage}: {ids}")
         print("Подсказка: pfs questions <шаг|id>")
         return
+    pdir = _p_or_hint(a)
+    lang = i18n.lang_of(pdir)
     rows = []
     for stage, items in blocks.items():
         if stage.startswith("_"):
@@ -137,7 +139,7 @@ def cmd_questions(a):
             f"{i + 1}) {o}" + (" ←рекомендуется" if i == b.get("recommended") else "")
             for i, o in enumerate(b.get("options", [])))
         print(f"[{stage}/{b['id']}] {b['q']}\n   {opts}\n   Зачем: {b.get('why', '')}\n")
-    print("Задать руководителю: pfs ask \"<вопрос>\" --options \"A,B,C\"")
+    print(i18n.t(lang, "ask_hint"))
 
 
 def cmd_ask(a):
@@ -147,12 +149,12 @@ def cmd_ask(a):
         # PRO-54: в автопрогоне пауза не ждёт человека — агент отвечает сам рекомендацией
         print(i18n.t(i18n.lang_of(pdir), "ask_autopilot"))
     else:
-        print("Вопрос записан. Агент ждёт ответа руководителя (pfs answer \"…\").")
+        print(i18n.t(i18n.lang_of(pdir), "ask_recorded"))
 
 
 def cmd_answer(a):
     project.answer_human(_p(a), a.answer)
-    print("Ответ записан.")
+    print(i18n.t(i18n.lang_of(_p(a)), "answer_recorded"))
 
 
 def cmd_question(a):
@@ -194,10 +196,11 @@ def cmd_source(a):
         rec, new = sources.add(pdir, target, text=text, url=a.url, title=a.title, origin=a.origin or "public",
                                note=a.note, published=a.published, force=a.force, text_path=text_path)
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
-        print(f"{'Добавлен' if new else 'Уже есть (повтор пропущен)'}: {rec['id']} — {rec['title']} ({rec['chars']} зн.){flag}")
+        _slang = i18n.lang_of(pdir)
+        print(i18n.t(_slang, "source_added" if new else "source_dup",
+                     sid=rec['id'], title=rec['title'], chars=rec['chars'], flag=flag))
         if rec.get("external_path"):
-            print(f"⚠ Файл лежал вне проекта ({rec['external_path']}) — копия сохранена в {rec['path']}. "
-                  "Материал должен быть явно передан пользователем.")
+            print(i18n.t(_slang, "source_ext_warn", external=rec['external_path'], path=rec['path']))
         if rec.get("broken_404"):
             print(f"⚠ {sources.BROKEN_MARK}: получено тело страницы 404/403 («Page not found»/«404 Not Found») — "
                   "ссылка недействительна, текст не является целевым материалом; замените источник живой "
@@ -213,8 +216,10 @@ def cmd_source(a):
                                           via_browser=getattr(a, "via_browser", False))
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
         via = sources.VIA_LABELS.get(channel, channel)
-        print(f"{'Добавлен' if new else 'Уже есть (повтор пропущен)'}: {rec['id']} — {rec['title']} "
-              f"({rec['chars']} зн.); канал: {via}; origin: {rec['origin']}{flag}")
+        _slang = i18n.lang_of(pdir)
+        print(i18n.t(_slang, "source_fetch_added" if new else "source_fetch_dup",
+                     sid=rec['id'], title=rec['title'], chars=rec['chars'],
+                     via=via, origin=rec['origin'], flag=flag))
         if rec.get("broken_404"):
             print(f"⚠ {sources.BROKEN_MARK}: канал вернул тело страницы 404/403 с HTTP 200 — ссылка "
                   "недействительна, текст не является целевым материалом; замените источник живой "
@@ -244,12 +249,14 @@ def cmd_claim(a):
     pdir = _p(a)
     if a.action == "add":
         c = claims.add(pdir, a.text, a.kind, _split(a.source), _split(a.from_ref), a.confidence, a.note, a.quote, grade=a.grade)
-        print(f"{c['id']} [{claims.KIND_RU[c['kind']]}] записано")
+        _cl = i18n.lang_of(pdir)
+        print(i18n.t(_cl, "claim_recorded", cid=c['id'], kind=i18n.t(_cl, f"kind_{c['kind']}")))
     elif a.action == "add-batch":
         res = claims.add_batch(pdir, core.resolve_input(a.text, pdir))
-        print(f"Батч: создано {len(res['created'])}, дубликаты пропущены {res['skipped']}")
+        _bl = i18n.lang_of(pdir)
+        print(i18n.t(_bl, "batch_created", n=len(res['created']), m=res['skipped']))
         if res["created"]:
-            print("Новые: " + ", ".join(res["created"]))
+            print(i18n.t(_bl, "batch_new", ids=", ".join(res["created"])))
     elif a.action == "list":
         rows = [c for c in claims.load(pdir) if (a.all or c["status"] == "active") and (not a.kind or c["kind"] == a.kind)]
         print(claims.table(rows))
@@ -307,7 +314,7 @@ def cmd_decision(a):
     if a.action == "add":
         d = decisions.add(pdir, a.title, a.decision, a.owner, _split(a.grounds), a.option, a.metric, a.review,
                           a.trigger, a.commit, _split(a.rejected))
-        print(f"{d['id']} записано")
+        print(i18n.t(i18n.lang_of(pdir), "decision_recorded", did=d['id']))
     elif a.action == "list":
         print(decisions.table(decisions.load(pdir)))
     elif a.action == "due":
@@ -468,7 +475,7 @@ def cmd_route(a):
     if a.json:
         print(json.dumps(res, ensure_ascii=False, indent=2))
         return
-    print(route.route_text(res))
+    print(route.route_text(res, i18n.lang_of(pdir)))
     print("Карты по шагам:")
     for stage in kb.STAGE_CARDS:
         print(f"  {stage}: {', '.join(kb.cards_for(stage))}")
