@@ -19,7 +19,8 @@ Windsurf, Copilot.
 ---
 
 > 🎬 Демонстрация работы агента (10 шагов сценария, озвучка и субтитры): [video/product-factory-strategist-RU.mp4](video/product-factory-strategist-RU.mp4)
-> 📺 Демо-проект CVStart (коммерциализация, реестр доказательств, решение): [DEMO-RU.mp4](video/product-factory-strategist-DEMO-RU.mp4) · [DEMO-EN.mp4](video/product-factory-strategist-DEMO-EN.mp4)
+> 📺 Демо-проект CVStart (коммерциализация, реестр доказательств, решение): [DEMO-RU.mp4](video/product-factory-strategist-DEMO-RU.mp4)
+> 🎞 **Детальный полный прогон (~20 мин):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — установка, 12 шагов, гейты, red team, six-pager-цикл, решение, мониторинг, финиш. · [DEMO-EN.mp4](video/product-factory-strategist-DEMO-EN.mp4)
 
 ## Быстрый старт (5 минут)
 

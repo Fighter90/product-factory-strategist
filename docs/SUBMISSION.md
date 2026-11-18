@@ -126,6 +126,8 @@ MRR $1 537; воспроизводится скриптом `analysis/gen_synthe
 - **EN:** [video/product-factory-strategist-EN.mp4](../video/product-factory-strategist-EN.mp4) — то же на английском.
 - **Демо-проект CVStart (RU):** [video/product-factory-strategist-DEMO-RU.mp4](../video/product-factory-strategist-DEMO-RU.mp4) — функционал демо: источники, реестр 20 утверждений, варианты A–E и red team, экономика (ARPU $29 → LTV ≈ $271,88), план проверки, решение D001, финишный пакет.
 - **Demo project (EN):** [video/product-factory-strategist-DEMO-EN.mp4](../video/product-factory-strategist-DEMO-EN.mp4) — the same walkthrough in English.
+- **Детальный полный прогон (RU, ~20 мин):** [video/product-factory-strategist-FULL-RU.mp4](../video/product-factory-strategist-FULL-RU.mp4) — установка и doctor, сюита тестов, создание проекта и маршрутизация, пауза intake, источники с защитами, реестр утверждений, шаги 1–12, red team, стратегии, строгий гейт, 4 книги Excel, six-pager writer-цикл до 0 ошибок, решение с основаниями, мониторинг, продолжение после перерыва, финиш (16 артефактов), стоимость.
+- **Full detailed run (EN, ~18 мин):** [video/product-factory-strategist-FULL-EN.mp4](../video/product-factory-strategist-FULL-EN.mp4) — the same walkthrough in English.
 
 ## 8. Время и расходы
 
