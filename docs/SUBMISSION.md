@@ -42,7 +42,7 @@
 | WebSearch / WebFetch среды | поиск и чтение открытых источников | — |
 | pfs CLI + MCP-сервер (Python stdlib) | гарантии проверяемости, состояние, стоимость | tools/pfs |
 | pdftotext / pypdf (необязательно) | извлечение текста из PDF | — |
-| unittest | 915 тестов инструментов | tests/ |
+| unittest | 917 тестов инструментов | tests/ |
 
 ## 4. Ключевые промпты и инструкции
 
@@ -122,8 +122,8 @@ MRR $1 537; воспроизводится скриптом `analysis/gen_synthe
 
 ## 7. Видеозапись работы агента (≤10 минут)
 
-- **RU:** [video/product-factory-strategist-RU.mp4](../video/product-factory-strategist-RU.mp4) — 10 сцен сценария VIDEO_SCRIPT.md: запрос → работа агента (12 шагов) → варианты и red team → стратегии и гейт → six-pager → продолжение после перерыва → финишный пакет. Озвучка и субтитры.
-- **EN:** [video/product-factory-strategist-EN.mp4](../video/product-factory-strategist-EN.mp4) — то же на английском.
+- **RU (обязательная запись, 1:50 ≤ 10 мин):** [video/product-factory-strategist-RU.mp4](../video/product-factory-strategist-RU.mp4) — 10 сцен сценария VIDEO_SCRIPT.md: запрос → работа агента (12 шагов) → варианты и red team → стратегии и гейт → six-pager → продолжение после перерыва → финишный пакет. Озвучка и субтитры.
+- **EN (обязательная запись, 1:37 ≤ 10 мин):** [video/product-factory-strategist-EN.mp4](../video/product-factory-strategist-EN.mp4) — то же на английском. FULL-версии ~20 мин — дополнительный материал, демо-ролики CVStart — walkthrough демо-проекта.
 - **Демо-проект CVStart (RU):** [video/product-factory-strategist-DEMO-RU.mp4](../video/product-factory-strategist-DEMO-RU.mp4) — функционал демо: источники, реестр 20 утверждений, варианты A–E и red team, экономика (ARPU $29 → LTV ≈ $271,88), план проверки, решение D001, финишный пакет.
 - **Demo project (EN):** [video/product-factory-strategist-DEMO-EN.mp4](../video/product-factory-strategist-DEMO-EN.mp4) — the same walkthrough in English.
 - **Детальный полный прогон (RU, ~20 мин):** [video/product-factory-strategist-FULL-RU.mp4](../video/product-factory-strategist-FULL-RU.mp4) — установка и doctor, сюита тестов, создание проекта и маршрутизация, пауза intake, источники с защитами, реестр утверждений, шаги 1–12, red team, стратегии, строгий гейт, 4 книги Excel, six-pager writer-цикл до 0 ошибок, решение с основаниями, мониторинг, продолжение после перерыва, финиш (16 артефактов), стоимость.

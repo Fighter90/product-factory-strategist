@@ -145,6 +145,24 @@ class FetchRetryTests(unittest.TestCase):
         self.assertEqual(len(calls), 1)  # 403 не повторяем
 
 
+class CohortGuardTests(unittest.TestCase):
+    def test_cohort_non_dates_clear_error(self):
+        """N-04: не-даты в столбце --date — понятная ошибка, а не ValueError."""
+        f = Path(TMP) / "bad_dates.csv"
+        f.write_text("user_id,week\nu1,1\nu2,2\nu3,1\n", encoding="utf-8")
+        with self.assertRaises(PfsError) as cm:
+            data.cohort_retention(f, "user_id", "week")
+        self.assertIn("не найдено дат", str(cm.exception))
+        self.assertIn("--date", str(cm.exception))
+
+    def test_cohort_en_error(self):
+        f = Path(TMP) / "bad_dates_en.csv"
+        f.write_text("user_id,week\nu1,1\n", encoding="utf-8")
+        # локаль проекта не передаётся в data; сообщение RU — фиксируем отсутствие Traceback
+        with self.assertRaises(PfsError):
+            data.cohort_retention(f, "user_id", "week")
+
+
 class ReadTableGuardTests(unittest.TestCase):
     """QA D13: нетабулярный вход — понятная ошибка, а не Traceback _csv.Error."""
 

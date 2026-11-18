@@ -133,6 +133,10 @@ def cohort_retention(path: Path, user_col: str, date_col: str, sheet: str | None
             bad += 1
             continue
         events[r[user_col].strip()].add(d.year * 12 + d.month - 1)
+    if not events:  # N-04: ни одной парсируемой даты — понятная ошибка вместо ValueError
+        raise PfsError(f"В столбце {date_col!r} не найдено дат (пропущено строк: {bad}) — "
+                       "ожидается YYYY-MM-DD / DD.MM.YYYY / YYYY-MM. "
+                       "Проверьте данные или укажите другой столбец --date")
     cohorts: dict[int, list[set[int]]] = defaultdict(list)
     for months in events.values():
         cohorts[min(months)].append(months)
