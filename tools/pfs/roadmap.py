@@ -66,6 +66,22 @@ _STAGE_PREFIX = ("этап", "инициатив", "драйвер", "фаза")
 
 MAX_PERIODS = 120  # предохранитель: шире — опечатка в датах, а не роудмап
 
+SPEC_TEMPLATE = """{
+  "title": "Название роадмапа",
+  "granularity": "quarter",
+  "projects": [
+    {
+      "name": "Этап 1 (бета)",
+      "initiative": "Название инициативы",
+      "start": "2026-Q4", "end": "2027-Q1",
+      "status": "план",
+      "description": "Что делаем и зачем (одной фразой)",
+      "comment": "Результат: измеримый gate этапа",
+      "features": [{"name": "Тактика 1", "start": "2026-Q4", "end": "2026-Q4"}]
+    }
+  ]
+}"""
+
 
 def _norm_status(value) -> str:
     return re.sub(r"[\s_]+", " ", str(value or "").strip().lower())
@@ -237,10 +253,57 @@ def spec_from_strategy(pdir: Path) -> dict:
             "features": _features_from_tactics(blob),
         })
     if not projects:
-        raise core.PfsError("в 04_product_strategy.md нет этапов outcome-роадмапа "
-                            "(«- **Этап 1 (…):** тактики… **Результат …:** …») — "
-                            "заполните роадмап в 04 или дайте pfs roadmap --spec roadmap.json")
+        projects = _stages_from_table(path.read_text(encoding="utf-8"), today)  # BUG B-13: таблица
+    if not projects:
+        raise core.PfsError("в 04_product_strategy.md нет этапов outcome-роадмапа. Два формата:\n"
+                            "1) список: «- **Этап 1 (…):** тактики… **Результат …:** …»\n"
+                            "2) таблица: | Инициатива | Outcome (результат) | Срок |\n"
+                            "Или файл спецификации: pfs roadmap --spec roadmap.json "
+                            "(без файла шаблон создастся сам)")
     return {"projects": projects}
+
+
+def _stages_from_table(text: str, today: dt.date) -> list[dict]:
+    """BUG B-13: этапы роадмапа в 04 таблицей «| Инициатива | Outcome | Срок |».
+    Колонки распознаются по заголовку (Инициатива/Этап/Название, Outcome/Результат,
+    Срок/Квартал — необязательная). Строки таблицы → проекты, статус «план»."""
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip().startswith("|")]
+    if len(lines) < 2:
+        return []
+    rows = [[c.strip() for c in ln.strip("|").split("|")] for ln in lines]
+    header = next((r for r in rows
+                   if any(_norm_status(c).startswith(("инициатив", "этап", "назван")) for c in r)
+                   and any(_norm_status(c).startswith(("outcome", "результ")) for c in r)), None)
+    if header is None:
+        return []
+    def col(names):
+        for i, c in enumerate(header):
+            if _norm_status(c).startswith(names):
+                return i
+        return None
+    i_name = col(("инициатив", "этап", "назван"))
+    i_out = col(("outcome", "результ"))
+    i_time = col(("срок", "квартал", "дата"))
+    projects = []
+    for r in rows[rows.index(header) + 1:]:
+        if not any(r) or set(r[0]) <= set("-: "):
+            continue  # разделитель |---|---|
+        name = (r[i_name] if i_name is not None and i_name < len(r) else "").strip("-— ")
+        if not name:
+            continue
+        outcome = (r[i_out] if i_out is not None and i_out < len(r) else "").strip()
+        timing = (r[i_time] if i_time is not None and i_time < len(r) else "").strip()
+        k = len(projects)
+        projects.append({
+            "name": f"Этап {k + 1} ({name})",
+            "initiative": name,
+            "start": _q_label(today, k), "end": _q_label(today, k),
+            "status": "план",
+            "description": _clean(outcome) or _clean(name),
+            "comment": f"Срок из 04: {timing}" if timing else "",
+            "features": [],
+        })
+    return projects
 
 
 def _q_label(d: dt.date, k: int) -> str:
@@ -300,8 +363,12 @@ def load_spec(pdir: Path, spec: str | Path | None = None) -> tuple[dict, str]:
     if spec:
         path = core.resolve_input(spec, pdir)
         if not path.exists():
-            raise core.PfsError(f"файл спецификации роудмапа не найден: {spec} "
-                                "(путь: каталог проекта или cwd) — создайте файл или уберите --spec")
+            # BUG B-12: вместо жёсткой ошибки — шаблон по грамматике роадмапа
+            core.atomic_write(path, SPEC_TEMPLATE.strip() + "\n")
+            raise core.PfsError(f"файла {spec} не было — создан шаблон с примером формата "
+                                "(гранулярность quarter|month; статусы план|в работе|сделано|риск; "
+                                "даты YYYY-QN | YYYY-MM-DD | YYYY-MM | YYYY | DD.MM.YYYY). "
+                                f"Заполните его и повторите: pfs roadmap --spec {spec}")
     else:
         path = pdir / "roadmap.json"
     if path.exists():
