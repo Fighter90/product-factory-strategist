@@ -19,6 +19,8 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 ## Quick start (5 minutes)
 
+> Full end-to-end agent testing guide: [QUICKSTART_EN.md](docs/QUICKSTART_EN.md)
+
 ## Installation
 
 ```bash

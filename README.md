@@ -20,6 +20,8 @@ Windsurf, Copilot.
 
 ## Быстрый старт (5 минут)
 
+> Полное тестирование агента от и до — пошаговая инструкция: [QUICKSTART_RU.md](docs/QUICKSTART_RU.md)
+
 ## Установка
 
 ```bash
