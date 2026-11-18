@@ -18,6 +18,8 @@ Windsurf, Copilot.
 
 ---
 
+> 🎬 Демонстрация работы агента (10 шагов сценария, озвучка и субтитры): [video/product-factory-strategist-RU.mp4](video/product-factory-strategist-RU.mp4)
+
 ## Быстрый старт (5 минут)
 
 > Полное тестирование агента от и до — пошаговая инструкция: [QUICKSTART_RU.md](docs/QUICKSTART_RU.md)

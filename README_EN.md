@@ -17,6 +17,8 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 ---
 
+> 🎬 Agent demo (10 scenario steps, voice-over and subtitles): [video/product-factory-strategist-EN.mp4](video/product-factory-strategist-EN.mp4)
+
 ## Quick start (5 minutes)
 
 > Full end-to-end agent testing guide: [QUICKSTART_EN.md](docs/QUICKSTART_EN.md)
