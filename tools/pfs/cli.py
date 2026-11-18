@@ -198,6 +198,10 @@ def cmd_source(a):
         if rec.get("external_path"):
             print(f"⚠ Файл лежал вне проекта ({rec['external_path']}) — копия сохранена в {rec['path']}. "
                   "Материал должен быть явно передан пользователем.")
+        if rec.get("broken_404"):
+            print(f"⚠ {sources.BROKEN_MARK}: получено тело страницы 404/403 («Page not found»/«404 Not Found») — "
+                  "ссылка недействительна, текст не является целевым материалом; замените источник живой "
+                  "страницей или выпиской (pfs source add --text-file <файл> --url <ссылка>)")
         if (text_path or (not is_url and target)) and rec.get("path"):
             print(f"Файл: {(pdir / rec['path']).resolve()}")  # копия в sources/raw/ — след в проекте (PRO-58)
     elif a.action == "fetch":
@@ -211,6 +215,10 @@ def cmd_source(a):
         via = sources.VIA_LABELS.get(channel, channel)
         print(f"{'Добавлен' if new else 'Уже есть (повтор пропущен)'}: {rec['id']} — {rec['title']} "
               f"({rec['chars']} зн.); канал: {via}; origin: {rec['origin']}{flag}")
+        if rec.get("broken_404"):
+            print(f"⚠ {sources.BROKEN_MARK}: канал вернул тело страницы 404/403 с HTTP 200 — ссылка "
+                  "недействительна, текст не является целевым материалом; замените источник живой "
+                  "страницей или выпиской (pfs source add --text-file <файл> --url <ссылка>)")
     elif a.action == "list":
         for s in sources.load(pdir):
             print(f"{s['id']} [{s['origin']}/{s['kind']}] {s['title'][:70]} — {s.get('url') or s.get('path') or ''}")
