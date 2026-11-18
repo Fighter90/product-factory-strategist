@@ -415,6 +415,10 @@ def cmd_data(a):
         text = data.profile_text(data.profile(path, a.sheet))
         cmd = f"python3 -m tools.pfs data profile {a.file}" + (f" --sheet {a.sheet}" if a.sheet else "")
     elif a.action == "cohort":
+        if not a.user or not a.date:  # N-01: флаги обязательны, у stats — другие (--col/--group)
+            raise core.PfsError("cohort: укажите --user <столбец пользователя> и --date <столбец даты>, "
+                                "например: pfs data cohort df.csv --user user_id --date dt "
+                                "(--col/--group — это флаги stats)")
         text = data.cohort_text(data.cohort_retention(path, a.user, a.date, a.sheet))
         cmd = f"python3 -m tools.pfs data cohort {a.file} --user {a.user} --date {a.date}"
     elif a.action == "funnel":
@@ -704,8 +708,12 @@ def build_parser() -> argparse.ArgumentParser:
     s = sp.add_parser("use", help="сделать проект активным"); s.add_argument("slug"); s.set_defaults(f=cmd_use)
     sp.add_parser("list", help="список проектов").set_defaults(f=cmd_list)
     s = sp.add_parser("status", help="где остановились"); s.add_argument("--brief", action="store_true"); s.set_defaults(f=cmd_status)
-    s = sp.add_parser("step", help="отметить шаг"); s.add_argument("step"); s.add_argument("status")
-    s.add_argument("--note"); s.add_argument("--next", help="следующее действие"); s.set_defaults(f=cmd_step)
+    s = sp.add_parser("step", help="отметить шаг",
+                      epilog='примеры: pfs step intake done --next sources · pfs step situation done --next options · pfs step status',
+                      formatter_class=argparse.RawDescriptionHelpFormatter)
+    s.add_argument("step"); s.add_argument("status")
+    s.add_argument("--note"); s.add_argument("--next", help="следующий шаг (имя); например: --next sources")
+    s.set_defaults(f=cmd_step)
     s = sp.add_parser("ask", help="вопрос руководителю (пауза)"); s.add_argument("question"); s.add_argument("--options"); s.set_defaults(f=cmd_ask)
     s = sp.add_parser("answer", help="ответ руководителя"); s.add_argument("answer"); s.set_defaults(f=cmd_answer)
     s = sp.add_parser("question", help="открытый вопрос/пробел"); s.add_argument("text"); s.add_argument("--close", action="store_true"); s.set_defaults(f=cmd_question)
@@ -799,7 +807,7 @@ def build_parser() -> argparse.ArgumentParser:
                    help="profile — паспорт таблицы; cohort — удержание; funnel — воронка; stats — статистика столбца")
     s.add_argument("file")
     s.add_argument("--sheet", help="лист Excel")
-    s.add_argument("--user", help="столбец пользователя (cohort/funnel)")
+    s.add_argument("--user", help="столбец пользователя (cohort/funnel); для cohort обязателен вместе с --date")
     s.add_argument("--date", help="столбец даты (cohort/funnel)")
     s.add_argument("--steps", help="шаги воронки через запятую: visit,signup,pay")
     s.add_argument("--col", help="числовой столбец для stats")

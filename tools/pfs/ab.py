@@ -75,7 +75,13 @@ def pick_hypothesis(pdir: Path, hypothesis: str | None = None) -> dict | None:
     """Гипотеза эксперимента: C### из реестра (по умолчанию первая активная гипотеза/прогноз);
     реестр пуст — первый заголовок из 06; нет и его — None (план собирается с заглушкой)."""
     if hypothesis:
-        c = claims.get(pdir, hypothesis)
+        try:
+            c = claims.get(pdir, hypothesis)
+        except PfsError as exc:
+            # N-02: произвольный текст вместо ID — подсказка, где взять готовое утверждение
+            raise PfsError(f"{exc}. Гипотеза должна существовать в реестре: посмотрите pfs claim list "
+                           f"и передайте --hypothesis C###, либо сначала добавьте: "
+                           f'pfs claim add "текст" --kind hypothesis') from None
         if c["status"] != "active":
             raise PfsError(f"{hypothesis} отозвано/замещено — выберите активную гипотезу (pfs claim list)")
         return {"id": c["id"], "text": c["text"]}
