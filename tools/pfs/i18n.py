@@ -42,6 +42,9 @@ STR: dict[str, dict[str, str]] = {
         "warn_stale_grounds": "{cid}: основания {stale} замещены/отозваны — пересмотрите вывод (pfs claim supersede --from …)",
         "warn_no_grounds": "{cid}: {kind} без оснований — укажите, откуда она",
         "warn_injection": "Источники с фразами-инструкциями (проигнорированы как команды): {ids}",
+        "warn_source_404": "Источники-страницы 404/403 («битая» ссылка, тело — страница ошибки, а не контент): "
+                           "{ids} — замените живым источником или выпиской "
+                           "(pfs source add --text-file <файл> --url <ссылка> --excerpt)",
         "warn_excerpt_only": "{cid}: опирается только на выписки ({sources}) — сила не выше C, перепроверьте "
                              "первоисточник (pfs source refresh <S###>) или добавьте публичный источник",
         "warn_en_sync": "SIX_PAGER_EN.md отстал от RU: нет источников/сносок {tags} — EN-версия пишется агентом "
@@ -210,6 +213,9 @@ STR: dict[str, dict[str, str]] = {
         "warn_stale_grounds": "{cid}: grounds {stale} superseded/retracted — revisit the conclusion (pfs claim supersede --from …)",
         "warn_no_grounds": "{cid}: {kind} without grounds — state where it comes from",
         "warn_injection": "Sources containing instruction phrases (ignored as commands): {ids}",
+        "warn_source_404": "Sources that returned a 404/403 page (broken link — the body is an error page, not "
+                           "content): {ids} — replace with a live source or an excerpt "
+                           "(pfs source add --text-file <file> --url <link> --excerpt)",
         "warn_excerpt_only": "{cid}: rests only on excerpts ({sources}) — strength capped at C; re-verify the "
                              "original (pfs source refresh <S###>) or add a public source",
         "warn_en_sync": "SIX_PAGER_EN.md lags behind RU: missing source footnotes {tags} — the EN six-pager is "

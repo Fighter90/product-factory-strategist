@@ -135,7 +135,10 @@ pfs source add --text-file doc.md --url https://example.com/report --origin exce
                                                     # (incl. inferences via derived_from — check warns)
 pfs source fetch <url> --title "…"                   # unreachable URL (403/SSL/JS/timeout) in one call:
                                                      # direct request → r.jina.ai → web.archive.org;
-                                                     # origin: public on direct success, excerpt on fallback
+                                                     # origin: public on direct success, excerpt on fallback;
+                                                     # channels validate content: a 404-page body with HTTP 200
+                                                     # skips the channel; if all channels return 404, the source
+                                                     # registers with a "broken" mark and a warning (pfs check warns)
 pfs source fetch <url> --via-browser                 # JS-rendered page via Playwright (if installed);
                                                      # without it — install command; on full failure use an excerpt: add --origin excerpt
 pfs source add interview.md --origin interview       # your interview (no personal data)

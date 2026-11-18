@@ -136,7 +136,10 @@ pfs source add --text-file doc.md --url https://example.com/report --origin exce
                                                     # (в т.ч. выводы через derived_from — check предупредит)
 pfs source fetch <url> --title "…"                  # недоступный URL (403/SSL/JS/таймаут) одним вызовом:
                                                     # прямой запрос → r.jina.ai → web.archive.org;
-                                                    # origin: public при прямом успехе, excerpt при фолбэке
+                                                    # origin: public при прямом успехе, excerpt при фолбэке;
+                                                    # каналы валидируют контент: тело 404-страницы с HTTP 200 —
+                                                    # канал пропускается, если 404 у всех — регистрация с пометкой
+                                                    # «битый источник» и предупреждением (pfs check предупреждает)
 pfs source fetch <url> --via-browser                # JS-страница: рендер через Playwright (если установлен);
                                                     # нет Playwright — команда установки; полный фейл — выписка: add --origin excerpt
 pfs source add interview.md --origin interview      # ваше интервью (без персональных данных)
