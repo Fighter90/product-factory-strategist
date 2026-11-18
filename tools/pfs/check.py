@@ -294,6 +294,11 @@ def run(pdir: Path, strict: bool = False, sixpager: bool = False) -> dict:
     flagged = [s["id"] for s in srcs.values() if s.get("injection_flags")]
     if flagged:
         warnings.append(tr("warn_injection", ids=", ".join(flagged)))
+    # PRO-83: «битые» источники — тело страницы 404/403 (пометка broken_404 при fetch/add)
+    # или записи с заголовком страницы ошибки (легаси-регистрации до детекта)
+    broken = [s["id"] for s in srcs.values() if s.get("broken_404") or src_mod.is_404_title(s.get("title"))]
+    if broken:
+        warnings.append(tr("warn_source_404", ids=", ".join(broken)))
 
     # 2. Документы
     for name, rules in block.get("documents", {}).items():
