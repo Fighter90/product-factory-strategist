@@ -28,7 +28,7 @@
 | 12 | `outputs/REPORT.md/.docx/.pdf` | Полный отчёт с реестром доказательств и приложениями |
 | 13 | `outputs/SIX_PAGER*.md/.docx/.pdf` | Документ комитета RU/EN (FAQ-1…6) |
 | 14 | `outputs/attachments/*.xlsx` | 4 книги Excel на живых формулах |
-| 15 | `outputs/presentations/deck.html` | Презентация 16:9 для комитета |
+| 15 | `outputs/presentations/deck.html/.pptx/.pdf` | Презентация 16:9 для комитета: HTML + PowerPoint + PDF (9 слайдов) |
 | 16 | `outputs/roadmap-демо.xlsx` | Outcome-роадмап: проекты и фичи |
 | 17 | `outputs/06_ab_design_C003.md` + `analysis/ab_checklist_C003.md` | Дизайн A/B-теста гипотезы C003: гардрейл, MDE, правило остановки (PRO-71) |
 | 18 | `analysis/ux_scaffold_S001.md` | UX-разбор продукта по 10 эвристикам от источника S001 |
