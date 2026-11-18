@@ -301,6 +301,15 @@ _NAV_MARKERS = ("главная", "о компании", "услуги", "кон
                 "menu", "skip to content", "cookie")
 
 
+_CT_EXT = {"image/png": ".png", "image/jpeg": ".jpg", "image/gif": ".gif", "image/webp": ".webp",
+           "image/svg+xml": ".svg", "audio/mpeg": ".mp3", "audio/wav": ".wav", "audio/ogg": ".ogg",
+           "audio/mp4": ".m4a", "video/mp4": ".mp4", "video/webm": ".webm", "video/quicktime": ".mov"}
+
+
+def ext_from_content_type(ctype: str) -> str | None:
+    """Расширение по Content-Type (масштаб: fetch --media). Параметры после ';' отбрасываются."""
+    base = (ctype or "").split(";")[0].strip().lower()
+    return _CT_EXT.get(base)
 def weak_content(body: str) -> bool:
     """Эвристика «навигационная оболочка» (BUG B-01): текст извлечён, но полезной
     нагрузки нет — сплошные короткие строки-пункты меню. Источник при этом

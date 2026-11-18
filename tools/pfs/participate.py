@@ -82,6 +82,32 @@ def save_synthetic(pdir: Path, path: Path, persona: str, title: str | None = Non
 
 
 # ---------- 3. Медиа (изображение/аудио/видео) ----------
+def media_from_url(pdir: Path, url: str, description: str, title: str | None = None,
+                   origin: str = "public", max_bytes: int = 100_000_000) -> dict:
+    """Масштаб (жюри): медиа по URL — загрузка напрямую (без reader/archive),
+    копия в sources/raw/, регистрация как kind="media" с обязательным описанием.
+    Агент не смотрит медиа: описание даёт руководитель, иначе источник не регистрируется."""
+    if not description.strip():
+        raise PfsError("fetch --media требует --desc \"что видно/слышимо\" — агент не смотрит медиа сам")
+    if not re.match(r"^https?://", url):
+        raise PfsError("fetch --media принимает только http(s)-ссылку на файл изображения/аудио/видео")
+    ok, why = sources._domain_ok(core.read_json(pdir / "project.json", {}), url)
+    if not ok:
+        raise PfsError(f"Источник не разрешён: {why}. Измените allowed_sources или --force с --note")
+    data, ctype = extract.fetch_url(url)
+    if len(data) > max_bytes:
+        raise PfsError(f"медиа больше {max_bytes // 1_000_000} МБ — скачайте вручную и используйте pfs media add")
+    ext = sources.ext_from_content_type(ctype) or ".bin"
+    tmp = pdir / "sources" / "raw" / ("fetch_media" + ext)
+    tmp.parent.mkdir(parents=True, exist_ok=True)
+    tmp.write_bytes(data)
+    try:
+        rec = media(pdir, tmp, description, title=title, origin=origin)
+    finally:
+        tmp.unlink(missing_ok=True)
+    return rec
+
+
 
 def media(pdir: Path, path: Path, description: str, title: str | None = None,
           origin: str = "own") -> dict:

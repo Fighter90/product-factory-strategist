@@ -12,7 +12,8 @@ from contextlib import redirect_stdout
 TMP = tempfile.mkdtemp(prefix="pfs-test-src-hyg-")
 os.environ["PFS_PROJECTS_DIR"] = TMP
 
-from pathlib import Path  # noqa: E402
+from pathlib import Path
+from unittest import mock  # noqa: E402
 
 from tools.pfs import cli, core, project, sources  # noqa: E402
 from tools.pfs.core import PfsError  # noqa: E402
@@ -44,20 +45,39 @@ class WeakContentTests(unittest.TestCase):
         self.assertIn("почти пуст", out)
 
 
-class MediaInterviewPointerTests(unittest.TestCase):
-    def test_fetch_media_flag_points_to_media_add(self):
-        pdir = project.create("Media ptr", "q", slug="sh-media")
-        core.set_active(pdir.name)
-        with self.assertRaises(PfsError) as cm:
-            run_cli(["source", "fetch", "https://example.com/video", "--media"])
-        self.assertIn("pfs media add", str(cm.exception))
+class MediaInterviewFetchTests(unittest.TestCase):
+    """Масштаб (жюри): fetch --media скачивает медиа по URL; --interview ставит origin."""
 
-    def test_fetch_interview_flag_points_to_interview_save(self):
-        pdir = project.create("Interview ptr", "q", slug="sh-int")
+    def test_media_download_registers_media_source(self):
+        from tools.pfs import extract, participate
+        pdir = project.create("Media fetch", "q", slug="sh-mfetch")
+        core.set_active(pdir.name)
+        data = b"\x89PNG\r\n\x1a\n" + b"pngdata" * 30
+        fake = {"id": "S001", "title": "Дашборд", "kind": "media", "origin": "public",
+                "chars": 40, "injection_flags": [], "path": "sources/raw/shot.png"}
+        with mock.patch.object(extract, "fetch_url", return_value=(data, "image/png")), \
+             mock.patch.object(participate, "media", return_value=fake) as pm:
+            out = run_cli(["source", "fetch", "https://example.com/shot.png", "--media",
+                           "--desc", "скриншот дашборда: график проходимости", "--title", "Дашборд"])
+        self.assertIn("медиа-источник", out)
+        self.assertTrue(pm.called)
+        self.assertIn("график проходимости", str(pm.call_args))
+
+    def test_media_without_desc_is_rejected(self):
+        pdir = project.create("Media desc", "q", slug="sh-mdesc")
         core.set_active(pdir.name)
         with self.assertRaises(PfsError) as cm:
-            run_cli(["source", "fetch", "https://example.com/talk", "--interview"])
-        self.assertIn("pfs interview save", str(cm.exception))
+            run_cli(["source", "fetch", "https://example.com/clip.mp4", "--media"])
+        self.assertIn("--desc", str(cm.exception))
+
+    def test_interview_flag_sets_origin_interview(self):
+        pdir = project.create("Interview fetch", "q", slug="sh-ifetch")
+        core.set_active(pdir.name)
+        with mock.patch.object(sources, "fetch", return_value=({"id": "S001", "title": "Интервью",
+            "kind": "web", "origin": "interview", "chars": 100, "injection_flags": []}, True, "direct")):
+            out = run_cli(["source", "fetch", "https://example.com/talk", "--interview"])
+        self.assertIn("interview", out)
+        self.assertIn("S001", out)
 
 
 class RefreshTextTests(unittest.TestCase):
@@ -153,7 +173,6 @@ class WeakContentV2Tests(unittest.TestCase):
         body = (pdir / "sources" / "S001.md").read_text(encoding="utf-8")
         self.assertIn("13,195 млн", body)
         self.assertTrue(list((pdir / "sources" / "raw").glob("S001_old_*.txt")), "нет бэкапа")
-
 
 if __name__ == "__main__":
     unittest.main()

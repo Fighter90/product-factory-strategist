@@ -175,12 +175,36 @@ def cmd_gap(a):
 
 def cmd_source(a):
     pdir = _p(a)
-    if getattr(a, "media", False) or getattr(a, "interview", False):  # BUG B-02: указание вместо «extract failed»
-        raise core.PfsError(
-            "медиа- и интервью-источники fetch не загружает: транскрипт/описание готовятся вне CLI. "
-            "Медиа: pfs media add <файл> --desc \"что видно/слышно\" --title \"...\". "
-            "Интервью: pfs interview save <файл> --persona \"...\" --title \"...\". "
-            "Web-страницы: pfs source fetch <url>.")
+    if getattr(a, "media", False) or getattr(a, "interview", False):
+        # Масштаб (жюри): fetch --media реально скачивает медиа-файл по URL в sources/raw/
+        # и регистрирует kind=media с обязательным описанием; --interview — страница с
+        # транскриптом регистрируется как интервью-источник (origin=interview).
+        if not (a.target and re.match(r"^https?://", a.target)):
+            raise core.PfsError("fetch --media/--interview требует http(s)-ссылку на файл/страницу")
+        if a.media:
+            if not (getattr(a, "desc", None) or "").strip():
+                raise core.PfsError('fetch --media требует --desc "что видно/слышимо" — '
+                                    "агент не смотрит медиа сам; описание становится частью источника")
+            import shutil as _shutil
+            _lang = i18n.lang_of(pdir)
+            data, ctype = extract.fetch_url(a.target)
+            if len(data) > 100_000_000:
+                raise core.PfsError("медиа больше 100 МБ — скачайте вручную и используйте pfs media add")
+            ext = sources.ext_from_content_type(ctype) or ".bin"
+            _tmp = pdir / "sources" / "raw" / ("fetch_media" + ext)
+            _tmp.parent.mkdir(parents=True, exist_ok=True)
+            _tmp.write_bytes(data)
+            try:
+                rec = participate.media(pdir, _tmp, a.desc, title=a.title,
+                                        origin=a.origin or "public")
+            finally:
+                _tmp.unlink(missing_ok=True)
+            _fl = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
+            print(f"✓ Добавлен медиа-источник: {rec['id']} — {rec['title']} ({rec.get('chars', 0)} зн. описания){_fl}")
+            print(f"Файл: sources/raw/{rec.get('path', '').split('/')[-1]}")
+            return
+        a.origin = "interview"
+
     if a.action == "add":
         if getattr(a, "via_browser", False):
             raise core.PfsError("--via-browser работает только с fetch: pfs source fetch <url> --via-browser")
@@ -730,9 +754,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("target", nargs="?",
                    help="URL или файл; относительный путь: сначала каталог проекта, затем cwd")
     s.add_argument("--media", action="store_true",
-                   help='медиа-источники (аудио/видео/скриншоты) — не fetch: pfs media add <файл> --desc "что видно/слышно"')
+                   help="скачать медиа-файл (изображение/аудио/видео ≤100 МБ) по URL в sources/raw/ и зарегистрировать; требует --desc")
+    s.add_argument("--desc", help="описание медиа «что видно/слышимо» — обязательно для --media (агент не смотрит медиа сам)")
     s.add_argument("--interview", action="store_true",
-                   help='интервью-источники — не fetch: pfs interview save <транскрипт> --persona "…"')
+                   help="зарегистрировать страницу с транскриптом интервью (origin=interview)")
     s.add_argument("--text-file", help="файл с текстом выписки (путь: каталог проекта → cwd); с update — заменяет содержимое источника")
     s.add_argument("--url"); s.add_argument("--title")
     s.add_argument("--origin", help="public | excerpt (выписка, первоисточник недоступен) | own | interview | synthetic | agent; "
