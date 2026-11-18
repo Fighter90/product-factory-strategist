@@ -270,6 +270,18 @@ def run(pdir: Path, strict: bool = False, sixpager: bool = False) -> dict:
     kind_label = lambda kind: tr(f"kind_{kind}") if f"kind_{kind}" in i18n.STR.get(lang, {}) else kind
     errors: list[str] = []
     warnings: list[str] = []
+    # BUG B-10: «?» в брифе после шага intake — ответы руководителя не дошли до документа
+    brief = pdir / "outputs" / "00_brief.md"
+    st = core.read_json(pdir / "state.json", {})
+    step_order = ["intake", "sources", "research", "discovery", "situation", "options",
+                  "choice", "strategy", "validation", "review", "decision", "finish"]
+    cur = st.get("step") or st.get("stage") or ""
+    if brief.exists() and cur in step_order and step_order.index(cur) > step_order.index("intake"):
+        open_rows = [ln.split("|")[1].strip() for ln in brief.read_text(encoding="utf-8").splitlines()
+                     if re.match(r"^\|[^|]+\|\s*\?\s*\|$", ln)]
+        if open_rows:
+            warnings.append(tr("warn_brief_open", rows=", ".join(open_rows[:4]) + ("…" if len(open_rows) > 4 else "")))
+
     passed: list[str] = []
     claims = {c["id"]: c for c in claims_mod.load(pdir)}
     srcs = {s["id"]: s for s in src_mod.load(pdir)}

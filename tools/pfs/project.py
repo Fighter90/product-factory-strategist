@@ -166,12 +166,51 @@ def ask_human(pdir: Path, question: str, options: list[str] | None = None) -> No
         core.log(pdir, "human", f"Вопрос руководителю: {question}", step=state.get("stage"))
 
 
+# BUG B-10: ответы intake заполняют слоты 00_brief.md — «?» не доживают до REPORT.
+# Ключевые слова вопроса → поле брифа (RU и EN-шаблоны).
+_BRIEF_ROW_KEYS = [
+    (("уточн", "refined"), ("Уточнённый вопрос", "Refined question")),
+    (("решени", "decision"), ("Решение, которое будет принято по результату", "Decision to be made from this work")),
+    (("успех", "цель", "метрик", "success", "goal"), ("Цель и критерий успеха", "Goal and success criterion")),
+    (("получат", "кому", "recipient", "audience"), ("Получатель результата и формат", "Recipient of the result and format")),
+    (("ограничен", "срок", "бюджет", "constraint"), ("Ограничения (сроки, бюджет, регуляторика, бренд)",
+                                                    "Constraints (deadline, budget, regulation, brand)")),
+    (("данные", "материал", "data"), ("Доступные данные и материалы", "Available data and materials")),
+    (("вне рамок", "исключа", "out of scope", "scope"), ("Что считаем вне рамок", "What is out of scope")),
+    (("дедлайн", "дедла", "deadline", "когда"), ("Дедлайн", "Deadline")),
+]
+
+
+def fill_brief_from_answer(pdir: Path, question: str, answer: str) -> str | None:
+    """BUG B-10: если вопрос intake указывает на поле брифа — вписать ответ вместо «?».
+    Возвращает имя заполненного поля или None (вопрос не о брифе — просто в журнале)."""
+    q = (question or "").lower()
+    path = pdir / "outputs" / "00_brief.md"
+    if not path.exists():
+        return None
+    text = path.read_text(encoding="utf-8")
+    for keys, (ru, en) in _BRIEF_ROW_KEYS:
+        if not any(k in q for k in keys):
+            continue
+        for label in (ru, en):
+            old_row = f"| {label} | ? |"
+            if old_row in text:
+                tag = "(intake answer)" if label in (en,) else "(ответ руководителя, intake)"
+                new_row = f"| {label} | {answer.strip()} {tag} |"
+                core.atomic_write(path, text.replace(old_row, new_row, 1))
+                return label
+    return None
+
+
 def answer_human(pdir: Path, answer: str) -> None:
     state = load_state(pdir)
     q = (state.get("awaiting_human") or {}).get("question", "")
     state["awaiting_human"] = None
     state.setdefault("answers", []).append({"question": q, "answer": answer, "ts": core.now()})
     save_state(pdir, state)
+    filled = fill_brief_from_answer(pdir, q, answer)  # BUG B-10: intake-ответы заполняют бриф
+    if filled:
+        core.log(pdir, "human", f"Бриф заполнен по ответу руководителя: поле «{filled}»")
     if core.autopilot():
         # PRO-54: в автопрогоне ответ (рекомендованный вариант) принимает агент — видно в журнале
         core.log(pdir, "autopilot", f"Ответ принят автоматически (QA autopilot): {answer}",
