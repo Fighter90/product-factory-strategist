@@ -181,6 +181,12 @@ Kinds: `fact` (needs a source; synthetic material never counts as one), `hypothe
 ### Checks and impact
 ```bash
 pfs check --strict   # quality gate: untagged numbers, dead links, structure (--json for machine output)
+
+Numbers with a unit need a [C###]/[S###] tag on the same line. The unit list lives in one
+place — `config/quality_gate.json → number_regex` (EN: %, pp, ₽/RUB, mln, bn, k, $, times,
+users/subscribers/customers, weeks/months/days, years, companies; mirrors RU) — the rule:
+"any number with any listed unit requires a tag". Line exemptions: `exempt_line_markers`
+(table separators, "Goal:", "Observation window:", `<!-- no-tag -->`).
                                 # numeric cross-check (PRO-26): numbers of active claims vs numbers in the
                                 # titles of their sources, and quote numbers vs sources/S###.md text —
                                 # a mismatch ("claim says 19, title says 17") adds a warning with the C###/S### pair

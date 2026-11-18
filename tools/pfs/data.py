@@ -174,6 +174,13 @@ def funnel(path: Path, steps: list[str] | str, user: str = "user_id", date: str 
     warnings: list[str] = []
     head = {c.lower(): c for c in rows[0]}
     event_col = head.get("event") or head.get("stage")
+    if event_col is not None:
+        # qa-commands: при неоднозначных столбцах (есть и event/stage, и шаги-колонки) —
+        # предупреждение о выбранном режиме, а не молчаливый выбор
+        named = [c for c in rows[0] if c.lower() in {s.lower() for s in steps}]
+        if named:
+            warnings.append(f"В файле есть и столбец {event_col!r}, и колонки шагов {named} — "
+                            f"выбран режим журнала событий (event). Для режима флаг-колонок уберите столбец {event_col!r}")
     counts: list[int] = []
     if event_col is not None:
         # Режим журнала событий: уникальные пользователи по значению event

@@ -144,6 +144,7 @@ def numeric_items(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict]) ->
     tr = lambda key, **kw: i18n.t(i18n.lang_of(pdir), key, **kw)
     out: list[tuple[str, str]] = []
     bodies: dict[str, set[float]] = {}
+    title_reported: set[str] = set()  # BUG B-11: один мягкий title-варнинг на источник за прогон
     for c in claims.values():
         if c["status"] != "active":
             continue
@@ -163,9 +164,13 @@ def numeric_items(pdir: Path, claims: dict[str, dict], srcs: dict[str, dict]) ->
             if tnums and cnums and not (set(tnums) & set(cnums)):
                 if set(cnums) & body:
                     # числа подтверждены текстом источника — заголовок может нести
-                    # другую метрику (кейс C004/S002: звёзды vs локали), это не устаревание
-                    out.append(("title", tr("warn_num_title_mismatch", cid=c["id"], sid=sid,
-                                            tnums=_fmt(tnums), cnums=_fmt(cnums))))
+                    # другую метрику (кейс C004/S002: звёзды vs локали), это не устаревание.
+                    # BUG B-11: не спамим одно и то же расхождение по каждому утверждению —
+                    # мягкий title-варнинг печатается один раз на источник за прогон
+                    if sid not in title_reported:
+                        title_reported.add(sid)
+                        out.append(("title", tr("warn_num_title_mismatch", cid=c["id"], sid=sid,
+                                                tnums=_fmt(tnums), cnums=_fmt(cnums))))
                 else:
                     out.append(("serious", tr("warn_num_serious", cid=c["id"], sid=sid,
                                               tnums=_fmt(tnums), cnums=_fmt(cnums))))

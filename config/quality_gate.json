@@ -3,33 +3,71 @@
   "ru": {
     "documents": {
       "02_situation.md": {
-        "required_sections": ["Что известно", "Чего мы не знаем", "Вопросы, которые могут изменить решение"],
+        "required_sections": [
+          "Что известно",
+          "Чего мы не знаем",
+          "Вопросы, которые могут изменить решение"
+        ],
         "numbers_need_tags": true
       },
       "03_options.md": {
         "min_options": 3,
         "option_heading_regex": "^##\\s+Вариант\\s+[A-ZА-Я0-9]",
-        "status_quo_keywords": ["оставить как есть", "статус-кво", "ничего не менять"],
-        "exit_keywords": ["закрыть", "свернуть", "выход из направления"],
-        "per_option_sections": ["Возражения"],
+        "status_quo_keywords": [
+          "оставить как есть",
+          "статус-кво",
+          "ничего не менять"
+        ],
+        "exit_keywords": [
+          "закрыть",
+          "свернуть",
+          "выход из направления"
+        ],
+        "per_option_sections": [
+          "Возражения"
+        ],
         "numbers_need_tags": true
       },
       "04_product_strategy.md": {
-        "required_sections": ["Аудитория", "Альтернативы", "Выбранное направление", "Осознанные отказы", "Экономика"],
+        "required_sections": [
+          "Аудитория",
+          "Альтернативы",
+          "Выбранное направление",
+          "Осознанные отказы",
+          "Экономика"
+        ],
         "numbers_need_tags": true
       },
       "05_comms_strategy.md": {
-        "required_sections": ["Аудитория и ситуация", "Барьер", "Ключевое сообщение", "Подтверждение", "Роль каналов", "Соответствие обещаний продукту"],
+        "required_sections": [
+          "Аудитория и ситуация",
+          "Барьер",
+          "Ключевое сообщение",
+          "Подтверждение",
+          "Роль каналов",
+          "Соответствие обещаний продукту"
+        ],
         "promise_table_section": "Соответствие обещаний продукту",
         "numbers_need_tags": true
       },
       "06_validation_plan.md": {
-        "required_sections": ["Ожидаемое изменение", "С чем сравниваем", "Срок наблюдения", "Нежелательные последствия", "Критерии решения"],
+        "required_sections": [
+          "Ожидаемое изменение",
+          "С чем сравниваем",
+          "Срок наблюдения",
+          "Нежелательные последствия",
+          "Критерии решения"
+        ],
         "numbers_need_tags": false
       }
     },
-    "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|п\\.п\\.|₽|руб|млн|млрд|тыс|\\$|раз[а]?\\b|пользоват|абонент)",
-    "exempt_line_markers": ["<!-- no-tag -->", "|---", "Цель:", "Срок наблюдения:"],
+    "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|п\\.п\\.|₽|руб|млн|млрд|тыс|\\$|раз[а]?\\b|пользоват|абонент|месяц|недел|дн|компан|год|лет)",
+    "exempt_line_markers": [
+      "<!-- no-tag -->",
+      "|---",
+      "Цель:",
+      "Срок наблюдения:"
+    ],
     "_banned_terms_comment": "PRO-52: языковой линтер документа комитета (outputs/SIX_PAGER.md). replace — англицизм/жаргон, всегда заменяем (термин → как писать по-русски, глоссарий в knowledge/templates/STYLE_RU.md); decode — допустимо только с расшифровкой при первом упоминании: «SERP (страница результатов поиска)» или «SERP — страница результатов поиска». Слова ищутся с учётом формы (replace — любое окончание), аббревиатуры — точным токеном.",
     "banned_terms": {
       "replace": {
@@ -79,33 +117,72 @@
   "en": {
     "documents": {
       "02_situation.md": {
-        "required_sections": ["What we know", "What we don't know", "Questions that could change the decision"],
+        "required_sections": [
+          "What we know",
+          "What we don't know",
+          "Questions that could change the decision"
+        ],
         "numbers_need_tags": true
       },
       "03_options.md": {
         "min_options": 3,
         "option_heading_regex": "^##\\s+Option\\s+[A-Z0-9]",
-        "status_quo_keywords": ["keep as is", "status quo", "do nothing"],
-        "exit_keywords": ["shut down", "wind down", "exit the direction", "close the direction"],
-        "per_option_sections": ["Objections"],
+        "status_quo_keywords": [
+          "keep as is",
+          "status quo",
+          "do nothing"
+        ],
+        "exit_keywords": [
+          "shut down",
+          "wind down",
+          "exit the direction",
+          "close the direction"
+        ],
+        "per_option_sections": [
+          "Objections"
+        ],
         "numbers_need_tags": true
       },
       "04_product_strategy.md": {
-        "required_sections": ["Audience", "Alternatives", "Chosen direction", "Conscious trade-offs", "Economics"],
+        "required_sections": [
+          "Audience",
+          "Alternatives",
+          "Chosen direction",
+          "Conscious trade-offs",
+          "Economics"
+        ],
         "numbers_need_tags": true
       },
       "05_comms_strategy.md": {
-        "required_sections": ["Audience and situation", "Barrier", "Key message", "Proof", "Role of channels", "Promises backed by the product"],
+        "required_sections": [
+          "Audience and situation",
+          "Barrier",
+          "Key message",
+          "Proof",
+          "Role of channels",
+          "Promises backed by the product"
+        ],
         "promise_table_section": "Promises backed by the product",
         "numbers_need_tags": true
       },
       "06_validation_plan.md": {
-        "required_sections": ["Expected change", "Comparison baseline", "Observation window", "Counter-metrics", "Decision criteria"],
+        "required_sections": [
+          "Expected change",
+          "Comparison baseline",
+          "Observation window",
+          "Counter-metrics",
+          "Decision criteria"
+        ],
         "numbers_need_tags": false
       }
     },
-    "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|pp\\b|₽|RUB|mln|bn|k\\b|\\$|times|users|subscribers|customers|weeks|months|days)",
-    "exempt_line_markers": ["<!-- no-tag -->", "|---", "Goal:", "Observation window:"]
+    "number_regex": "(?<![\\w\\[])\\d[\\d\\s.,]*\\s?(%|pp\\b|₽|RUB|mln|bn|k\\b|\\$|times|users|subscribers|customers|weeks|months|days|years|companies)",
+    "exempt_line_markers": [
+      "<!-- no-tag -->",
+      "|---",
+      "Goal:",
+      "Observation window:"
+    ]
   },
   "sixpager": {
     "_comment": "PRO-47: линтер содержания six-pager (outputs/SIX_PAGER.md) — pfs check --six-pager, автоматически в --strict и в затворе pfs finish, если файл существует. Проверяет документ комитета, а не теги: структуру эталона (FAQ-1…6, knowledge/templates/SIX_PAGER_PROMPT.md), объём, остатки шаблона, таблицы, служебные ID, арифметику, сноски и язык. Пороги, маркеры и паттерны меняйте здесь, не в коде. Блок sections выбирается по языку проекта.",
@@ -115,40 +192,156 @@
     "en_file": "SIX_PAGER_EN.md",
     "sections": {
       "ru": {
-        "faq": ["FAQ-1", "FAQ-2", "FAQ-3", "FAQ-4", "FAQ-5", "FAQ-6"],
-        "subpoints": {"FAQ-1": ["1.1", "1.2"], "FAQ-2": ["2.1", "2.2"]},
-        "extra_h2_allowed": ["Источники", "Приложения"],
-        "exclude_from_words": ["Источники", "Приложения"],
-        "working_doc_headings": ["^\\d{2} · ", "^Варианты[ :]", "^Вариант\\s+[A-ZА-Я0-9]",
-                                 "^Продуктовая стратегия", "^План проверки", "^Сравнение",
-                                 "^Возражения", "^Рекомендация", "^Скрытые допущения"],
+        "faq": [
+          "FAQ-1",
+          "FAQ-2",
+          "FAQ-3",
+          "FAQ-4",
+          "FAQ-5",
+          "FAQ-6"
+        ],
+        "subpoints": {
+          "FAQ-1": [
+            "1.1",
+            "1.2"
+          ],
+          "FAQ-2": [
+            "2.1",
+            "2.2"
+          ]
+        },
+        "extra_h2_allowed": [
+          "Источники",
+          "Приложения"
+        ],
+        "exclude_from_words": [
+          "Источники",
+          "Приложения"
+        ],
+        "working_doc_headings": [
+          "^\\d{2} · ",
+          "^Варианты[ :]",
+          "^Вариант\\s+[A-ZА-Я0-9]",
+          "^Продуктовая стратегия",
+          "^План проверки",
+          "^Сравнение",
+          "^Возражения",
+          "^Рекомендация",
+          "^Скрытые допущения"
+        ],
         "footnotes_heading": "Источники (сноски)",
         "contrib_lead": "распределение вклада",
-        "calc_table_cols": ["Расчёт", "Результат"],
-        "needs_solutions_cols": ["Потребности", "Решения"],
-        "template_markers": ["заполните", "__%", "укажите теги", "KPI в двух направлениях",
-                             "Сформулируйте 3–4 инициативы"],
-        "template_regexes": ["Сегмент\\s+\\d", "Инициатива\\s+\\d"],
-        "metric_labels": ["ARPU", "CAC", "LTV", "MRR", "churn", "NSM"],
-        "metric_ignore": ["до", "порог", "цель", "критерий", "окупаемость", "payback", "база"]
+        "calc_table_cols": [
+          "Расчёт",
+          "Результат"
+        ],
+        "needs_solutions_cols": [
+          "Потребности",
+          "Решения"
+        ],
+        "template_markers": [
+          "заполните",
+          "__%",
+          "укажите теги",
+          "KPI в двух направлениях",
+          "Сформулируйте 3–4 инициативы"
+        ],
+        "template_regexes": [
+          "Сегмент\\s+\\d",
+          "Инициатива\\s+\\d"
+        ],
+        "metric_labels": [
+          "ARPU",
+          "CAC",
+          "LTV",
+          "MRR",
+          "churn",
+          "NSM"
+        ],
+        "metric_ignore": [
+          "до",
+          "порог",
+          "цель",
+          "критерий",
+          "окупаемость",
+          "payback",
+          "база"
+        ]
       },
       "en": {
-        "faq": ["FAQ-1", "FAQ-2", "FAQ-3", "FAQ-4", "FAQ-5", "FAQ-6"],
-        "subpoints": {"FAQ-1": ["1.1", "1.2"], "FAQ-2": ["2.1", "2.2"]},
-        "extra_h2_allowed": ["Sources", "Appendices"],
-        "exclude_from_words": ["Sources", "Appendices"],
-        "working_doc_headings": ["^\\d{2} · ", "^Options[ :]", "^Option\\s+[A-Z0-9]",
-                                 "^Product strategy", "^Validation plan", "^Comparison",
-                                 "^Objections", "^Recommendation", "^Hidden assumptions"],
+        "faq": [
+          "FAQ-1",
+          "FAQ-2",
+          "FAQ-3",
+          "FAQ-4",
+          "FAQ-5",
+          "FAQ-6"
+        ],
+        "subpoints": {
+          "FAQ-1": [
+            "1.1",
+            "1.2"
+          ],
+          "FAQ-2": [
+            "2.1",
+            "2.2"
+          ]
+        },
+        "extra_h2_allowed": [
+          "Sources",
+          "Appendices"
+        ],
+        "exclude_from_words": [
+          "Sources",
+          "Appendices"
+        ],
+        "working_doc_headings": [
+          "^\\d{2} · ",
+          "^Options[ :]",
+          "^Option\\s+[A-Z0-9]",
+          "^Product strategy",
+          "^Validation plan",
+          "^Comparison",
+          "^Objections",
+          "^Recommendation",
+          "^Hidden assumptions"
+        ],
         "footnotes_heading": "Sources (footnotes)",
         "contrib_lead": "contribution",
-        "calc_table_cols": ["Calculation", "Result"],
-        "needs_solutions_cols": ["Needs", "Solutions"],
-        "template_markers": ["fill in", "__%", "KPIs in two dimensions:",
-                             "Formulate 3–4 initiatives"],
-        "template_regexes": ["Segment\\s+\\d", "Initiative\\s+\\d"],
-        "metric_labels": ["ARPU", "CAC", "LTV", "MRR", "churn", "NSM"],
-        "metric_ignore": ["up to", "threshold", "target", "criterion", "payback", "baseline"]
+        "calc_table_cols": [
+          "Calculation",
+          "Result"
+        ],
+        "needs_solutions_cols": [
+          "Needs",
+          "Solutions"
+        ],
+        "template_markers": [
+          "fill in",
+          "__%",
+          "KPIs in two dimensions:",
+          "Formulate 3–4 initiatives"
+        ],
+        "template_regexes": [
+          "Segment\\s+\\d",
+          "Initiative\\s+\\d"
+        ],
+        "metric_labels": [
+          "ARPU",
+          "CAC",
+          "LTV",
+          "MRR",
+          "churn",
+          "NSM"
+        ],
+        "metric_ignore": [
+          "up to",
+          "threshold",
+          "target",
+          "criterion",
+          "payback",
+          "baseline"
+        ]
       }
     },
     "service_id_patterns": {
