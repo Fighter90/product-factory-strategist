@@ -6,6 +6,12 @@
 import json
 import re
 import unittest
+from pathlib import Path as _P
+
+_KB_METHODS = _P(__file__).resolve().parent.parent / "knowledge" / "methods"
+requires_kb = unittest.skipUnless(any(_KB_METHODS.glob("*.md")),
+                                   "база знаний не установлена - запустите scripts/install.sh")
+
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -28,6 +34,7 @@ DOC_TO_TEMPLATE = {
 }
 
 
+@requires_kb
 class TemplatesParityTests(unittest.TestCase):
     def test_every_ru_template_has_en_counterpart(self):
         # STYLE_RU.md — стайлгайд русского языка (PRO-52); SIX_PAGER_PROMPT_EN.md и
@@ -75,6 +82,7 @@ class TemplatesParityTests(unittest.TestCase):
                             f"{lang}/options.md: нет ключей выхода")
 
 
+@requires_kb
 class ValidationPlanKpiTemplateTests(unittest.TestCase):
     """PRO-48 (ревью): шаблон 06 несёт явную таблицу «KPI» со столбцом
     «Плоскость» и готовыми строками бизнес-метрик — six-pager FAQ-6 собирает

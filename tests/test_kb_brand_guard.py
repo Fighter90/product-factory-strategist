@@ -35,6 +35,12 @@
 Запуск: python3 -m unittest tests.test_kb_magistratura -v
 """
 import unittest
+from pathlib import Path as _P
+
+_KB_METHODS = _P(__file__).resolve().parent.parent / "knowledge" / "methods"
+requires_kb = unittest.skipUnless(any(_KB_METHODS.glob("*.md")),
+                                   "база знаний не установлена - запустите scripts/install.sh")
+
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -94,6 +100,7 @@ def h2_sections(text: str) -> list[tuple[str, str]]:
     return sections
 
 
+@requires_kb
 class MagistraturaMapsTests(unittest.TestCase):
     """Карты пакета 1 полные, методические и без брендов."""
 
@@ -143,6 +150,7 @@ class MagistraturaMapsTests(unittest.TestCase):
         self.assertEqual(short, [], "пустые/короткие разделы: " + ", ".join(short))
 
 
+@requires_kb
 class NamingSchemeTests(unittest.TestCase):
     """Единая схема имён всей базы: methods/<id>.md + methods_en/<id>.md, id M-<id>.
 
@@ -189,6 +197,7 @@ class NamingSchemeTests(unittest.TestCase):
         )
 
 
+@requires_kb
 class IndexFreshnessTests(unittest.TestCase):
     """Каждая карта пакета 1 присутствует в INDEX.md и INDEX_EN.md — индекс свежий."""
 
@@ -204,6 +213,7 @@ class IndexFreshnessTests(unittest.TestCase):
         self.assertEqual(missing, [], "индекс не содержит карт пакета 1: " + "; ".join(missing))
 
 
+@requires_kb
 class KnowledgeCountersTests(unittest.TestCase):
     """Счётчики карт в README/COMPLIANCE/HELP равны реальному числу карт базы знаний."""
 

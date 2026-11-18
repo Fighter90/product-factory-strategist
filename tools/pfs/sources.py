@@ -267,9 +267,16 @@ def audit(pdir: Path) -> list[str]:
     problems: list[str] = []
     id_counts: dict[str, int] = {}
     url_owner: dict[str, str] = {}
+    sha_owner: dict[str, str] = {}
     for r in rows:
         sid = str(r.get("id", "?"))
         id_counts[sid] = id_counts.get(sid, 0) + 1
+        sha = r.get("sha256")
+        if sha:
+            if sha in sha_owner:
+                problems.append(f"дубль содержимого (sha256): {sha_owner[sha]} и {sid}")
+            else:
+                sha_owner[sha] = sid
         url = r.get("url")
         if url:
             if url in url_owner:
@@ -286,6 +293,24 @@ def audit(pdir: Path) -> list[str]:
     for sid in sorted(files - ids):
         problems.append(f"sources/{sid}.md есть, но записи в sources.jsonl нет — добавьте заново (pfs source add) или удалите файл")
     return problems
+
+
+_NAV_MARKERS = ("главная", "о компании", "услуги", "контакты", "вход", "регистрация",
+                "подробнее", "читать далее", "меню", "все новости", "home", "about",
+                "services", "contacts", "sign in", "log in", "read more", "learn more",
+                "menu", "skip to content", "cookie")
+
+
+def weak_content(body: str) -> bool:
+    """Эвристика «навигационная оболочка» (BUG B-01): текст извлечён, но полезной
+    нагрузки нет — сплошные короткие строки-пункты меню. Источник при этом
+    регистрируется (решение за агентом), но с пометкой weak_content и предупреждением."""
+    lines = [ln.strip() for ln in body.splitlines() if ln.strip()]
+    if len(lines) < 8:
+        return False
+    short = sum(1 for ln in lines if len(ln) < 40)
+    hits = sum(1 for ln in lines if any(m in ln.lower() for m in _NAV_MARKERS))
+    return (short / len(lines) > 0.7 and hits >= 3) or hits >= 12
 
 
 def _register_web(pdir: Path, *, url: str | None, kind: str, body: str, title: str | None, origin: str,
@@ -312,6 +337,8 @@ def _register_web(pdir: Path, *, url: str | None, kind: str, body: str, title: s
             "kind": kind, "origin": origin, "retrieved": core.now(), "published": published,
             "sha256": digest, "chars": len(body), "injection_flags": flags, "note": note,
         }
+        if weak_content(body) or len(body.strip()) < 50:
+            rec["weak_content"] = True  # BUG B-01: навигационная оболочка или почти пустой текст
         if via:
             rec["via"] = via
         if broken_404:
@@ -450,11 +477,13 @@ def refresh(pdir: Path, sid: str, max_chars: int = 4000) -> dict:
     """
     rec = get(pdir, sid)
     url = rec.get("url")
+    if not url and rec.get("kind") == "text":
+        return _refresh_text_file(pdir, rec, max_chars)  # BUG B-04: text с path перечитывается
     if not url or rec.get("kind") not in ("web", "text"):
         # PRO-59: выписку (kind=text) с ссылкой можно перепроверить refresh'ем — прямой ответ
-        # первоисточника снимает пометку; текст без ссылки по-прежнему только вручную.
-        raise PfsError(f"{sid} — нет ссылки или тип {rec.get('kind')} не перезагружается; обновите вручную: "
-                       f"pfs source add --text-file <новый> --url {url or '<url>'}")
+        # первоисточника снимает пометку; текст без ссылки и без path — только заново.
+        raise PfsError(f"{sid} — нет ссылки и файла-первоисточника; обновите запись: "
+                       f"pfs source update {sid} --title/--note или заново: pfs source add --text-file <новый>")
     ok, why = _domain_ok(core.read_json(pdir / "project.json", {}), url)
     if not ok:
         raise PfsError(f"{sid} не обновлён: {why}. Сохраните текст вручную: pfs source add --text-file <новый> --url {url}")
@@ -502,6 +531,81 @@ def refresh(pdir: Path, sid: str, max_chars: int = 4000) -> dict:
     return {"sid": sid, "changed": True, "verified": verified, "old_chars": old_chars, "new_chars": len(body),
             "old_sha8": old_sha8, "new_sha8": new_digest[:8], "flags": len(flags), "preview": body[:max_chars]}
 
+
+def _refresh_text_file(pdir: Path, rec: dict, max_chars: int = 4000) -> dict:
+    """BUG B-04: text-источник с файлом-первоисточником — refresh перечитывает файл
+    (path или external_path), как web-refresh перечитывает URL: без изменений — только
+    отметка проверки; изменился — бэкап старого текста и перезапись с тем же заголовком."""
+    sid = rec["id"]
+    cand = [p for p in (rec.get("external_path"), rec.get("path")) if p]  # первоисточник первым
+    src = None
+    for p in cand:
+        pp = Path(p) if Path(p).is_absolute() else pdir / p
+        if pp.exists():
+            src = pp
+            break
+    if src is None:
+        raise PfsError(f"{sid}: файл-первоисточник не найден ({' или '.join(cand) or '-'}); "
+                       f"обновите запись: pfs source update {sid} --title/--note или заново: "
+                       "pfs source add --text-file <новый>")
+    body = src.read_text(encoding="utf-8")
+    new_digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
+    path = pdir / "sources" / f"{sid}.md"
+    old_text = path.read_text(encoding="utf-8")
+    if new_digest == rec["sha256"]:
+        rec["retrieved"] = core.now()
+        core.write_jsonl(pdir / "sources.jsonl",
+                         [{**r, **rec} if r["id"] == sid else r for r in load(pdir)])
+        return {"sid": sid, "changed": False}
+    old_sha8 = rec["sha256"][:8]
+    old_chars = rec.get("chars")
+    flags = scan_injection(body)
+    core.atomic_write(pdir / "sources" / "raw" / f"{sid}_old_{old_sha8}.txt", old_text)
+    rec.update({"sha256": new_digest, "chars": len(body), "retrieved": core.now(),
+                "injection_flags": flags})
+    core.atomic_write(path, _source_md(rec, body, flags))
+    core.write_jsonl(pdir / "sources.jsonl",
+                     [{**r, **rec} if r["id"] == sid else r for r in load(pdir)])
+    core.log(pdir, "source", f"{sid} обновлён из файла (chars {old_chars if old_chars is not None else '?'}->{len(body)})",
+             tool="pfs source refresh")
+    return {"sid": sid, "changed": True, "old_chars": old_chars, "new_chars": len(body),
+            "old_sha8": old_sha8, "new_sha8": new_digest[:8], "flags": len(flags),
+            "preview": body[:max_chars]}
+
+
+def update(pdir: Path, sid: str, *, title: str | None = None, origin: str | None = None,
+           note: str | None = None) -> dict:
+    """BUG B-04: правка метаданных источника без ручного редактирования sources.jsonl.
+    Текст и sha256 не трогаются — обновляются заголовок файла и поля реестра."""
+    rec = get(pdir, sid)
+    if origin is not None and origin not in ORIGINS:
+        raise PfsError(f"origin: {', '.join(ORIGINS)}")
+    changed = []
+    if title:
+        rec["title"] = title[:200]
+        changed.append("title")
+    if origin:
+        rec["origin"] = origin
+        changed.append("origin")
+    if note is not None:
+        rec["note"] = note
+        changed.append("note")
+    if not changed:
+        raise PfsError("нечего обновлять: укажите --title / --origin / --note")
+    path = pdir / "sources" / f"{sid}.md"
+    if path.exists():
+        old = path.read_text(encoding="utf-8")
+        sep_pos = old.find("\n---\n")
+        if sep_pos != -1:
+            head = old[:sep_pos]
+            tail = old[sep_pos:]
+            lines = head.split("\n")
+            lines[0] = f"# {sid} - {rec['title']}"
+            core.atomic_write(path, "\n".join(lines) + tail)
+    core.write_jsonl(pdir / "sources.jsonl",
+                     [{**r, **rec} if r["id"] == sid else r for r in load(pdir)])
+    core.log(pdir, "source", f"{sid} обновлены поля: {', '.join(changed)}", tool="pfs source update")
+    return rec
 
 def show(pdir: Path, sid: str, max_chars: int = 4000) -> str:
     get(pdir, sid)

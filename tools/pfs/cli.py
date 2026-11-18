@@ -175,6 +175,12 @@ def cmd_gap(a):
 
 def cmd_source(a):
     pdir = _p(a)
+    if getattr(a, "media", False) or getattr(a, "interview", False):  # BUG B-02: указание вместо «extract failed»
+        raise core.PfsError(
+            "медиа- и интервью-источники fetch не загружает: транскрипт/описание готовятся вне CLI. "
+            "Медиа: pfs media add <файл> --desc \"что видно/слышно\" --title \"...\". "
+            "Интервью: pfs interview save <файл> --persona \"...\" --title \"...\". "
+            "Web-страницы: pfs source fetch <url>.")
     if a.action == "add":
         if getattr(a, "via_browser", False):
             raise core.PfsError("--via-browser работает только с fetch: pfs source fetch <url> --via-browser")
@@ -196,6 +202,9 @@ def cmd_source(a):
         rec, new = sources.add(pdir, target, text=text, url=a.url, title=a.title, origin=a.origin or "public",
                                note=a.note, published=a.published, force=a.force, text_path=text_path)
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
+        if rec.get("weak_content"):  # BUG B-01: пустая/навигационная выписка не несёт доказательств
+            flag += (" ⚠ контент почти пуст ({0} знаков) — сохраните содержимое страницы в файл и "
+                     "пересоздайте: pfs source add --text-file <файл>".format(rec.get('chars')))
         _slang = i18n.lang_of(pdir)
         print(i18n.t(_slang, "source_added" if new else "source_dup",
                      sid=rec['id'], title=rec['title'], chars=rec['chars'], flag=flag))
@@ -215,6 +224,9 @@ def cmd_source(a):
                                           note=a.note, published=a.published, force=a.force,
                                           via_browser=getattr(a, "via_browser", False))
         flag = f" ⚠ подозрительных фраз: {len(rec['injection_flags'])}" if rec.get("injection_flags") else ""
+        if rec.get("weak_content"):  # BUG B-01: навигационная шелуха вместо контента
+            flag += (" ⚠ похоже на навигационную оболочку — проверьте sources/%s: полезного текста "
+                     "может не быть; при пустой выписке — pfs source add --text-file <файл> --excerpt" % rec['id'])
         via = sources.VIA_LABELS.get(channel, channel)
         _slang = i18n.lang_of(pdir)
         print(i18n.t(_slang, "source_fetch_added" if new else "source_fetch_dup",
@@ -224,6 +236,9 @@ def cmd_source(a):
             print(f"⚠ {sources.BROKEN_MARK}: канал вернул тело страницы 404/403 с HTTP 200 — ссылка "
                   "недействительна, текст не является целевым материалом; замените источник живой "
                   "страницей или выпиской (pfs source add --text-file <файл> --url <ссылка>)")
+    elif a.action == "update":  # BUG B-04: метаданные без ручного редактирования jsonl
+        rec = sources.update(pdir, a.target, title=a.title, origin=a.origin, note=a.note)
+        print(f"{rec['id']} обновлено: title={rec['title']!r} origin={rec['origin']}")
     elif a.action == "list":
         for s in sources.load(pdir):
             print(f"{s['id']} [{s['origin']}/{s['kind']}] {s['title'][:70]} — {s.get('url') or s.get('path') or ''}")
@@ -698,11 +713,15 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(f=cmd_gap)
 
     s = sp.add_parser("source", help="источники (add/fetch/list/show/refresh)")
-    s.add_argument("action", choices=["add", "fetch", "list", "show", "refresh"],
+    s.add_argument("action", choices=["add", "fetch", "list", "show", "refresh", "update"],
                    help="fetch — недоступный URL (403/SSL/JS/таймаут): прямой запрос → r.jina.ai → web.archive.org; "
                         "JS-страница — fetch --via-browser; полный фейл — выписка: add --text-file --origin excerpt")
     s.add_argument("target", nargs="?",
                    help="URL или файл; относительный путь: сначала каталог проекта, затем cwd")
+    s.add_argument("--media", action="store_true",
+                   help='медиа-источники (аудио/видео/скриншоты) — не fetch: pfs media add <файл> --desc "что видно/слышно"')
+    s.add_argument("--interview", action="store_true",
+                   help='интервью-источники — не fetch: pfs interview save <транскрипт> --persona "…"')
     s.add_argument("--text-file", help="файл с текстом выписки (путь: каталог проекта → cwd)")
     s.add_argument("--url"); s.add_argument("--title")
     s.add_argument("--origin", help="public | excerpt (выписка, первоисточник недоступен) | own | interview | synthetic | agent; "

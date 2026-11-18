@@ -23,6 +23,12 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from pathlib import Path as _P
+
+_KB_METHODS = _P(__file__).resolve().parent.parent / "knowledge" / "methods"
+requires_kb = unittest.skipUnless(any(_KB_METHODS.glob("*.md")),
+                                   "база знаний не установлена - запустите scripts/install.sh")
+
 from pathlib import Path
 
 from tools.pfs import export, finish
@@ -102,6 +108,7 @@ def _runnable(line: str) -> str | None:
     return line or None
 
 
+@requires_kb
 class DocsCommandsTests(unittest.TestCase):
     """Команды из документации работают как написано (PRO-63)."""
 

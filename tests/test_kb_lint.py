@@ -16,6 +16,12 @@
 import math
 import tempfile
 import unittest
+from pathlib import Path as _P
+
+_KB_METHODS = _P(__file__).resolve().parent.parent / "knowledge" / "methods"
+requires_kb = unittest.skipUnless(any(_KB_METHODS.glob("*.md")),
+                                   "база знаний не установлена - запустите scripts/install.sh")
+
 from pathlib import Path
 from unittest import mock
 
@@ -42,6 +48,7 @@ def h2_count(text: str) -> int:
     return sum(1 for line in body.splitlines() if line.startswith("## "))
 
 
+@requires_kb
 class RealKbLintTests(unittest.TestCase):
     """Каноническая база знаний должна проходить pfs kb lint без единой проблемы."""
 

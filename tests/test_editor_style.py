@@ -6,6 +6,12 @@
 import os
 import tempfile
 import unittest
+from pathlib import Path as _P
+
+_KB_METHODS = _P(__file__).resolve().parent.parent / "knowledge" / "methods"
+requires_kb = unittest.skipUnless(any(_KB_METHODS.glob("*.md")),
+                                   "база знаний не установлена - запустите scripts/install.sh")
+
 from pathlib import Path
 
 TMP = tempfile.mkdtemp(prefix="pfs-test-pro52-")
@@ -45,6 +51,7 @@ class TitleNormalizationTests(unittest.TestCase):
         self.assertEqual(project.normalize_title(""), "")
 
 
+@requires_kb
 class StyleGuideTests(unittest.TestCase):
     def test_style_guide_exists_with_glossary_of_40_plus_terms(self):
         guide = REPO / "knowledge" / "templates" / "STYLE_RU.md"
@@ -72,6 +79,7 @@ class EditorAgentTests(unittest.TestCase):
         self.assertEqual(models.pick("editor")["tier"], "fast", "editor должен быть дешёвой моделью")
 
 
+@requires_kb
 class LanguageLintTests(unittest.TestCase):
     DIRTY = "\n".join([
         "# Тест: six-pager",

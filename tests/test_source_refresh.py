@@ -121,7 +121,8 @@ class RefreshTests(unittest.TestCase):
         rec, _ = sources.add(self.pdir, text="локальный текст заметки", title="loc")
         with self.assertRaises(PfsError) as cm:
             sources.refresh(self.pdir, rec["id"])
-        self.assertIn("обновите вручную", str(cm.exception))
+        # BUG B-04: text без файла-первоисточника — явное указание, что делать (update/заново)
+        self.assertIn("файл-первоисточник не найден", str(cm.exception))
         with self.assertRaises(PfsError):
             sources.refresh(self.pdir, "S999")
 

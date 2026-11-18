@@ -21,9 +21,13 @@ fail() { printf "✗ ОШИБКА: %s\n" "$*" >&2; exit 1; }
 
 # ---------- 1. База знаний (публичный репозиторий) ----------
 step "1/4 База знаний: product-factory-strategist-base (публичная)"
-if [ -f knowledge/INDEX.md ]; then
+if [ -d knowledge/methods ] && [ -n "$(ls knowledge/methods/*.md 2>/dev/null | head -1)" ]; then
   ok "knowledge/ уже на месте (обновить: cd knowledge && git pull)"
 else
+  if [ -f knowledge/INDEX.md ]; then
+    echo "→ найдены пустые INDEX-оболочки без карт — докачиваю базу целиком"
+    rm -rf knowledge
+  fi
   git clone --depth 1 "$BASE_REPO" knowledge 2>&1 | grep -v "^Cloning" || true
   [ -f knowledge/INDEX.md ] || fail "база не подтянулась. Проверьте сеть и доступ к github.com:
 репозиторий product-factory-strategist-base публичный

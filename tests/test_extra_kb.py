@@ -5,6 +5,12 @@
 import os
 import tempfile
 import unittest
+from pathlib import Path as _P
+
+_KB_METHODS = _P(__file__).resolve().parent.parent / "knowledge" / "methods"
+requires_kb = unittest.skipUnless(any(_KB_METHODS.glob("*.md")),
+                                   "база знаний не установлена - запустите scripts/install.sh")
+
 from pathlib import Path
 from unittest import mock
 
@@ -15,6 +21,7 @@ from tools.pfs import core, kb, project, sources  # noqa: E402
 from tools.pfs.core import PfsError  # noqa: E402
 
 
+@requires_kb
 class KbTokenTests(unittest.TestCase):
     def test_stem_and_tokens(self):
         self.assertEqual(kb.stem("Ёжик"), "ежик")           # ё → е
@@ -37,6 +44,7 @@ class KbTokenTests(unittest.TestCase):
         self.assertIn("options", real["stages"])
 
 
+@requires_kb
 class KbSearchTests(unittest.TestCase):
     def test_search_ru_and_en_rank_unit_economics(self):
         for query in ("юнит экономика LTV CAC", "unit economics LTV CAC"):

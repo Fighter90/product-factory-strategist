@@ -138,6 +138,12 @@ def build_index() -> tuple[str, list[str]]:
     if problems:
         lines += ["## Битые связи", ""] + [f"- {p}" for p in problems]
     text = "\n".join(lines) + "\n"
+    methods = core.KNOWLEDGE / "methods"
+    if not methods.is_dir() or not any(methods.glob("*.md")):
+        # C-04: на свежем клоне без базы не фабрикуем knowledge/INDEX.md —
+        # install.sh примет заглушку за установленную базу и пропустит клонирование
+        raise core.PfsError("база знаний не установлена (knowledge/methods пуст) — "
+                            "запустите scripts/install.sh, он клонирует публичный репозиторий базы")
     core.atomic_write(core.KNOWLEDGE / "INDEX.md", text)
     return text, problems
 
@@ -171,6 +177,10 @@ def build_index_en() -> str:
         lines.append(f"**{course}**: " + ", ".join(f"[{c.get('id')}](methods_en/{c['file']})" for c in group))
         lines.append("")
     text = "\n".join(lines) + "\n"
+    methods_en = core.KNOWLEDGE / "methods_en"
+    if not methods_en.is_dir() or not any(methods_en.glob("*.md")):
+        raise core.PfsError("EN-база не установлена (knowledge/methods_en пуст) — "
+                            "запустите scripts/install.sh")
     core.atomic_write(core.KNOWLEDGE / "INDEX_EN.md", text)
     return text
 

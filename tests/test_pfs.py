@@ -3,6 +3,12 @@ import json
 import os
 import tempfile
 import unittest
+from pathlib import Path as _P
+
+_KB_METHODS = _P(__file__).resolve().parent.parent / "knowledge" / "methods"
+requires_kb = unittest.skipUnless(any(_KB_METHODS.glob("*.md")),
+                                   "база знаний не установлена - запустите scripts/install.sh")
+
 from pathlib import Path
 
 TMP = tempfile.mkdtemp(prefix="pfs-test-")
@@ -220,6 +226,7 @@ class RoutingTests(unittest.TestCase):
             models.pick("unknown_task")
 
 
+@requires_kb
 class KbAndMcpTests(unittest.TestCase):
     def test_kb_search(self):
         self.assertTrue(kb.search("юнит экономика LTV CAC"))
