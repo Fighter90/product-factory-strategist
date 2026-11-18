@@ -49,7 +49,12 @@ def build_ssl_context() -> ssl.SSLContext:
 
 
 def cert_fix_hint() -> str:
-    """Готовая команда исправления отсутствующих корневых сертификатов (PRO-59)."""
+    """Готовая команда исправления отсутствующих корневых сертификатов (PRO-59, PRO-82).
+    Ремедиация зависит от способа установки: у uv tool окружения нет pip —
+    совет «python -m pip install» там невыполним (находка сквозного прогона)."""
+    if "/uv/tools/" in sys.executable:  # uv tool install — окружение без pip
+        return ("Python не доверяет корневым сертификатам — TLS-проверка не отключается. "
+                "Исправление (uv tool): uv tool install --force --with certifi product-factory-strategist")
     hint = (f"Python не доверяет корневым сертификатам — TLS-проверка не отключается. "
             f"Готовое исправление: {sys.executable} -m pip install certifi")
     if sys.platform == "darwin":
