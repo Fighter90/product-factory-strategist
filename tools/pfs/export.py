@@ -647,13 +647,25 @@ def _unit_econ_block(pdir: Path, lang: str = "ru") -> str | None:
     table = _t("| Формула | Расчёт | Результат |", lang) + "\n|---|---|---|\n" + \
         "\n".join(f"| {f} | {c} | {r} |" for f, c, r in rows)
     note = _flat(cfg.get("note"))
-    head = (_t("Допущения: {note}", lang).format(note=note) if note else
-            _t("Допущения [укажите теги]: ARPU, переменные, CAC, churn — лист «Ввод» unit_economics.xlsx.", lang))
+    if lang == "en":
+        # BUG B-05: RU-note из calcs.json нельзя вставлять в EN-каркас —
+        # гейт кириллицы отклонит SIX_PAGER_EN.md сразу после export.
+        head = ("Assumptions [rewrite in English from the calcs note / unit_economics.xlsx "
+                "input sheet; keep C-tags]: [describe assumptions]")
+    elif note:
+        head = f"Допущения: {note}"
+    else:
+        head = "Допущения [укажите теги]: ARPU, переменные, CAC, churn — лист «Ввод» unit_economics.xlsx."
     tiers = [t for t in (ue.get("tiers") or []) if isinstance(t, dict)]
     if tiers:  # PRO-51: объяснённый микс тарифов вместо цены топ-тарифа
-        mix = " + ".join(f"{t.get('name')} {n(t.get('price') or 0)} × {n((t.get('share') or 0) * 100)}%"
-                         for t in tiers)
-        head += "\n" + _t("ARPU средневзвешенный по тарифам", lang) + f": {mix} = **{n(arpu)}**."
+        if lang == "en":
+            # имена тарифов из calcs.json на языке проекта — в EN плейсхолдер (BUG B-05)
+            head += ("\nWeighted ARPU by plans [list each plan: price × share from "
+                     "unit_economics.xlsx]: [plans mix] = **" + n(arpu) + "**.")
+        else:
+            mix = " + ".join(f"{t.get('name')} {n(t.get('price') or 0)} × {n((t.get('share') or 0) * 100)}%"
+                             for t in tiers)
+            head += "\nARPU средневзвешенный по тарифам" + f": {mix} = **{n(arpu)}**."
     # Чувствительность к критерию LTV/CAC ≥ 3: порог по каждому допущению при прочих равных.
     if cm > 0 and ltv > 0 and ratio is not None and ratio >= 3:
         sens = _t("**Вывод (умозаключение):** LTV/CAC ≥ 3 держится до churn ≈ {churn} %/мес, "
