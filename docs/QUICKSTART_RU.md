@@ -103,7 +103,9 @@ python3 scripts/update_skill_counts.py --check  # счётчики актуал�
 ## Шаг 8. MCP-серверы
 
 В OpenCode: `/mcp` — статус каждого сервера «connected»
-(`linear-pfs` — issue-операции, `producthunt`, `context7`, `zai-mcp-server`).
+(`pfs-strategist` — инструменты агента; `linear`, `producthunt`, `lovable`, `rea` —
+внешние серверы из `.mcp.json`: требуют OAuth/ключей в `.env` и настраиваются отдельно;
+context7 и другие плагины среды — поверх, вне `.mcp.json`).
 
 ## Если что-то не сошлось
 

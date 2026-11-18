@@ -104,7 +104,9 @@ python3 scripts/update_skill_counts.py --check  # counters are fresh
 ## Step 8. MCP servers
 
 In OpenCode: `/mcp` — every server shows "connected"
-(`linear-pfs` — issue operations, `producthunt`, `context7`, `zai-mcp-server`).
+(`pfs-strategist` — the agent's tools; `linear`, `producthunt`, `lovable`, `rea` —
+external servers from `.mcp.json`: they require OAuth/keys in `.env` and are configured
+separately; context7 and other environment plugins sit on top, outside `.mcp.json`).
 
 ## If something doesn't match
 
