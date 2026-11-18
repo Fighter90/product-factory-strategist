@@ -197,9 +197,7 @@ pfs impact C005                 # what a change affects: conclusions → documen
 
 ### Decisions (D###) and monitoring
 ```bash
-pfs decision add --title "…" --decision "…" --owner "CPO" --grounds C001,C007 \
-  --metric "M1 retention: 38% -> 45% @2027-01-01" --review 2027-01-01 \
-  --trigger "M1 < 40% for two months" --commit "Launch pilot|PM|2026-12-01"
+pfs decision add --title "…" --decision "…" --owner "CPO" --grounds C001,C007 --metric "M1 retention: 38% -> 45% @2027-01-01" --review 2027-01-01 --trigger "M1 < 40% for two months" --commit "Launch pilot|PM|2026-12-01"
 pfs decision due          # what to decide now: overdue commitments, stale grounds, sources
                           # unchecked for 180+ days — with a ready `pfs source refresh S###` command
 pfs decision done --id D001 --commitment K1

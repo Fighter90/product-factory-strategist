@@ -51,13 +51,26 @@ STUBS = {
 
 
 def _extract_commands() -> list[tuple[str, str]]:
-    """(файл, строка-команда) из блоков кода документации, по одной команде на строку."""
+    """(файл, строка-команда) из блоков кода документации, по одной команде на строку.
+
+    Продолжения строк с висячим «\\» склеиваются в одну команду (QA D3:
+    иначе тест выполняет обрывок с «unrecognized arguments: \\»).
+    """
     out = []
     for f in DOCS:
         text = (REPO / f).read_text(encoding="utf-8")
         for block in re.findall(r"```(?:bash|sh|shell)?\n(.*?)```", text, re.S):
-            for line in block.split("\n"):
-                s = line.strip()
+            raw = block.split("\n")
+            merged: list[str] = []
+            i = 0
+            while i < len(raw):
+                s = raw[i].rstrip()
+                while s.endswith("\\") and i + 1 < len(raw):  # склейка продолжения
+                    s = s[:-1].rstrip() + " " + raw[i + 1].strip()
+                    i += 1
+                merged.append(s)
+                i += 1
+            for s in merged:
                 if s.startswith("pfs ") or s.startswith("python3 -m tools.pfs "):
                     out.append((f, s))
     return out

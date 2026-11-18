@@ -52,15 +52,25 @@ class SSLContextTests(unittest.TestCase):
         self.assertIs(captured["context"], marker)
 
     def test_ssl_failure_message_names_ready_fix_command(self):
-        """CERTIFICATE_VERIFY_FAILED: в тексте ошибки — готовая команда исправления, TLS не отключается."""
+        """CERTIFICATE_VERIFY_FAILED: в тексте ошибки — готовая команда исправления, TLS не отключается.
+
+        Ожидания ветвятся по способу установки (PRO-82, QA D3): в uv tool окружении
+        pip нет — там совет «uv tool install --with certifi», в venv/system — pip
+        (+ mac-подсказка «Install Certificates.command» на macOS).
+        """
         with mock.patch.object(urllib.request, "build_opener", return_value=FakeOpener(SSL_ERR)), \
              mock.patch.object(extract.socket, "getaddrinfo", return_value=[("AF_INET", 1, 6, "", ("93.184.216.34", 0))]):
             with self.assertRaises(PfsError) as cm:
                 extract.fetch_url(URL, attempts=1)
         msg = str(cm.exception)
-        self.assertIn("pip install certifi", msg)
-        self.assertIn(sys.executable, msg)
-        self.assertIn("Install Certificates.command", msg)  # на macOS — готовый путь исправления
+        self.assertIn("certifi", msg)
+        if "/uv/tools/" in sys.executable:
+            self.assertIn("uv tool install --force --with certifi product-factory-strategist", msg)
+        else:
+            self.assertIn("pip install certifi", msg)
+            self.assertIn(sys.executable, msg)
+            if sys.platform == "darwin":
+                self.assertIn("Install Certificates.command", msg)  # на macOS — готовый путь исправления
         self.assertNotIn("check_hostname = False", msg)  # проверку TLS не отключаем никогда
 
     def test_non_ssl_failure_keeps_manual_save_hint(self):
@@ -76,11 +86,21 @@ class SSLContextTests(unittest.TestCase):
 
 class CertHintTests(unittest.TestCase):
     def test_hint_names_pip_certifi_and_macos_command(self):
+        """venv/system-ветка: pip-команда, исполняемый файл; на macOS — команда Диска."""
         hint = extract.cert_fix_hint()
         self.assertIn("pip install certifi", hint)
         self.assertIn(sys.executable, hint)
         if sys.platform == "darwin":
             self.assertIn("Install Certificates.command", hint)
+
+    def test_hint_uv_tool_branch_names_uv_command(self):
+        """uv tool-ветка (QA D3/PRO-82): в окружении без pip — команда uv tool install."""
+        uv_python = "/home/z/.local/share/uv/tools/product-factory-strategist/bin/python3"
+        with mock.patch.object(extract.sys, "executable", uv_python):
+            hint = extract.cert_fix_hint()
+        self.assertIn("uv tool install --force --with certifi product-factory-strategist", hint)
+        self.assertNotIn("pip install", hint)  # pip в uv tool окружении отсутствует
+        self.assertNotIn("Install Certificates.command", hint)
 
     def test_is_cert_error_detects_wrapped_and_plain_ssl(self):
         self.assertTrue(extract.is_cert_error(SSL_ERR))
@@ -170,8 +190,13 @@ class DoctorHTTPSTests(unittest.TestCase):
                 cli.cmd_doctor(argparse.Namespace())
         out = buf.getvalue()
         self.assertIn("pypi.org: ssl", out)
-        self.assertIn("Install Certificates.command", out)
-        self.assertIn("pip install certifi", out)
+        self.assertIn("certifi", out)
+        if "/uv/tools/" in sys.executable:  # ветка ремедиации по способу установки (PRO-82)
+            self.assertIn("uv tool install --force --with certifi", out)
+        else:
+            self.assertIn("pip install certifi", out)
+            if sys.platform == "darwin":
+                self.assertIn("Install Certificates.command", out)
 
 
 if __name__ == "__main__":

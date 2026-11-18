@@ -198,9 +198,7 @@ pfs impact C005                 # что затронет изменение: в
 
 ### Решения (D###) и мониторинг
 ```bash
-pfs decision add --title "…" --decision "…" --owner "CPO" --grounds C001,C007 \
-  --metric "Удержание M1: 38% -> 45% @2027-01-01" --review 2027-01-01 \
-  --trigger "M1 < 40% два месяца подряд" --commit "Запустить пилот|PM|2026-12-01"
+pfs decision add --title "…" --decision "…" --owner "CPO" --grounds C001,C007 --metric "Удержание M1: 38% -> 45% @2027-01-01" --review 2027-01-01 --trigger "M1 < 40% два месяца подряд" --commit "Запустить пилот|PM|2026-12-01"
 pfs decision due          # что решать сейчас: просроченные обязательства, устаревшие основания,
                           # источники без проверки дольше 180 дн. — с командой pfs source refresh S###
 pfs decision done --id D001 --commitment K1
