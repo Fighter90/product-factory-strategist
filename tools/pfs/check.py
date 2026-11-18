@@ -14,7 +14,7 @@ from .impact import TAG
 # (ведущий ноль, как в S041), «v1.267.1» — номер версии: всё это не числа утверждения,
 # иначе дата проверки «2026-11-08» ловилась как «серьёзное расхождение (08, 11)» с каждым
 # источником, а дата в заголовке «Сводка за 25.09» — как ложное несовпадение показателей.
-NUM_TOKEN = re.compile(r"\d+(?:[.,]\d+)?")
+NUM_TOKEN = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:[.,]\d+)?")
 YEAR_TOKEN = re.compile(r"^(?:19|20)\d{2}$")
 LEADING_ZERO_TOKEN = re.compile(r"^0\d+$")
 DATE_TOKEN = re.compile(r"(?<![\d.])(?:3[01]|[12]\d|[1-9])\.(?:1[0-2]|0?[1-9])(?:\.(?:\d{2}|\d{4}))?(?![\d.])")
@@ -115,7 +115,7 @@ def _numbers(text: str) -> dict[float, str]:
         raw = m.group(0)
         if YEAR_TOKEN.match(raw) or LEADING_ZERO_TOKEN.match(raw):
             continue
-        out.setdefault(float(raw.replace(",", ".")), raw)
+        out.setdefault(calc_mod.parse_number(raw), raw)
     return out
 
 
@@ -195,6 +195,10 @@ CALCS_METRICS = (
 )
 CALCS_DOCS = ("03_options.md", "04_product_strategy.md", "06_validation_plan.md",
               "SIX_PAGER.md", "SIX_PAGER_EN.md")
+# BUG B-07: маркеры «другого сценария» в строке — её число не сверяется с calcs.json
+_SCENARIO_LINE = re.compile(
+    r"статус-кво|сценар\w*|при конверсии|альтернатив\w*|вариант[аы]? [A-ZА-Я]\b|"
+    r"status quo|scenario|alternative", re.I)
 
 
 def calcs_mismatch_errors(pdir: Path) -> list[str]:
@@ -238,8 +242,12 @@ def calcs_mismatch_errors(pdir: Path) -> list[str]:
                     tail = line[mo.end() + nm.end():].lstrip()
                     if tail.startswith("/") or tail.startswith(")"):
                         continue  # operand формулы («= 60 / 0,055») или нумерация («; 2) Продукт»)
-                    got = calc_mod._num(nm.group(0))
+                    got = calc_mod.parse_number(nm.group(0))
                     if abs(got - want) > max(0.011, abs(want) * 0.005):
+                        # BUG B-07: строка описывает другой сценарий (статус-кво, альтернативная
+                        # конверсия) — её числа не обязаны сходиться с calcs.json одного расчёта
+                        if _SCENARIO_LINE.search(line):
+                            continue
                         out.append(tr("err_calcs_mismatch", name=name, i=i, metric=metric,
                                       num=nm.group(0).strip(), expected=fmt(want)))
                         break  # одна ошибка на метрику в строке

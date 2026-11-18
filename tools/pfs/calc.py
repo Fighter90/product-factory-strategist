@@ -477,9 +477,24 @@ PARAM_SPECS: dict[str, list[dict]] = {
 
 
 def _num(text: str) -> float:
-    """«1 200», «1,5», «2 603» → float."""
-    t = text.replace("\u00a0", "").replace("\u202f", "").replace(" ", "").replace(",", ".")
-    return float(t)
+    """«1 200», «1,5», «2 603» → float. Для новых проверок используйте parse_number:
+    он различает тысячные и десятичные запятые (BUG B-06/B-08)."""
+    return parse_number(text)
+
+
+_THOUSANDS_COMMA = re.compile(r"^\d{1,3}(,\d{3})+$")
+_THOUSANDS_TAIL = re.compile(r"(\d),(\d{3})(?!\d)")
+
+
+def parse_number(text: str) -> float:
+    """Число из токена с разделителями (BUG B-06/B-08, внешний аудит):
+    «22 500» → 22500; «13,195» (запятая + ровно 3 цифры — тысячный разряд) → 13195;
+    «8,9» (запятая + 1–2 цифры — RU десятичная) → 8.9; «1,234.5» (EN) → 1234.5."""
+    t = (text.replace("\u00a0", "").replace("\u202f", "").replace(" ", ""))
+    if _THOUSANDS_COMMA.match(t):
+        return float(t.replace(",", ""))
+    t = _THOUSANDS_TAIL.sub(r"\1\2", t)  # «1,234.5» → «1234.5»
+    return float(t.replace(",", "."))
 
 
 def _grab(line: str, pattern: str) -> tuple[float, str, int] | None:
