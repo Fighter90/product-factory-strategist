@@ -16,3 +16,4 @@ projects/.active
 projects/*/*_session.json
 product_factory_strategist.egg-info/
 knowledge/
+site/
