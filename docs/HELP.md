@@ -40,7 +40,7 @@ python3 -m unittest discover -s tests   # самопроверка (260 тест
 ```
 
 > **Материалы агента** (`knowledge/` — карты знаний RU/EN, шаблоны, рубрики) лежат в отдельном
-> приватном репозитории [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base)
+> публичном репозитории [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base)
 > подтягиваются автоматически при `./scripts/install.sh` — вместе с сайтом; установка проверяет результат.
 > Без них `pfs doctor` подскажет отсутствие; обновление материалов — `cd knowledge && git pull`.
 

@@ -41,7 +41,7 @@ python3 -m unittest discover -s tests          # self-check (260 tests)
 ```
 
 > **Agent materials** (`knowledge/` — RU/EN knowledge maps, templates, rubrics) live in a separate
-> private repository [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base)
+> public repository [product-factory-strategist-base](https://github.com/Fighter90/product-factory-strategist-base)
 > are pulled automatically by `./scripts/install.sh` — together with the site; the install verifies the result.
 > Without them `pfs doctor` hints; to update the materials run `cd knowledge && git pull`.
 
