@@ -371,6 +371,10 @@ def load_spec(pdir: Path, spec: str | Path | None = None) -> tuple[dict, str]:
                                 f"Заполните его и повторите: pfs roadmap --spec {spec}")
     else:
         path = pdir / "roadmap.json"
+    if path.is_file() and path.read_text(encoding="utf-8").strip() == SPEC_TEMPLATE.strip():
+        # незаполненный шаблон — молча строить роудмап из болванки нельзя
+        raise core.PfsError(f"{path}: шаблон ещё не заполнен — впишите этапы и повторите: "
+                            f"pfs roadmap --spec {spec or path.name}")
     if path.exists():
         try:
             data = core.read_json(path)

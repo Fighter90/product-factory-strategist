@@ -250,7 +250,7 @@ class CliIntegrationTests(unittest.TestCase):
         make_04(pdir)
         buf = io.StringIO()
         with redirect_stdout(buf):
-            rc = cli.main(["--project", pdir.name, "roadmap", "--spec", "no-such.json"])
+            rc = cli.main(["--project", pdir.name, "roadmap", "--spec", "outputs/no-such.json"])
         self.assertEqual(rc, 2)
 
 
@@ -304,7 +304,7 @@ class RoadmapValidationTests(unittest.TestCase):
         pdir = project.create("Роудмап нет spec", "Вопрос?", slug="rm-nospec")
         make_04(pdir)  # 04 на месте: без проверки откат прошёл бы «успешно»
         with self.assertRaises(PfsError):
-            roadmap.load_spec(pdir, "no-such-roadmap.json")
+            roadmap.load_spec(pdir, "outputs/no-such-roadmap.json")
 
     def test_directory_as_spec_is_pfs_error(self):
         pdir = project.create("Роудмап каталог как spec", "Вопрос?", slug="rm-dirspec")
