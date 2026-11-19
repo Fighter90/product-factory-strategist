@@ -1,8 +1,8 @@
 # Connection for loved ones and personal devices: six-pager
 
-> Six-pager for a decision committee. The market and every figure are training numbers from the leader's brief[^1]; the full evidence chain lives in REPORT.md. Assumptions are labeled as assumptions and hypotheses as hypotheses; interviews with AI respondents are sources of hypotheses only, not proof. Scenario calculations: analysis/economics.py; Excel appendices: the Appendices section below.
+> Six-pager for a decision committee. The market and every figure are training numbers from the director's brief[^1]; the full evidence chain lives in REPORT.md. Assumptions are labeled as assumptions and hypotheses as hypotheses; interviews with AI respondents are sources of hypotheses only, not proof. Scenario calculations: analysis/economics.py; Excel appendices: the Appendices section below.
 
-**Request:** Your team runs the services of a fictional mobile operator. Some customers help loved ones with their connectivity. Others manage several of their own numbers. Decide who to help first, what exactly to change, and why the operator should invest money in it. Prepare a plan for the next year and set a benchmark for the end of year three. The leader faces two decisions: by the end of Q1 — whether to commit people and money to a pilot; by the end of Q2 — whether to expand coverage, change the offer, or keep observing.
+**Request:** Your team runs the services of a fictional mobile operator. Some customers help loved ones with their connectivity. Others manage several of their own numbers. Decide who to help first, what exactly to change, and why the operator should invest money in it. Prepare a plan for the next year and set a benchmark for the end of year three. The director faces two decisions: by the end of Q1 — whether to commit people and money to a pilot; by the end of Q2 — whether to expand coverage, change the offer, or keep observing.
 
 ## FAQ-1. Current state analysis
 
@@ -31,7 +31,7 @@ Honest data gaps: the mix of outage causes is taken as an assumption of ~50% quo
 
 ### 1.2 Key competitors: growth and promo mechanics
 
-The training market has no operator brands to fight: the competition is the habitual ways customers already solve the job [S001]. The comparison follows the brief's groups of ways.
+The training market has no operator brands to fight: the competition is the habitual ways customers already solve the job [S001]. The comparison follows the brief's groups of existing workarounds.
 
 | | Bank auto-payment | Family chat | Dashboard and device app | Plan with package sharing |
 |---|---|---|---|---|
@@ -84,7 +84,7 @@ What holds people back from starting or renewing?
 
 ## FAQ-3. Strategic initiatives. Justify each one briefly.
 
-The direction was chosen from five meaningfully different options: A — keep as is; B — "alert before the outage"; C — "family dashboard"; D — device owners first; E — shut the line down. B was chosen: it uses data and mechanics that already exist [C005,C006], fits the Q2 budget (3 development man-months, plus 0.5 FTE (full-time equivalent) each for a designer and an analyst) [C010], and hits the recorded gap "the data exists — the alert does not". C was rejected: it does not solve the moment of finding out and needs ≥4–5 man-months, over budget [C010]. D was rejected for the first wave: its base is 2.5× smaller and auto-payment already covers most cases [C004,C020]. A and E remain defensible only if the leadership revises the targets [C002].
+The direction was chosen from five meaningfully different options: A — keep as is; B — "alert before the outage"; C — "family dashboard"; D — device owners first; E — shut the line down. B was chosen: it uses data and mechanics that already exist [C005,C006], fits the Q2 budget (3 development man-months, plus 0.5 FTE (full-time equivalent) each for a designer and an analyst) [C010], and hits the recorded gap "the data exists — the alert does not". C was rejected: it does not solve the moment of finding out and needs ≥4–5 man-months, over budget [C010]. D was rejected for the first wave: its base is 2.5× smaller and auto-payment already covers most cases [C004,C020]. A and E remain defensible only if the directorship revises the targets [C002].
 
 An independent red-team attack produced 20 hits (15 objections + 5 hidden assumptions) with the verdict "needs rework before the pilot"; every hit is built into the design as a check or a threshold [C021–C026]: incrementality, cannibalization, consent rights, forecast precision, and pilot power.
 
@@ -132,7 +132,7 @@ Five-line forecast:
 | Owners of several numbers, year-end | 1,000 | 1,200 | 1,000 | second wave — Q3–Q4; until Q3 — no change [C016] |
 | 14-day activation (last quarter) | 45% | 60% | 50% | the alert pushes the first action [C007] |
 
-Gaps in the adverse case: profit RUB 2.5M short of target — expand only after the pilot effect is confirmed; 1,600 active groups short — activation work or a target revision by the leader [C002].
+Gaps in the adverse case: profit RUB 2.5M short of target — expand only after the pilot effect is confirmed; 1,600 active groups short — activation work or a target revision by the director [C002].
 
 > **Conclusion (inference):** the four drivers close the FAQ-2 barriers: the moment of finding out is solved by the product itself (driver 1), distrust by the consent screen and the invitation (drivers 1–2), unexplained charges by the in-message charge breakdown, and weak evidence by driver 3. Every initiative builds on existing assets: balance and payment data [C005,C006] and the transfer mechanics [C005]; no new tariff product is required. This means the risk sits not in development but in customer behavior — precisely what the pilot tests.
 
@@ -159,9 +159,9 @@ Expected distribution of the initiatives' contribution to the overall result (su
 - 10% — Driver 4 "Device owners": +200 owners over "no change" (1,200 versus 1,000 by year-end) [C002];
 - 5% — Driver 3 "Honest retention economics": no direct monetary contribution, but it protects the whole result from a false expansion — the nullification rule at shifts >30% [C021].
 
-Order of tactics: **high priority — Q1**: trigger rules, reminder templates, consent screen, payment idempotency, pilot pre-registration; about 2 of the 3 Q2 development man-months plus a 0.5 FTE analyst [C010,C022,C025,C026]. **Medium priority — Q2**: enroll 600 groups over 6 weeks, observe the last enrollees for up to 14 days, report to the leader: effect, retention, decision [C018,S001]. **Base priority — Q3–Q4**: carry the mechanics to device owners, revise the yearly targets against actual data [C016,C002].
+Order of tactics: **high priority — Q1**: trigger rules, reminder templates, consent screen, payment idempotency, pilot pre-registration; about 2 of the 3 Q2 development man-months plus a 0.5 FTE analyst [C010,C022,C025,C026]. **Medium priority — Q2**: enroll 600 groups over 6 weeks, observe the last enrollees for up to 14 days, report to the director: effect, retention, decision [C018,S001]. **Lower priority — Q3–Q4**: carry the mechanics to device owners, revise the yearly targets against actual data [C016,C002].
 
-Timing: the package data shows no pronounced seasonal peaks — an honest gap. Timing is tied to the billing cycle (recurring charges, for example on the 5th of the month — a standing trigger of "unexplained charges" [C005]) and to the leader's decisions: the pilot by the end of Q1, the report by the end of Q2 [S001]. A seasonal adjustment is mandatory when extrapolating the 600 groups to scale [C025].
+Timing: the package data shows no pronounced seasonal peaks — an honest gap. Timing is tied to the billing cycle (recurring charges, for example on the 5th of the month — a standing trigger of "unexplained charges" [C005]) and to the director's decisions: the pilot by the end of Q1, the report by the end of Q2 [S001]. A seasonal adjustment is mandatory when extrapolating the 600 groups to scale [C025].
 
 Parallel tracks (off the main line): a usability check before the A/B — the same "help a loved one" task by the old and the new way: time, errors, who succeeded unaided [S001]; a support cost estimate before pilot start (the verification specialist is a separate leader decision) [C010]; invitation and consent-screen wording tested on the pilot group — synthetic hypotheses [C019]. There are no partnership tracks: no agreements with external brands exist and no paid advertising is used — only the operator's own contact points [S001].
 
@@ -176,7 +176,7 @@ KPIs — key performance indicators — are set in two dimensions: business (mon
 | Business | Plan-year gross profit | RUB 279M ("no change") [C002] | ≥RUB 285M by the end of the plan year [C002] | actual <RUB 285M with a confirmed pilot effect — revise the target with the finance team [S001] |
 | Business | Additional paid months | 0 — the service is not launched [C003] | ≥12,000 by year-end; target scenario 16,500 [C003] | <12,000 by year-end — cut coverage or costs [S001] |
 | Business | Enrolled groups, year-end | 6,500 [C001] | 12,000 [C002] | <11,500 — audit the acquisition funnel and the consent rate [C024] |
-| Business | Active groups (last month) | 4,000 [C001] | 8,000 [C002] | <7,600 — activation work or a target revision by the leader [C008] |
+| Business | Active groups (last month) | 4,000 [C001] | 8,000 [C002] | <7,600 — activation work or a target revision by the director [C008] |
 | Business | 14-day activation (last quarter) | 42–45% [C001,S001] | 60% [C002] | <50% (the adverse-case level) — rework group onboarding |
 | Product | Exhaustion-driven cutoffs after a low-balance event | 12% [C013] | −3 p.p., to 9%, by the end of the pilot [C013] | an effect of −1 to −3 p.p. — extend observation; ≈0 — stop or change [S001] |
 | Product | Consent rate of enrolled groups | not measured [C024] | ≥70% in the first 4 weeks of the pilot [C024] | <50% — rework the invitation; <30% — rework the mechanic [C024] |

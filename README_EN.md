@@ -18,8 +18,8 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 ---
 
 > 🎬 Agent demo (10 scenario steps, voice-over and subtitles): [video/product-factory-strategist-EN.mp4](video/product-factory-strategist-EN.mp4)
-> 📺 Демо-проект CVStart (коммерциализация, реестр доказательств, решение): [DEMO-RU.mp4](video/product-factory-strategist-DEMO-RU.mp4) · [DEMO-EN.mp4](video/product-factory-strategist-DEMO-EN.mp4)
-> 🎞 **Детальный полный прогон (~20 мин):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — установка, 12 шагов, гейты, red team, six-pager-цикл, решение, мониторинг, финиш.
+> 📺 Demo project CVStart (commercialization, evidence registry, decision): [DEMO-RU.mp4](video/product-factory-strategist-DEMO-RU.mp4) · [DEMO-EN.mp4](video/product-factory-strategist-DEMO-EN.mp4)
+> 🎞 **Detailed full run (~20 min):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — установка, 12 шагов, гейты, red team, six-pager-цикл, решение, мониторинг, финиш.
 
 ## Quick start (5 minutes)
 
@@ -63,7 +63,7 @@ chat — state is restored automatically.
 
 ## Demo project: 'Connection for loved ones' (customer brief) — video and screenshots
 
-> Customer brief (training market of a mobile carrier): family groups with a shared data package, and owners of several own numbers. Full 12-step run: 26 claims (10 facts · 8 assumptions · 4 hypotheses · 4 inferences), red team 20 hits, decision D001, `check --strict` 0 errors. Strategies — in **BRIEF_RESPONSE.md** (one document in five parts, as the brief requires).
+> Customer brief (training market of a mobile carrier): family groups with a shared data package, and owners of several own numbers. Full 12-step run: 26 claims (10 facts · 8 assumptions · 4 hypotheses · 4 inferences), red team 20 hits, decision D001, `check --strict` 0 errors. Strategies — in **BRIEF_RESPONSE.md** (one document in five parts, as the brief requires; RU — the deliverable language of the demo, EN summary in SIX_PAGER_EN.md).
 
 ### Video (EN — 4:14, RU — 4:20)
 
@@ -368,14 +368,14 @@ AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
   skills/ (102: base 13 · product-skills 27 · personal library · integrations)
   agents/ (10) · hooks/ (6: + pre_guard) · settings.json · opencode.json (permissions)
-.cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea · producthunt)
+.cursor/rules/ · .github/ (CI + release workflows) · .mcp.json (pfs · linear · lovable · rea · producthunt)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions
             data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/
             sources/ · claims.jsonl · decisions.jsonl · log.jsonl · costs.json · state.json
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
-site/index.html (RU/EN)
+site/ (deployed via site-repo, not stored here)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
 tests/               (919) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```
