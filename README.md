@@ -19,8 +19,8 @@ Windsurf, Copilot.
 ---
 
 > 🎬 Демонстрация работы агента (10 шагов сценария, озвучка и субтитры): [video/product-factory-strategist-RU.mp4](video/product-factory-strategist-RU.mp4)
-> 📺 Демо-проект CVStart (коммерциализация, реестр доказательств, решение): [DEMO-RU.mp4](video/product-factory-strategist-DEMO-RU.mp4)
-> 🎞 **Детальный полный прогон (~20 мин):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — установка, 12 шагов, гейты, red team, six-pager-цикл, решение, мониторинг, финиш. · [DEMO-EN.mp4](video/product-factory-strategist-DEMO-EN.mp4)
+> 📺 Демо-проект «Связь для близких» (бриф заказчика, 12 шагов, решение D001): [обзор RU — 4:22](video/svyaz-overview-RU.mp4) · [обзор EN — 4:16](video/svyaz-overview-EN.mp4)
+> 🎞 **Детальный полный прогон (~20 мин):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — установка, 12 шагов, гейты, red team, six-pager-цикл, решение, мониторинг, финиш.
 
 ## Быстрый старт (5 минут)
 
@@ -64,7 +64,7 @@ python3 -m unittest discover -s tests          # 919 тестов
 
 > Бриф заказчика (учебный рынок мобильного оператора): семейные группы с общим пакетом и владельцы нескольких номеров. Полный 12-шаговый прогон: 26 утверждений (10 факт · 8 допущение · 4 гипотеза · 4 вывода), red team 20 ударов, решение D001, `check --strict` 0 ошибок. Стратегии — в **`BRIEF_RESPONSE.md`** (один документ из пяти частей, как требует бриф).
 
-### Видео (RU — 4:20, EN — 4:14)
+### Видео (RU — 4:22, EN — 4:16)
 
 | | |
 |---|---|
@@ -91,113 +91,17 @@ python3 -m unittest discover -s tests          # 919 тестов
 
 Полный пакет демо: `projects/связь-для-близких-и-собственных-устройств/` — карта пакета: [`DEMO_README.md`](projects/связь-для-близких-и-собственных-устройств/DEMO_README.md).
 
-<details>
-<summary><b>Архив: предыдущее демо CVStart (второй пример — агент на другой задаче)</b></summary>
-
-### CVStart — коммерциализация open-source резюме-платформы
-
-Живой пример сквозного прогона: реальная задача руководителя, 12 шагов агента, пять вариантов с атакой red team, обе стратегии, six-pager на двух языках (формат референса стратегии роста: подпункты 1.1/1.2 и 2.1/2.2, матрица тактик, KPI в двух плоскостях, сноски; черновик собирает `pfs export --six-pager`, спецификация — `knowledge/templates/SIX_PAGER_PROMPT.md`) с Excel-моделью. Проект лежит в `projects/демо/`, скриншоты продукта — в `projects/демо/outputs/img/` и `https://strategyproduct.ru/assets/` (публичный сайт).
-
-### Задача и продукт
-
-**Запрос руководителя (дословно):** «Разработать коммерческую версию cvstart.org и стратегию вывода на рынок на весь мир».
-
-**Продукт:** [cvstart.org](https://cvstart.org/) ([github.com/Fighter90/career-ops-ui](https://github.com/Fighter90/career-ops-ui)) — открытый (MIT) AI-конструктор резюме и поиска вакансий: скан ~129 джоб-бордов, AI-скоринг 0.0–5.0, CV Studio, PDF/DOCX, cover letters, трекер, карта вакансий; 100% локально; 18 LLM-провайдеров BYOK; 19 языков; ~7 602 автотеста; монетизации нет.
-
-Ось сравнения вариантов — платящие подписчики и ARR; ограничения: MIT-core остаётся бесплатным и открытым, соло-разработчик, сохранить доверие локального/приватного режима.
-
-Сайт и README продукта зарегистрированы первыми источниками (S001–S002, origin=own).
-
-![Лендинг CVStart](https://strategyproduct.ru/assets/cv_landing_ru.jpg)
-
-### Как агент работал: 12 шагов
-
-| Шаг | Что происходило | Команды / факты |
-|---|---|---|
-| 0 · Бриф | ≤3 вопроса руководителю: решение (стратегия коммерциализации + GTM), ось (платящие/ARR), ограничения (MIT-core, соло, локальный режим). Человек подтвердил бриф | `pfs new`, `pfs answer`, `00_brief.md` |
-| 1 · Источники | 11 источников (S001–S012): сайт и README продукта, рынок resume builders, цены конкурентов, рекрутинг/ATS, синтетическая воронка, 2 ИИ-респондента, выбор руководителя | `pfs source add` ×11 |
-| 2 · Исследование | 20 утверждений с типами (12 фактов, 4 гипотезы, 4 допущения) и силой A–D: resume builders $1,2–2,4 млрд (диапазон — агрегаторы расходятся ×2), AI-сегмент CAGR 13,1%, онлайн-рекрутинг $37,97 млрд (2025), ATS у 98% F500 | `pfs claim add` ×20 |
-| 3 · Дискавери | 2 синтетические персоны (Sarah 32, EN-сегмент; Markus 35, Берлин) — честно помечены origin=synthetic, дали только гипотезы; 7 конкурентов $8–40/мес с автопродлениями (Zety, resume.io, Novoresume, Kickresume, Enhancv, Teal, Rezi) | `pfs interview save`, S009–S010 |
-| 4 · Ситуация | Известно / не знаем / противоречия: внутренних метрик hosted-версии нет (её ещё не существует) — честный пробел; рыночные оценки — диапазонами | `02_situation.md` |
-| 5 · Варианты | 5 содержательно разных A–E, включая «оставить как есть» (A) и «закрыть коммерческую ветку» (E) | `03_options.md` |
-| 5 · Red team | Отдельный субагент атаковал каждый вариант: **15 возражений + 5 скрытых допущений** (20 ударов) — все встроены порогами плана проверки | субагент red-team |
-| 6 · Выбор | Пауза человека: руководитель выбрал **B — hosted freemium SaaS** (записано источником S011) | `pfs answer`, S011 |
-| 7 · Стратегии | Продуктовая (Free BYOK / Pro $12 / Unlimited $29; opt-in облако при локальном MIT-core; честный прайсинг без автопродлений; волны локалей EN → DE/ES/PT-BR → JA/ZH) + коммуникационная с таблицей «обещание → подтверждение» | `04/05` |
-| 8 · Проверка | 90 дней: продолжить ≥40 платящих / изменить 20–40 / остановить <20 при activation <35%; контр-метрики: звёзды GitHub, GDPR-жалобы, NPS ≥30, инференс free ≤$200/мес | `06_validation_plan.md` |
-| 9 · Review | Автопроверка `check --strict` = **100/100**; six-pager RU/EN (MD · PDF · DOCX) + 4 книги Excel; экономика [C016]: ARPU $29, CM $21,75, LTV ≈ $271,88, LTV/CAC ≈ 4,5, брейк-евен ≈ 69 платящих; синтетическая воронка [S008] — метод, не прогноз | `pfs calc all`, `pfs export --six-pager` |
-| 10 · Решение | D001: бета в 3 EN-гео к 2026-12-15, пересмотр 2027-02-10, основания C019/C013/C014/C016/C005/C006 | `pfs decision add` |
-| 11 · Мониторинг | Открыт: `pfs decision due` следит за бета-обязательством и датой пересмотра | шаг in_progress |
-
-Синтетика (персоны и воронка) зарегистрирована с `origin=synthetic` — инструмент не даёт записать на неё
-факты: это метод и гипотезы, не доказательство спроса.
-
-### Что получилось
-
-- **Рекомендация: вариант B — hosted freemium SaaS**: Free BYOK / Pro $12 / Unlimited $29, opt-in облако
-  при локальном MIT-core, честный прайсинг без автопродлений, волны локалей EN → DE/ES/PT-BR → JA/ZH.
-  B2B-лицензии (D), open-core-переход (C) и статус-кво (A) — осознанные отказы.
-- **Экономика [C016]**: ARPU $29 → контрибуция $21,75; LTV ≈ $271,88; LTV/CAC ≈ 4,5; брейк-евен ≈ 69 платящих
-  (чувствительность — в Excel).
-- **Синтетическая воронка [S008]** (метод, не прогноз): к нед. 12 — 53 платящих, MRR $1 537; воспроизводится
-  скриптом `analysis/gen_synthetic.py` → `synthetic_funnel.csv`.
-
-### Что посмотреть
-
-| Артефакт | Путь |
-|---|---|
-| Бриф и план исследования | `projects/демо/outputs/00_brief.md`, `01_research_plan.md` |
-| Ситуация и сегменты | `projects/демо/outputs/02_situation.md` |
-| 5 вариантов + red team | `projects/демо/outputs/03_options.md` |
-| Обе стратегии | `projects/демо/outputs/04_product_strategy.md`, `05_comms_strategy.md` |
-| План проверки (90 дней) | `projects/демо/outputs/06_validation_plan.md` |
-| Ревью качества | `projects/демо/outputs/07_quality_review.md` |
-| **Six-pager RU** (MD · **PDF** · DOCX) | `projects/демо/outputs/SIX_PAGER.md` · `.pdf` · `.docx` |
-| **Six-pager EN** (MD · **PDF** · DOCX) | `projects/демо/outputs/SIX_PAGER_EN.md` · `.pdf` · `.docx` |
-| Полный отчёт | `projects/демо/outputs/REPORT.md` |
-| Excel-модель (4 книги) | `projects/демо/outputs/attachments/` (unit_economics · growth_model · cohort_retention · market_sizing) |
-| Скриншоты продукта | `projects/демо/outputs/img/`, `https://strategyproduct.ru/assets/` (публичный сайт) |
-| Синтетические интервью (2 персоны) | `projects/демо/interviews/synthetic/` |
-| Синтетика + анализ данных | `projects/демо/analysis/` (gen_synthetic.py, synthetic_funnel.csv, md_to_pdf.py) |
-| Реестр и журнал | `projects/демо/claims.jsonl`, `decisions.jsonl`, `log.jsonl` |
-| Deck-презентация | `projects/демо/outputs/presentations/deck.html` |
-
-### Сверка с заданием — где что в демо
-
-| Требование задания | Где доказательство |
-|---|---|
-| **Обязательный минимум** | |
-| Поставить задачу, ≤3 вопроса | `00_brief.md`; вопросы intake — только важное |
-| Материалы + источник каждого сведения | 11 источников S001–S012 (`pfs source list`; S003 замещена при выверке — PRO-50); дедуп SHA-256; 20 утверждений C001–C020 с тегами типов и силы A–D |
-| План от вопросов, меняющих решение; пробелы | `01_research_plan.md`; честные пробелы в `02_situation.md` (нет внутренних метрик hosted-версии) |
-| ≥3 варианта, вкл. «оставить как есть» и «закрыть»; возражения | `03_options.md`: A–E; red team — 20 ударов (15 возражений + 5 скрытых допущений) |
-| Продуктовая + коммуникационная стратегия | `04_product_strategy.md`, `05_comms_strategy.md`, таблица «обещание → подтверждение» |
-| План проверки | `06_validation_plan.md`: 90 дней, пороги 40 / 20–40 / <20, контр-метрики, критерии решения |
-| Workflow с паузами человека | 12 шагов, паузы на брифе (1), выборе B (7) и утверждении D001 (11); конец прогона — `pfs finish` |
-| Порядок в знаниях | инструкции / knowledge / projects/демо / state.json — раздельно |
-| Продолжение после перерыва | состояние в state.json; `pfs status` восстанавливает контекст |
-| Прозрачность | log.jsonl; цепочка C### → S###; `pfs impact` |
-| **Дополнительный уровень** | |
-| Интервью и синтетика | 2 ИИ-персоны (S009–S010), origin=synthetic — только гипотезы, чекер факты на них не пускает |
-| Изображения и медиа | скриншоты продукта RU/EN в `outputs/img/` и `https://strategyproduct.ru/assets/` (публичный сайт); сайт и README — источниками S001–S002 |
-| Анализ данных | синтетическая воронка [S008]: `analysis/synthetic_funnel.csv`, воспроизводится скриптом |
-| Поддержка решений и пересмотр | D001 + `pfs decision due`; `pfs impact` показывает затронутые выводы |
-| Маршрутизация, skills/hooks/subagents | `pfs route` → сценарий вывода на рынок; red-team субагент |
-| MCP и CLI | CLI `pfs` (25+ команд) + MCP 18 инструментов |
-| Six-pager для комитета | RU и EN, каждый в трёх форматах (MD/PDF/DOCX) + 4 книги Excel |
-| Качество | `pfs check --strict` = 100/100 |
-
 ### Как повторить
 
 ```bash
-python3 -m tools.pfs use демо                        # переключиться на демо
-python3 -m tools.pfs status                          # где остановились (шаг monitoring)
-python3 -m tools.pfs next                            # что решать сейчас
-python3 -m tools.pfs --project демо check --strict   # quality gate: 100/100
+python3 -m tools.pfs use связь-для-близких-и-собственных-устройств  # переключиться на демо
+python3 -m tools.pfs status                         # где остановились (12/12, D001)
+python3 -m tools.pfs next                           # что решать сейчас
+python3 -m tools.pfs check --strict                 # quality gate: 0 ошибок
 # своя задача:
 python3 -m tools.pfs new "Название" "Запрос дословно"
 ```
 
-</details>
 ## Как агент работает: 12 шагов
 
 На каждом шаге агент **читает обязательные карты базы знаний** (печатаются в `pfs step`), проходит
@@ -439,8 +343,7 @@ tools/pfs/           core · project · route · sources · claims · check · i
                      data · calc · xlsx · docx · export · cost · kb · models · mcp_server · cli
 projects/<slug>/     sources/ · state.json · claims.jsonl · decisions.jsonl · log.jsonl · costs.json ·
                      outputs/ (00…07 · REPORT · SIX_PAGER · attachments/*.xlsx · presentations/)
-                     демо-проект: демо — CVStart (сквозной прогон · six-pager RU/EN (MD/PDF/DOCX) ·
-                     Excel · 100/100)
+                     демо-проект: «связь для близких» (бриф заказчика · BRIEF_RESPONSE · six-pager RU/EN · Excel)
 docs/                HELP.md · HELP_EN.md · ARCHITECTURE · SKILLS · COMPLIANCE · SUBMISSION ·
                      VERIFICATION · docx/ · demo/ · lovable-brief…
 tests/               (919)

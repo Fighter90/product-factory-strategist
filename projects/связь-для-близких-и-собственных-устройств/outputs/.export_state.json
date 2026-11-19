@@ -1,8 +1,8 @@
 {
-  "at": "2026-11-19T15:29:30+03:00",
-  "claims": 26,
+  "at": "2026-11-19T18:59:46+03:00",
+  "claims": 27,
   "sources": 4,
-  "claims_sha": "9478cef4ba11b25f5c86daab357e8aef063c09b7f767d7482d29013d3e3b7aaf",
+  "claims_sha": "c4e456fb69d2ddcd6b9b098ccbb9c5df8b4e6c97adcf4a16c480d0063f3c70d3",
   "sources_sha": "ba1d472e1bcd2139c9c4c788fa6b2d1e8b813e88373f6344e3b096b8aec04faf",
   "calcs_sha": "abce39967dde866c161b802939796426ea1bb7104a28ec751c3591ac5446cfdd",
   "att_shas": {

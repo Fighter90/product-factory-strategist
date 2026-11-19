@@ -18,7 +18,7 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 ---
 
 > 🎬 Agent demo (10 scenario steps, voice-over and subtitles): [video/product-factory-strategist-EN.mp4](video/product-factory-strategist-EN.mp4)
-> 📺 Demo project CVStart (commercialization, evidence registry, decision): [DEMO-RU.mp4](video/product-factory-strategist-DEMO-RU.mp4) · [DEMO-EN.mp4](video/product-factory-strategist-DEMO-EN.mp4)
+> 📺 Demo project "Connection for loved ones" (customer brief, 12 steps, decision D001): [overview EN — 4:16](video/svyaz-overview-EN.mp4) · [overview RU — 4:22](video/svyaz-overview-RU.mp4)
 > 🎞 **Detailed full run (~20 min):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — установка, 12 шагов, гейты, red team, six-pager-цикл, решение, мониторинг, финиш.
 
 ## Quick start (5 minutes)
@@ -65,7 +65,7 @@ chat — state is restored automatically.
 
 > Customer brief (training market of a mobile carrier): family groups with a shared data package, and owners of several own numbers. Full 12-step run: 26 claims (10 facts · 8 assumptions · 4 hypotheses · 4 inferences), red team 20 hits, decision D001, `check --strict` 0 errors. Strategies — in **BRIEF_RESPONSE.md** (one document in five parts, as the brief requires; RU — the deliverable language of the demo, EN summary in SIX_PAGER_EN.md).
 
-### Video (EN — 4:14, RU — 4:20)
+### Video (EN — 4:16, RU — 4:22)
 
 | | |
 |---|---|
@@ -92,48 +92,26 @@ The end-to-end path required by the case: **request → agent work → options �
 
 Full demo package: `projects/связь-для-близких-и-собственных-устройств/` — package map: [DEMO_README.md](projects/связь-для-близких-и-собственных-устройств/DEMO_README.md).
 
-<details>
-<summary><b>Archive: previous demo CVStart (a second example — the agent on a different task)</b></summary>
-
-</details>
-## Demo project: CVStart — full walkthrough
-
-A live end-to-end run on a real task: **CVStart** — [cvstart.org](https://cvstart.org/)
-([github.com/Fighter90/career-ops-ui](https://github.com/Fighter90/career-ops-ui)), an open (MIT) AI resume
-builder and job-search tool: a scan of ~129 job boards, AI scoring 0.0–5.0, CV Studio, PDF/DOCX, cover letters,
-a tracker, a job map; 100% local; 18 BYOK LLM providers; 19 languages; ~7,602 automated tests; no monetization yet.
-
-- Task: "Build the commercial version of cvstart.org and a go-to-market strategy for the whole world."
-  Comparison axis: paying subscribers and ARR; constraints: the MIT core stays free and open, a solo developer,
-  keep the trust of the local/private mode.
-- How the agent ran: 12 steps — brief → 11 sources (S001–S012) → research plan → discovery with 2 synthetic
-  personas (honestly labeled, hypotheses only) → situation → 5 options + red team (15 objections + 5 hidden
-  assumptions = 20 hits) → the director picked **B: hosted freemium SaaS** (Free BYOK / Pro $12 / Unlimited $29,
-  opt-in cloud on top of the local MIT core, honest pricing without auto-renewals, locale waves
-  EN → DE/ES/PT-BR → JA/ZH) → both strategies → 90-day validation plan (continue ≥40 paying / change 20–40 /
-  stop <20 at activation <35%; counter-metrics: GitHub stars, GDPR complaints, NPS ≥30, free-tier inference
-  ≤$200/mo) → review `check --strict` **100/100** → decision D001 (beta in 3 EN geos by 2026-12-15,
-  review 2027-02-10) → monitoring.
-- Evidence: 11 sources (S001–S012; S003 superseded during source verification — PRO-50), 20 claims with
-  types and grades A–D (12 facts, 4 hypotheses, 4 assumptions); market
-  facts: resume builders $1.2–2.4B (aggregators disagree 2×), AI segment CAGR 13.1%, online recruiting $37.97B
-  (2025), ATS at 98% of F500, 7 competitors at $8–40/mo with auto-renewals; unit economics [C016]: ARPU $29,
-  CM $21.75, LTV ≈ $271.88, LTV/CAC ≈ 4.5, break-even ≈ 69 paying; synthetic funnel [S008] is a method,
-  not a forecast. Synthetic material is registered with `origin=synthetic` — the tool refuses to record facts on it.
-
-What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_PAGER (RU) and SIX_PAGER_EN — each as
-.md/.pdf/.docx**, attachments/*.xlsx — 4 workbooks, img/ screenshots), `projects/демо/interviews/synthetic/`. The six-pager follows the growth-strategy reference format: subsections 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs in two planes, source footnotes; the draft is assembled by `pfs export --six-pager` (spec: `knowledge/templates/SIX_PAGER_PROMPT.md`)
-(2 AI personas), `projects/демо/analysis/` (generators + funnel CSV). Product screenshots: `https://strategyproduct.ru/assets/` (public site).
+What the run produced: 26 claims with types and grades (10 facts · 8 assumptions · 4 hypotheses · 4 inferences),
+5 options A–E with red team (20 hits — 15 objections + 5 hidden assumptions, built into thresholds), both
+strategies with "promise → confirmation" tables, a pre-registered A/B plan (600 family groups, ITT, −3 p.p.
+threshold), decision **D001 "Alert before top-up" accepted** (pilot by end of Q1, review 2027-04-30, four
+commitments), `check --strict` 0 errors, six-pager RU/EN + 4 Excel workbooks + deck. The jury-facing answer
+to the brief is `outputs/BRIEF_RESPONSE.md` — one document in five parts. The six-pager follows the
+growth-strategy reference format: subsections 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs
+in two planes, source footnotes; the draft is assembled by `pfs export --six-pager`
+(spec: `knowledge/templates/SIX_PAGER_PROMPT.md`). Synthetic interviews (2 AI respondents) are registered
+with `origin=synthetic` — the tool refuses to record facts on them.
 Full RU breakdown with a task-requirements mapping table — in
 [README.md](README.md#демо-проект-связь-для-близких-бриф-заказчика--видео-и-скриншоты).
 
 How to repeat:
 
 ```bash
-python3 -m tools.pfs use демо                        # switch to the demo
-python3 -m tools.pfs status                          # where we stopped (step: monitoring)
+python3 -m tools.pfs use связь-для-близких-и-собственных-устройств   # switch to the demo
+python3 -m tools.pfs status                          # where we stopped (12/12, D001)
 python3 -m tools.pfs next                            # what to decide now
-python3 -m tools.pfs --project демо check --strict   # quality gate: 100/100
+python3 -m tools.pfs check --strict                  # quality gate: 0 errors
 python3 -m tools.pfs new "Title" "Request verbatim"  # your own task
 ```
 
@@ -377,5 +355,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/ (deployed via site-repo, not stored here)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/               (919) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/               (919) · demo: "connection for loved ones" (customer brief · BRIEF_RESPONSE · six-pager RU/EN · Excel)
 ```

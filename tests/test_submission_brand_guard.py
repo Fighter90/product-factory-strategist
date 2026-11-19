@@ -21,6 +21,7 @@ import json
 import re
 import shutil
 import subprocess
+import time
 import unittest
 from pathlib import Path
 
@@ -134,10 +135,18 @@ class DemoVideoTests(unittest.TestCase):
         if shutil.which("ffprobe") is None:
             self.skipTest("ffprobe недоступен")
         for v in self.VIDEOS:
-            out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
-                                  "-of", "default=noprint_wrappers=1:nokey=1", str(REPO / v)],
-                                 capture_output=True, text=True)
-            duration = float(out.stdout.strip())
+            duration = None
+            # 3 попытки: файл могут перегенерировать параллельно (mp4 без moov-атома на середине записи)
+            for _ in range(3):
+                out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                                      "-of", "default=noprint_wrappers=1:nokey=1", str(REPO / v)],
+                                     capture_output=True, text=True)
+                m = re.search(r"(?:duration=)?(\d+(?:\.\d+)?)", out.stdout.strip())
+                if m:
+                    duration = float(m.group(1))
+                    break
+                time.sleep(5)
+            self.assertIsNotNone(duration, f"{v}: ffprobe не смог прочитать длительность")
             self.assertLessEqual(duration, 600, f"{v}: {duration:.0f} c — длиннее 10 минут")
 
 
