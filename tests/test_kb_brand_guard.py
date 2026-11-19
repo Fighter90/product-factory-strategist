@@ -49,7 +49,7 @@ KB = REPO / "knowledge"
 # Пакет 1 — продуктовое ядро (карты в клоне knowledge/, ветка main приватного -base).
 # Имена = id карты без префикса M-; файлы: methods/<id>.md и methods_en/<id>.md
 # (единая схема всей базы, см. пункт 5 докстринга).
-MAGISTRATURA_MAPS = [
+CORE_PACKAGE_MAPS = [
     "b2b-validation", "competitor-teardown", "evidence-design", "guerrilla-research",
     "hypothesis-testing", "mvp-ds-assembly", "pnl-product-finance", "case-solving",
     "impact-uncertainty", "metric-drop-diagnosis", "ux-prototyping",
@@ -101,12 +101,12 @@ def h2_sections(text: str) -> list[tuple[str, str]]:
 
 
 @requires_kb
-class MagistraturaMapsTests(unittest.TestCase):
+class CorePackageMapsTests(unittest.TestCase):
     """Карты пакета 1 полные, методические и без брендов."""
 
     def test_new_maps_exist_in_ru_and_en(self):
         missing = []
-        for name in MAGISTRATURA_MAPS:
+        for name in CORE_PACKAGE_MAPS:
             for sub in ("methods", "methods_en"):
                 p = KB / sub / f"{name}.md"
                 if not p.exists():
@@ -115,7 +115,7 @@ class MagistraturaMapsTests(unittest.TestCase):
 
     def test_new_maps_carry_method_sections(self):
         bad = []
-        for name in MAGISTRATURA_MAPS:
+        for name in CORE_PACKAGE_MAPS:
             ru_titles = [t.lower() for t in h2_titles(body(KB / "methods" / f"{name}.md"))]
             en_titles = [t.lower() for t in h2_titles(body(KB / "methods_en" / f"{name}.md"))]
             for section in RU_REQUIRED:
@@ -132,7 +132,7 @@ class MagistraturaMapsTests(unittest.TestCase):
 
     def test_new_maps_free_of_brands(self):
         found = []
-        for name in MAGISTRATURA_MAPS:
+        for name in CORE_PACKAGE_MAPS:
             for sub in ("methods", "methods_en"):
                 text = (KB / sub / f"{name}.md").read_text(encoding="utf-8")
                 for brand in BRANDS:
@@ -142,7 +142,7 @@ class MagistraturaMapsTests(unittest.TestCase):
 
     def test_new_maps_sections_not_empty(self):
         short = []
-        for name in MAGISTRATURA_MAPS:
+        for name in CORE_PACKAGE_MAPS:
             for sub in ("methods", "methods_en"):
                 for title, content in h2_sections(body(KB / sub / f"{name}.md")):
                     if len(content.strip()) < 30:
@@ -161,7 +161,7 @@ class NamingSchemeTests(unittest.TestCase):
 
     def test_new_maps_follow_single_naming_scheme(self):
         bad = []
-        for name in MAGISTRATURA_MAPS:
+        for name in CORE_PACKAGE_MAPS:
             ru, en = KB / "methods" / f"{name}.md", KB / "methods_en" / f"{name}.md"
             if not ru.exists() or not en.exists():
                 bad.append(f"{name}: нет пары methods/{name}.md + methods_en/{name}.md")
@@ -203,7 +203,7 @@ class IndexFreshnessTests(unittest.TestCase):
 
     def test_new_maps_listed_in_indexes(self):
         missing = []
-        for name in MAGISTRATURA_MAPS:
+        for name in CORE_PACKAGE_MAPS:
             ru_index = (KB / "INDEX.md").read_text(encoding="utf-8")
             en_index = (KB / "INDEX_EN.md").read_text(encoding="utf-8")
             if f"](methods/{name}.md)" not in ru_index or f"`M-{name}`" not in ru_index:
