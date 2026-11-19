@@ -2,7 +2,7 @@
 
 **[RU](HELP.md) · [EN](HELP_EN.md)**
 
-> Full user guide.
+> Full user guide. Quick start takes 5 minutes; after that — all commands, scenarios, and solutions to common problems.
 
 ---
 

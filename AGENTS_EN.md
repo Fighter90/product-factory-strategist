@@ -95,6 +95,11 @@ The default is `ru`.
 leader); if the answer is obvious from the data — `pfs log --kind questions-skip`. `pfs step` prints the maps required
 for the step.
 
+**Localization note.** The project language (`pfs new --lang en`, `pfs lang en`) switches instructions, templates,
+quality-gate headings, and localized CLI messages; question blocks (`pfs questions`) ship with EN variants for every
+step (PRO-132). A few deeper CLI strings and Excel attachment captions still print in Russian — a documented cosmetic
+limitation, not a workflow blocker.
+
 Before starting: `pfs route` — the scenario (retention, go-to-market, communication, monetization, growth,
 shut down / keep), the list of maps, and the model plan. If confidence is `low`, clarify with the leader or fix it
 with `--override`.
