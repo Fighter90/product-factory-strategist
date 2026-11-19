@@ -132,7 +132,7 @@ Five-line forecast:
 | Owners of several numbers, year-end | 1,000 | 1,200 | 1,000 | second wave — Q3–Q4; until Q3 — no change [C016] |
 | 14-day activation (last quarter) | 45% | 60% | 50% | the alert pushes the first action [C007] |
 
-Gaps in the adverse case: profit RUB 2.5M short of target — expand only after the pilot effect is confirmed; 1,600 active groups short — activation work or a target revision by the director [C002].
+Gaps in the adverse case: profit RUB 4.5M short of target — expand only after the pilot effect is confirmed; 1,600 active groups short — activation work or a target revision by the director [C002].
 
 > **Conclusion (inference):** the four drivers close the FAQ-2 barriers: the moment of finding out is solved by the product itself (driver 1), distrust by the consent screen and the invitation (drivers 1–2), unexplained charges by the in-message charge breakdown, and weak evidence by driver 3. Every initiative builds on existing assets: balance and payment data [C005,C006] and the transfer mechanics [C005]; no new tariff product is required. This means the risk sits not in development but in customer behavior — precisely what the pilot tests.
 
