@@ -25,3 +25,4 @@ projects/.active
 projects/**/.tmp-*
 projects/*/*_session.json
 site/
+.regress_probe/
