@@ -20,7 +20,7 @@ Windsurf, Copilot.
 
 > 🎬 Демонстрация работы агента (10 шагов сценария, озвучка и субтитры): [video/product-factory-strategist-RU.mp4](video/product-factory-strategist-RU.mp4)
 > 📺 Демо-проект «Связь для близких» (бриф заказчика, 12 шагов, решение D001): [обзор RU — 4:22](video/svyaz-overview-RU.mp4) · [обзор EN — 4:16](video/svyaz-overview-EN.mp4)
-> 🎞 **Детальный полный прогон (~20 мин):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — установка, 12 шагов, гейты, red team, six-pager-цикл, решение, мониторинг, финиш.
+> 🎞 **Детальный полный прогон (8:42 RU / 7:52 EN):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — установка, 12 шагов, гейты, red team, six-pager-цикл, решение, мониторинг, финиш.
 
 ## Быстрый старт (5 минут)
 
@@ -152,7 +152,7 @@ flowchart TB
   U["Руководитель продукта"] -->|"запрос · ответы на блоки вопросов"| ENV
   subgraph ENV["LLM-среда (Claude Code / Cursor / OpenCode / Codex…)"]
     AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 102<br/>(базовые 13 + product-skills 27 + личная 58 + интеграции 4: ph-trends · sdd · deck · premortem)"]
-    AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
+    AG --> SUB["subagents: 10<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router · editor · six-pager-writer"]
     AG --> HK["hooks: 6<br/>SessionStart · PreWeb-домены · PreGuard-реестры · PostTool-журнал · Stop-стоимость (+ общий модуль)"]
   end
   ENV -->|"CLI: pfs … · MCP: pfs-strategist"| TOOLS
@@ -331,7 +331,8 @@ FAQ-2 персоны · FAQ-3 инициативы и возражения · FA
 AGENTS.md · CLAUDE.md · README.md · README_EN.md · CHANGELOG.md · pyproject.toml
 .claude/skills/      (102)  базовые 13 · product-skills 27 · личная 58 · интеграции 4
 .claude/agents/      (10)    researcher · red-team · evidence-auditor · synthetic-respondent ·
-                            data-analyst · ux-analyst · comms-strategist · router
+                            data-analyst · ux-analyst · comms-strategist · router ·
+                            editor · six-pager-writer
 .claude/hooks/       (6)    session_start (SessionStart-контекст) · pre_web (домены до запроса) ·
                             pre_guard (реестры только через pfs; чтение вне репо — ask) ·
                             post_tool (журнал и автопроверка) · stop (стоимость) · _common

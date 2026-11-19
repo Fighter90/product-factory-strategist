@@ -8,7 +8,7 @@ distinct options, and aligned product and communication strategies. After the de
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
 This is a repository folder: instructions, knowledge sets organized by category (strategy · economics · product ·
-UX · data · platforms · Gen AI), 102 skills, 8 subagents, 6 hooks, and a dependency-free Python CLI/MCP toolset.
+UX · data · platforms · Gen AI), 102 skills, 10 subagents, 6 hooks, and a dependency-free Python CLI/MCP toolset.
 Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
@@ -19,7 +19,7 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 > 🎬 Agent demo (10 scenario steps, voice-over and subtitles): [video/product-factory-strategist-EN.mp4](video/product-factory-strategist-EN.mp4)
 > 📺 Demo project "Connection for loved ones" (customer brief, 12 steps, decision D001): [overview EN — 4:16](video/svyaz-overview-EN.mp4) · [overview RU — 4:22](video/svyaz-overview-RU.mp4)
-> 🎞 **Detailed full run (~20 min):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — установка, 12 шагов, гейты, red team, six-pager-цикл, решение, мониторинг, финиш.
+> 🎞 **Detailed full run (~20 min):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — installation, 12 steps, gates, red team, the six-pager cycle, decision, monitoring, finish.
 
 ## Quick start (5 minutes)
 
@@ -95,7 +95,7 @@ Full demo package: `projects/связь-для-близких-и-собстве�
 What the run produced: 26 claims with types and grades (10 facts · 8 assumptions · 4 hypotheses · 4 inferences),
 5 options A–E with red team (20 hits — 15 objections + 5 hidden assumptions, built into thresholds), both
 strategies with "promise → confirmation" tables, a pre-registered A/B plan (600 family groups, ITT, −3 p.p.
-threshold), decision **D001 "Alert before top-up" accepted** (pilot by end of Q1, review 2027-04-30, four
+threshold), decision **D001 "Alert before the outage" accepted** (pilot by end of Q1, review 2027-04-30, four
 commitments), `check --strict` 0 errors, six-pager RU/EN + 4 Excel workbooks + deck. The jury-facing answer
 to the brief is `outputs/BRIEF_RESPONSE.md` — one document in five parts. The six-pager follows the
 growth-strategy reference format: subsections 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs
@@ -164,7 +164,7 @@ flowchart TB
   U["Product director"] -->|"request · answers to question blocks"| ENV
   subgraph ENV["LLM environment (Claude Code / Cursor / OpenCode / Codex…)"]
     AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 102<br/>(base + product-skills 27 + integrations: ph-trends · sdd · deck · premortem)"]
-    AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
+    AG --> SUB["subagents: 10<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router · editor · six-pager-writer"]
     AG --> HK["hooks: 6<br/>SessionStart · PreWeb-domains · PreGuard-registries · PostTool-log · Stop-cost (+ shared module)"]
   end
   ENV -->|"CLI: pfs … · MCP: pfs-strategist"| TOOLS
