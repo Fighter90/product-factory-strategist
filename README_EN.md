@@ -50,7 +50,7 @@ Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INST
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 929 tests
+python3 -m unittest discover -s tests          # 937 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -355,5 +355,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/ (deployed via site-repo, not stored here)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/               (929) · demo: "connection for loved ones" (customer brief · BRIEF_RESPONSE · six-pager RU/EN · Excel)
+tests/               (937) · demo: "connection for loved ones" (customer brief · BRIEF_RESPONSE · six-pager RU/EN · Excel)
 ```
