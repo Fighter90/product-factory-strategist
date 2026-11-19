@@ -66,16 +66,21 @@ def render_frame(draw_lines, cursor_at=None, title=""):
     for i, c in enumerate([(255,95,86),(255,189,46),(39,201,63)]):
         d.ellipse([16+i*26, 11, 32+i*26, 27], fill=c)
     f_t = font(15, "ru")
-    d.text((W//2-220, 10), title or "pfs — Стратег Фабрики продуктов", font=f_t, fill=(200,200,204))
+    d.text((W//2-260, 10), (title or "pfs — Стратег Фабрики продуктов")[:64], font=f_t, fill=(200,200,204))
     y = MARGIN
     f_b = font(19, "ru"); f_s = font(16, "ru")
-    for item in draw_lines:
-        kind, text, color = item
+    # развёртка строк с типами и скролл-окно (последние MAX_LINES видны)
+    flat = []
+    for kind, text, color in draw_lines:
         f = f_b if kind in ("out", "cmd") else f_s
         for ln in wrap(d, text, f, W - 2*MARGIN):
-            d.text((MARGIN, y), ln, font=f, fill=color)
-            y += 26
-        y += 8
+            flat.append((ln, color, f))
+        flat.append(("", color, f))  # отступ после блока
+    MAX_LINES = 26
+    visible = flat[-MAX_LINES:]
+    for ln, color, f in visible:
+        d.text((MARGIN, y), ln, font=f, fill=color)
+        y += 27
     if cursor_at is not None:
         d.rectangle([MARGIN + cursor_at, y - 2, MARGIN + cursor_at + 11, y + 20], fill=GREEN)
     d.text((MARGIN, H-34), "pfs · 12 шагов · факт/допущение/гипотеза/вывод · стоимость $0 CLI", font=f_s, fill=DIM)
