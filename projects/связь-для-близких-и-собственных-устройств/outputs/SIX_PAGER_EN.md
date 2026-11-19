@@ -59,7 +59,7 @@ Segments are split by the entry barrier, not by profession. Each segment's job i
 Prioritization rationale (capacity / competition / acquisition cost):
 
 - **Capacity:** S1 has a reachable base of 100,000 households versus 40,000 owners for S3 — 2.5× larger [C004].
-- **Competition of ways:** for families, auto-payment covers only non-payment, and the dominant outage cause is quota exhaustion (assumed at 50% of cases [C011]); for owners, auto-payment already covers most cases [C020] — stronger competition, weaker information trigger.
+- **Competition among workarounds:** for families, auto-payment covers only non-payment, and the dominant outage cause is quota exhaustion (assumed at 50% of cases [C011]); for owners, auto-payment already covers most cases [C020] — stronger competition, weaker information trigger.
 - **Customer acquisition cost (CAC):** acquisition runs through the operator's own channels without paid advertising [S001]; the family journey and mechanics already work [C005]; the pilot needs about 2 of the 3 development man-months of Q2 [C010].
 - **Therefore,** the first customer is S1; S3 follows in the second wave, Q3–Q4, with the mechanics carried over; S2 is not a separate target but the enabling condition: without the member's consents the S1 service cannot switch on [C016,C009].
 
@@ -84,7 +84,7 @@ What holds people back from starting or renewing?
 
 ## FAQ-3. Strategic initiatives. Justify each one briefly.
 
-The direction was chosen from five meaningfully different options: A — keep as is; B — "alert before the outage"; C — "family dashboard"; D — device owners first; E — shut the line down. B was chosen: it uses data and mechanics that already exist [C005,C006], fits the Q2 budget (3 development man-months, plus 0.5 FTE (full-time equivalent) each for a designer and an analyst) [C010], and hits the recorded gap "the data exists — the alert does not". C was rejected: it does not solve the moment of finding out and needs ≥4–5 man-months, over budget [C010]. D was rejected for the first wave: its base is 2.5× smaller and auto-payment already covers most cases [C004,C020]. A and E remain defensible only if the directorship revises the targets [C002].
+The direction was chosen from five meaningfully different options: A — keep as is; B — "alert before the outage"; C — "family dashboard"; D — device owners first; E — shut the line down. B was chosen: it uses data and mechanics that already exist [C005,C006], fits the Q2 budget (3 development man-months, plus 0.5 FTE (full-time equivalent) each for a designer and an analyst) [C010], and hits the recorded gap "the data exists — the alert does not". C was rejected: it does not solve the moment of finding out and needs ≥4–5 man-months, over budget [C010]. D was rejected for the first wave: its base is 2.5× smaller and auto-payment already covers most cases [C004,C020]. A and E remain defensible only if the direction revises the targets [C002].
 
 An independent red-team attack produced 20 hits (15 objections + 5 hidden assumptions) with the verdict "needs rework before the pilot"; every hit is built into the design as a check or a threshold [C021–C026]: incrementality, cannibalization, consent rights, forecast precision, and pilot power.
 

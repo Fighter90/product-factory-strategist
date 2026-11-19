@@ -85,3 +85,4 @@
 {"ts": "2026-11-20T00:12:36+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
 {"ts": "2026-11-20T00:12:36+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
 {"ts": "2026-11-20T00:12:36+03:00", "kind": "action", "msg": "Собран финальный пакет: unit_economics.xlsx, growth_model.xlsx, cohort_retention.xlsx, market_sizing.xlsx, REPORT.md, SIX_PAGER.md, REPORT.docx, SIX_PAGER.docx, SIX_PAGER_EN.md, SIX_PAGER_EN.docx, deck.html", "tool": "pfs finish"}
+{"ts": "2026-11-20T01:05:30+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
