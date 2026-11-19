@@ -8,7 +8,7 @@ distinct options, and aligned product and communication strategies. After the de
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
 This is a repository folder: instructions, knowledge sets organized by category (strategy · economics · product ·
-UX · data · platforms · Gen AI), 101 skills, 8 subagents, 6 hooks, and a dependency-free Python CLI/MCP toolset.
+UX · data · platforms · Gen AI), 102 skills, 8 subagents, 6 hooks, and a dependency-free Python CLI/MCP toolset.
 Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
@@ -50,7 +50,7 @@ Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INST
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 918 tests
+python3 -m unittest discover -s tests          # 919 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -150,7 +150,7 @@ commitments (WBS, drafts) are not executed without an explicit request. QA and C
 flowchart TB
   U["Product director"] -->|"request · answers to question blocks"| ENV
   subgraph ENV["LLM environment (Claude Code / Cursor / OpenCode / Codex…)"]
-    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 101<br/>(base + product-skills 27 + integrations: ph-trends · sdd · deck · premortem)"]
+    AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 102<br/>(base + product-skills 27 + integrations: ph-trends · sdd · deck · premortem)"]
     AG --> SUB["subagents: 8<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router"]
     AG --> HK["hooks: 6<br/>SessionStart · PreWeb-domains · PreGuard-registries · PostTool-log · Stop-cost (+ shared module)"]
   end
@@ -180,19 +180,19 @@ every place referencing it.
 
 ```mermaid
 flowchart TB
-  SK["101 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
+  SK["102 skills"] --> B["Base 13: process steps<br/>intake · research · situation · options · strategy · validation · decision-support · data-analysis · interviews · ux-review · six-pager · deep-research · strategist"]
   SK --> P["Product-skills 27: method procedures<br/>market-sizing · unit-economics · traction-modeling · solution-design · problem-design · …"]
-  SK --> L["Personal library 57<br/>design · marketing · science · docs/media · meta"]
+  SK --> L["Personal library 58<br/>design · marketing · science · docs/media · meta"]
   SK --> INT["Integrations 4<br/>ph-trends · premortem · sdd · deck"]
   B & P & L & INT --> INV["Invocation: automatic by triggers · explicit 'use skill X' · via process steps"]
 ```
 
-101 skills in `.claude/skills/`, four groups:
+102 skills in `.claude/skills/`, four groups:
 
 - **base 13** — process steps (one per workflow stage: intake → sources → research → … → monitoring).
 - **product-skills 27** — method procedures (problem and solution design, traction modeling, unit economics,
   market sizing, interviews, UX review, …).
-- **personal library 57** — domain expertise:
+- **personal library 58** — domain expertise:
   - Design: refero-design, design-ui, claudable-landing, frontend-design, make-interfaces-feel-better,
     emil-design-eng, web-design-guidelines.
   - Marketing: ad-creative, ads, ai-seo, analytics, churn-prevention, co-marketing, competitors,
@@ -202,7 +202,8 @@ flowchart TB
   - Science and data: company-research, research-lookup, defuddle, literature-review,
     hypothesis-generation, statistical-analysis, exploratory-data-analysis,
     scientific-critical-thinking, peer-review, scientific-writing, transcribe, watch.
-  - Docs/media: markitdown, docx, pdf, xlsx, pptx, officecli, matplotlib, scientific-visualization,
+  - Docs/media: markitdown, brief-response, docx, pdf, xlsx, pptx, officecli, matplotlib,
+    scientific-visualization,
     generate-image, infographics, video.
   - Meta: balanced, find-skills.
 - **integrations 4** — ph-trends (Product Hunt trends → product application), premortem, sdd, deck.
@@ -330,7 +331,7 @@ consent and no personal data · the validator refuses a fact based on synthetic/
 ```
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
-  skills/ (101: base 13 · product-skills 27 · personal library · integrations)
+  skills/ (102: base 13 · product-skills 27 · personal library · integrations)
   agents/ (10) · hooks/ (6: + pre_guard) · settings.json · opencode.json (permissions)
 .cursor/rules/ · .github/ (Pages workflow) · .mcp.json (pfs · linear · lovable · rea · producthunt)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
@@ -341,5 +342,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/index.html (RU/EN)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/               (918) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
+tests/               (919) · demo: демо — CVStart (end-to-end run · six-pager RU/EN (MD/PDF/DOCX) · Excel · 100/100)
 ```

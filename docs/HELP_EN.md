@@ -329,13 +329,13 @@ the report itself is origin agent — hypotheses only. Telemetry: `FEYNMAN_TELEM
 
 ## Skills: structure and invocation
 
-Alongside the process the environment loads **skills** — packaged instruction sets (101 in total, in three
+Alongside the process the environment loads **skills** — packaged instruction sets (102 in total, in three
 groups plus integrations):
 
 - **Base (13)** — one per process step: `intake`, `research`, `situation`, `options`, `strategy`,
   `validation-plan`, `decision-support`, `six-pager`, etc.
 - **Product-skills (27)** — domain packs around the process: segments, JTBD, unit economics, growth, risks.
-- **Personal library (57)** — imported packs by category:
+- **Personal library (58)** — imported packs by category:
   - **Design** — `design-ui`, `refero-design`, `frontend-design`, `claudable-landing`, `make-interfaces-feel-better`,
     `emil-design-eng`, `web-design-guidelines`;
   - **Marketing** — `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`,

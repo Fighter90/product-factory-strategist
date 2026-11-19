@@ -331,14 +331,14 @@ FEYNMAN_TELEMETRY=off; ключи OPENALEX/SEMANTIC_SCHOLAR_API_KEY — в .env.
 
 ## Навыки: структура и вызов
 
-У агента 101 навык (skills): базовые 13 по шагам процесса · 27 product-skills · 57 из личной библиотеки · 4 интеграции.
+У агента 102 навыка (skills): базовые 13 по шагам процесса · 27 product-skills · 58 из личной библиотеки · 4 интеграции.
 Навыки не заменяют процесс и `pfs` — это библиотека техник, которые подключаются там, где нужны.
 
 **Группы:**
 
 - **Базовые (13)** — по шагам процесса: intake, research, situation, options, strategy, validation-plan, decision-support и др.
 - **Product-skills (27)** — продуктовые методики (маркет-сайзинг, юнит-экономика, трекшн-модели, роадмапы…).
-- **Личная библиотека (57):**
+- **Личная библиотека (58):**
   - *дизайн*: `design-ui`, `refero-design`, `frontend-design`, `claudable-landing`, `make-interfaces-feel-better`, `emil-design-eng`, `web-design-guidelines`
   - *маркетинг*: `ads`, `ad-creative`, `seo-audit`, `ai-seo`, `cro`, `pricing`, `offers`, `emails`, `launch`, `content-strategy`, `competitors`, `analytics`, `programmatic-seo`, `customer-research`, `marketing-psychology`, `prospecting` и др.
   - *наука и данные*: `research-lookup`, `literature-review`, `scientific-writing`, `scientific-critical-thinking`, `peer-review`, `statistical-analysis`, `hypothesis-generation`, `exploratory-data-analysis`, `transcribe`, `watch`

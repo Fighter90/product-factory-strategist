@@ -230,6 +230,30 @@ class SkillCountersTests(unittest.TestCase):
         self.assertEqual(ok_text, f'Личная библиотека {c["personal"]}<br/>')
         self.assertEqual(ok_findings, [], "актуальный счётчик помечен как устаревший")
 
+    def test_help_header_counters_recognized(self):
+        """Формат заголовка группы в HELP («- **Личная библиотека (57):**» /
+        «- **Personal library (57)** —») скрипт распознаёт: число в скобках после
+        названия группы с пробелом — тот же счётчик, иначе он замораживается
+        при смене состава навыков (регресс PRO-122: заголовок HELP остался 57)."""
+        script = load_counts_script()
+        c = script.counts()
+        rules = script.build_rules(c)
+        stale = c["personal"] + 5
+        samples = [
+            f"- **Личная библиотека ({stale}):**",
+            f"- **Personal library ({stale})** — imported packs by category:",
+        ]
+        for sample in samples:
+            new_text, findings = script._process_text(sample, rules)
+            self.assertIn(str(c["personal"]), new_text,
+                          f"скрипт не обновляет счётчик группы в заголовке HELP: {sample!r}")
+            self.assertTrue(findings,
+                            f"скрипт не сообщает об устаревшем счётчике заголовка: {sample!r}")
+            _, ok_findings = script._process_text(sample.replace(str(stale), str(c["personal"])),
+                                                  rules)
+            self.assertEqual(ok_findings, [],
+                             f"актуальный счётчик заголовка помечен как устаревший: {sample!r}")
+
     def test_ru_plural_forms(self):
         script = load_counts_script()
         plural = script.ru_plural

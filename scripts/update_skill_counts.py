@@ -131,6 +131,8 @@ def build_rules(c):
     # --- группы: пары «название + число» (с круглыми скобками, вплотную или через пробел) ---
     def group(name, value):
         add(rf"({name})\((\d+)\)", lambda m: f"{m.group(1)}({value})")
+        # «Личная библиотека (58):» / «Personal library (58)** —» — заголовки групп в HELP (PRO-122)
+        add(rf"({name} \()(\d+)(\))", lambda m: f"{m.group(1)}{value}{m.group(3)}")
         add(rf"({name})(\d+)(?![\d.)])", lambda m: f"{m.group(1)}{value}")
         add(rf"({name}) (\d+)(?![\d.)])", lambda m: f"{m.group(1)} {value}")
 
