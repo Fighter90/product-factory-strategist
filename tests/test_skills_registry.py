@@ -4,6 +4,7 @@
 """
 import ast
 import importlib.util
+import json
 import re
 import unittest
 from pathlib import Path
@@ -213,6 +214,28 @@ class SkillCountersTests(unittest.TestCase):
         script = load_counts_script()
         findings = script.stale_findings()
         self.assertEqual(findings, [], "устаревшие счётчики навыков: " + "; ".join(findings))
+
+    def test_hook_counter_matches_settings_json(self):
+        """Счётчик хуков скрипта = хуки, реально подключённые в .claude/settings.json (PRO-128).
+
+        Дефект 2026-11-20: скрипт считал ВСЕ *.py в .claude/hooks/ (6) — вместе с
+        общим модулем _common.py, который хуком не является (не упомянут в
+        settings.json). Документы после cd8d9b46 честно говорят «5 хуков»,
+        скрипт — «6», тест счётчиков красный.
+        """
+        script = load_counts_script()
+        settings = json.loads(
+            (REPO / ".claude" / "settings.json").read_text(encoding="utf-8"))
+        wired = set()
+        for entries in settings.get("hooks", {}).values():
+            for entry in entries:
+                for h in entry.get("hooks", []):
+                    m = re.search(r"\.claude/hooks/([A-Za-z0-9_]+\.py)", h.get("command", ""))
+                    if m:
+                        wired.add(m.group(1))
+        self.assertEqual(script.counts()["hooks"], len(wired),
+                         f"скрипт насчитывает {script.counts()['hooks']} хуков, "
+                         f"в settings.json подключено {len(wired)}: {sorted(wired)}")
 
     def test_spaced_group_counters_recognized(self):
         """Счётчики с пробелом перед числом («Личная библиотека 75») скрипт распознаёт."""

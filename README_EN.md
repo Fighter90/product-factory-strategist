@@ -50,7 +50,7 @@ Details, PEP 668, updates, uninstall, testing and troubleshooting — [docs/INST
 git clone https://github.com/Fighter90/product-factory-strategist-agent.git
 cd product-factory-strategist-agent
 python3 -m tools.pfs doctor                    # environment check
-python3 -m unittest discover -s tests          # 952 tests
+python3 -m unittest discover -s tests          # 953 tests
 # in Claude Code (run `claude` in the folder) write the task:
 # "Our paid anti-spam service is losing subscribers. What do we do and what do we tell customers?"
 ```
@@ -345,7 +345,7 @@ consent and no personal data · the validator refuses a fact based on synthetic/
 AGENTS.md CLAUDE.md README.md README_EN.md CHANGELOG.md pyproject.toml
 .claude/
   skills/ (102: base 13 · product-skills 27 · personal library · integrations)
-  agents/ (10) · hooks/ (6: + pre_guard) · settings.json · opencode.json (permissions)
+  agents/ (10) · hooks/ (5: + pre_guard) · settings.json · opencode.json (permissions)
 .cursor/rules/ · .github/ (CI + release workflows) · .mcp.json (pfs · linear · lovable · rea · producthunt)
 config/     models.json · pricing.json · quality_gate.json · question_blocks.json
 tools/pfs/  core · project · route · sources · claims · check · impact · decisions
@@ -355,5 +355,5 @@ projects/<slug>/
             outputs/ (00…07, REPORT, SIX_PAGER) · outputs/attachments/*.xlsx · outputs/presentations/
 site/ (deployed via site-repo, not stored here)
 docs/       HELP×2 · ARCHITECTURE · SKILLS · SUBMISSION · VERIFICATION · COMPLIANCE · docx/ · demo/
-tests/               (952) · demo: "connection for loved ones" (customer brief · BRIEF_RESPONSE · six-pager RU/EN · Excel)
+tests/               (953) · demo: "connection for loved ones" (customer brief · BRIEF_RESPONSE · six-pager RU/EN · Excel)
 ```

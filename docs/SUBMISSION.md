@@ -51,7 +51,7 @@
 | WebSearch / WebFetch среды | поиск и чтение открытых источников | — |
 | pfs CLI + MCP-сервер (Python stdlib) | гарантии проверяемости, состояние, стоимость | tools/pfs |
 | pdftotext / pypdf (необязательно) | извлечение текста из PDF | — |
-| unittest | 952 теста инструментов | tests/ |
+| unittest | 953 теста инструментов | tests/ |
 
 ## 4. Ключевые промпты и инструкции
 
@@ -140,7 +140,7 @@ Q1; расширение планового года — только при э�
 - **RU (обязательная запись, 4:22 ≤ 10 мин):** [video/svyaz-overview-RU.mp4](../video/svyaz-overview-RU.mp4) — сквозной путь по демо «Связь для близких»: запрос → 12 шагов → 5 вариантов + red team (20 ударов) → стратегии → **продолжение после перерыва** (`pfs status` → то же место) → решение D001 → финишный пакет с BRIEF_RESPONSE (5 частей). Озвучка и субтитры.
 - **EN (обязательная запись, 4:16 ≤ 10 мин):** [video/svyaz-overview-EN.mp4](../video/svyaz-overview-EN.mp4) — the same walkthrough in English.
 - **Walkthrough демо (RU 1:01 / EN 1:04):** [video/svyaz-walkthrough-RU.mp4](../video/svyaz-walkthrough-RU.mp4) · [video/svyaz-walkthrough-EN.mp4](../video/svyaz-walkthrough-EN.mp4) — пакет демо за 60 секунд: файлы, числа, реестры.
-- **Детальный полный прогон нового демо (RU 8:42 / EN 7:52):** [video/svyaz-FULL-RU.mp4](../video/svyaz-FULL-RU.mp4) · [video/svyaz-FULL-EN.mp4](../video/svyaz-FULL-EN.mp4) — в сборке (финальная сборка).
+- **Детальный полный прогон нового демо (RU 8:42 / EN 7:52):** [video/svyaz-FULL-RU.mp4](../video/svyaz-FULL-RU.mp4) · EN 7:52 — в сборке (финальная сборка).
 - **В сборке — обзорные walkthrough:** RU (1:50) [video/product-factory-strategist-RU.mp4](../video/product-factory-strategist-RU.mp4) · EN (1:37) [video/product-factory-strategist-EN.mp4](../video/product-factory-strategist-EN.mp4) — 10 сцен сценария VIDEO_SCRIPT.md; презентация агента (24 слайда) — [presentation/agent-overview-RU.pptx](../presentation/agent-overview-RU.pptx) / [.pdf](../presentation/agent-overview-RU.pdf) / [EN](../presentation/agent-overview-EN.pptx) / [EN .pdf](../presentation/agent-overview-EN.pdf).
 - **В сборке — детальный полный прогон (~20 мин):** [video/product-factory-strategist-FULL-RU.mp4](../video/product-factory-strategist-FULL-RU.mp4) — установка и doctor, сюита тестов, создание проекта и маршрутизация, пауза intake, источники с защитами, реестр утверждений, шаги 1–12, red team, стратегии, строгий гейт, 4 книги Excel, six-pager writer-цикл до 0 ошибок, решение с основаниями, мониторинг, продолжение после перерыва, финиш, стоимость; [FULL-EN.mp4](../video/product-factory-strategist-FULL-EN.mp4) — the same walkthrough in English.
 
@@ -166,7 +166,7 @@ LLM-сессий окружением разработки в `pfs cost` не п
 утверждение решения (decision); между ними агент ведёт шаги сам. Режим `PFS_AUTOPILOT=1`
 проходит паузы без человека (QA/CI-режим).
 
-**Живые прогоны на новых задачах (автопрогон OpenCode, отчёты в [qa/](qa)):** три задачи, которых не было в демо — антиспам, budget-app, повышение цены (RU/EN, 2026-11-11) — и два прогона по теме брифа на свежих клонах 2026-11-19: [RU](qa/E2E-2026-11-19-svyaz-ru.md) — все 12 шагов одной сессией до `pfs finish`, `check --strict` 0 ошибок, 69,7 мин; [EN](qa/E2E-2026-11-19-svyaz-en.md) — 96/100, 0 ошибок, `pfs finish`. Живой LLM-цикл на этих прогонах воспроизводился независимо от среды разработки.
+**Живые прогоны на новых задачах (автопрогон OpenCode, отчёты в [qa/](../qa)):** три задачи, которых не было в демо — антиспам, budget-app, повышение цены (RU/EN, 2026-11-11) — и два прогона по теме брифа на свежих клонах 2026-11-19: [RU](../qa/E2E-2026-11-19-svyaz-ru.md) — все 12 шагов одной сессией до `pfs finish`, `check --strict` 0 ошибок, 69,7 мин; [EN](../qa/E2E-2026-11-19-svyaz-en.md) — 96/100, 0 ошибок, `pfs finish`. Живой LLM-цикл на этих прогонах воспроизводился независимо от среды разработки.
 
 **Известные ошибки цикла разработки** — найдены и исправлены в процессе (полная история:
 `CHANGELOG.md` и задачи PRO-46…PRO-130 в Linear). В демо «Связь для близких»: единственное

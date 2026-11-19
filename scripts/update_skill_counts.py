@@ -63,6 +63,27 @@ def count_tests():
     )
 
 
+def _wired_hooks():
+    """Имена хуков, подключённых в .claude/settings.json (событие → команда).
+
+    .claude/hooks/_common.py — общий модуль, в settings.json не упомянут:
+    общие функции для хуков, сам хуком не является (PRO-128).
+    """
+    import json
+    settings = ROOT / ".claude" / "settings.json"
+    if not settings.is_file():
+        return set()
+    wired = set()
+    data = json.loads(settings.read_text(encoding="utf-8"))
+    for entries in data.get("hooks", {}).values():
+        for entry in entries:
+            for h in entry.get("hooks", []):
+                m = re.search(r"\.claude/hooks/([A-Za-z0-9_]+\.py)", h.get("command", ""))
+                if m:
+                    wired.add(m.group(1))
+    return wired
+
+
 def counts():
     loaded = set(loaded_skills())
     base = len([s for s in BASE if s in loaded])
@@ -71,8 +92,9 @@ def counts():
     total = len(loaded)
     personal = total - base - product - integr
     agents = len(list((ROOT / ".claude" / "agents").glob("*.md")))
-    hooks = len([p for p in (ROOT / ".claude" / "hooks").iterdir()
-                 if p.is_file() and p.suffix == ".py"])
+    # хуки — только подключённые в .claude/settings.json; _common.py — общий
+    # модуль без собственного события, хуком не считается (PRO-128)
+    hooks = len(_wired_hooks())
     maps_ru = maps_en = None
     m_ru, m_en = ROOT / "knowledge" / "methods", ROOT / "knowledge" / "methods_en"
     if m_ru.is_dir():
