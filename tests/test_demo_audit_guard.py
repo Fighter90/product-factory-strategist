@@ -170,5 +170,45 @@ class RegistryBasesActiveTests(unittest.TestCase):
                          + "; ".join(offenders))
 
 
+class ReportEmbedsBriefTests(unittest.TestCase):
+    """REPORT.md — экспорт `pfs export`: вложенная копия BRIEF_RESPONSE.md свежая (PRO-128).
+
+    Дефект 2026-11-20: правки BRIEF_RESPONSE (b2777864, 8d5f8a63) не попали в
+    REPORT — REPORT не пересобрали, и подача расходилась сама с собой
+    (устаревший «учебный пример брифа», отсутствующая строка «столкнутся
+    во 2-м квартале», старая формулировка экономии поддержки, тег [C018]).
+    Охрана: каждый абзац BRIEF_RESPONSE обязан присутствовать в REPORT
+    посимвольно (заголовок при встраивании понижается на один уровень —
+    «# X» в REPORT становится «## X», сравниваем оба варианта).
+    """
+
+    def test_report_contains_every_brief_paragraph(self):
+        def paragraphs(text: str) -> list[str]:
+            paras, cur = [], []
+            for line in text.splitlines():
+                if line.strip():
+                    cur.append(line.strip())
+                elif cur:
+                    paras.append(" ".join(cur))
+                    cur = []
+            if cur:
+                paras.append(" ".join(cur))
+            return [re.sub(r"\s+", " ", p) for p in paras]
+
+        brief = paragraphs(_doc("BRIEF_RESPONSE.md"))
+        report = paragraphs(_doc("REPORT.md"))
+        missing = []
+        for p in brief:
+            if p in report:
+                continue
+            # заголовок документа при встраивании понижается: «# X» → «## X»
+            if p.startswith("# ") and ("## " + p[2:]) in report:
+                continue
+            missing.append(p[:120])
+        self.assertEqual(missing, [],
+                         "REPORT.md не содержит свежий BRIEF_RESPONSE.md — пересоберите "
+                         "REPORT (pfs finish или pfs export):\n" + "\n".join(missing))
+
+
 if __name__ == "__main__":
     unittest.main()
