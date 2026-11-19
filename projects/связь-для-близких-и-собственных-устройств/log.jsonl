@@ -69,3 +69,5 @@
 {"ts": "2026-11-19T18:56:54+03:00", "kind": "step", "msg": "review → done: check --strict 0 ошибок; 07_quality_review.md; six-pager RU/EN — 0 ошибок линтера", "step": "review"}
 {"ts": "2026-11-19T18:56:54+03:00", "kind": "step", "msg": "monitoring → done: D001 принят; финишный пакет собран; обзорные видео RU/EN — прогон-витрина завершён", "step": "monitoring"}
 {"ts": "2026-11-19T18:59:46+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-19T19:12:58+03:00", "kind": "claim", "msg": "C025: основания перенаправлены C018→C027"}
+{"ts": "2026-11-19T19:12:59+03:00", "kind": "decision", "msg": "D001: основания обновлены C018→C027. аудит PRO-130: основание C018 замещено C027 (удар red team №14, мощность)"}
