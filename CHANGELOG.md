@@ -3,6 +3,20 @@
 Формат — Keep a Changelog; версионирование — SemVer.
 
 
+## 1.2.37 — 2026-11-19 · swarm PRO-122: полный регресс ×3 — раунд 1 (свежий клон + install)
+
+### Fixed
+- **Счётчики навыков 101 → 102** (добавлен `brief-response` в a9356311, документы не перегенерированы — на свежем клоне падали 7 тестов `tests/test_skills_registry`): `python3 scripts/update_skill_counts.py --write` — README/README_EN («101 навык/skills», mermaid `SK["102 навыка"]`, «личная 57 → 58»), docs/HELP.md, docs/HELP_EN.md («58 in total»), docs/SUBMISSION.md, docs/COMPLIANCE.md («| Навыки | 102 |», счётчик тестов 918 → 919).
+- **`docs/SKILLS.md`**: строка `` `brief-response` `` в «Документы и медиа» (11 → 12), «Личная библиотека» 57 → 58, «Итого: **102**» — реестр снова покрывает все загруженные навыки; списки «документы/медиа» / «Docs/media» в README/README_EN синхронизированы с реестром.
+- **`scripts/update_skill_counts.py`**: новое правило — счётчик группы в заголовках HELP («- **Личная библиотека (58):**» / «- **Personal library (58)** —») теперь распознаётся и обновляется скриптом (раньше замораживался — причина дрейфа); тест `SkillCountersTests.test_help_header_counters_recognized` (red-first).
+
+### Notes
+- После фикса: `update_skill_counts.py --check` — актуальны; сьюта 919 OK (skipped=1 — site/). Вне этого репозитория: сайт (`product-factory-strategist-site`) содержит устаревшее «навыков: 101» — пересобрать отдельным прогоном build_site.
+
+> Регресс раунда 1 (PRO-122): клон HEAD, `scripts/install.sh` (knowledge+site подтянуты, 111 карт в doctor), полная сьюта, счётчики, секреты, бренды, ссылки SUBMISSION §7, демо-проект.
+> build · glm-5.3-flash
+
+
 ## 1.2.37 — 2026-11-19 · swarm PRO-116: Lane B · RU-цикл 12 шагов (python3 -m tools.pfs, глобальный 
 
 ### Fixed
