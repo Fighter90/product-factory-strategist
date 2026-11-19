@@ -1,0 +1,45 @@
+{
+  "stage": "intake",
+  "steps": {
+    "intake": {
+      "status": "pending"
+    },
+    "sources": {
+      "status": "pending"
+    },
+    "research": {
+      "status": "pending"
+    },
+    "discovery": {
+      "status": "pending"
+    },
+    "situation": {
+      "status": "pending"
+    },
+    "options": {
+      "status": "pending"
+    },
+    "choice": {
+      "status": "pending"
+    },
+    "strategy": {
+      "status": "pending"
+    },
+    "validation": {
+      "status": "pending"
+    },
+    "review": {
+      "status": "pending"
+    },
+    "decision": {
+      "status": "pending"
+    },
+    "monitoring": {
+      "status": "pending"
+    }
+  },
+  "next_action": "Уточнить запрос: вопрос, решение, получатель, ограничения, данные (шаг intake)",
+  "open_questions": [],
+  "awaiting_human": null,
+  "updated": "2026-11-19T14:30:13+03:00"
+}
