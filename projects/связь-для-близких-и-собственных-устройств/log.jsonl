@@ -71,3 +71,10 @@
 {"ts": "2026-11-19T18:59:46+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
 {"ts": "2026-11-19T19:12:58+03:00", "kind": "claim", "msg": "C025: основания перенаправлены C018→C027"}
 {"ts": "2026-11-19T19:12:59+03:00", "kind": "decision", "msg": "D001: основания обновлены C018→C027. аудит PRO-130: основание C018 замещено C027 (удар red team №14, мощность)"}
+{"ts": "2026-11-19T19:13:47+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-19T19:13:47+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-19T19:13:47+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-19T19:13:47+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-19T19:13:47+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-19T19:13:47+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
+{"ts": "2026-11-19T19:13:47+03:00", "kind": "action", "msg": "Собран финальный пакет: unit_economics.xlsx, growth_model.xlsx, cohort_retention.xlsx, market_sizing.xlsx, REPORT.md, SIX_PAGER.md, REPORT.docx, SIX_PAGER.docx, SIX_PAGER_EN.md, SIX_PAGER_EN.docx, deck.html", "tool": "pfs finish"}
