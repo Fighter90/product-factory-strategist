@@ -102,7 +102,7 @@ The strongest objection — "profit is not a direct effect: if retention does no
 
 Key directions: show the offer after the first "outage via plea for help" (a banner on the group card); offer it at support contacts — the moment of explicit pain; send the member a separate invitation that states the rights in plain words [C005,C019,C009].
 
-Effect calculation: the pilot needs 600 groups over 6 weeks — a pace of ≥100 newly eligible groups per week (an assumption, verified in the first 2 weeks of enrollment) [C012,C018]. Scaling to 12,000 groups requires a consent rate — the share of enrolled groups with issued consents — of at least 70% [C024]. A show-to-enrollment conversion of ~35% is a funnel assumption [C011,C024].
+Effect calculation: the pilot needs 600 groups over 6 weeks — a pace of ≥100 newly eligible groups per week (an assumption, verified in the first 2 weeks of enrollment) [C012,C027]. Scaling to 12,000 groups requires a consent rate — the share of enrolled groups with issued consents — of at least 70% [C024]. A show-to-enrollment conversion of ~35% is a funnel assumption [C011,C024].
 
 The strongest objection — "the consents may not come: financial data is sensitive". Answer: the consent rate is the pilot's primary funnel: below 50% in the first 4 weeks — rework the invitation; below 30% — rework the mechanic and test option D in a small loop [C024,C019]. A consent revoked mid-pilot does not remove the group from the calculation [C024].
 
@@ -159,13 +159,13 @@ Expected distribution of the initiatives' contribution to the overall result (su
 - 10% — Driver 4 "Device owners": +200 owners over "no change" (1,200 versus 1,000 by year-end) [C002];
 - 5% — Driver 3 "Honest retention economics": no direct monetary contribution, but it protects the whole result from a false expansion — the nullification rule at shifts >30% [C021].
 
-Order of tactics: **high priority — Q1**: trigger rules, reminder templates, consent screen, payment idempotency, pilot pre-registration; about 2 of the 3 Q2 development man-months plus a 0.5 FTE analyst [C010,C022,C025,C026]. **Medium priority — Q2**: enroll 600 groups over 6 weeks, observe the last enrollees for up to 14 days, report to the director: effect, retention, decision [C018,S001]. **Lower priority — Q3–Q4**: carry the mechanics to device owners, revise the yearly targets against actual data [C016,C002].
+Order of tactics: **high priority — Q1**: trigger rules, reminder templates, consent screen, payment idempotency, pilot pre-registration; about 2 of the 3 Q2 development man-months plus a 0.5 FTE analyst [C010,C022,C025,C026]. **Medium priority — Q2**: enroll 600 groups over 6 weeks, observe the last enrollees for up to 14 days, report to the director: effect, retention, decision [C027,S001]. **Lower priority — Q3–Q4**: carry the mechanics to device owners, revise the yearly targets against actual data [C016,C002].
 
 Timing: the package data shows no pronounced seasonal peaks — an honest gap. Timing is tied to the billing cycle (recurring charges, for example on the 5th of the month — a standing trigger of "unexplained charges" [C005]) and to the director's decisions: the pilot by the end of Q1, the report by the end of Q2 [S001]. A seasonal adjustment is mandatory when extrapolating the 600 groups to scale [C025].
 
 Parallel tracks (off the main line): a usability check before the A/B — the same "help a loved one" task by the old and the new way: time, errors, who succeeded unaided [S001]; a support cost estimate before pilot start (the verification specialist is a separate leader decision) [C010]; invitation and consent-screen wording tested on the pilot group — synthetic hypotheses [C019]. There are no partnership tracks: no agreements with external brands exist and no paid advertising is used — only the operator's own contact points [S001].
 
-**Decision D001** — Launch the "Alert before the outage" pilot (option B). Mid-course review 2027-04-30. Triggers: consent withdrawals >15% [C022]; double charges ≥1 [C026]; alert precision <80% [C026]; enrollment pace <50 groups/week for 2 consecutive weeks [C012]; payment shifts >30% (incrementality) [C021]. Owner — direction lead; grounds: [C013], [C016], [C017], [C003], [C015], [C018].
+**Decision D001** — Launch the "Alert before the outage" pilot (option B). Mid-course review 2027-04-30. Triggers: consent withdrawals >15% [C022]; double charges ≥1 [C026]; alert precision <80% [C026]; enrollment pace <50 groups/week for 2 consecutive weeks [C012]; payment shifts >30% (incrementality) [C021]. Owner — direction lead; grounds: [C013], [C016], [C017], [C003], [C015], [C027].
 
 ## FAQ-6. Success metrics. KPIs in two dimensions
 
