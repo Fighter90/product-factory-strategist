@@ -62,3 +62,6 @@
 {"ts": "2026-11-19T15:29:30+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER_EN.md и пакет данных six_pager_pack (PRO-46: каркас со слотами, документы не вставляются)", "tool": "pfs export --six-pager"}
 {"ts": "2026-11-19T15:29:30+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
 {"ts": "2026-11-19T15:29:30+03:00", "kind": "action", "msg": "Собран финальный пакет: unit_economics.xlsx, growth_model.xlsx, cohort_retention.xlsx, market_sizing.xlsx, REPORT.md, SIX_PAGER.md, REPORT.docx, SIX_PAGER.docx, SIX_PAGER_EN.md, SIX_PAGER_EN.docx, deck.html", "tool": "pfs finish"}
+{"ts": "2026-11-19T18:44:15+03:00", "kind": "claim", "msg": "C027 [вывод] ВЫВОД: 600 групп — объём набора пилота по темпу брифа (~100/нед × 6 недель [C012]); достат"}
+{"ts": "2026-11-19T18:44:15+03:00", "kind": "claim", "msg": "C018 замещено C027: удар red team №14: мощность не показана; C018 противоречил C025"}
+{"ts": "2026-11-19T18:44:16+03:00", "kind": "claim", "msg": "C014: источник перенаправлен — → S002; цитата перепроверена"}
