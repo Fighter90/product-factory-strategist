@@ -8,7 +8,7 @@ distinct options, and aligned product and communication strategies. After the de
 grounds, tracks commitments, and revisits conclusions when new data arrives.
 
 This is a repository folder: instructions, knowledge sets organized by category (strategy · economics · product ·
-UX · data · platforms · Gen AI), 102 skills, 10 subagents, 6 hooks, and a dependency-free Python CLI/MCP toolset.
+UX · data · platforms · Gen AI), 102 skills, 10 subagents, 5 hooks, and a dependency-free Python CLI/MCP toolset.
 Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 **Links:** [Docs site RU/EN](https://strategyproduct.ru) · [HELP (EN)](docs/HELP_EN.md) ·
@@ -165,7 +165,7 @@ flowchart TB
   subgraph ENV["LLM environment (Claude Code / Cursor / OpenCode / Codex…)"]
     AG["AGENTS.md — 12-step process, rules"] --> SK["skills: 102<br/>(base + product-skills 27 + integrations: ph-trends · sdd · deck · premortem)"]
     AG --> SUB["subagents: 10<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router · editor · six-pager-writer"]
-    AG --> HK["hooks: 6<br/>SessionStart · PreWeb-domains · PreGuard-registries · PostTool-log · Stop-cost (+ shared module)"]
+    AG --> HK["hooks: 5<br/>SessionStart · PreWeb-domains · PreGuard-registries · PostTool-log · Stop-cost (+ shared module)"]
   end
   ENV -->|"CLI: pfs … · MCP: pfs-strategist"| TOOLS
   subgraph TOOLS["tools/pfs — deterministic guarantees (stdlib only)"]

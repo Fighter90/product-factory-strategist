@@ -8,7 +8,7 @@
 за обязательствами и пересматривает выводы при новых данных.
 
 Это папка-репозиторий: инструкции, наборы знаний по категориям (стратегия · экономика · продукт · UX ·
-данные · платформы · Gen AI), 102 навыка, 10 субагентов, 6 хуков
+данные · платформы · Gen AI), 102 навыка, 10 субагентов, 5 хуков
 и CLI/MCP-инструменты на чистом Python (ноль зависимостей). Работает в Claude Code, Cursor, Codex, OpenCode,
 Windsurf, Copilot.
 
@@ -153,7 +153,7 @@ flowchart TB
   subgraph ENV["LLM-среда (Claude Code / Cursor / OpenCode / Codex…)"]
     AG["AGENTS.md — процесс 12 шагов, правила"] --> SK["skills: 102<br/>(базовые 13 + product-skills 27 + личная 58 + интеграции 4: ph-trends · sdd · deck · premortem)"]
     AG --> SUB["subagents: 10<br/>researcher · red-team · evidence-auditor · synthetic-respondent · data-analyst · ux-analyst · comms-strategist · router · editor · six-pager-writer"]
-    AG --> HK["hooks: 6<br/>SessionStart · PreWeb-домены · PreGuard-реестры · PostTool-журнал · Stop-стоимость (+ общий модуль)"]
+    AG --> HK["hooks: 5<br/>SessionStart · PreWeb-домены · PreGuard-реестры · PostTool-журнал · Stop-стоимость (+ общий модуль)"]
   end
   ENV -->|"CLI: pfs … · MCP: pfs-strategist"| TOOLS
   subgraph TOOLS["tools/pfs — детерминированные гарантии (stdlib only)"]
