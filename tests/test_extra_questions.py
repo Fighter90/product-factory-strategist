@@ -78,5 +78,38 @@ class QuestionBlocksConfigTests(unittest.TestCase):
             self.assertIn(b["id"], out)
 
 
+class QuestionBlocksEnTests(unittest.TestCase):
+    """PRO-132: EN-варианты блоков в служебном ключе _en — покрытие и выбор по lang проекта."""
+
+    def test_en_mirror_covers_all_ru_stages(self):
+        blocks = core.read_json(core.CONFIG / "question_blocks.json")
+        en = blocks.get("_en")
+        self.assertIsInstance(en, dict)
+        ru_stages = {k for k in blocks if not k.startswith("_")}
+        self.assertEqual(set(en), ru_stages)  # у каждого RU-этапа есть EN-вариант
+        for stage, items in en.items():
+            self.assertEqual([b["id"] for b in items], [b["id"] for b in blocks[stage]], stage)
+            for b in items:
+                self.assertTrue(b.get("q", "").strip())
+                self.assertGreaterEqual(len(b.get("options", [])), 2)
+                rec = b.get("recommended")
+                if rec is not None:
+                    self.assertTrue(0 <= rec < len(b["options"]), b["id"])
+
+    def test_en_project_prints_en_blocks(self):
+        from tools.pfs import project
+        project.create("EN questions", "question", slug="en-questions", lang="en")
+        self.addCleanup(core.clear_active)
+        out = run(["questions", "intake"])
+        self.assertIn("[intake/intake-decision]", out)
+        self.assertIn("What decision are we making as a result of this work?", out)
+        self.assertIn("Why:", out)
+        self.assertNotIn("Какое решение принимаем", out)
+        self.assertNotIn("Зачем:", out)
+        out_sources = run(["questions", "sources"])
+        self.assertIn("[sources/sources-allowed]", out_sources)
+        self.assertIn("Which materials may be used as sources?", out_sources)
+
+
 if __name__ == "__main__":
     unittest.main()

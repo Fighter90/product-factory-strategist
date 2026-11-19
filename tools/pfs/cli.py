@@ -111,6 +111,9 @@ def cmd_next(a):
 
 def cmd_questions(a):
     blocks = core.read_json(core.CONFIG / "question_blocks.json", {})
+    # PRO-132: EN-варианты блоков лежат в служебном ключе "_en" (структура и id — как у RU-ключей);
+    # для проекта с lang=en RU-списки этапов подменяются EN-вариантами.
+    en_blocks = blocks.get("_en") if isinstance(blocks.get("_en"), dict) else {}
     key = a.block
     if key is None:
         print("Вопросные блоки по шагам:")
@@ -123,6 +126,8 @@ def cmd_questions(a):
         return
     pdir = _p_or_hint(a)
     lang = i18n.lang_of(pdir)
+    if lang == "en" and en_blocks:
+        blocks = {**blocks, **en_blocks}
     rows = []
     for stage, items in blocks.items():
         if stage.startswith("_"):
@@ -134,11 +139,13 @@ def cmd_questions(a):
     if not rows:
         keys = [k for k in blocks if not k.startswith("_")]
         raise core.PfsError(f"Блок не найден: {key}. Шаги: {', '.join(keys)}")
+    why_label = "Why" if lang == "en" else "Зачем"
+    rec_label = " ←recommended" if lang == "en" else " ←рекомендуется"
     for stage, b in rows:
         opts = " · ".join(
-            f"{i + 1}) {o}" + (" ←рекомендуется" if i == b.get("recommended") else "")
+            f"{i + 1}) {o}" + (rec_label if i == b.get("recommended") else "")
             for i, o in enumerate(b.get("options", [])))
-        print(f"[{stage}/{b['id']}] {b['q']}\n   {opts}\n   Зачем: {b.get('why', '')}\n")
+        print(f"[{stage}/{b['id']}] {b['q']}\n   {opts}\n   {why_label}: {b.get('why', '')}\n")
     print(i18n.t(lang, "ask_hint"))
 
 
