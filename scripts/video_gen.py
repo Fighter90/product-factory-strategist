@@ -57,7 +57,12 @@ def wrap(draw, text, f, width):
     if cur: lines.append(cur)
     return lines or [""]
 
-def render_frame(draw_lines, cursor_at=None, title=""):
+FOOTER = {
+    "ru": "pfs · 12 шагов · факт/допущение/гипотеза/вывод · стоимость $0 CLI",
+    "en": "pfs · 12 steps · fact/assumption/hypothesis/inference · CLI cost $0",
+}
+
+def render_frame(draw_lines, cursor_at=None, title="", lang="ru"):
     from PIL import Image, ImageDraw
     img = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img)
@@ -83,7 +88,7 @@ def render_frame(draw_lines, cursor_at=None, title=""):
         y += 27
     if cursor_at is not None:
         d.rectangle([MARGIN + cursor_at, y - 2, MARGIN + cursor_at + 11, y + 20], fill=GREEN)
-    d.text((MARGIN, H-34), "pfs · 12 шагов · факт/допущение/гипотеза/вывод · стоимость $0 CLI", font=f_s, fill=DIM)
+    d.text((MARGIN, H-34), FOOTER.get(lang, FOOTER["ru"]), font=f_s, fill=DIM)
     return img
 
 def build_video(scen_path, out_path):
@@ -122,7 +127,7 @@ def build_video(scen_path, out_path):
                 fr = lines_snapshot[:-1] + [(lines_snapshot[-1][0], shown, lines_snapshot[-1][2])]
             else:
                 fr = lines_snapshot
-            img = render_frame(fr, title=title)
+            img = render_frame(fr, title=title, lang=lang)
             fp = str(tmp / f"f_{len(frame_paths):05}.png"); img.save(fp); frame_paths.append(fp)
     # аудио: склейка с паузами
     print("аудио...")

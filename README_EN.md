@@ -61,6 +61,41 @@ chat — state is restored automatically.
 
 ---
 
+## Demo project: 'Connection for loved ones' (customer brief) — video and screenshots
+
+> Customer brief (training market of a mobile carrier): family groups with a shared data package, and owners of several own numbers. Full 12-step run: 26 claims (10 facts · 8 assumptions · 4 hypotheses · 4 inferences), red team 20 hits, decision D001, `check --strict` 0 errors. Strategies — in **BRIEF_RESPONSE.md** (one document in five parts, as the brief requires).
+
+### Video (EN — 4:14, RU — 4:20)
+
+| | |
+|---|---|
+| **EN** | ![Demo overview EN](assets/video-en-poster.png) · [video/svyaz-overview-EN.mp4](video/svyaz-overview-EN.mp4) — end-to-end: request → 12 steps → options + red team → strategies → resume after a break → final package |
+| **RU** | ![Обзор демо RU](assets/video-ru-poster.png) · [video/svyaz-overview-RU.mp4](video/svyaz-overview-RU.mp4) — same walkthrough in Russian |
+
+The end-to-end path required by the case: **request → agent work → options → strategy → resume after a break** (the video shows a mid-run restart → `pfs status` → continuing from the same place).
+
+### Screenshots
+
+| `pfs status` — 12/12 steps, D001, cost | `pfs check --strict` — 0 errors, final package |
+|---|---|
+| ![pfs status](assets/screenshot-status.png) | ![pfs check --strict](assets/screenshot-check.png) |
+
+### Architecture
+
+![Architecture: 12 steps + separated knowledge layers](assets/architecture.png)
+
+*Permanent instructions / methodological knowledge / project materials / task state — kept separately (a case requirement). 3 mandatory human pauses: intake, choice, decision.*
+
+### Product wireframe (mockup hypothesis from the demo)
+
+![Wireframe: family dashboard with alerts](projects/связь-для-близких-и-собственных-устройств/sources/raw/wireframe-kabinet.png)
+
+Full demo package: `projects/связь-для-близких-и-собственных-устройств/` — package map: [DEMO_README.md](projects/связь-для-близких-и-собственных-устройств/DEMO_README.md).
+
+<details>
+<summary><b>Archive: previous demo CVStart (a second example — the agent on a different task)</b></summary>
+
+</details>
 ## Demo project: CVStart — full walkthrough
 
 A live end-to-end run on a real task: **CVStart** — [cvstart.org](https://cvstart.org/)
@@ -90,7 +125,7 @@ What to look at: `projects/демо/outputs/` (00_brief…07, REPORT.md, **SIX_P
 .md/.pdf/.docx**, attachments/*.xlsx — 4 workbooks, img/ screenshots), `projects/демо/interviews/synthetic/`. The six-pager follows the growth-strategy reference format: subsections 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs in two planes, source footnotes; the draft is assembled by `pfs export --six-pager` (spec: `knowledge/templates/SIX_PAGER_PROMPT.md`)
 (2 AI personas), `projects/демо/analysis/` (generators + funnel CSV). Product screenshots: `https://strategyproduct.ru/assets/` (public site).
 Full RU breakdown with a task-requirements mapping table — in
-[README.md](README.md#демонстрационный-проект-cvstart--полный-разбор).
+[README.md](README.md#демо-проект-связь-для-близких-бриф-заказчика--видео-и-скриншоты).
 
 How to repeat:
 
