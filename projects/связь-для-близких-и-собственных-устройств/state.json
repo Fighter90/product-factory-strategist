@@ -1,45 +1,54 @@
 {
-  "stage": "intake",
+  "stage": "sources",
   "steps": {
     "intake": {
-      "status": "pending"
+      "status": "done",
+      "ts": "2026-11-19T14:32:38+03:00"
     },
     "sources": {
       "status": "pending"
     },
     "research": {
-      "status": "pending"
+      "status": "done",
+      "ts": "2026-11-19T14:37:31+03:00"
     },
     "discovery": {
-      "status": "pending"
+      "status": "done",
+      "ts": "2026-11-19T14:37:32+03:00"
     },
     "situation": {
-      "status": "pending"
+      "status": "done",
+      "ts": "2026-11-19T14:38:40+03:00"
     },
     "options": {
-      "status": "pending"
+      "status": "done",
+      "ts": "2026-11-19T15:22:29+03:00"
     },
     "choice": {
-      "status": "pending"
+      "status": "done",
+      "ts": "2026-11-19T15:22:29+03:00"
     },
     "strategy": {
-      "status": "pending"
+      "status": "done",
+      "ts": "2026-11-19T15:22:29+03:00"
     },
     "validation": {
-      "status": "pending"
+      "status": "done",
+      "ts": "2026-11-19T15:22:29+03:00"
     },
     "review": {
       "status": "pending"
     },
     "decision": {
-      "status": "pending"
+      "status": "done",
+      "ts": "2026-11-19T15:29:29+03:00"
     },
     "monitoring": {
       "status": "pending"
     }
   },
-  "next_action": "Уточнить запрос: вопрос, решение, получатель, ограничения, данные (шаг intake)",
+  "next_action": "monitoring: решение D001 открыто; финишный пакет",
   "open_questions": [],
   "awaiting_human": null,
-  "updated": "2026-11-19T14:30:13+03:00"
+  "updated": "2026-11-19T15:29:29+03:00"
 }

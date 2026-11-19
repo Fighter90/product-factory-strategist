@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-19T15:29:30+03:00",
+  "claims": 26,
+  "sources": 4,
+  "claims_sha": "9478cef4ba11b25f5c86daab357e8aef063c09b7f767d7482d29013d3e3b7aaf",
+  "sources_sha": "ba1d472e1bcd2139c9c4c788fa6b2d1e8b813e88373f6344e3b096b8aec04faf",
+  "calcs_sha": "abce39967dde866c161b802939796426ea1bb7104a28ec751c3591ac5446cfdd",
+  "att_shas": {
+    "cohort_retention.xlsx": "5ad5ba8f2e4f7212abab3b511bd01d9547da04db14a929bfd7a86ed027eea17f",
+    "growth_model.xlsx": "a2ec455bf9989b03fc26c26cd787066d72abf12cb23c9d83319f0333ace222d8",
+    "market_sizing.xlsx": "4b69e7d83de7cd7cd4021abdcc4eec357863fdcbca544035f39572a8ee9f3fa1",
+    "unit_economics.xlsx": "fc4c2e57e4e9659054f935d147339d9e13fff21c7d11c980fa0362c7a775eea9"
+  },
+  "calcs_mtime": 1795091279.7239573,
+  "attachments_mtime": 1795091370.1246033
+}
