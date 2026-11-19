@@ -51,7 +51,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md). In brief:
 | Environment WebSearch / WebFetch | search and reading of open sources | — |
 | pfs CLI + MCP server (Python stdlib) | verifiability guarantees, state, cost | tools/pfs |
 | pdftotext / pypdf (optional) | extracting text from PDFs | — |
-| unittest | 949 tool tests | tests/ |
+| unittest | 958 tool tests | tests/ |
 
 ## 4. Key prompts and instructions
 
@@ -78,7 +78,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md). In brief:
 | Decision support | `pfs decision add/due/done/status`: grounds C###, owners, metrics, revision conditions, commitments, stale grounds | D001 + `decision due` |
 | Revision on new data | `claim supersede/retract/rebase` + `pfs impact` (the graph source → claim → inference → document line → decision) + `check` catches references to retracted claims | the `claims.jsonl` registry (26 active claims; history preserved — C018 superseded); the mechanism is covered by tests |
 | Routing | `pfs route` (scenario, maps, questions), `config/models.json` (a model per task, escalation, economy, profiles), the `--override` fix | the model plan in the demo |
-| Skills, hooks, subagents | 102 skills / 6 hooks / 10 subagents (router, researcher, data-analyst, synthetic-respondent, ux-analyst, red-team, comms-strategist, evidence-auditor, six-pager-writer, editor) | the whole demo run |
+| Skills, hooks, subagents | 102 skills / 5 hooks / 10 subagents (router, researcher, data-analyst, synthetic-respondent, ux-analyst, red-team, comms-strategist, evidence-auditor, six-pager-writer, editor) | the whole demo run |
 | MCP and CLI | the `pfs` CLI (25+ commands) + the `pfs-strategist` MCP server (18 tools) | the demo run goes through CLI+MCP |
 | Knowledge base | 111 maps (RU) + 111 EN mirrors — a fully bilingual base and an EN index, BM25 search, `related` links, a broken-link check; project memory without turning inferences into facts; record retraction | `pfs kb search` |
 | Resilience | atomic writes, idempotent commands, explicit network errors, a journal | an interruption in the demo run: a new chat → `pfs status` → continuation from the same place (shown in the video, §7) |

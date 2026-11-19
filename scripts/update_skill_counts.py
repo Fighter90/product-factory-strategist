@@ -45,6 +45,7 @@ TARGETS = [
     "README.md",
     "README_EN.md",
     "docs/SUBMISSION.md",
+    "docs/SUBMISSION_EN.md",
     "docs/HELP.md",
     "docs/HELP_EN.md",
     "docs/COMPLIANCE.md",
@@ -184,6 +185,8 @@ def build_rules(c):
     add(r"(Тесты инструментов \()(\d+)", lambda m: f"{m.group(1)}{T}")
     add(r"(\| unittest \| )(\d+)( тест(?:а|ов)? инструментов)",
         lambda m: f"{m.group(1)}{T} {ru_plural(T, 'тест', 'теста', 'тестов')} инструментов")
+    add(r"(\| unittest \| )(\d+)( tool tests)",
+        lambda m: f"{m.group(1)}{T} tool tests")
     add(r"(discover -s tests\s+# )(\d+)( тест(?:а|ов)?)",
         lambda m: f"{m.group(1)}{T} {ru_plural(T, 'тест', 'теста', 'тестов')}")
     add(r"(discover -s tests\s+# )(\d+)( tests)", lambda m: f"{m.group(1)}{T}{m.group(3)}")
@@ -199,6 +202,9 @@ def build_rules(c):
     add(r"( / )(\d+)( хуков)", lambda m: f"{m.group(1)}{H}{m.group(3)}")
     add(r"(`\.claude/hooks/` \()(\d+)(\))", lambda m: f"{m.group(1)}{H}{m.group(3)}")
     add(r"(hooks/ \()(\d+)(:)", lambda m: f"{m.group(1)}{H}{m.group(3)}")
+    # EN-формулировки (docs/SUBMISSION_EN.md, README_EN): «… skills / 5 hooks / 10 subagents»
+    add(r"( / )(\d+)( hooks)(?![\w])", lambda m: f"{m.group(1)}{H} hooks")
+    add(r"(?<![\w.])(\d+)( subagents)(?!\w)", lambda m: f"{A} subagents")
 
     # --- карты базы знаний (QA D12-семейство): только когда knowledge/ на месте ---
     MR, ME = c.get("maps_ru"), c.get("maps_en")
@@ -206,6 +212,8 @@ def build_rules(c):
         add(r"(\d+ карт \(RU\) \+ )(\d+)( EN-зеркал)",
             lambda m: f"{MR} карт (RU) + {ME}{m.group(3)}")
         add(r"(\d+ карт RU \+ )(\d+)( EN)", lambda m: f"{MR} карт RU + {ME}{m.group(3)}")
+        add(r"(\d+ RU maps \+ )(\d+)( EN mirrors)",
+            lambda m: f"{MR} RU maps + {ME}{m.group(3)}")
 
     # --- источники демо-прогона (QA D8): COMPLIANCE/SUBMISSION ---
     DS = c["demo_sources"]

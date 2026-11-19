@@ -76,6 +76,11 @@ else
   trap cleanup EXIT
   echo "→ свежий клон: $CLONE"
   git clone -q "$REPO" "$CLONE"
+  # Клон обязан тестировать проверяемое состояние (PRO-128): git clone без ветки
+  # берёт ветку по умолчанию (main), а не текущий HEAD — во время цикла
+  # «дефект → фикс-коммит → повторный прогон» HEAD исполнителя уходит вперёд main,
+  # и регресс тестировал бы устаревший код.
+  git -C "$CLONE" checkout -q "$(git -C "$REPO" rev-parse HEAD)"
   echo "→ opencode run --auto --format json (это долго: 20–40 мин)"
   RC=0
   ( cd "$CLONE" && opencode run --auto --archived --format json \

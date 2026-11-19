@@ -813,5 +813,54 @@ class ReviewRound6Tests(unittest.TestCase):
             "загрузки …)» не заменён на точный путь")
 
 
+class SubmissionEnCountersTests(unittest.TestCase):
+    """EN-версия SUBMISSION под охраной скрипта счётчиков (PRO-128).
+
+    Дефект 2026-11-20: docs/SUBMISSION_EN.md не входит в TARGETS скрипта
+    update_skill_counts — счётчики заморозились («949 tool tests» при 953
+    тестах, «6 hooks» при 5 подключённых в settings.json), RU-версия
+    обновляется, EN — нет.
+    """
+
+    def test_submission_en_in_targets(self):
+        script = load_counts_script()
+        self.assertIn(
+            "docs/SUBMISSION_EN.md", script.TARGETS,
+            "docs/SUBMISSION_EN.md не в TARGETS scripts/update_skill_counts.py "
+            "— счётчики EN-версии замораживаются при росте тестов/навыков")
+
+    def test_en_counter_patterns_recognized(self):
+        """Скрипт распознаёт устаревшие EN-формулировки счётчиков: «N tool tests»,
+        «… skills / N hooks / N subagents», «N RU maps + N EN mirrors»."""
+        script = load_counts_script()
+        c = script.counts()
+        rules = script.build_rules(c)
+        samples = [
+            (f"| unittest | {c['tests'] + 4} tool tests | tests/ |",
+             str(c['tests']), "счётчик тестов EN не обновляется"),
+            (f"102 skills / {c['hooks'] + 1} hooks / {c['agents']} subagents "
+             "(router, researcher, …)",
+             str(c['hooks']), "счётчик хуков EN не обновляется"),
+            (f"{c['maps_ru'] or 111} RU maps + {(c['maps_en'] or 111) + 3} EN mirrors "
+             "— a fully bilingual base",
+             str(c['maps_en']), "счётчик EN-карт не обновляется"),
+        ]
+        for sample, expected, why in samples:
+            new_text, findings = script._process_text(sample, rules)
+            self.assertIn(expected, new_text, f"{why}: {sample!r}")
+            self.assertTrue(findings, f"скрипт не сообщает об устаревшем EN-счётчике: {sample!r}")
+
+    def test_submission_en_counter_is_actual(self):
+        """Сам файл: счётчик тестов в docs/SUBMISSION_EN.md равен фактическому числу."""
+        script = load_counts_script()
+        text = (REPO / "docs" / "SUBMISSION_EN.md").read_text(encoding="utf-8")
+        m = re.search(r"\| unittest \| (\d+) tool tests \| tests/ \|", text)
+        self.assertIsNotNone(
+            m, "в docs/SUBMISSION_EN.md нет строки «| unittest | N tool tests | tests/ |»")
+        self.assertEqual(
+            int(m.group(1)), script.counts()["tests"],
+            "счётчик тестов в docs/SUBMISSION_EN.md отстал от фактического числа")
+
+
 if __name__ == "__main__":
     unittest.main()
