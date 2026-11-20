@@ -58,7 +58,7 @@ chat — state is restored automatically.
 
 ---
 
-## Demo project: 'Connection for loved ones' (customer brief) — video and screenshots
+## Demo project: 'Connection for loved ones' (customer brief)
 
 > Customer brief (training market of a mobile carrier): family groups with a shared data package, and owners of several own numbers. Full 12-step run: 26 claims (10 facts · 8 assumptions · 4 hypotheses · 4 inferences), red team 20 hits, decision D001, `check --strict` 0 errors. Strategies — in **BRIEF_RESPONSE.md** (one document in five parts, as the brief requires; RU — the deliverable language of the demo, EN summary in SIX_PAGER_EN.md).
 
@@ -79,10 +79,6 @@ The end-to-end path required by the case: **request → agent work → options �
 ![Architecture: 12 steps + separated knowledge layers](assets/architecture.png)
 
 *Permanent instructions / methodological knowledge / project materials / task state — kept separately (a case requirement). 3 mandatory human pauses: intake, choice, decision.*
-
-### Product wireframe (mockup hypothesis from the demo)
-
-![Wireframe: family dashboard with alerts](projects/связь-для-близких-и-собственных-устройств/sources/raw/wireframe-kabinet.png)
 
 Full demo package: `projects/связь-для-близких-и-собственных-устройств/` — package map: [DEMO_README.md](projects/связь-для-близких-и-собственных-устройств/DEMO_README.md).
 
