@@ -223,3 +223,38 @@ class SiteRegressTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Pro133ContentGate(unittest.TestCase):
+    """PRO-133: EN-страницы без кириллицы (вне whitelist: пути/цитаты), RU без «100/100»."""
+
+    def _read(self, rel):
+        p = SITE / rel
+        self.assertTrue(p.exists(), f"{rel} не собран")
+        return p.read_text(encoding="utf-8")
+
+    def test_en_pages_no_cyrillic_outside_whitelist(self):
+        import re
+        wl = re.compile(r"projects/связь|lang=\"ru\"|<code|<!--")
+        cyr = re.compile(r"[А-Яа-яЁё][А-Яа-яЁё ]{6,}")
+        for rel in ("site/en/demo.html", "site/en/help.html",
+                    "site/en/materials.html", "site/en/index.html"):
+            frags = set()
+            for line in self._read(rel).splitlines():
+                if wl.search(line):
+                    continue
+                frags.update(m.group(0) for m in cyr.finditer(line))
+            frags = {w for w in frags if len(w) >= 4 and w.lower() != "ru"}
+            self.assertEqual(frags, set(), f"{rel}: кириллица на EN: {sorted(frags)[:5]}")
+
+    def test_ru_pages_no_invented_score_or_stale_numbers(self):
+        for rel in ("site/demo.html", "site/help.html", "site/materials.html", "site/index.html"):
+            t = self._read(rel)
+            self.assertNotIn("100/100", t, f"{rel}: выдуманная оценка 100/100")
+            self.assertNotIn("18,444", t, f"{rel}: EN-формат числа на RU")
+            self.assertNotIn("Три порога", t, f"{rel}: ложное утверждение полноты порогов")
+
+    def test_demo_thresholds_honest(self):
+        t = self._read("site/demo.html")
+        self.assertIn("−3 п.п.", t, "порог −3 п.п. отсутствует")
+        self.assertIn("12 000", t, "граница 12 000 мес отсутствует")
