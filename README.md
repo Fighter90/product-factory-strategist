@@ -2,6 +2,12 @@
 
 **[RU](README.md) · [EN](README_EN.md)**
 
+![skills](https://img.shields.io/badge/skills-102-1B998B) ![subagents](https://img.shields.io/badge/subagents-10-6C5CE7) ![hooks](https://img.shields.io/badge/hooks-5-F4A259) ![knowledge cards](https://img.shields.io/badge/knowledge%20cards-111-2D6CDF) ![python](https://img.shields.io/badge/python-3.9%2B-14213D) ![dependencies](https://img.shields.io/badge/dependencies-0-2E9E5B)
+
+> **Новичок?** Начните с полного руководства «Быстрый старт» (47 страниц со схемами):
+> **[📘 Быстрый старт — русская версия (PDF)](docs/Strategist_Quickstart_RU.pdf)** ·
+> **[📘 Quick Start — English version (PDF)](docs/Strategist_Quickstart_EN.pdf)**
+
 ИИ-агент для руководителя цифрового продукта: от размытого запроса («почему падает удержание», «кому продавать
 новый сервис», «что сказать аудитории») — к **проверяемой** картине ситуации, содержательно разным вариантам
 и согласованным продуктовой и коммуникационной стратегиям. После решения агент хранит его основания, следит
@@ -22,6 +28,9 @@ Windsurf, Copilot.
 ## Быстрый старт (5 минут)
 
 > Полное тестирование агента от и до — пошаговая инструкция: [QUICKSTART_RU.md](docs/QUICKSTART_RU.md)
+>
+> Иллюстрированное руководство со схемами архитектуры, установкой и запуском в OpenCode / Claude Code / Cursor:
+> [Быстрый старт (PDF, RU)](docs/Strategist_Quickstart_RU.pdf) · [Quick Start (PDF, EN)](docs/Strategist_Quickstart_EN.pdf)
 
 ## Установка
 
@@ -53,7 +62,7 @@ python3 -m unittest discover -s tests          # 972 теста
 
 Агент сам создаст проект, пройдёт блоки вопросов, построит исследование и покажет прогресс строкой
 `Шаг N/12 · …`. «Стоп» — пауза, «уточни: …» — корректировка, «собери six-pager» — отчёт для комитета,
-«сделай презентацию» — дека из six-pager. После перерыва откройте новый чат: состояние подастся автоматически.
+«сделай презентацию» — дека из six-pager. После перерыва откройте новый чат: состояние подаётся автоматически.
 
 ---
 
@@ -61,7 +70,7 @@ python3 -m unittest discover -s tests          # 972 теста
 
 На каждом шаге агент **читает обязательные карты базы знаний** (печатаются в `pfs step`), проходит
 **вопросный блок** (`pfs questions <шаг>` — 1–3 вопроса руководителю, пропуск — только через журнал)
-и упирается в **ворота качества**. Фазы двойного романа: Discover (1–4) → Define (5–7) → Develop (8–10) →
+и упирается в **ворота качества**. Фазы двойного ромба: Discover (1–4) → Define (5–7) → Develop (8–10) →
 Deliver (11–12). Нумерация 1–12 совпадает в CLI, документации и на сайте.
 
 ```mermaid
