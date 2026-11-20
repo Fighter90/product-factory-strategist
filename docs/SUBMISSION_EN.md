@@ -51,7 +51,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md). In brief:
 | Environment WebSearch / WebFetch | search and reading of open sources | — |
 | pfs CLI + MCP server (Python stdlib) | verifiability guarantees, state, cost | tools/pfs |
 | pdftotext / pypdf (optional) | extracting text from PDFs | — |
-| unittest | 958 tool tests | tests/ |
+| unittest | 969 tool tests | tests/ |
 
 ## 4. Key prompts and instructions
 

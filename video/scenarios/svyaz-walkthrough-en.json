@@ -5,9 +5,9 @@
     {"speaker":"human","text":"What is in the demo package?"},
     {"cmd":"ls outputs/","out":"00_brief … 07_quality_review · BRIEF_RESPONSE.md · REPORT.md/docx · SIX_PAGER RU/EN · attachments/ (4 Excel) · deck"},
     {"speaker":"pfs","text":"The brief answer is one document in five parts: customers and problem, case walkthrough, offer and journey, benefit and profit, choice and quarters. Calculations next to decisions.","accent":"ok"},
-    {"cmd":"python3 analysis/economics.py","out":"Target scenario: 16,500 months = 5,500 numbers × 3 → +6.75M → 285.8M RUB (target ≥285)"},
-    {"speaker":"pfs","text":"Validation plan: A/B 600 groups, ITT, pre-registration; threshold — minus three percentage points of cutoffs; stop metrics written before data."},
-    {"cmd":"pfs check --strict","out":"0 errors · 26 claims: 10 facts, 10 assumptions, 4 hypotheses, 6 inferences · decision D001"},
+    {"cmd":"python3 analysis/economics.py","out":"Boundary from the brief: {{boundary_months}} months × RUB 500 = +6M · Target: 16,500 months → +6.75M → {{target_mln}}M RUB (target ≥285)"},
+    {"speaker":"pfs","text":"Validation plan: A/B 600 groups, ITT, pre-registration; threshold — minus three percentage points of cutoff-driven restrictions; stop metrics written before data."},
+    {"cmd":"pfs check --strict","out":"0 errors · {{claims_total}} claims: {{c_fact}} facts, {{c_assumption}} assumptions, {{c_hyp}} hypotheses, {{c_inf}} inferences · decision {{decision_id}}"},
     {"speaker":"pfs","text":"Every number carries a source tag. Synthetic data — hypotheses only. The decision is not abandoned: commitments and review live in the registry.","accent":"ok"}
   ]
 }
