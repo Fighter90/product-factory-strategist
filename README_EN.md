@@ -17,7 +17,6 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 ---
 
-> 🎬 Agent demo (10 scenario steps, voice-over and subtitles): 
 
 ## Quick start (5 minutes)
 
