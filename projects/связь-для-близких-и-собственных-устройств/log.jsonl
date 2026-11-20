@@ -93,3 +93,16 @@
 {"ts": "2026-11-20T01:50:34+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
 {"ts": "2026-11-20T01:50:34+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
 {"ts": "2026-11-20T01:50:34+03:00", "kind": "action", "msg": "Собран финальный пакет: unit_economics.xlsx, growth_model.xlsx, cohort_retention.xlsx, market_sizing.xlsx, REPORT.md, SIX_PAGER.md, REPORT.docx, SIX_PAGER.docx, SIX_PAGER_EN.md, SIX_PAGER_EN.docx, deck.html", "tool": "pfs finish"}
+{"ts": "2026-11-20T06:10:48+03:00", "kind": "route", "msg": "Сценарий: retention (medium); доп.: —"}
+{"ts": "2026-11-20T06:10:48+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-20T06:11:37+03:00", "kind": "route", "msg": "Сценарий: retention (high); доп.: —"}
+{"ts": "2026-11-20T06:11:37+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-20T06:11:37+03:00", "kind": "route", "msg": "Сценарий: go_to_market (low); доп.: messaging"}
+{"ts": "2026-11-20T06:11:38+03:00", "kind": "route", "msg": "Сценарий: monetization (high); доп.: —"}
+{"ts": "2026-11-20T06:11:38+03:00", "kind": "route", "msg": "Сценарий: keep_or_kill (high); доп.: —"}
+{"ts": "2026-11-20T06:32:15+03:00", "kind": "route", "msg": "Сценарий: retention (high); доп.: —"}
+{"ts": "2026-11-20T06:32:15+03:00", "kind": "route", "msg": "Сценарий: go_to_market (high); доп.: —"}
+{"ts": "2026-11-20T06:32:15+03:00", "kind": "route", "msg": "Сценарий: messaging (high); доп.: go_to_market"}
+{"ts": "2026-11-20T06:32:15+03:00", "kind": "route", "msg": "Сценарий: monetization (low); доп.: keep_or_kill"}
+{"ts": "2026-11-20T06:32:43+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-20T06:32:49+03:00", "kind": "cost", "msg": "Ручная правка реестра: C002 quote → дословная строка таблицы брифа (был коллаж с «…»); REPORT пересобран: $0.00, человек 5 мин"}

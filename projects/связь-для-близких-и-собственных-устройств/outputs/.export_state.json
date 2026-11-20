@@ -1,8 +1,8 @@
 {
-  "at": "2026-11-20T01:50:34+03:00",
+  "at": "2026-11-20T06:32:43+03:00",
   "claims": 27,
   "sources": 4,
-  "claims_sha": "cbd0c0824aa16d0218b99dd73440355221d0f6f9423f6d003773a0d8ff3c6e31",
+  "claims_sha": "59799f733695c3185dd9885e2a36fb2762dd0f665f2eb397056641ad30c56f50",
   "sources_sha": "ba1d472e1bcd2139c9c4c788fa6b2d1e8b813e88373f6344e3b096b8aec04faf",
   "calcs_sha": "f3fb14f13cb45eb762f140a85230087414f8ef245f73942edaf934d65ef82e78",
   "att_shas": {
@@ -12,5 +12,5 @@
     "unit_economics.xlsx": "483c68005a90656b16efdb80682d589821610663a4fcce468514b98edb4d0f25"
   },
   "calcs_mtime": 1795104758.5282664,
-  "attachments_mtime": 1795128634.3231318
+  "attachments_mtime": 1795129019.1678517
 }
