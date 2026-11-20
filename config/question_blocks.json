@@ -1,85 +1,31 @@
 {
-  "_comment": "Библиотека вопросных блоков (pfs questions <шаг|блок>). На каждом шаге агент обязан пройти хотя бы один блок: задать 1–3 вопроса руководителю через pfs ask; если ответ очевиден из данных — отметить пропуск в журнале (pfs log --kind questions-skip). Формат: q — вопрос; options — варианты; recommended — индекс рекомендуемого; why — зачем вопрос. Ключ _en — EN-варианты тех же блоков (PRO-132): для проекта с lang=en CLI подменяет RU-списки этапов на EN; структура и id блоков совпадают с RU-ключами.",
-  "intake": [
-    {"id": "intake-decision", "q": "Какое решение принимаем по итогам работы?", "options": ["запуск/остановка продукта", "выбор направления развития", "изменение модели монетизации", "сообщение аудитории", "портфельное решение"], "recommended": 1, "why": "Определяет глубину исследования и формат выхода"},
-    {"id": "intake-success", "q": "Что считаем успехом рекомендации?", "options": ["рост выручки/ARPU", "рост удержания", "конверсия free→paid", "снижение стоимости привлечения", "ускорение time-to-market"], "recommended": 0, "why": "Критерий успеха станет осью сравнения вариантов"},
-    {"id": "intake-constraints", "q": "Какие жёсткие ограничения?", "options": ["цена/маржа", "сроки", "юридические", "технологические", "бренд/тон"], "recommended": 0, "why": "Ограничения фильтруют варианты до сравнения"}
+  "_comment": "Вопросные блоки шагов (pfs questions <шаг>). Блоки intake/sources/discovery/situation/options/choice/strategy/validation/decision/research/review/monitoring. Ключ _en — английские варианты (выбор по meta.lang проекта, PRO-132).",
+  "research": [
+    {"id": "research/plan-questions", "question": "Какие 3–5 вопросов могут изменить решение, если ответ «да»/«нет»?", "options": ["стоимость/маржа", "сроки", "юридические", "технологические", "бренд/тон"], "recommended": 0, "why": "План строится от вопросов, а не от «собрать всё»"},
+    {"id": "research/data-sources", "question": "Какие данные доступны сейчас: выгрузки, открытые источники, интервью?", "options": ["есть выгрузки", "только открытые источники", "есть доступ к клиентам", "ничего — только гипотезы"], "recommended": 0, "why": "Определяет методы и силу доказательств"},
+    {"id": "research/synthetic-ok", "question": "Допустимы ли ИИ-респонденты для гипотез (пометка synthetic, не доказательство спроса)?", "options": ["да, для гипотез", "нет — только реальные данные"], "recommended": 0, "why": "Синтетика ускоряет старт, но не заменяет спрос"}
   ],
-  "sources": [
-    {"id": "sources-allowed", "q": "Какие материалы разрешено использовать как источники?", "options": ["только открытые источники", "открытые + материалы руководителя", "плюс внутренние данные заказчика"], "recommended": 1, "why": "Список разрешённых доменов фиксируется до поиска — его проверяет хук WebFetch"},
-    {"id": "sources-priority", "q": "Где искать в первую очередь?", "options": ["официальная статистика и отчёты", "материалы конкурентов", "отраслевые СМИ", "данные из брифа"], "recommended": 0, "why": "Порядок поиска задаёт силу доказательств: доказательства A–B собирают первыми"},
-    {"id": "sources-budget", "q": "Какой бюджет времени на сбор источников?", "options": ["час — только ключевое", "день — основательная база", "решить по плану исследования"], "recommended": 2, "why": "Бюджет времени удерживает ресёрч от бесконечного расширения"}
+  "review": [
+    {"id": "review/auditor", "question": "Кто независимо проверяет пакет перед решением?", "options": ["субагент-аудитор", "внешний ревьюер", "самопроверка"], "recommended": 0, "why": "Независимая оценка ловит слепые зоны"},
+    {"id": "review/lock", "question": "Заморозить реестры после ревизии (pfs review lock)?", "options": ["да", "нет — ещё правки"], "recommended": 0, "why": "Правки после lock требуют повторного ревью"}
   ],
-  "discovery": [
-    {"id": "discovery-segment", "q": "Какой сегмент в приоритете?", "options": ["по размеру рынка", "по готовности платить", "по доступности канала", "решить по данным"], "recommended": 3, "why": "Персоны и JTBD строятся под выбранный сегмент"},
-    {"id": "discovery-jtbd", "q": "Какую «работу» пользователь наймёт наш продукт сделать?", "options": ["функциональную", "эмоциональную", "социальную"], "recommended": 0, "why": "JTBD переформулирует ценность не в фичах, а в прогрессе пользователя"},
-    {"id": "discovery-switchers", "q": "С чем сравнивает пользователь сегодня (альтернативы)?", "options": ["бесплатные встроенные", "конкуренты", "ничего не делает", "самодельные решения"], "recommended": 0, "why": "Альтернативы задают честный бенчмарк для ценности"}
-  ],
-  "situation": [
-    {"id": "situation-gaps", "q": "Какой пробел информации может перевернуть картину?", "options": ["внутренние данные", "конкурентная цена", "регуляторика", "поведение пользователей"], "recommended": 0, "why": "Пробелы попадают в открытые вопросы и план закрытия"},
-    {"id": "situation-confidence", "q": "Какая уверенность достаточна для выбора?", "options": ["высокая — решение дорогое", "средняя — решение обратимо", "низкая — нужен только пилот"], "recommended": 1, "why": "Уровень уверенности калибрует глубину доказательств"}
-  ],
-  "options": [
-    {"id": "options-criteria", "q": "По каким критериям сравнивать варианты?", "options": ["вклад в метрику", "стоимость/срок", "риск и обратимость", "стратегическое соответствие"], "recommended": 0, "why": "Критерии фиксируются ДО выбора, чтобы выбор не подгоняли"},
-    {"id": "options-borders", "q": "Какие варианты точно вне рамок (моральный/юридический/бренд)?", "options": ["тёмные паттерны", "агрессивный маркетинг", "снижение приватности", "нет ограничений"], "recommended": 2, "why": "Осознанные отказы — обязательная часть стратегии"},
-    {"id": "options-quorum", "q": "Сколько возражений red team обязаны пережить варианты?", "options": ["по 1 на вариант", "по 2–3 на вариант", "только на рекомендацию"], "recommended": 1, "why": "Глубина атаки влияет на доверие комитета"}
-  ],
-  "choice": [
-    {"id": "choice-reversibility", "q": "Если выберем неверно — как дорого откат?", "options": ["обратимо за спринт", "обратимо за квартал", "почти необратимо"], "recommended": 1, "why": "Обратимость определяет размер пилота"},
-    {"id": "choice-owner", "q": "Кто утверждает и несёт ответственность?", "options": ["руководитель продукта", "комитет", "спонсор направления"], "recommended": 0, "why": "Владелец уходит в запись решения D###"}
-  ],
-  "strategy": [
-    {"id": "strategy-promise", "q": "Какое ОДНО сообщение должно остаться в голове аудитории?", "options": ["спокойствие/безопасность", "выгода/экономия", "рост/развитие", "статус/принадлежность"], "recommended": 0, "why": "Одно сообщение — ядро коммуникационной стратегии"},
-    {"id": "strategy-channels", "q": "Какие каналы обязательны?", "options": ["пуш/SMS оператора", "email", "соцсети/реклама", "точки продаж"], "recommended": 0, "why": "Роль каналов должна соответствовать барьеру аудитории"}
-  ],
-  "validation": [
-    {"id": "validation-metric", "q": "Главная метрика проверки и её база?", "options": ["из продукта (дашборд)", "из внешнего бенчмарка", "замер до/после"], "recommended": 0, "why": "Без базы сравнения метрика непроверяема"},
-    {"id": "validation-stop", "q": "Какой порог остановки эксперимента?", "options": ["падение guardrail-метрики", "стоимость выше плана", "срок без результата"], "recommended": 0, "why": "Контрметрики защищают от вреда при эксперименте"}
-  ],
-  "decision": [
-    {"id": "decision-commitments", "q": "Какие обязательства фиксируем (что|кто|когда)?", "options": ["пилот", "выгрузка данных", "юридическая проверка"], "recommended": 0, "why": "Обязательства → decision due напомнит о сроках"},
-    {"id": "decision-review", "q": "Когда пересматриваем решение?", "options": ["через 1 месяц", "через квартал", "по триггеру метрики"], "recommended": 2, "why": "Дата пересмотра — часть записи решения"}
+  "monitoring": [
+    {"id": "monitoring/triggers", "question": "По каким триггерам возвращаться к решению?", "options": ["даты пересмотра", "падение метрик", "новые данные рынка", "все перечисленные"], "recommended": 3, "why": "Мониторинг запускается по триггерам, не постоянно"},
+    {"id": "monitoring/commitments", "question": "Какие обязательства решения контролировать (WBS, черновики, посты)?", "options": ["только сроки", "сроки + ответственные", "не контролировать"], "recommended": 1, "why": "Обязательства без владельца не исполняются"}
   ],
   "_en": {
-    "intake": [
-      {"id": "intake-decision", "q": "What decision are we making as a result of this work?", "options": ["launch/park the product", "pick a development direction", "change the monetization model", "message to the audience", "a portfolio decision"], "recommended": 1, "why": "Defines the research depth and the output format"},
-      {"id": "intake-success", "q": "What counts as success for the recommendation?", "options": ["revenue/ARPU growth", "retention growth", "free→paid conversion", "lower acquisition cost", "faster time-to-market"], "recommended": 0, "why": "The success criterion becomes the axis for comparing options"},
-      {"id": "intake-constraints", "q": "What are the hard constraints?", "options": ["price/margin", "deadlines", "legal", "technology", "brand/tone"], "recommended": 0, "why": "Constraints filter the options before comparison"}
+    "research": [
+      {"id": "research/plan-questions", "question": "Which 3–5 questions could change the decision if answered yes/no?", "options": ["cost/margin", "deadlines", "legal", "technology", "brand/tone"], "recommended": 0, "why": "The plan is built from decision-changing questions, not from 'gather everything'"},
+      {"id": "research/data-sources", "question": "Which data is available now: exports, open sources, interviews?", "options": ["exports available", "open sources only", "customer access", "nothing — hypotheses only"], "recommended": 0, "why": "Determines methods and evidence strength"},
+      {"id": "research/synthetic-ok", "question": "Are AI respondents acceptable for hypotheses (marked synthetic, not demand proof)?", "options": ["yes, for hypotheses", "no — real data only"], "recommended": 0, "why": "Synthetic speeds up the start but never proves demand"}
     ],
-    "sources": [
-      {"id": "sources-allowed", "q": "Which materials may be used as sources?", "options": ["open sources only", "open sources + the lead's materials", "plus the client's internal data"], "recommended": 1, "why": "The allowed-domain list is fixed before searching — the WebFetch hook enforces it"},
-      {"id": "sources-priority", "q": "Where do we search first?", "options": ["official statistics and reports", "competitor materials", "industry media", "brief data"], "recommended": 0, "why": "Search order sets evidence strength: A–B evidence is collected first"},
-      {"id": "sources-budget", "q": "What is the time budget for collecting sources?", "options": ["an hour — key items only", "a day — a solid base", "decide from the research plan"], "recommended": 2, "why": "A time budget keeps the research from expanding forever"}
+    "review": [
+      {"id": "review/auditor", "question": "Who independently reviews the package before the decision?", "options": ["auditor subagent", "external reviewer", "self-check"], "recommended": 0, "why": "Independent review catches blind spots"},
+      {"id": "review/lock", "question": "Freeze registries after the review (pfs review lock)?", "options": ["yes", "no — more edits coming"], "recommended": 0, "why": "Edits after lock require re-review"}
     ],
-    "discovery": [
-      {"id": "discovery-segment", "q": "Which segment takes priority?", "options": ["by market size", "by willingness to pay", "by channel availability", "decide from data"], "recommended": 3, "why": "Personas and JTBD are built for the chosen segment"},
-      {"id": "discovery-jtbd", "q": "What \"job\" will users hire our product to do?", "options": ["functional", "emotional", "social"], "recommended": 0, "why": "JTBD reframes value as user progress, not features"},
-      {"id": "discovery-switchers", "q": "What do users compare us with today (alternatives)?", "options": ["free built-in tools", "competitors", "doing nothing", "home-made solutions"], "recommended": 0, "why": "Alternatives set the honest benchmark for value"}
-    ],
-    "situation": [
-      {"id": "situation-gaps", "q": "Which information gap could flip the picture?", "options": ["internal data", "competitor pricing", "regulation", "user behaviour"], "recommended": 0, "why": "Gaps go into open questions and the closure plan"},
-      {"id": "situation-confidence", "q": "How much confidence is enough to choose?", "options": ["high — the decision is expensive", "medium — the decision is reversible", "low — a pilot only"], "recommended": 1, "why": "The confidence level calibrates the evidence depth"}
-    ],
-    "options": [
-      {"id": "options-criteria", "q": "Which criteria compare the options?", "options": ["metric contribution", "cost/timeline", "risk and reversibility", "strategic fit"], "recommended": 0, "why": "Criteria are fixed BEFORE the choice, so the choice cannot be bent to fit"},
-      {"id": "options-borders", "q": "Which options are out of bounds (moral/legal/brand)?", "options": ["dark patterns", "aggressive marketing", "reduced privacy", "no constraints"], "recommended": 2, "why": "Conscious refusals are a mandatory part of the strategy"},
-      {"id": "options-quorum", "q": "How many red-team objections must the options survive?", "options": ["1 per option", "2–3 per option", "on the recommendation only"], "recommended": 1, "why": "Attack depth drives committee trust"}
-    ],
-    "choice": [
-      {"id": "choice-reversibility", "q": "If we choose wrong — how costly is the rollback?", "options": ["reversible within a sprint", "reversible within a quarter", "almost irreversible"], "recommended": 1, "why": "Reversibility sizes the pilot"},
-      {"id": "choice-owner", "q": "Who approves and owns the outcome?", "options": ["the product lead", "the committee", "the area sponsor"], "recommended": 0, "why": "The owner goes into the decision record D###"}
-    ],
-    "strategy": [
-      {"id": "strategy-promise", "q": "What ONE message must stay in the audience's head?", "options": ["calm/safety", "benefit/savings", "growth/development", "status/belonging"], "recommended": 0, "why": "One message is the core of the communication strategy"},
-      {"id": "strategy-channels", "q": "Which channels are mandatory?", "options": ["carrier push/SMS", "email", "social/ads", "points of sale"], "recommended": 0, "why": "Channel roles must match the audience barrier"}
-    ],
-    "validation": [
-      {"id": "validation-metric", "q": "The main validation metric and its baseline?", "options": ["from the product (dashboard)", "from an external benchmark", "a before/after measurement"], "recommended": 0, "why": "Without a comparison baseline the metric is unverifiable"},
-      {"id": "validation-stop", "q": "What is the experiment stop threshold?", "options": ["a guardrail metric drop", "cost above plan", "a deadline without results"], "recommended": 0, "why": "Counter-metrics protect from harm during the experiment"}
-    ],
-    "decision": [
-      {"id": "decision-commitments", "q": "Which commitments do we record (what|who|when)?", "options": ["a pilot", "a data export", "a legal review"], "recommended": 0, "why": "Commitments → decision due will remind about the deadlines"},
-      {"id": "decision-review", "q": "When do we revisit the decision?", "options": ["in a month", "in a quarter", "on a metric trigger"], "recommended": 2, "why": "The review date is part of the decision record"}
+    "monitoring": [
+      {"id": "monitoring/triggers", "question": "Which triggers bring the decision back for review?", "options": ["review dates", "metric drops", "new market data", "all of the above"], "recommended": 3, "why": "Monitoring runs on triggers, not continuously"},
+      {"id": "monitoring/commitments", "question": "Which decision commitments are tracked (WBS, drafts, posts)?", "options": ["deadlines only", "deadlines + owners", "none"], "recommended": 1, "why": "Commitments without an owner do not execute"}
     ]
   }
 }
