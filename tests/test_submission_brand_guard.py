@@ -38,8 +38,8 @@ FORBIDDEN_BRANDS = [
 ]
 
 # Демо подачи: маркеры, обязанные быть в README RU и EN одновременно
-DEMO_MARKERS_RU = ["svyaz-overview-RU.mp4", "svyaz-overview-EN.mp4"]
-DEMO_MARKERS_EN = DEMO_MARKERS_RU  # одни и те же файлы в обеих версиях README
+DEMO_MARKERS_RU = ["projects/связь-для-близких-и-собственных-устройств", "DEMO_README.md"]
+DEMO_MARKERS_EN = DEMO_MARKERS_RU  # одни и те же ссылки на карту пакета в обеих версиях README
 
 # Тег источника/раздела: [C003], [S001,C009], [03,C], [06] — но не [15] ударов red team
 _TAG = re.compile(r"\[(?=[^\]]*(?:[CS]\d{3}))([^\]]*)\]")
