@@ -58,53 +58,6 @@ chat — state is restored automatically.
 
 ---
 
-## Demo project: 'Connection for loved ones' (customer brief)
-
-> Customer brief (training market of a mobile carrier): family groups with a shared data package, and owners of several own numbers. Full 12-step run: 26 claims (10 facts · 8 assumptions · 4 hypotheses · 4 inferences), red team 20 hits, decision D001, `check --strict` 0 errors. Strategies — in **BRIEF_RESPONSE.md** (one document in five parts, as the brief requires; RU — the deliverable language of the demo, EN summary in SIX_PAGER_EN.md).
-
-### Videos
-
-|
-
-The end-to-end path required by the case: **request → agent work → options → strategy → resume after a break** (the video shows a mid-run restart → `pfs status` → continuing from the same place).
-
-### Screenshots
-
-| `pfs status` — 12/12 steps, D001, cost | `pfs check --strict` — 0 errors, final package |
-|---|---|
-| ![pfs status](assets/screenshot-status.png) | ![pfs check --strict](assets/screenshot-check.png) |
-
-### Architecture
-
-![Architecture: 12 steps + separated knowledge layers](assets/architecture.png)
-
-*Permanent instructions / methodological knowledge / project materials / task state — kept separately (a case requirement). 3 mandatory human pauses: intake, choice, decision.*
-
-Full demo package: `projects/связь-для-близких-и-собственных-устройств/` — package map: [DEMO_README.md](projects/связь-для-близких-и-собственных-устройств/DEMO_README.md).
-
-What the run produced: 26 claims with types and grades (10 facts · 8 assumptions · 4 hypotheses · 4 inferences),
-5 options A–E with red team (20 hits — 15 objections + 5 hidden assumptions, built into thresholds), both
-strategies with "promise → confirmation" tables, a pre-registered A/B plan (600 family groups, ITT, −3 p.p.
-threshold), decision **D001 "Alert before the outage" accepted** (pilot by end of Q1, review 2027-04-30, four
-commitments), `check --strict` 0 errors, six-pager RU/EN + 4 Excel workbooks + deck. The jury-facing answer
-to the brief is `outputs/BRIEF_RESPONSE.md` — one document in five parts. The six-pager follows the
-growth-strategy reference format: subsections 1.1/1.2 and 2.1/2.2, driver initiatives, a tactic matrix, KPIs
-in two planes, source footnotes; the draft is assembled by `pfs export --six-pager`
-(spec: `knowledge/templates/SIX_PAGER_PROMPT.md`). Synthetic interviews (2 AI respondents) are registered
-with `origin=synthetic` — the tool refuses to record facts on them.
-Full RU breakdown with a task-requirements mapping table — in
-[README.md](README.md#демо-проект-связь-для-близких-бриф-заказчика--видео-и-скриншоты).
-
-How to repeat:
-
-```bash
-python3 -m tools.pfs use связь-для-близких-и-собственных-устройств   # switch to the demo
-python3 -m tools.pfs status                          # where we stopped (12/12, D001)
-python3 -m tools.pfs next                            # what to decide now
-python3 -m tools.pfs check --strict                  # quality gate: 0 errors
-python3 -m tools.pfs new "Title" "Request verbatim"  # your own task
-```
-
 ## How the agent works: 12 steps
 
 At every step the agent **reads the mandatory knowledge cards** (printed by `pfs step`), passes a

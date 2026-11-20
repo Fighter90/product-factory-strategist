@@ -68,13 +68,12 @@ class SubmissionBrandGuardTests(unittest.TestCase):
         self.assertEqual(offenders, [],
                          "бренды в материалах подачи запрещены: " + "; ".join(offenders))
 
-    def test_readme_demo_sections_are_about_the_svyaz_demo(self):
-        for name, markers in (("README.md", DEMO_MARKERS_RU), ("README_EN.md", DEMO_MARKERS_EN)):
+    def test_readme_has_no_demo_section(self):
+        """PRO-133+руководитель: README без демо-секции — пакет в projects/связь…, материалы на сайте."""
+        for name in ("README.md", "README_EN.md"):
             text = (REPO / name).read_text(encoding="utf-8")
-            missing = [m for m in markers if m not in text]
-            self.assertEqual(missing, [],
-                             f"{name}: демо-раздел должен вести на демо «Связь для близких», нет: {missing}")
-            self.assertIn("DEMO_README.md", text, f"{name}: нет ссылки на карту пакета демо")
+            self.assertNotIn("## Демо-проект", text, f"{name}: демо-секция должна быть удалена")
+            self.assertNotIn("## Demo project:", text, f"{name}: demo section must be removed")
 
 
 class SubmissionLinksAliveTests(unittest.TestCase):
