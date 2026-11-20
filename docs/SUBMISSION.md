@@ -71,7 +71,7 @@
 | Возможность | Как реализовано | Подтверждение в демо |
 |---|---|---|
 | Интервью и модельные респонденты | навык `interviews`, гайд-шаблон, субагент `synthetic-respondent`; origin `synthetic` → только гипотезы (правило в коде) | 2 ИИ-респондента (организатор, владелец роутера) → S002–S003 → гипотезы |
-| Изображения, аудио, видео | регистрация медиа как источника + описание только видимого | макет кабинета — источник S004 (`pfs media add`), описание только видимого; обзорные видео RU/EN в `video/` |
+| Изображения, аудио, видео | регистрация медиа как источника + описание только видимого | макет кабинета — источник S004 (`pfs media add`), описание только видимого; медиа регистрируются как источники (описание только видимого) |
 | Анализ UX | навык `ux-review`, карта эвристик с привязкой к видимому элементу; субагент `ux-analyst` | `06_ux_review_S004.md` — разбор макета по эвристикам, только то, что видно |
 | Анализ данных | `pfs data profile` (типы, пропуски, дубли, единицы, пропущенные периоды), `pfs data cohort`, скрипты в analysis/ с командой воспроизведения | воспроизводимый расчёт: `analysis/economics.py` → `economics_out.txt` — сценарии +6,75/+4,5/+1,5/−1,5/−3,5 млн [C003,C021] |
 | Поддержка решений | `pfs decision add/due/done/status`: основания C###, ответственные, метрики, условия пересмотра, обязательства, устаревшие основания | D001 + `decision due` |
@@ -137,12 +137,9 @@ Q1; расширение планового года — только при э�
 
 ## 7. Видеозапись работы агента (≤10 минут)
 
-- **RU (обязательная запись, 4:22 ≤ 10 мин):** [video/svyaz-overview-RU.mp4](../video/svyaz-overview-RU.mp4) — сквозной путь по демо «Связь для близких»: запрос → 12 шагов → 5 вариантов + red team (20 ударов) → стратегии → **продолжение после перерыва** (`pfs status` → то же место) → решение D001 → финишный пакет с BRIEF_RESPONSE (5 частей). Озвучка и субтитры.
-- **EN (обязательная запись, 4:16 ≤ 10 мин):** [video/svyaz-overview-EN.mp4](../video/svyaz-overview-EN.mp4) — the same walkthrough in English.
-- **Walkthrough демо (RU 1:01 / EN 1:04):** [video/svyaz-walkthrough-RU.mp4](../video/svyaz-walkthrough-RU.mp4) · [video/svyaz-walkthrough-EN.mp4](../video/svyaz-walkthrough-EN.mp4) — пакет демо за 60 секунд: файлы, числа, реестры. Оба tracked в git.
-- **Детальный полный прогон нового демо (RU 8:42 / EN 7:52):** [video/svyaz-FULL-RU.mp4](../video/svyaz-FULL-RU.mp4) · EN 7:52 — в сборке (финальная сборка).
-- **В сборке — обзорные walkthrough:** RU (1:50) [video/product-factory-strategist-RU.mp4](../video/product-factory-strategist-RU.mp4) · EN (1:37) [video/product-factory-strategist-EN.mp4](../video/product-factory-strategist-EN.mp4) — 10 сцен сценария VIDEO_SCRIPT.md; презентация агента (24 слайда) — [presentation/agent-overview-RU.pptx](../presentation/agent-overview-RU.pptx) / [.pdf](../presentation/agent-overview-RU.pdf) / [EN](../presentation/agent-overview-EN.pptx) / [EN .pdf](../presentation/agent-overview-EN.pdf).
-- **В сборке — детальный полный прогон (~20 мин):** [video/product-factory-strategist-FULL-RU.mp4](../video/product-factory-strategist-FULL-RU.mp4) — установка и doctor, сюита тестов, создание проекта и маршрутизация, пауза intake, источники с защитами, реестр утверждений, шаги 1–12, red team, стратегии, строгий гейт, 4 книги Excel, six-pager writer-цикл до 0 ошибок, решение с основаниями, мониторинг, продолжение после перерыва, финиш, стоимость; [FULL-EN.mp4](../video/product-factory-strategist-FULL-EN.mp4) — the same walkthrough in English.
+- **RU (обязательная запись ≤ 10 мин):** сквозной путь демо «Связь для близких»: запрос → 12 шагов → 5 вариантов + red team (20 ударов) → стратегии → **продолжение после перерыва** (`pfs status` → то же место) → решение D001 → финишный пакет с BRIEF_RESPONSE (5 частей). Запись готовит руководитель.
+- **EN (обязательная запись ≤ 10 мин):** the same walkthrough in English. Recording by the lead.
+- **Ссылки на хостинг** (Яндекс Диск / VK Видео / RuTube / YouTube) — вписываются перед подачей (PRO-113).
 
 ## 8. Время и расходы
 

@@ -19,7 +19,6 @@
 - **Варианты и red team**: `outputs/03_options.md` — 5 вариантов A–E, 20 ударов (15 возражений + 5 скрытых допущений), пороги [C021–C026]
 - **Реестры**: `claims.jsonl` (26 активных: 10 факт · 8 допущение · 4 гипотеза · 4 вывода) · `decisions.jsonl` (D001 accepted) · `sources/` (S001 бриф · S002–S003 синтетика · S004 wireframe)
 - **Финансы**: `analysis/economics.py` → `economics_out.txt` (воспроизводимо) · `attachments/` (4 Excel на формулах)
-- **Видео**: `video/` репозитория — обзор RU 4:22 / EN 4:16 (обязательное ≤10 мин), walkthrough RU 1:01 / EN 1:04, FULL RU 8:42→11:29 / EN 7:52→11:15
 - **e2e живые прогоны**: `qa/E2E-2026-11-19-svyaz-ru.md` (111 шагов модели, 7 пауз автопилотом) · `-en.md` (148 шагов, EN-интерфейс)
 - **Сравнение с обычным чатом**: `docs/demo/comparison.md` (7 критериев) + `baseline_svyaz.md`
 

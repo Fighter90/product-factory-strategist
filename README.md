@@ -18,9 +18,6 @@ Windsurf, Copilot.
 
 ---
 
-> 🎬 Демонстрация работы агента (10 шагов сценария, озвучка и субтитры): [video/product-factory-strategist-RU.mp4](video/product-factory-strategist-RU.mp4)
-> 📺 Демо-проект «Связь для близких» (бриф заказчика, 12 шагов, решение D001): [обзор RU — 4:22](video/svyaz-overview-RU.mp4) · [обзор EN — 4:16](video/svyaz-overview-EN.mp4)
-> 🎞 **Детальный полный прогон (8:42 RU / 7:52 EN):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — установка, 12 шагов, гейты, red team, six-pager-цикл, решение, мониторинг, финиш.
 
 ## Быстрый старт (5 минут)
 
@@ -64,12 +61,9 @@ python3 -m unittest discover -s tests          # 972 теста
 
 > Бриф заказчика (учебный рынок мобильного оператора): семейные группы с общим пакетом и владельцы нескольких номеров. Полный 12-шаговый прогон: 26 утверждений (10 факт · 8 допущение · 4 гипотеза · 4 вывода), red team 20 ударов, решение D001, `check --strict` 0 ошибок. Стратегии — в **`BRIEF_RESPONSE.md`** (один документ из пяти частей, как требует бриф).
 
-### Видео (RU — 4:22, EN — 4:16)
+### Видеозаписи
 
-| | |
-|---|---|
-| **RU** | ![Обзор демо RU](assets/video-ru-poster.png) · [video/svyaz-overview-RU.mp4](video/svyaz-overview-RU.mp4) — сквозной путь: запрос → 12 шагов → варианты + red team → стратегии → продолжение после перерыва → финиш |
-| **EN** | ![Demo overview EN](assets/video-en-poster.png) · [video/svyaz-overview-EN.mp4](video/svyaz-overview-EN.mp4) — same walkthrough in English |
+Руководитель записывает видеоразделы сам по этому README (демо-секция ниже: запрос → 12 шагов → варианты → стратегии → продолжение после перерыва → финишный пакет).
 
 Сквозной путь по требованию кейса: **запрос → работа агента → варианты → стратегия → продолжение после перерыва** (в ролике: перезапуск в середине → `pfs status` → продолжение с того же места). Прогон в OpenCode: `oc_OPENCODE-RU/EN` кадры в `video/`.
 

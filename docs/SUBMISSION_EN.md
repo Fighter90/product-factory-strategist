@@ -72,7 +72,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md). In brief:
 | Feature | How it is implemented | Proof in the demo |
 |---|---|---|
 | Interviews and model respondents | the `interviews` skill, a guide template, the `synthetic-respondent` subagent; origin `synthetic` → hypotheses only (a rule in code) | 2 AI respondents (a community organizer, a router owner) → S002–S003 → hypotheses |
-| Images, audio, video | registering media as a source + describing only what is visible | the cabinet mockup — source S004 (`pfs media add`), description of only what is visible; overview videos RU/EN in `video/` |
+| Images, audio, video | registering media as a source + describing only what is visible | the cabinet mockup — source S004 (`pfs media add`), description of only what is visible; media are registered as sources (describing only what is visible) |
 | UX analysis | the `ux-review` skill, a heuristic map tied to the visible element; the `ux-analyst` subagent | `06_ux_review_S004.md` — the mockup analyzed by heuristics, only what is visible |
 | Data analysis | `pfs data profile` (types, gaps, duplicates, units, missing periods), `pfs data cohort`, scripts in analysis/ with a reproduction command | a reproducible calculation: `analysis/economics.py` → `economics_out.txt` — scenarios +6.75/+4.5/+1.5/−1.5/−3.5M [C003,C021] |
 | Decision support | `pfs decision add/due/done/status`: grounds C###, owners, metrics, revision conditions, commitments, stale grounds | D001 + `decision due` |
@@ -135,14 +135,11 @@ adverse 280.5, "zero" 277.5, "minus" with churn 275.5 [C003,C021]. The calculati
 (0 errors); the full package "research → options → strategies → plan → decision" is produced by one end-to-end
 agent run.
 
-## 7. Video recording of the agent's work (≤10 minutes)
+## 7. Video of the agent's work (≤10 minutes)
 
-- **RU (the required recording, 4:22 ≤ 10 min):** [video/svyaz-overview-RU.mp4](../video/svyaz-overview-RU.mp4) — the end-to-end path through the "Connection for Loved Ones" demo: the request → 12 steps → 5 options + red team (20 hits) → strategies → **continuation after an interruption** (`pfs status` → the same place) → decision D001 → the finish pack with BRIEF_RESPONSE (5 parts). Voice-over and subtitles.
-- **EN (the required recording, 4:16 ≤ 10 min):** [video/svyaz-overview-EN.mp4](../video/svyaz-overview-EN.mp4) — the same walkthrough in English.
-- **Demo walkthrough (RU 1:01 / EN 1:04):** [video/svyaz-walkthrough-RU.mp4](../video/svyaz-walkthrough-RU.mp4) · [video/svyaz-walkthrough-EN.mp4](../video/svyaz-walkthrough-EN.mp4) — the demo package in 60 seconds: files, numbers, registries.
-- **The detailed full run of the new demo (RU 8:42 / EN 7:52):** [video/svyaz-FULL-RU.mp4](../video/svyaz-FULL-RU.mp4) · EN 7:52 — in the build (the final assembly).
-- **Also included — overview walkthroughs:** RU (1:50) [video/product-factory-strategist-RU.mp4](../video/product-factory-strategist-RU.mp4) · EN (1:37) [video/product-factory-strategist-EN.mp4](../video/product-factory-strategist-EN.mp4) — 10 scenarios from VIDEO_SCRIPT.md; the agent presentation (24 slides) — [presentation/agent-overview-RU.pptx](../presentation/agent-overview-RU.pptx) / [.pdf](../presentation/agent-overview-RU.pdf) / [EN](../presentation/agent-overview-EN.pptx) / [EN .pdf](../presentation/agent-overview-EN.pdf).
-- **Also included — the detailed full run (~20 min):** [video/product-factory-strategist-FULL-RU.mp4](../video/product-factory-strategist-FULL-RU.mp4) — installation and doctor, the test suite, project creation and routing, the intake pause, sources with protections, the claims registry, steps 1–12, red team, the strict gate, 4 Excel workbooks, the six-pager writer loop down to 0 errors, the decision with grounds, monitoring, continuation after an interruption, finish, cost; [FULL-EN.mp4](../video/product-factory-strategist-FULL-EN.mp4) — the same walkthrough in English.
+- **RU (the required recording ≤ 10 min):** the end-to-end demo path of "Connection for Loved Ones": request → 12 steps → 5 options + red team (20 hits) → strategies → **continuation after an interruption** (`pfs status` → the same place) → decision D001 → the finish pack with BRIEF_RESPONSE (5 parts). Recording by the lead.
+- **EN (the required recording ≤ 10 min):** the same walkthrough in English. Recording by the lead.
+- **Hosting links** (Yandex Disk / VK Video / RuTube / YouTube) — added before submission (PRO-113).
 
 ## 8. Time and costs
 

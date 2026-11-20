@@ -69,17 +69,6 @@ python3 -m unittest discover -s tests   # самопроверка (260 тест
 ---
 
 
-## 3b. Видеоразборы демо
-
-| Ролик | Длительность | Что показывает |
-|---|---|---|
-| [RU-обзор](../video/svyaz-overview-RU.mp4) | 4:20 | Сквозной путь: запрос → 12 шагов → варианты + red team → стратегии → продолжение после перерыва → финишный пакет |
-| [EN-обзор](../video/svyaz-overview-EN.mp4) | 4:14 | Same walkthrough in English |
-
-![Кадр RU-обзора](../assets/video-ru-poster.png)
-
-Скриншоты и архитектурная схема — в [README](../README.md#демо-проект-связь-для-близких-бриф-заказчика--видео-и-скриншоты) и `assets/` (`architecture.png`, `screenshot-status.png`, `screenshot-check.png`).
-
 ## 4. Процесс из 12 шагов
 
 | # | Шаг | Что происходит | Ваша роль |

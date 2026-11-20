@@ -70,17 +70,6 @@ CLI needs no API keys. Keys (e.g., Linear API) go into `.env` — it is git-igno
 ---
 
 
-## 3b. Demo walkthrough videos
-
-| Video | Length | What it shows |
-|---|---|---|
-| [EN overview](../video/svyaz-overview-EN.mp4) | 4:14 | End-to-end: request → 12 steps → options + red team → strategies → resume after a break → final package |
-| [RU overview](../video/svyaz-overview-RU.mp4) | 4:20 | Same walkthrough in Russian |
-
-![EN overview frame](../assets/video-en-poster.png)
-
-Screenshots and the architecture diagram — in the [README](../README.md#демо-проект-связь-для-близких-бриф-заказчика--видео-и-скриншоты) and `assets/`.
-
 ## 4. The 12-step process
 
 | # | Step | What happens | Your role |

@@ -17,9 +17,7 @@ Works in Claude Code, Cursor, Codex, OpenCode, Windsurf, Copilot.
 
 ---
 
-> 🎬 Agent demo (10 scenario steps, voice-over and subtitles): [video/product-factory-strategist-EN.mp4](video/product-factory-strategist-EN.mp4)
-> 📺 Demo project "Connection for loved ones" (customer brief, 12 steps, decision D001): [overview EN — 4:16](video/svyaz-overview-EN.mp4) · [overview RU — 4:22](video/svyaz-overview-RU.mp4)
-> 🎞 **Detailed full run (~20 min):** [FULL-RU.mp4](video/product-factory-strategist-FULL-RU.mp4) · [FULL-EN.mp4](video/product-factory-strategist-FULL-EN.mp4) — installation, 12 steps, gates, red team, the six-pager cycle, decision, monitoring, finish.
+> 🎬 Agent demo (10 scenario steps, voice-over and subtitles): 
 
 ## Quick start (5 minutes)
 
@@ -65,12 +63,9 @@ chat — state is restored automatically.
 
 > Customer brief (training market of a mobile carrier): family groups with a shared data package, and owners of several own numbers. Full 12-step run: 26 claims (10 facts · 8 assumptions · 4 hypotheses · 4 inferences), red team 20 hits, decision D001, `check --strict` 0 errors. Strategies — in **BRIEF_RESPONSE.md** (one document in five parts, as the brief requires; RU — the deliverable language of the demo, EN summary in SIX_PAGER_EN.md).
 
-### Video (EN — 4:16, RU — 4:22)
+### Videos
 
-| | |
-|---|---|
-| **EN** | ![Demo overview EN](assets/video-en-poster.png) · [video/svyaz-overview-EN.mp4](video/svyaz-overview-EN.mp4) — end-to-end: request → 12 steps → options + red team → strategies → resume after a break → final package |
-| **RU** | ![Обзор демо RU](assets/video-ru-poster.png) · [video/svyaz-overview-RU.mp4](video/svyaz-overview-RU.mp4) — same walkthrough in Russian |
+|
 
 The end-to-end path required by the case: **request → agent work → options → strategy → resume after a break** (the video shows a mid-run restart → `pfs status` → continuing from the same place).
 
