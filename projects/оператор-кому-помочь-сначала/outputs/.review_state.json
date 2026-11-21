@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-21T04:40:07+03:00",
+  "claims_sha": "85c78b351b5bcc58a893b4ad494f470564b7fa88786df00c84da1651824c4923",
+  "sources_sha": "d447d28dca5cde5ed2ed8dc80d3ca9c356f1143478ccd5076f49e1a2c22818bd",
+  "documents": {
+    "00_brief.md": "6d4f12e251bd7edf6c1e695ee22fb42906edc2bf4ce87b52802fff69eb5408a8",
+    "01_research_plan.md": "70a769e009dd56d9cae6e332186739fd7540aed25b76eccac63679b52c201dfb",
+    "02_situation.md": "a6eda9dc9ca15d3e99875aa73f227cd29d23db814c37c0f3ffc48420be8a5512",
+    "03_options.md": "8e37d585f206a5f2f304699a6a5800eed82a88420cc7613bf7915e518873162c",
+    "04_product_strategy.md": "90269a571ffff789cf60c1140492cd7b7c9c02d9d54e44b8da925e1b282eb1a4",
+    "05_comms_strategy.md": "44b60fec2a617148eb77865ad81598e001f08b925e56dcbfd54f2b55fbc0f99b",
+    "06_validation_plan.md": "256156b685306b7ea6f21b7b7eb92b5681acb088bbcddfccd696201a20612ec1",
+    "07_quality_review.md": "5830e6f856987e9a04dd5e8e50f0f76e8d5d08ad43357be84b668e3842d545bd"
+  }
+}

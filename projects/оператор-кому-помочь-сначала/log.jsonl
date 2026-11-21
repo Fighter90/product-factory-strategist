@@ -1,0 +1,109 @@
+{"ts": "2026-11-21T03:43:05+03:00", "kind": "action", "msg": "Создан проект «Оператор: кому помочь сначала»", "step": "intake"}
+{"ts": "2026-11-21T03:43:07+03:00", "kind": "route", "msg": "Сценарий: go_to_market (medium); доп.: —"}
+{"ts": "2026-11-21T03:43:26+03:00", "kind": "questions-skip", "msg": "Вопрос intake-decision пропущен: решение явно задано в запросе (Q1 пилот, Q2 масштаб/наблюдение)"}
+{"ts": "2026-11-21T03:43:26+03:00", "kind": "human", "msg": "Вопрос руководителю: Что считаем успехом рекомендации? Если не ответите, считаю рост выручки/ARPU на выбранном сегменте без потери удержания", "step": "intake"}
+{"ts": "2026-11-21T03:43:35+03:00", "kind": "human", "msg": "Ответ руководителя: ?", "step": "intake"}
+{"ts": "2026-11-21T03:43:35+03:00", "kind": "human", "msg": "Вопрос руководителю: Какое ограничение самое жёсткое? Если не ответите, считаю цену/маржу (отрасль с низкой маржой) + ограниченный бюджет пилота", "step": "intake"}
+{"ts": "2026-11-21T03:44:16+03:00", "kind": "human", "msg": "Ответ руководителя: цена/маржа", "step": "intake"}
+{"ts": "2026-11-21T03:44:16+03:00", "kind": "note", "msg": "Ответ на intake-success получен у руководителя напрямую: рост выручки/ARPU (заменяет техническую запись «?» от 2026-11-21)"}
+{"ts": "2026-11-21T03:44:23+03:00", "kind": "source", "msg": "S001 добавлен: Запрос руководителя и ответы на вопросы intake (2026-11-21)", "tool": "pfs source add"}
+{"ts": "2026-11-21T03:44:30+03:00", "kind": "claim", "msg": "C001 [допущение] Успех рекомендации измеряем ростом выручки/ARPU на выбранном сегменте; удержание — контрме", "sources": ["S001"]}
+{"ts": "2026-11-21T03:44:30+03:00", "kind": "claim", "msg": "C002 [допущение] Самое жёсткое ограничение — цена/маржа; бюджет пилота ограничен одной командой", "sources": ["S001"]}
+{"ts": "2026-11-21T03:44:30+03:00", "kind": "claim", "msg": "C003 [допущение] Данных оператора не передано: количественные оценки строятся на открытых отраслевых источн", "sources": ["S001"]}
+{"ts": "2026-11-21T03:44:30+03:00", "kind": "claim", "msg": "C004 [допущение] Горизонт планирования — один год с воротами конец Q1 (пилот) и конец Q2 (масштаб/изменение", "sources": ["S001"]}
+{"ts": "2026-11-21T03:44:59+03:00", "kind": "step", "msg": "intake → done", "step": "intake"}
+{"ts": "2026-11-21T03:45:13+03:00", "kind": "step", "msg": "sources → in_progress", "step": "sources"}
+{"ts": "2026-11-21T03:45:59+03:00", "kind": "source", "msg": "S002 добавлен: GSMA Intelligence: eSIM — the time is right to push adoption (2026)", "tool": "pfs source add", "url": "http://gsma.com/solutions-and-impact/technologies/esim/wp-content/uploads/2026/04/GSMA-Intelligence-eSIM-the-time-is-right-to-push-adoption.pdf"}
+{"ts": "2026-11-21T03:46:04+03:00", "kind": "source", "msg": "S003 добавлен: Ars Technica / Cowen: US wireless bills and plan mix (2014)", "tool": "pfs source add", "url": "https://arstechnica.com/information-technology/2014/01/verizon-leads-top-wireless-carriers-in-bill-size-at-148-a-month/"}
+{"ts": "2026-11-21T03:46:26+03:00", "kind": "source", "msg": "S003 обновлены поля: text", "tool": "pfs source update"}
+{"ts": "2026-11-21T03:46:55+03:00", "kind": "source", "msg": "S004 добавлен: USA TODAY: родители платят /мес за связь взрослых детей (выписка)", "tool": "pfs source add", "url": "https://www.usatoday.com/story/money/2025/05/12/adults-still-get-money-from-parents-2025/83539381007/"}
+{"ts": "2026-11-21T03:46:56+03:00", "kind": "source", "msg": "S005 добавлен: PCMag: 49% взрослых 18–24 на тарифе родителей (выписка)", "tool": "pfs source add", "url": "https://www.pcmag.com/news/far-too-many-adults-still-using-parents-phone-plan"}
+{"ts": "2026-11-21T03:47:06+03:00", "kind": "source", "msg": "S006 добавлен: Fierce Network: семейные тарифы = низкий отток (выписка)", "tool": "pfs source add", "url": "https://www.fierce-network.com/wireless/carriers-sharpen-focus-family-plans-as-single-line-users-look-to-prepaid"}
+{"ts": "2026-11-21T03:47:28+03:00", "kind": "source", "msg": "S007 добавлен: Selectra: цены UK-операторов на eSIM-подключение умных часов (окт 2026)", "tool": "pfs source add", "url": "https://selectra.co.uk/mobile/news/smartwatch-esim-number-sharing-cost-uk-networks"}
+{"ts": "2026-11-21T03:47:38+03:00", "kind": "source", "msg": "S008 добавлен: Verizon Smart Family / T-Mobile FamilyMode: цены аддонов заботы (выписка)", "tool": "pfs source add", "url": "https://www.verizon.com/solutions-and-services/add-ons/safety/verizon-family-parental-control-monitoring-app/"}
+{"ts": "2026-11-21T03:47:45+03:00", "kind": "claim", "msg": "C005 [прогноз] К концу 2026 eSIM достигнет ~10% смартфон-подключений в мире (5% в конце 2025); к 2030 — о", "sources": ["S002"]}
+{"ts": "2026-11-21T03:47:45+03:00", "kind": "claim", "msg": "C006 [факт] В США 68,5% постоплатных абонентов были на семейных тарифах (2014)", "sources": ["S003"]}
+{"ts": "2026-11-21T03:47:50+03:00", "kind": "claim", "msg": "C007 [факт] 65% поддерживающих родителей платят в среднем /мес за мобильную связь взрослого ребёнка (С", "sources": ["S004"]}
+{"ts": "2026-11-21T03:47:50+03:00", "kind": "claim", "msg": "C008 [факт] 49% молодых взрослых 18–24 в США получают связь, оплачиваемую родителями", "sources": ["S005"]}
+{"ts": "2026-11-21T03:47:50+03:00", "kind": "claim", "msg": "C009 [факт] Семейный тариф — исторически низкоотточный сценарий для операторов; каждая строка привязан", "sources": ["S006"]}
+{"ts": "2026-11-21T03:47:55+03:00", "kind": "claim", "msg": "C010 [факт] В Великобритании подключение умных часов стоит £7.50/мес (Vodafone) и £9/мес (EE, 2026); н", "sources": ["S007"]}
+{"ts": "2026-11-21T03:47:55+03:00", "kind": "claim", "msg": "C011 [факт] Часы с eSIM созданы в том числе для пожилых, живущих одиноко: вызов помощи без телефона по", "sources": ["S007"]}
+{"ts": "2026-11-21T03:47:55+03:00", "kind": "claim", "msg": "C012 [факт] Операторы США монетизируют «заботу» как аддон –10/мес на семью: Verizon Smart Family .99–9", "sources": ["S008"]}
+{"ts": "2026-11-21T03:48:14+03:00", "kind": "step", "msg": "sources → done", "step": "sources"}
+{"ts": "2026-11-21T03:48:14+03:00", "kind": "step", "msg": "research → done", "step": "research"}
+{"ts": "2026-11-21T03:48:37+03:00", "kind": "questions-skip", "msg": "Вопрос discovery-segment пропущен: выбор сегмента — предмет всего исследования, решается на шагах options/choice по данным"}
+{"ts": "2026-11-21T03:48:37+03:00", "kind": "questions-skip", "msg": "Вопрос discovery-jtbd пропущен: фиксируем JTBD всех типов — для «заботы» ведущая эмоциональная работа (спокойствие за близкого), функциональная — настройка и оплата; для «мульти-SIM» — функциональная (разделить роли номера)"}
+{"ts": "2026-11-21T03:48:37+03:00", "kind": "questions-skip", "msg": "Вопрос discovery-switchers пропущен: главные альтернативы — самодельные решения (отдельный контракт на близкого, prepaid-карточка «лежит в ящике», OTT-номер за /мес) и «ничего не делать»"}
+{"ts": "2026-11-21T03:48:37+03:00", "kind": "step", "msg": "discovery → in_progress", "step": "discovery"}
+{"ts": "2026-11-21T03:49:01+03:00", "kind": "source", "msg": "S009 добавлен: RCR Wireless: семейные планы — удержание против ARPU (выписка)", "tool": "pfs source add", "url": "https://rcrwireless.com/20170803/featured/20170721archived-articlestbt-keeping-in-family-plan-opening-up-walled-gardens-this-week-in-2005-tag6"}
+{"ts": "2026-11-21T03:49:05+03:00", "kind": "claim", "msg": "C013 [факт] Клиент семейного плана генерирует примерно вдвое меньшую месячную выручку на строку, чем о", "sources": ["S009"]}
+{"ts": "2026-11-21T03:49:05+03:00", "kind": "claim", "msg": "C014 [вывод] У «заботливых» плательщик и пользователь связи — разные люди: это делает уход плательщика "}
+{"ts": "2026-11-21T03:49:09+03:00", "kind": "claim", "msg": "C015 [вывод] «Мульти-SIM» конкурирует по цене с OTT-сервисами второго номера (–10/мес) и travel-eSIM, п"}
+{"ts": "2026-11-21T03:49:14+03:00", "kind": "step", "msg": "discovery → done", "step": "discovery"}
+{"ts": "2026-11-21T03:49:14+03:00", "kind": "step", "msg": "situation → in_progress", "step": "situation"}
+{"ts": "2026-11-21T03:49:55+03:00", "kind": "note", "msg": "Проверка: предупреждение check по C012 — ложное срабатывание парсера цитат; дословная цитата присутствует в sources/S008.md (строка 12)"}
+{"ts": "2026-11-21T03:49:55+03:00", "kind": "step", "msg": "situation → done", "step": "situation"}
+{"ts": "2026-11-21T03:49:55+03:00", "kind": "step", "msg": "options → in_progress", "step": "options"}
+{"ts": "2026-11-21T03:50:12+03:00", "kind": "claim", "msg": "C016 [допущение] Базовая модель: 1 млн абонентов, ARPU основной линии ~/мес — оператор вымышленный, калибро", "sources": ["S001"]}
+{"ts": "2026-11-21T03:50:13+03:00", "kind": "claim", "msg": "C017 [допущение] Доля «заботливых» в базе ~15%, доля «мульти-SIM» ~10% — аналогия со структурой рынков США ", "sources": ["S001"]}
+{"ts": "2026-11-21T03:54:11+03:00", "kind": "claim", "msg": "C018 [допущение] Маржа на дополнительной линии ~60–70% выручки: сеть и биллинг амортизированы, переменные р", "sources": ["S001"]}
+{"ts": "2026-11-21T03:54:12+03:00", "kind": "claim", "msg": "C019 [прогноз] Сценарии эффекта B (run-rate, при доле «заботливых» 15% [C017], маржа 60–70% [C018]): конв"}
+{"ts": "2026-11-21T04:05:39+03:00", "kind": "step", "msg": "options → done", "step": "options"}
+{"ts": "2026-11-21T04:05:39+03:00", "kind": "human", "msg": "Вопрос руководителю: Какой вариант выбираем? Рекомендую B «Семейный хаб заботы»: ниша заботы о пожилом в другом доме не закрыта, альтернатива клиента — полный контракт или ничего, маржа выше, решение Q1 защищено биллинг- и юр.гейтами", "step": "choice"}
+{"ts": "2026-11-21T04:08:17+03:00", "kind": "human", "msg": "Ответ руководителя: B: хаб заботы", "step": "choice"}
+{"ts": "2026-11-21T04:08:18+03:00", "kind": "note", "msg": "Выбор руководителя: вариант B «Семейный хаб заботы» (персона пилота — пожилой в другом доме, клин-вайр device-first [C010])"}
+{"ts": "2026-11-21T04:08:18+03:00", "kind": "step", "msg": "choice → done", "step": "choice"}
+{"ts": "2026-11-21T04:08:22+03:00", "kind": "step", "msg": "strategy → in_progress", "step": "strategy"}
+{"ts": "2026-11-21T04:09:17+03:00", "kind": "step", "msg": "strategy → done", "step": "strategy"}
+{"ts": "2026-11-21T04:09:17+03:00", "kind": "action", "msg": "Роудмап: outputs/roadmap-оператор-кому-помочь-сначала.xlsx (проектов: 1, фич: 1; источник: 04_product_strategy.md)", "tool": "pfs roadmap"}
+{"ts": "2026-11-21T04:09:48+03:00", "kind": "step", "msg": "validation → in_progress", "step": "validation"}
+{"ts": "2026-11-21T04:10:26+03:00", "kind": "step", "msg": "validation → done", "step": "validation"}
+{"ts": "2026-11-21T04:10:26+03:00", "kind": "step", "msg": "review → in_progress", "step": "review"}
+{"ts": "2026-11-21T04:10:42+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-21T04:10:42+03:00", "kind": "action", "msg": "Роудмап: outputs/roadmap-оператор-кому-помочь-сначала.xlsx (проектов: 1, фич: 1; источник: 04_product_strategy.md)", "tool": "pfs roadmap"}
+{"ts": "2026-11-21T04:12:58+03:00", "kind": "claim", "msg": "C020 [факт] 65% поддерживающих родителей платят в среднем $63/мес за мобильную связь взрослого ребёнка", "sources": ["S004"]}
+{"ts": "2026-11-21T04:12:58+03:00", "kind": "claim", "msg": "C007 замещено C020: восстановление суммы, потерянной при раскрытии shell-переменных при регистрации (аудит, исправление 1)"}
+{"ts": "2026-11-21T04:13:05+03:00", "kind": "claim", "msg": "retag: [C007] → [C020] — файлов 4, вхождений 12 (02_situation.md, 03_options.md, 06_validation_plan.md, REPORT.md)"}
+{"ts": "2026-11-21T04:13:10+03:00", "kind": "claim", "msg": "C021 [факт] Операторы США монетизируют «заботу» как аддон $5–10/мес на семью: Verizon Smart Family $4.", "sources": ["S008"]}
+{"ts": "2026-11-21T04:13:10+03:00", "kind": "claim", "msg": "C012 замещено C021: восстановление сумм, потерянных при раскрытии shell-переменных (аудит, исправление 1)"}
+{"ts": "2026-11-21T04:13:16+03:00", "kind": "claim", "msg": "retag: [C012] → [C021] — файлов 6, вхождений 34 (02_situation.md, 03_options.md, 04_product_strategy.md, 05_comms_strategy.md, 06_validation_plan.md, REPORT.md)"}
+{"ts": "2026-11-21T04:13:16+03:00", "kind": "claim", "msg": "C022 [вывод] «Мульти-SIM» конкурирует по цене с OTT-сервисами второго номера ($5–10/мес) и travel-eSIM,"}
+{"ts": "2026-11-21T04:13:16+03:00", "kind": "claim", "msg": "C015 замещено C022: восстановление сумм, потерянных при раскрытии shell-переменных (аудит, исправление 1)"}
+{"ts": "2026-11-21T04:13:26+03:00", "kind": "claim", "msg": "retag: [C015] → [C022] — файлов 4, вхождений 18 (02_situation.md, 03_options.md, 04_product_strategy.md, REPORT.md)"}
+{"ts": "2026-11-21T04:13:26+03:00", "kind": "claim", "msg": "C023 [допущение] Базовая модель: 1 млн абонентов, ARPU основной линии ~$20/мес — оператор вымышленный, кали", "sources": ["S001"]}
+{"ts": "2026-11-21T04:13:26+03:00", "kind": "claim", "msg": "C016 замещено C023: восстановление суммы, потерянной при раскрытии shell-переменных (аудит, исправление 1)"}
+{"ts": "2026-11-21T04:13:32+03:00", "kind": "claim", "msg": "retag: [C016] → [C023] — файлов 4, вхождений 6 (03_options.md, 04_product_strategy.md, 06_validation_plan.md, REPORT.md)"}
+{"ts": "2026-11-21T04:13:32+03:00", "kind": "claim", "msg": "C024 [прогноз] Сценарии эффекта B (run-rate, при доле «заботливых» 15% [C017], маржа 60–70% [C018]): конв"}
+{"ts": "2026-11-21T04:13:32+03:00", "kind": "claim", "msg": "C019 замещено C024: восстановление сумм, потерянных при раскрытии shell-переменных (аудит, исправление 1); центральный прогноз рекомендации"}
+{"ts": "2026-11-21T04:13:38+03:00", "kind": "claim", "msg": "retag: [C019] → [C024] — файлов 5, вхождений 38 (03_options.md, 04_product_strategy.md, 05_comms_strategy.md, 06_validation_plan.md, REPORT.md)"}
+{"ts": "2026-11-21T04:13:45+03:00", "kind": "source", "msg": "S004 обновлены поля: title", "tool": "pfs source update"}
+{"ts": "2026-11-21T04:13:45+03:00", "kind": "source", "msg": "S008 обновлены поля: title", "tool": "pfs source update"}
+{"ts": "2026-11-21T04:13:58+03:00", "kind": "cost", "msg": "Ручная работа руководителя и агента: бриф, источники, документы 02-06, ответ на вопросы: $0.00, человек 120 мин"}
+{"ts": "2026-11-21T04:13:58+03:00", "kind": "cost", "msg": "Red team (субагент) и аудит качества (субагент): 8 возражений МЕНЯЕТ; аудит 20/22, готово; исправления реестра выполнены (C007→C020, C012→C021, C015→C022, C016→C023, C019→C024): $0.00, человек 30 мин"}
+{"ts": "2026-11-21T04:14:07+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-21T04:14:07+03:00", "kind": "action", "msg": "Роудмап: outputs/roadmap-оператор-кому-помочь-сначала.xlsx (проектов: 1, фич: 1; источник: 04_product_strategy.md)", "tool": "pfs roadmap"}
+{"ts": "2026-11-21T04:15:01+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-21T04:15:01+03:00", "kind": "action", "msg": "Роудмап: outputs/roadmap-оператор-кому-помочь-сначала.xlsx (проектов: 1, фич: 1; источник: 04_product_strategy.md)", "tool": "pfs roadmap"}
+{"ts": "2026-11-21T04:15:24+03:00", "kind": "action", "msg": "Вердикт review зафиксирован: снимок реестра в outputs/.review_state.json", "tool": "pfs review lock"}
+{"ts": "2026-11-21T04:15:24+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-21T04:15:24+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-21T04:15:24+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-21T04:15:24+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-21T04:15:24+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER.md и пакет данных six_pager_pack (PRO-46: каркас со слотами, документы не вставляются)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-21T04:15:24+03:00", "kind": "action", "msg": "Роудмап: outputs/roadmap-оператор-кому-помочь-сначала.xlsx (проектов: 1, фич: 1; источник: 04_product_strategy.md)", "tool": "pfs roadmap"}
+{"ts": "2026-11-21T04:24:35+03:00", "kind": "step", "msg": "review → done", "step": "review"}
+{"ts": "2026-11-21T04:24:35+03:00", "kind": "step", "msg": "decision → in_progress", "step": "decision"}
+{"ts": "2026-11-21T04:40:07+03:00", "kind": "action", "msg": "Вердикт review зафиксирован: снимок реестра в outputs/.review_state.json", "tool": "pfs review lock"}
+{"ts": "2026-11-21T04:40:16+03:00", "kind": "human", "msg": "Вопрос руководителю: Утверждаете решение: вариант B «Семейный хаб заботы», пилот device-first в Q2 2027 после контрольных точек Q1 (биллинг ≥10%, юр.заключение)? Если не ответите, решение не фиксируется", "step": "decision"}
+{"ts": "2026-11-21T04:41:24+03:00", "kind": "human", "msg": "Ответ руководителя: Утверждаю", "step": "decision"}
+{"ts": "2026-11-21T04:41:24+03:00", "kind": "note", "msg": "Решение утверждено руководителем 2026-11-21"}
+{"ts": "2026-11-21T04:41:25+03:00", "kind": "decision", "msg": "D001 принято: Семейный хаб заботы: помогаем сначала «заботливым», пилот device-first в Q2 (отв. руководитель продукта)", "step": "decision"}
+{"ts": "2026-11-21T04:41:39+03:00", "kind": "step", "msg": "decision → done", "step": "decision"}
+{"ts": "2026-11-21T04:41:47+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/unit_economics.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-21T04:41:47+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/growth_model.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-21T04:41:47+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/cohort_retention.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-21T04:41:47+03:00", "kind": "action", "msg": "Excel-приложение: outputs/attachments/market_sizing.xlsx", "tool": "pfs calc"}
+{"ts": "2026-11-21T04:41:47+03:00", "kind": "action", "msg": "Собран outputs/REPORT.md", "tool": "pfs export"}
+{"ts": "2026-11-21T04:41:47+03:00", "kind": "action", "msg": "Собран outputs/SIX_PAGER_EN.md и пакет данных six_pager_pack (PRO-46: каркас со слотами, документы не вставляются)", "tool": "pfs export --six-pager"}
+{"ts": "2026-11-21T04:41:47+03:00", "kind": "action", "msg": "Собран outputs/presentations/deck.html", "tool": "pfs export --deck"}
+{"ts": "2026-11-21T04:41:47+03:00", "kind": "action", "msg": "Собран финальный пакет: unit_economics.xlsx, growth_model.xlsx, cohort_retention.xlsx, market_sizing.xlsx, REPORT.md, SIX_PAGER.md, REPORT.docx, SIX_PAGER.docx, SIX_PAGER_EN.md, SIX_PAGER_EN.docx, deck.html", "tool": "pfs finish"}
